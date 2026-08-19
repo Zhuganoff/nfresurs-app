@@ -9,32 +9,32 @@
   :root {
     --app-bg: #eef1f5; --app-bg2: #e6eaf0; --surface: #ffffff; --surface-2: #eef1f4;
     --text: #14181d; --text-dim: #5a636d; --text-faint: #8b949e;
-    --hair: #dfe3e8; --accent: #b9741a; --accent-soft: #f3e6d3;
-    --urgent: #c1443b; --fresh: #2f8a5f; --warn: #d99a00; --nav-bg: rgba(255,255,255,.55);
-    --glass: rgba(255,255,255,.66); --glass-2: rgba(255,255,255,.5);
+    --hair: #d9e2e0; --accent: #255d51; --accent-soft: #e5f1ed;
+    --urgent: #c1443b; --fresh: #2f8065; --warn: #c78a24; --nav-bg: rgba(247,251,250,.72);
+    --glass: #ffffff; --glass-2: #f6f9f8;
     --glass-brd: rgba(255,255,255,.85); --glass-hair: rgba(120,130,145,.16);
     --shadow: rgba(24,34,50,.10); --shadow-s: rgba(24,34,50,.06);
-    --glow-a: rgba(185,116,26,.16); --glow-b: rgba(47,138,95,.10);
+    --glow-a: rgba(65,151,126,.10); --glow-b: rgba(37,93,81,.08);
   }
   :root:not([data-theme="light"]) { @media (prefers-color-scheme: dark) {
-    --app-bg:#0a1119; --app-bg2:#0d1826; --surface:#17212b; --surface-2:#1d2a37;
-    --text:#e9eef2; --text-dim:#93a2b1; --text-faint:#6b7c8c;
-    --hair:#22303d; --accent:#e0982f; --accent-soft:#2a2416;
-    --urgent:#e0655b; --fresh:#4bb083; --warn:#e6b23c; --nav-bg:rgba(14,22,31,.5);
-    --glass: rgba(28,39,52,.55); --glass-2: rgba(28,39,52,.4);
+    --app-bg:#081016; --app-bg2:#101b22; --surface:#17232b; --surface-2:#1d2b34;
+    --text:#f1f6f4; --text-dim:#b5c3bf; --text-faint:#91a49e;
+    --hair:#2a3a42; --accent:#7fd0b4; --accent-soft:#173a31;
+    --urgent:#ff8178; --fresh:#7fd0b4; --warn:#e2ad58; --nav-bg:rgba(8,16,22,.74);
+    --glass:#17232b; --glass-2:#1d2b34;
     --glass-brd: rgba(255,255,255,.10); --glass-hair: rgba(255,255,255,.07);
     --shadow: rgba(0,0,0,.45); --shadow-s: rgba(0,0,0,.3);
-    --glow-a: rgba(224,152,47,.18); --glow-b: rgba(75,176,131,.10);
+    --glow-a: rgba(75,156,130,.12); --glow-b: rgba(54,121,104,.08);
   }}
   :root[data-theme="dark"] {
-    --app-bg:#0a1119; --app-bg2:#0d1826; --surface:#17212b; --surface-2:#1d2a37;
-    --text:#e9eef2; --text-dim:#93a2b1; --text-faint:#6b7c8c;
-    --hair:#22303d; --accent:#e0982f; --accent-soft:#2a2416;
-    --urgent:#e0655b; --fresh:#4bb083; --warn:#e6b23c; --nav-bg:rgba(14,22,31,.5);
-    --glass: rgba(28,39,52,.55); --glass-2: rgba(28,39,52,.4);
+    --app-bg:#081016; --app-bg2:#101b22; --surface:#17232b; --surface-2:#1d2b34;
+    --text:#f1f6f4; --text-dim:#b5c3bf; --text-faint:#91a49e;
+    --hair:#2a3a42; --accent:#7fd0b4; --accent-soft:#173a31;
+    --urgent:#ff8178; --fresh:#7fd0b4; --warn:#e2ad58; --nav-bg:rgba(8,16,22,.74);
+    --glass:#17232b; --glass-2:#1d2b34;
     --glass-brd: rgba(255,255,255,.10); --glass-hair: rgba(255,255,255,.07);
     --shadow: rgba(0,0,0,.45); --shadow-s: rgba(0,0,0,.3);
-    --glow-a: rgba(224,152,47,.18); --glow-b: rgba(75,176,131,.10);
+    --glow-a: rgba(75,156,130,.12); --glow-b: rgba(54,121,104,.08);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; }
@@ -200,7 +200,7 @@
   #splash::after {
     content:""; position:absolute; left:50%; top:34%;
     width:320px; height:320px; transform:translate(-50%,-50%);
-    background: radial-gradient(circle, rgba(224,152,47,.20), transparent 62%);
+    background: radial-gradient(circle, rgba(88,185,154,.20), transparent 62%);
     animation: glow 2.4s ease-in-out infinite; pointer-events:none;
   }
   #splash .flash {
@@ -213,7 +213,7 @@
     animation: rigIn .8s cubic-bezier(.2,.85,.25,1) .2s forwards; }
   #splash .rig { position:absolute; inset:0; width:100%; height:100%;
     filter: drop-shadow(0 6px 20px rgba(0,0,0,.5)); }
-  #splash .drop { fill: #e0982f; opacity: 0;
+  #splash .drop { fill: #58b99a; opacity: 0;
     transform-box: fill-box; transform-origin: center;
     animation: gush 1.5s cubic-bezier(.3,.1,.4,1) .55s forwards; }
   #splash .drop:nth-child(2){ animation-delay:.62s }
@@ -224,7 +224,7 @@
     position: absolute; bottom: 26%; width: 100%; text-align: center;
     font-size: 12px; letter-spacing: .42em; text-transform: uppercase;
     font-weight: 700;
-    background: linear-gradient(100deg,#e0982f,#ffd48a,#e0982f);
+    background: linear-gradient(100deg,#58b99a,#b8f1df,#58b99a);
     -webkit-background-clip: text; background-clip: text; color: transparent;
     opacity: 0; animation: rigIn .7s ease .7s forwards;
   }
@@ -246,6 +246,47 @@
     #splash .stage, #splash .word { animation: rigIn .3s ease forwards; }
     #splash .drop { animation: none; opacity:.9; }
   }
+
+  /* Dense Ledger — компактная рабочая лента */
+  header.app { padding: 8px 13px; padding-top: calc(8px + env(safe-area-inset-top)); gap: 10px; }
+  .logo { width: 36px; height: 36px; border-radius: 11px; background: linear-gradient(145deg,#58b99a,#1b5a49); box-shadow: 0 5px 15px rgba(40,130,105,.22); }
+  .logo svg { width: 21px; height: 21px; fill: none; stroke: #effff9; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .app-name { font-size: 14px; }
+  .app-sub { font-size: 9px; letter-spacing: .11em; margin-top: 3px; }
+  .pane { padding: 8px 8px calc(68px + env(safe-area-inset-bottom)); }
+  .pane-head { padding: 2px 2px 8px; }
+  .pane-head h2 { font-size: 19px; }
+  .toolbar { gap: 6px; margin-bottom: 7px; }
+  .search { border-radius: 10px; padding: 9px 11px; font-size: 13px; box-shadow: none; }
+  .fchips { gap: 6px; }
+  .fsel { min-width: 105px; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; }
+  .fchip { border-radius: 8px; padding: 6px 9px; font-size: 11.5px; box-shadow: none; }
+  .card { background: var(--surface); border: 1px solid var(--hair); border-left: 3px solid var(--accent); border-radius: 9px; padding: 8px 9px 7px; margin-bottom: 5px; box-shadow: 0 2px 8px var(--shadow-s); }
+  .card.new { border: 1px solid var(--hair); border-left: 3px solid var(--fresh); background: var(--surface); animation: none; box-shadow: 0 2px 8px var(--shadow-s); }
+  .new-badge { top: 7px; right: 38px; font-size: 9px; letter-spacing: .04em; color: var(--fresh); background: var(--accent-soft); padding: 2px 6px; box-shadow: none; }
+  .c-top { gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
+  .chip { font-size: 10.5px; color: var(--accent); background: transparent; padding: 0; }
+  .also-chip { font-size: 9.5px; padding: 1px 5px; }
+  .stpill { font-size: 10px; padding: 1px 6px; }
+  .deadline { font-size: 10.5px; gap: 4px; }
+  .deadline .dot { width: 5px; height: 5px; }
+  .fav { width: 24px; height: 24px; }
+  .card h3 { margin: 0 0 5px; font-size: 13px; line-height: 1.25; -webkit-line-clamp: 1; }
+  .city { font-size: 12px; margin: 0 8px 4px 0; gap: 4px; }
+  .city svg { width: 13px; height: 13px; }
+  .seller { font-size: 11px; margin: 0 0 5px; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .seller svg { width: 11px; height: 11px; }
+  .price { font-size: 13.5px; }
+  .price.none { font-size: 11px; }
+  .iact { width: 27px; height: 27px; border-radius: 7px; }
+  .iact svg { width: 14px; height: 14px; }
+  nav.tabbar { background: var(--nav-bg); padding: 5px 8px calc(5px + env(safe-area-inset-bottom)); box-shadow: 0 -7px 28px var(--shadow); }
+  nav.tabbar button { --tab-c: var(--text-faint) !important; opacity: .8; font-size: 9.5px; gap: 2px; }
+  nav.tabbar button.active { --tab-c: var(--accent) !important; opacity: 1; }
+  nav.tabbar button svg { width: 22px; height: 22px; stroke-width: 1.8; }
+  .sharebtn { background: linear-gradient(145deg,#4a9a82,#255d51); box-shadow: 0 5px 16px rgba(37,93,81,.25); }
+  :root[data-theme="dark"] .card, :root[data-theme="dark"] .rows { box-shadow: 0 3px 10px rgba(0,0,0,.24); }
+  :root[data-theme="dark"] header.app { box-shadow: 0 5px 22px rgba(0,0,0,.28); }
 </style>
 </head>
 <body>
@@ -257,9 +298,9 @@
         <defs>
           <linearGradient id="steel" gradientUnits="userSpaceOnUse"
               x1="100" y1="30" x2="100" y2="210">
-            <stop offset="0" stop-color="#ffd48a"/>
-            <stop offset=".5" stop-color="#e0982f"/>
-            <stop offset="1" stop-color="#a9701f"/>
+            <stop offset="0" stop-color="#b8f1df"/>
+            <stop offset=".5" stop-color="#58b99a"/>
+            <stop offset="1" stop-color="#1b5a49"/>
           </linearGradient>
         </defs>
         <g stroke="url(#steel)" stroke-width="2.6">
@@ -279,13 +320,13 @@
           <circle cx="100" cy="38" r="4" fill="none"/>
           <path d="M100 26 V16"/>
           <!-- талевый блок с крюком -->
-          <path d="M94 96 H106 V108 H94 Z" fill="rgba(224,152,47,.15)"/>
+          <path d="M94 96 H106 V108 H94 Z" fill="rgba(88,185,154,.15)"/>
           <path d="M100 108 V118 M96 118 q4 6 8 0"/>
           <!-- основание -->
           <path d="M40 206 H160" stroke-width="3.4"/>
         </g>
         <!-- штабель труб у основания (трубы · металлолом) -->
-        <g stroke="url(#steel)" stroke-width="2" fill="rgba(224,152,47,.10)">
+        <g stroke="url(#steel)" stroke-width="2" fill="rgba(88,185,154,.10)">
           <circle cx="70" cy="226" r="7.5"/><circle cx="85" cy="226" r="7.5"/><circle cx="100" cy="226" r="7.5"/><circle cx="115" cy="226" r="7.5"/><circle cx="130" cy="226" r="7.5"/>
           <circle cx="77.5" cy="212" r="7.5"/><circle cx="92.5" cy="212" r="7.5"/><circle cx="107.5" cy="212" r="7.5"/><circle cx="122.5" cy="212" r="7.5"/>
         </g>
@@ -303,7 +344,7 @@
   </div>
 
   <header class="app">
-    <div class="logo">ОД</div>
+    <div class="logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 16.5c0-2.6 2-5.3 5-9.2 3 3.9 5 6.6 5 9.2a5 5 0 0 1-10 0Z"/><path d="M15.7 5.7 18.5 3M17.2 8.3h3.6"/></svg></div>
     <div>
       <div class="app-name">ОТХОДЫ В ДОХОДЫ</div>
       <div class="app-sub">НЕФТЕПРОДУКТЫ · МЕТАЛЛОЛОМ · ТРУБЫ</div>
@@ -386,8 +427,8 @@
   </main>
 
   <nav class="tabbar">
-    <button data-tab="feed" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3c3.4 4.4 6 7.4 6 10.4a6 6 0 0 1-12 0C6 10.4 8.6 7.4 12 3Z"/></svg>Нефтепродукты</button>
-    <button data-tab="pipe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 4h5a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H8"/><ellipse cx="8" cy="12" rx="2.2" ry="8"/></svg>Трубы</button>
+    <button data-tab="feed" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8c3.7 4.7 6.1 7.8 6.1 11a6.1 6.1 0 0 1-12.2 0c0-3.2 2.4-6.3 6.1-11Z"/><path d="M9 15.2c.5 1.3 1.5 2 3 2.1"/></svg>Нефтепродукты</button>
+    <button data-tab="pipe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="6.6" cy="12" rx="3.1" ry="7.4"/><path d="M6.6 4.6h9.7c1.7 0 3.1 3.3 3.1 7.4s-1.4 7.4-3.1 7.4H6.6"/><path d="M15.9 7.5c.6 1.1.9 2.7.9 4.5s-.3 3.4-.9 4.5"/></svg>Трубы</button>
     <button data-tab="fav"><span class="badge" id="fav-badge" style="display:none">0</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.5-9.3-9A5 5 0 0 1 12 5.5 5 5 0 0 1 21.3 11C19 15.5 12 20 12 20Z"/></svg>Избранное</button>
     <button data-tab="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>Профиль</button>
   </nav>
