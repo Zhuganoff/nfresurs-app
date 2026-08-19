@@ -115,6 +115,8 @@
   .fav svg { width: 16px; height: 16px; }
   .card h3 { margin: 0 0 9px; font-size: 13.5px; line-height: 1.3; font-weight: 600; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
   .seller { font-size: 11.5px; color: var(--text-dim); margin: -3px 0 8px; display: flex; align-items: center; gap: 5px; line-height: 1.3; }
+  .city { font-size: 14.5px; font-weight: 700; color: var(--accent); margin: 4px 0 8px; display: inline-flex; align-items: center; gap: 6px; letter-spacing: -.01em; }
+  .city svg { width: 16px; height: 16px; flex: none; }
   .seller svg { width: 13px; height: 13px; flex: none; color: var(--text-faint); }
   .c-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .price { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -295,7 +297,7 @@
 
   <main>
     <section class="pane active" id="pane-feed">
-      <div class="pane-head"><h2>Тендеры</h2><span class="count" id="feed-count"></span></div>
+      <div class="pane-head"><h2>Нефтепродукты</h2><span class="count" id="feed-count"></span></div>
       <div class="toolbar">
         <input id="search" class="search" type="search" placeholder="Поиск по названию…" autocomplete="off">
         <div class="fchips">
@@ -351,7 +353,7 @@
   </main>
 
   <nav class="tabbar">
-    <button data-tab="feed" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Тендеры</button>
+    <button data-tab="feed" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3c3.4 4.4 6 7.4 6 10.4a6 6 0 0 1-12 0C6 10.4 8.6 7.4 12 3Z"/></svg>Нефтепродукты</button>
     <button data-tab="fav"><span class="badge" id="fav-badge" style="display:none">0</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.5-9.3-9A5 5 0 0 1 12 5.5 5 5 0 0 1 21.3 11C19 15.5 12 20 12 20Z"/></svg>Избранное</button>
     <button data-tab="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>Профиль</button>
   </nav>
@@ -413,6 +415,17 @@ const heart=f=>f?'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-
 
 function key(t){return t.site+':'+(t.url||t.title);}
 function daysLeft(d){const dt=pDate(d);if(!dt)return null;return Math.round((dt-REF)/864e5);}
+// город вывоза — вытягиваем из названия/продавца (где площадка его даёт текстом)
+function cityOf(t){
+  var s=(t.title||'')+' | '+(t.seller||'');
+  var m=s.match(/\bг\.?\s*([А-ЯЁ][а-яё][а-яё\-]{2,})/);
+  if(m) return 'г. '+m[1];
+  m=s.match(/([А-ЯЁ][а-яё\-]+ская)\s+(?:област|обл)/i);
+  if(m) return m[1]+' обл.';
+  m=s.match(/(Ханты-Мансийск|Нижневартовск|Сургут|Ноябрьск|Уренгой|Усинск|Альметьевск|Оренбург|Астрахан[ьи]|Самар[аы]|Уф[аы]|Казан[ьи]|Пермь|Тюмен[ьи]|Ижевск)/i);
+  if(m) return 'г. '+m[1];
+  return '';
+}
 function plural(n,a,b,c){n=Math.abs(n)%100;const n1=n%10;if(n>10&&n<20)return c;if(n1>1&&n1<5)return b;if(n1===1)return a;return c;}
 const STAT={'':{t:'+ статус',c:''},interest:{t:'Интересно',c:'st-i'},prep:{t:'Готовим',c:'st-p'},skip:{t:'Пропустить',c:'st-s'}};
 const STAT_ORDER=['','interest','prep','skip'];
@@ -429,8 +442,10 @@ function card(t){
   const hot=on && dLeft!==null && dLeft>=0 && dLeft<=3;   // избранное и ≤3 дней
   const favCls=on?(hot?' fav-hot':' fav-mark'):'';
   const cd=hot?`<span class="dleft">${dLeft===0?'сегодня последний день':'осталось '+dLeft+' '+plural(dLeft,'день','дня','дней')}</span>`:'';
+  const city=cityOf(t);
   return `<article class="card${nw?' new':''}${favCls}${stv==='skip'?' skip':''}" data-key="${kk}">${nw?'<span class="new-badge">NEW</span>':''}<div class="c-top"><span class="chip">${t.site_title||PLATFORMS[t.site]||t.site}</span>${also}<span class="stpill ${st.c}" data-st="${kk}">${st.t}</span>${cd}<span class="deadline ${dl.cls}"><span class="dot"></span>${dl.txt}</span><button class="fav ${on?'on':''}" data-k="${kk}">${heart(on)}</button></div>
   <h3>${cleanTitle(t.title)}</h3>
+  ${city?`<div class="city"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>Вывоз: ${city}</div>`:''}
   ${t.seller?`<div class="seller"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>${t.seller}</div>`:''}
   <div class="c-foot">${price?`<span class="price">${price}</span>`:'<span class="price none">по запросу</span>'}<span class="c-act"><a class="iact" title="Открыть на площадке" href="${t.url}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a><button class="iact send-btn" title="На почту" data-send="${encodeURIComponent(key(t))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button></span></div></article>`;
 }
@@ -464,7 +479,7 @@ function render(){
   document.getElementById('feed-list').innerHTML = items.length?items.map(card).join(''):'<div class="empty">Ничего не найдено.</div>';
   document.getElementById('feed-count').textContent = items.length+(items.length===TENDERS.length?' лотов':' из '+TENDERS.length);
   const fv=TENDERS.filter(t=>favs.has(key(t)));
-  document.getElementById('fav-list').innerHTML = fv.length?fv.map(card).join(''):`<div class="empty">${heart(false)}<div>Отмечайте лоты ♥ во вкладке «Тендеры» — они появятся здесь.</div></div>`;
+  document.getElementById('fav-list').innerHTML = fv.length?fv.map(card).join(''):`<div class="empty">${heart(false)}<div>Отмечайте лоты ♥ во вкладке «Нефтепродукты» — они появятся здесь.</div></div>`;
   document.getElementById('fav-count').textContent = fv.length+' сохранено';
   const b=document.getElementById('fav-badge'); b.textContent=fv.length; b.style.display=fv.length?'grid':'none';
   document.getElementById('plat-on').textContent = Object.values(PSTATE).filter(s=>s==='on').length;
