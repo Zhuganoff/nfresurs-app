@@ -150,6 +150,9 @@
   .group { margin-bottom: 22px; }
   .group > .label { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--text-faint); font-weight: 600; padding: 0 6px 8px; }
   .rows { background: var(--glass); border: 1px solid var(--glass-hair); border-radius: 16px; overflow: hidden; box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 6px 18px var(--shadow-s); }
+  .sharebtn { width: 100%; margin: 0 0 16px; display: flex; align-items: center; justify-content: center; gap: 9px; background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 92%, #fff), color-mix(in srgb, var(--accent) 58%, #000)); color: #fff; border: none; border-radius: 14px; padding: 13px; font-size: 14.5px; font-weight: 700; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 5px 16px color-mix(in srgb, var(--accent) 35%, transparent); }
+  .sharebtn svg { width: 18px; height: 18px; }
+  .sharebtn:active { transform: translateY(1px); }
   .row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--hair); }
   .row:last-child { border-bottom: none; }
   .row .ic { width: 20px; flex: none; color: var(--text-dim); display: grid; place-items: center; }
@@ -324,6 +327,7 @@
     </section>
     <section class="pane" id="pane-profile">
       <div class="pane-head"><h2>Мой профиль</h2></div>
+      <button id="share-btn" class="sharebtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Поделиться приложением</button>
       <div class="group">
         <div class="label">Уведомления</div>
         <div class="rows">
@@ -358,6 +362,11 @@
       <div class="group">
         <div class="label">Площадки · <span id="plat-on"></span> из 12</div>
         <div class="rows" id="plat-rows"></div>
+        <div class="efield" style="margin-top:9px">
+          <input id="suggest-url" class="search" type="url" placeholder="Ссылка на площадку — предложить" autocomplete="off" style="font-size:13px">
+          <button class="ebtn" id="suggest-btn">Предложить</button>
+        </div>
+        <div class="ehint" id="suggest-hint">Вставьте ссылку на площадку реализации — мы изучим её и подключим. Авто-подключение к любому сайту невозможно (у каждого свой формат), но каждую заявку разбираем вручную.</div>
       </div>
     </section>
   </main>
@@ -442,7 +451,7 @@ const STAT={'':{t:'+ статус',c:''},interest:{t:'Интересно',c:'st-
 const STAT_ORDER=['','interest','prep','skip'];
 // «новый» = ещё не просмотрен И появился недавно (до 3 дней).
 // при прокрутке карточка помечается просмотренной и рамка снимается.
-function isNew(t){ if(seen.has(key(t))) return false; if(!t.first_seen) return false; var ts=Date.parse(t.first_seen); return !isNaN(ts) && (Date.now()-ts) < 3*24*3600*1000; }
+function isNew(t){ if(!t.first_seen) return false; var ts=Date.parse(t.first_seen); return !isNaN(ts) && ts > VISIT_PREV; }
 function priceNum(p){ if(!p) return -1; var m=String(p).match(/([\d\s.,]+)/); if(!m) return -1; var n=parseFloat(m[1].replace(/\s/g,'').replace(',','.')); return isNaN(n)?-1:n; }
 function card(t){
   const price=fmtPrice(t.price), dl=dlInfo(t.deadline), on=favs.has(key(t));
@@ -483,7 +492,7 @@ let _io=null;
 function observeNew(){
   if(!('IntersectionObserver' in window)) return;
   if(_io) _io.disconnect();
-  _io=new IntersectionObserver((ents)=>{ents.forEach(e=>{ if(e.isIntersecting){ const el=e.target,k=el.dataset.key; _io.unobserve(el); setTimeout(()=>{ if(k&&!seen.has(k)){ seen.add(k); saveSeen(); } el.classList.remove('new'); const b=el.querySelector('.new-badge'); if(b)b.remove(); },1400);}});},{threshold:0.65, root:document.querySelector('main')});
+  _io=new IntersectionObserver((ents)=>{ents.forEach(e=>{ if(e.isIntersecting){ const el=e.target; _io.unobserve(el); setTimeout(()=>{ el.classList.remove('new'); const b=el.querySelector('.new-badge'); if(b)b.remove(); },1400);}});},{threshold:0.65, root:document.querySelector('main')});
   document.querySelectorAll('#feed-list .card.new, #pipe-list .card.new, #fav-list .card.new').forEach(el=>_io.observe(el));
 }
 function render(){
@@ -541,21 +550,25 @@ function saveFavs(){
   }catch(_){}
   try{ localStorage.setItem('favs',arr); }catch(_){}
 }
-// «просмотренные» лоты (для снятия зелёной рамки)
-function loadSeen(cb){
-  try{
-    if(cloudOK()){ tg.CloudStorage.getItem('seen',(e,v)=>{ try{ if(v)(JSON.parse(v)).forEach(x=>seen.add(x)); }catch(_){}; cb&&cb(); }); return; }
-  }catch(_){}
-  try{(JSON.parse(localStorage.getItem('seen')||'[]')).forEach(x=>seen.add(x));}catch(_){}
-  cb&&cb();
+// «Новые» = появившиеся после прошлого захода (метка времени lastVisit).
+// Надёжнее пер-карточного seen: не зависит от прокрутки и всегда успевает
+// сохраниться (пишем и в localStorage, и в CloudStorage сразу при загрузке).
+let VISIT_PREV = 0;
+function loadVisit(cb){
+  var apply=function(v){
+    var prev=parseInt(v||'0',10)||0;
+    // первый заход: новыми считаем лоты за последние 3 дня, не «всё подряд»
+    VISIT_PREV = prev>0 ? prev : (Date.now() - 3*24*3600*1000);
+    saveVisit();            // помечаем текущий заход
+    cb&&cb();
+  };
+  try{ if(cloudOK()){ tg.CloudStorage.getItem('lastVisit',(e,v)=>apply(v)); return; } }catch(_){}
+  try{ apply(localStorage.getItem('lastVisit')); }catch(_){ apply('0'); }
 }
-let _seenTimer=null;
-function saveSeen(){
-  clearTimeout(_seenTimer);
-  _seenTimer=setTimeout(()=>{ const arr=JSON.stringify([...seen].slice(-2000));
-    try{ if(cloudOK()){ tg.CloudStorage.setItem('seen',arr); return; } }catch(_){}
-    try{ localStorage.setItem('seen',arr); }catch(_){}
-  }, 500);
+function saveVisit(){
+  var now=String(Date.now());
+  try{ if(cloudOK()){ tg.CloudStorage.setItem('lastVisit',now); } }catch(_){}
+  try{ localStorage.setItem('lastVisit',now); }catch(_){}
 }
 // статусы лотов (интересно/готовим/пропустить)
 function loadStatuses(cb){
@@ -623,6 +636,24 @@ document.addEventListener('click',e=>{
       .catch(err=>{s.style.opacity='';alert(err.message);});
     return;
   }
+  if(e.target.closest('#share-btn')){
+    var url='https://zhuganoff.github.io/nfresurs-app/';
+    var text='Отходы в доходы — тендеры по реализации нефтепродуктов, металлолома и труб';
+    var link='https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);
+    try{ if(tg&&tg.openTelegramLink){ tg.openTelegramLink(link); return; } }catch(_){}
+    try{ if(navigator.share){ navigator.share({title:'Отходы в доходы',text:text,url:url}); return; } }catch(_){}
+    try{ window.open(link,'_blank'); }catch(_){}
+    return;
+  }
+  if(e.target.closest('#suggest-btn')){
+    var inp=document.getElementById('suggest-url'), hint=document.getElementById('suggest-hint');
+    var u=(inp.value||'').trim();
+    if(!/^https?:\/\/.+\..+/.test(u)){ hint.textContent='Вставьте корректную ссылку (https://…)'; return; }
+    hint.textContent='Отправляю…';
+    api('/api/suggest',{url:u}).then(()=>{ inp.value=''; hint.textContent='Спасибо! Заявка принята — изучим площадку и подключим.'; if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success'); })
+      .catch(()=>{ hint.textContent='Не удалось отправить (нет связи с сервером). Пришлите ссылку владельцу напрямую.'; });
+    return;
+  }
   const tab=e.target.closest('nav.tabbar button');
   if(tab){document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0;}
 });
@@ -630,7 +661,7 @@ loadEmail();
 
 // данные вшиты прямо в страницу (никакого fetch — надёжнее в вебвью)
 try { TENDERS = ((window.TENDERS_DATA)||{}).tenders || []; } catch(_) { TENDERS = []; }
-try { loadStatuses(function(){ loadSeen(function(){ loadFavs(render); }); }); } catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
+try { loadStatuses(function(){ loadVisit(function(){ loadFavs(render); }); }); } catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
 </script>
 </body>
 </html>
