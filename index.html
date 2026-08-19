@@ -4,77 +4,150 @@
 <meta charset="utf-8">
 <title>нефтересурс</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script src="./telegram-web-app.js"></script>
+<script src="telegram-web-app.js"></script>
 <style>
   :root {
-    --app-bg: #f2f4f6; --surface: #ffffff; --surface-2: #eef1f4;
+    --app-bg: #eef1f5; --app-bg2: #e6eaf0; --surface: #ffffff; --surface-2: #eef1f4;
     --text: #14181d; --text-dim: #5a636d; --text-faint: #8b949e;
     --hair: #dfe3e8; --accent: #b9741a; --accent-soft: #f3e6d3;
-    --urgent: #c1443b; --fresh: #2f8a5f; --nav-bg: #ffffffee;
+    --urgent: #c1443b; --fresh: #2f8a5f; --warn: #d99a00; --nav-bg: rgba(255,255,255,.55);
+    --glass: rgba(255,255,255,.66); --glass-2: rgba(255,255,255,.5);
+    --glass-brd: rgba(255,255,255,.85); --glass-hair: rgba(120,130,145,.16);
+    --shadow: rgba(24,34,50,.10); --shadow-s: rgba(24,34,50,.06);
+    --glow-a: rgba(185,116,26,.16); --glow-b: rgba(47,138,95,.10);
   }
   :root:not([data-theme="light"]) { @media (prefers-color-scheme: dark) {
-    --app-bg:#0e1621; --surface:#17212b; --surface-2:#1d2a37;
+    --app-bg:#0a1119; --app-bg2:#0d1826; --surface:#17212b; --surface-2:#1d2a37;
     --text:#e9eef2; --text-dim:#93a2b1; --text-faint:#6b7c8c;
     --hair:#22303d; --accent:#e0982f; --accent-soft:#2a2416;
-    --urgent:#e0655b; --fresh:#4bb083; --nav-bg:#17212bee;
+    --urgent:#e0655b; --fresh:#4bb083; --warn:#e6b23c; --nav-bg:rgba(14,22,31,.5);
+    --glass: rgba(28,39,52,.55); --glass-2: rgba(28,39,52,.4);
+    --glass-brd: rgba(255,255,255,.10); --glass-hair: rgba(255,255,255,.07);
+    --shadow: rgba(0,0,0,.45); --shadow-s: rgba(0,0,0,.3);
+    --glow-a: rgba(224,152,47,.18); --glow-b: rgba(75,176,131,.10);
   }}
   :root[data-theme="dark"] {
-    --app-bg:#0e1621; --surface:#17212b; --surface-2:#1d2a37;
+    --app-bg:#0a1119; --app-bg2:#0d1826; --surface:#17212b; --surface-2:#1d2a37;
     --text:#e9eef2; --text-dim:#93a2b1; --text-faint:#6b7c8c;
     --hair:#22303d; --accent:#e0982f; --accent-soft:#2a2416;
-    --urgent:#e0655b; --fresh:#4bb083; --nav-bg:#17212bee;
+    --urgent:#e0655b; --fresh:#4bb083; --warn:#e6b23c; --nav-bg:rgba(14,22,31,.5);
+    --glass: rgba(28,39,52,.55); --glass-2: rgba(28,39,52,.4);
+    --glass-brd: rgba(255,255,255,.10); --glass-hair: rgba(255,255,255,.07);
+    --shadow: rgba(0,0,0,.45); --shadow-s: rgba(0,0,0,.3);
+    --glow-a: rgba(224,152,47,.18); --glow-b: rgba(75,176,131,.10);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; }
   body {
-    background: var(--app-bg); color: var(--text);
+    background: linear-gradient(180deg, var(--app-bg), var(--app-bg2)); color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    display: flex; flex-direction: column; height: 100vh;
+    display: flex; flex-direction: column; height: 100vh; position: relative;
     -webkit-font-smoothing: antialiased;
   }
+  /* ambient-свечение под стеклом (фиксировано — не перерисовывается при скролле) */
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(120% 60% at 85% -5%, var(--glow-a), transparent 60%),
+      radial-gradient(110% 55% at -10% 105%, var(--glow-b), transparent 60%);
+  }
+  header.app, main { position: relative; z-index: 1; }
   header.app {
-    flex: none; padding: 12px 16px 12px; border-bottom: 1px solid var(--hair);
-    display: flex; align-items: center; gap: 12px; background: var(--app-bg);
-    padding-top: calc(12px + env(safe-area-inset-top));
+    flex: none; padding: 11px 16px 11px; display: flex; align-items: center; gap: 12px;
+    background: var(--nav-bg);
+    backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border-bottom: 1px solid var(--glass-hair);
+    box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 4px 18px var(--shadow-s);
+    padding-top: calc(11px + env(safe-area-inset-top)); z-index: 2;
   }
   .logo {
-    width: 36px; height: 36px; border-radius: 10px; flex: none;
-    background: linear-gradient(150deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #000));
+    width: 38px; height: 38px; border-radius: 12px; flex: none;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 88%, #fff), color-mix(in srgb, var(--accent) 55%, #000));
     display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 18px;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.15);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.4), inset 0 0 0 1px rgba(255,255,255,.12), 0 4px 12px color-mix(in srgb, var(--accent) 35%, transparent);
   }
-  .app-name { font-size: 16px; font-weight: 700; letter-spacing: -.01em; }
-  .app-sub { font-size: 11px; color: var(--text-faint); margin-top: 1px; letter-spacing: .04em; }
+  .app-name { font-size: 16.5px; font-weight: 700; letter-spacing: -.015em; }
+  .app-sub { font-size: 10.5px; color: var(--text-faint); margin-top: 1px; letter-spacing: .07em; text-transform: uppercase; }
   main { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
-  .pane { display: none; padding: 12px 12px 20px; }
+  .pane { display: none; padding: 10px 12px calc(64px + env(safe-area-inset-bottom)); max-width: 620px; margin: 0 auto; }
   .pane.active { display: block; }
-  .pane-head { display: flex; align-items: baseline; justify-content: space-between; padding: 4px 4px 12px; }
+  .pane-head { display: flex; align-items: baseline; justify-content: space-between; padding: 4px 2px 10px; }
   .pane-head h2 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
   .pane-head .count { font-size: 12px; color: var(--text-faint); font-variant-numeric: tabular-nums; }
-  .card { background: var(--surface); border: 1px solid var(--hair); border-radius: 16px; padding: 14px 14px 12px; margin-bottom: 10px; }
-  .card .top { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
-  .chip { font-size: 11px; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
-  .also-chip { font-size: 11px; color: var(--text-faint); }
-  .fav { margin-left: auto; flex: none; width: 30px; height: 30px; border-radius: 50%; border: none; background: var(--surface-2); cursor: pointer; display: grid; place-items: center; color: var(--text-faint); transition: transform .12s, color .12s, background .12s; }
+  .toolbar { margin: 0 0 10px; display: flex; flex-direction: column; gap: 8px; }
+  .search { width: 100%; background: var(--glass); color: var(--text); border: 1px solid var(--glass-hair); border-radius: 13px; padding: 11px 14px; font-size: 14px; box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 2px 8px var(--shadow-s); }
+  .search::placeholder { color: var(--text-faint); }
+  .search:focus { outline: none; border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
+  .fchips { display: flex; gap: 7px; flex-wrap: wrap; }
+  .fsel { flex: 1; min-width: 120px; background: var(--glass); color: var(--text); border: 1px solid var(--glass-hair); border-radius: 10px; padding: 8px 10px; font-size: 12.5px; }
+  .fchip { flex: none; background: var(--glass); color: var(--text-dim); border: 1px solid var(--glass-hair); border-radius: 999px; padding: 7px 13px; font-size: 12.5px; font-weight: 600; cursor: pointer; box-shadow: 0 1px 4px var(--shadow-s); }
+  .fchip.on { background: var(--accent-soft); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+  .card { background: var(--glass);
+    border: 1px solid var(--glass-hair); border-radius: 16px; padding: 12px 13px 11px; margin-bottom: 9px; position: relative;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 6px 20px var(--shadow-s), 0 2px 6px var(--shadow-s); }
+  /* новый тендер — переливающаяся зелёная подсветка */
+  .card.new { border-color: transparent; background:
+      linear-gradient(var(--glass),var(--glass)) padding-box,
+      linear-gradient(110deg,#2fbf6e,#7ff0a6,#1f9d55,#7ff0a6,#2fbf6e) border-box;
+    border: 2px solid transparent; background-size: 100% 100%, 300% 100%;
+    animation: shimmer 3s linear infinite;
+    box-shadow: 0 0 0 1px rgba(47,191,110,.15), 0 6px 20px rgba(47,191,110,.18); }
+  @keyframes shimmer { to { background-position: 0 0, -300% 0; } }
+  @media (prefers-reduced-motion: reduce){ .card.new{ animation:none; } }
+  .new-badge { position:absolute; top:-8px; right:14px; z-index:1;
+    font-size:10px; font-weight:700; letter-spacing:.08em; color:#052e16;
+    background:linear-gradient(110deg,#7ff0a6,#2fbf6e); padding:3px 9px;
+    border-radius:999px; box-shadow:0 2px 8px rgba(47,191,110,.4); }
+  /* избранное: жёлтая метка; за ≤3 дня до конца — ярко-красная */
+  .card.fav-mark, .card.fav-hot { background: color-mix(in srgb, var(--warn) 9%, var(--surface)); }
+  .card.fav-mark::before, .card.fav-hot::before { content:''; position:absolute; left:0; top:10px; bottom:10px; width:4px; border-radius:0 3px 3px 0; background: var(--warn); }
+  .card.fav-hot { background: color-mix(in srgb, var(--urgent) 12%, var(--surface));
+    box-shadow: 0 0 0 1px color-mix(in srgb,var(--urgent) 45%,transparent), 0 6px 18px color-mix(in srgb,var(--urgent) 22%,transparent); }
+  .card.fav-hot::before { background: var(--urgent); }
+  .dleft { font-size: 10px; font-weight: 700; color: #fff; background: var(--urgent); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .c-top { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; flex-wrap: wrap; }
+  .chip { font-size: 10.5px; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .also-chip { font-size: 10px; font-weight: 600; color: var(--text-faint); background: var(--surface-2); padding: 2px 6px; border-radius: 999px; }
+  .c-top .deadline { margin-left: auto; }
+  .fav { flex: none; width: 26px; height: 26px; border-radius: 50%; border: none; background: transparent; cursor: pointer; display: grid; place-items: center; color: var(--text-faint); transition: transform .12s, color .12s; }
   .fav:active { transform: scale(1.15); }
-  .fav.on { color: var(--accent); background: var(--accent-soft); }
+  .fav.on { color: var(--accent); }
   .fav svg { width: 16px; height: 16px; }
-  .card h3 { margin: 0 0 10px; font-size: 15px; line-height: 1.34; font-weight: 600; text-wrap: balance; }
-  .meta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 11px; }
-  .price { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
-  .price.none { font-weight: 500; color: var(--text-faint); font-size: 13px; }
-  .deadline { font-size: 12.5px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
-  .deadline .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-faint); flex: none; }
+  .card h3 { margin: 0 0 9px; font-size: 13.5px; line-height: 1.3; font-weight: 600; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .seller { font-size: 11.5px; color: var(--text-dim); margin: -3px 0 8px; display: flex; align-items: center; gap: 5px; line-height: 1.3; }
+  .seller svg { width: 13px; height: 13px; flex: none; color: var(--text-faint); }
+  .c-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .price { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .price.none { font-weight: 500; color: var(--text-faint); font-size: 12px; }
+  .deadline { font-size: 11.5px; color: var(--text-dim); display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .deadline .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-faint); flex: none; }
   .deadline.urgent { color: var(--urgent); font-weight: 600; }
   .deadline.urgent .dot { background: var(--urgent); }
   .deadline.fresh .dot { background: var(--fresh); }
-  .open { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; }
-  .open svg { width: 13px; height: 13px; }
+  .stpill { font-size: 10.5px; font-weight: 600; padding: 2px 9px; border-radius: 999px; cursor: pointer; border: 1px dashed var(--hair); color: var(--text-faint); background: transparent; white-space: nowrap; }
+  .stpill.st-i { color: #2f7fd9; background: color-mix(in srgb,#2f7fd9 12%,transparent); border: 1px solid color-mix(in srgb,#2f7fd9 40%,transparent); }
+  .stpill.st-p { color: var(--accent); background: var(--accent-soft); border: 1px solid color-mix(in srgb,var(--accent) 40%,transparent); }
+  .stpill.st-s { color: var(--text-faint); background: var(--surface-2); border: 1px solid var(--hair); }
+  .card.skip { opacity: .5; }
+  .c-act { display: inline-flex; gap: 6px; flex: none; }
+  .iact { width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--hair); background: var(--surface-2); color: var(--text-dim); display: grid; place-items: center; cursor: pointer; text-decoration: none; }
+  .iact:active { transform: scale(.94); }
+  .iact svg { width: 15px; height: 15px; }
+  .iact.send-btn.sent { color: var(--fresh); border-color: var(--fresh); }
+  .send-btn.sent { color: var(--fresh); border-color: var(--fresh); }
+  .efield { display: flex; gap: 8px; }
+  .efield input { flex: 1; min-width: 0; background: var(--surface-2); color: var(--text); border: 1px solid var(--hair); border-radius: 9px; padding: 9px 11px; font-size: 14px; }
+  .ebtn { flex: none; background: var(--accent); color: #fff; border: none; border-radius: 9px; padding: 0 14px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .ebtn.ghost { background: var(--surface-2); color: var(--text-dim); border: 1px solid var(--hair); }
+  .ehint { font-size: 11.5px; color: var(--text-faint); padding: 8px 6px 0; line-height: 1.5; }
+  .emsg { font-size: 12px; padding: 2px 2px; }
+  .emsg.err { color: var(--urgent); } .emsg.ok { color: var(--fresh); }
+  .everified { color: var(--fresh); font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
   .empty { text-align: center; color: var(--text-faint); padding: 60px 30px; font-size: 14px; line-height: 1.6; }
   .empty svg { width: 40px; height: 40px; opacity: .4; margin-bottom: 12px; }
   .group { margin-bottom: 22px; }
   .group > .label { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--text-faint); font-weight: 600; padding: 0 6px 8px; }
-  .rows { background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; overflow: hidden; }
+  .rows { background: var(--glass); border: 1px solid var(--glass-hair); border-radius: 16px; overflow: hidden; box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 6px 18px var(--shadow-s); }
   .row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--hair); }
   .row:last-child { border-bottom: none; }
   .row .ic { width: 20px; flex: none; color: var(--text-dim); display: grid; place-items: center; }
@@ -86,17 +159,132 @@
   .status-dot.off { background: var(--text-faint); }
   .status-dot.wait { background: var(--accent); }
   select.tz { background: var(--surface-2); color: var(--text); border: 1px solid var(--hair); border-radius: 8px; padding: 4px 8px; font-size: 13px; }
-  nav.tabbar { flex: none; display: flex; background: var(--nav-bg); backdrop-filter: blur(12px); border-top: 1px solid var(--hair); padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); }
-  nav.tabbar button { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-faint); font-size: 11px; font-weight: 600; padding: 4px 0; transition: color .12s; position: relative; }
-  nav.tabbar button svg { width: 24px; height: 24px; }
-  nav.tabbar button.active { color: var(--accent); }
+  nav.tabbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 10; display: flex;
+    background: var(--nav-bg);
+    backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border-top: 1px solid color-mix(in srgb, var(--hair) 55%, transparent);
+    padding: 4px 8px calc(4px + env(safe-area-inset-bottom)); }
+  nav.tabbar button { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--tab-c, var(--text-faint)); opacity: .5; font-size: 9.5px; font-weight: 600; padding: 2px 0; transition: opacity .14s, transform .14s; position: relative; }
+  nav.tabbar button svg { width: 19px; height: 19px; }
+  nav.tabbar button[data-tab="feed"]    { --tab-c: var(--accent); }
+  nav.tabbar button[data-tab="fav"]     { --tab-c: #e5484d; }
+  nav.tabbar button[data-tab="profile"] { --tab-c: #2f7fd9; }
+  nav.tabbar button.active { opacity: 1; transform: translateY(-1px); }
   nav.tabbar .badge { position: absolute; top: 0; left: 50%; margin-left: 6px; min-width: 16px; height: 16px; padding: 0 4px; background: var(--accent); color: #fff; border-radius: 999px; font-size: 10px; font-weight: 700; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
   .spinner { width: 26px; height: 26px; border: 3px solid var(--hair); border-top-color: var(--accent); border-radius: 50%; margin: 60px auto; animation: spin .8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+
+  /* ——— заставка: буровая вышка + нефтяной фонтан ——— */
+  #splash {
+    position: fixed; inset: 0; z-index: 1000;
+    display: grid; place-items: center;
+    background:
+      radial-gradient(120% 90% at 50% 34%, #16324a 0%, #0c1a29 46%, #050c14 100%);
+    animation: splashOut .55s ease 2.15s forwards;
+    overflow: hidden;
+  }
+  /* тёплое свечение «нефтяного пласта» снизу */
+  #splash::after {
+    content:""; position:absolute; left:50%; top:34%;
+    width:320px; height:320px; transform:translate(-50%,-50%);
+    background: radial-gradient(circle, rgba(224,152,47,.20), transparent 62%);
+    animation: glow 2.4s ease-in-out infinite; pointer-events:none;
+  }
+  #splash .flash {
+    position: absolute; inset: 0; background:
+      radial-gradient(circle at 50% 34%, #fff 0%, rgba(255,240,210,.6) 30%, transparent 60%);
+    animation: flash .6s ease .15s forwards; opacity:0;
+  }
+  #splash .stage { position: relative; width: 230px; height: 250px;
+    opacity: 0; transform: scale(.9) translateY(8px);
+    animation: rigIn .8s cubic-bezier(.2,.85,.25,1) .2s forwards; }
+  #splash .rig { position:absolute; inset:0; width:100%; height:100%;
+    filter: drop-shadow(0 6px 20px rgba(0,0,0,.5)); }
+  #splash .drop { fill: #e0982f; opacity: 0;
+    transform-box: fill-box; transform-origin: center;
+    animation: gush 1.5s cubic-bezier(.3,.1,.4,1) .55s forwards; }
+  #splash .drop:nth-child(2){ animation-delay:.62s }
+  #splash .drop:nth-child(3){ animation-delay:.7s }
+  #splash .drop:nth-child(4){ animation-delay:.78s }
+  #splash .drop:nth-child(5){ animation-delay:.86s }
+  #splash .word {
+    position: absolute; bottom: 26%; width: 100%; text-align: center;
+    font-size: 12px; letter-spacing: .42em; text-transform: uppercase;
+    font-weight: 700;
+    background: linear-gradient(100deg,#e0982f,#ffd48a,#e0982f);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    opacity: 0; animation: rigIn .7s ease .7s forwards;
+  }
+  #splash .word small { display:block; margin-top:7px; font-size:9px;
+    letter-spacing:.34em; font-weight:600; color: #6b8299;
+    -webkit-text-fill-color:#6b8299; }
+  @keyframes flash { 0%{opacity:0} 18%{opacity:.85} 100%{opacity:0} }
+  @keyframes glow { 0%,100%{opacity:.6} 50%{opacity:1} }
+  @keyframes rigIn { to { opacity: 1; transform: scale(1) translateY(0); } }
+  @keyframes splashOut { to { opacity: 0; visibility: hidden; } }
+  @keyframes gush {
+    0%   { opacity:0; transform: translateY(0) scale(.5); }
+    18%  { opacity:1; }
+    100% { opacity:0; transform: translateY(-70px) translateX(var(--dx,0)) scale(1.1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #splash { animation: splashOut .3s ease .8s forwards; }
+    #splash .flash, #splash::after { display: none; }
+    #splash .stage, #splash .word { animation: rigIn .3s ease forwards; }
+    #splash .drop { animation: none; opacity:.9; }
+  }
 </style>
 </head>
 <body>
+  <div id="splash" aria-hidden="true">
+    <div class="flash"></div>
+    <div class="stage">
+      <svg class="rig" viewBox="0 0 200 240" fill="none"
+           stroke-linecap="round" stroke-linejoin="round">
+        <defs>
+          <linearGradient id="steel" gradientUnits="userSpaceOnUse"
+              x1="100" y1="30" x2="100" y2="210">
+            <stop offset="0" stop-color="#ffd48a"/>
+            <stop offset=".5" stop-color="#e0982f"/>
+            <stop offset="1" stop-color="#a9701f"/>
+          </linearGradient>
+        </defs>
+        <g stroke="url(#steel)" stroke-width="2.6">
+          <!-- ноги вышки -->
+          <path d="M52 206 L86 44"/><path d="M148 206 L114 44"/>
+          <!-- горизонтальные пояса -->
+          <path d="M60 180 H140"/><path d="M66 150 H134"/>
+          <path d="M72 120 H128"/><path d="M77 92 H123"/><path d="M82 66 H118"/>
+          <!-- X-раскосы -->
+          <path d="M52 206 L140 180 M148 206 L60 180"/>
+          <path d="M60 180 L134 150 M140 180 L66 150"/>
+          <path d="M66 150 L128 120 M134 150 L72 120"/>
+          <path d="M72 120 L123 92 M128 120 L77 92"/>
+          <path d="M77 92 L118 66 M123 92 L82 66"/>
+          <!-- корона и кронблок -->
+          <path d="M86 44 H114 L100 26 Z"/>
+          <circle cx="100" cy="38" r="4" fill="none"/>
+          <path d="M100 26 V16"/>
+          <!-- талевый блок с крюком -->
+          <path d="M94 96 H106 V108 H94 Z" fill="rgba(224,152,47,.15)"/>
+          <path d="M100 108 V118 M96 118 q4 6 8 0"/>
+          <!-- основание -->
+          <path d="M40 206 H160" stroke-width="3.4"/>
+        </g>
+        <!-- нефтяной фонтан из устья -->
+        <g>
+          <circle class="drop" cx="100" cy="30" r="4" style="--dx:-14px"/>
+          <circle class="drop" cx="100" cy="30" r="3" style="--dx:12px"/>
+          <circle class="drop" cx="100" cy="30" r="3.5" style="--dx:-4px"/>
+          <circle class="drop" cx="100" cy="30" r="2.5" style="--dx:20px"/>
+          <circle class="drop" cx="100" cy="30" r="3" style="--dx:-22px"/>
+        </g>
+      </svg>
+    </div>
+    <div class="word">нефтересурс<small>торги · нефтепродукты</small></div>
+  </div>
+
   <header class="app">
     <div class="logo">Н</div>
     <div>
@@ -108,6 +296,14 @@
   <main>
     <section class="pane active" id="pane-feed">
       <div class="pane-head"><h2>Тендеры</h2><span class="count" id="feed-count"></span></div>
+      <div class="toolbar">
+        <input id="search" class="search" type="search" placeholder="Поиск по названию…" autocomplete="off">
+        <div class="fchips">
+          <select id="f-site" class="fsel"><option value="">Все площадки</option></select>
+          <select id="f-sort" class="fsel"><option value="new">Сначала новые</option><option value="deadline">Скоро дедлайн</option><option value="price">Дороже</option></select>
+          <button id="f-new" class="fchip">Только новые</button>
+        </div>
+      </div>
       <div id="feed-list"><div class="spinner"></div></div>
     </section>
     <section class="pane" id="pane-fav">
@@ -128,10 +324,27 @@
             <span class="rl">Часовой пояс</span>
             <span class="rv"><select class="tz" id="tz"><option>МСК (UTC+3)</option><option>Екатеринбург (UTC+5)</option><option>Новосибирск (UTC+7)</option><option>Владивосток (UTC+10)</option></select></span>
           </div>
+          <div class="row">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"/></svg></span>
+            <span class="rl">Оформление</span>
+            <span class="rv"><select class="tz" id="theme-sel"><option value="auto">Как в Telegram</option><option value="light">Светлая</option><option value="dark">Тёмная</option></select></span>
+          </div>
         </div>
       </div>
       <div class="group">
-        <div class="label">Площадки · <span id="plat-on"></span> из 8</div>
+        <div class="label">Электронная почта</div>
+        <div class="rows">
+          <div class="row" style="flex-wrap:wrap; gap:10px">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+            <span class="rl">E-mail</span>
+            <span class="rv" id="email-state"></span>
+            <div id="email-box" style="flex-basis:100%; display:flex; flex-direction:column; gap:8px"></div>
+          </div>
+        </div>
+        <div class="ehint">На эту почту приходят тендеры по кнопке «Отправить на почту». Подтверждается кодом.</div>
+      </div>
+      <div class="group">
+        <div class="label">Площадки · <span id="plat-on"></span> из 12</div>
         <div class="rows" id="plat-rows"></div>
       </div>
     </section>
@@ -143,18 +356,54 @@
     <button data-tab="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>Профиль</button>
   </nav>
 
+<script>window.TENDERS_DATA=/*__DATA_START__*/{"tenders": [{"site": "bidzaar", "site_title": "Bidzaar", "title": "Реализация отходов минеральных масел, образовавшихся в результате хозяйственной деятельности, Тамбовская область", "url": "https://bidzaar.com/app/process/light/01a0154a-f2d2-7e19-ae35-86c6955751af", "price": "", "deadline": "2026-08-27 11:00", "seller": "ГРУППА КОМПАНИЙ РУСАГРО", "first_seen": "2026-08-18T15:01:12+00:00", "also": []}, {"site": "etpgpb", "site_title": "ЭТП ГПБ", "title": "Реализация отработанных масел", "url": "https://etpgpb.ru/procedures/sale/1169876-realizatsiya-otrabotannyh-masel/", "price": "1318765.45 RUB", "deadline": "2026-09-04 08:00", "seller": "ГАЗПРОМ ПЕРЕРАБОТКА Астраханский филиал", "first_seen": "2026-08-18T09:01:00+00:00", "also": []}, {"site": "etpgpb", "site_title": "ЭТП ГПБ", "title": "Реализация отработанных масел", "url": "https://etpgpb.ru/procedures/sale/1169054-realizatsiya-otrabotannyh-masel/", "price": "3129158.49 RUB", "deadline": "2026-08-20 12:00", "seller": "Филиал \"Оренбургский гелиевый завод\"", "first_seen": "2026-08-18T09:01:00+00:00", "also": []}, {"site": "tektorg", "site_title": "ТЭК-Торг", "title": "Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Уфа", "url": "https://www.tektorg.ru/sale/procedures/19547788", "price": "", "deadline": "2026-08-24 10:00", "seller": "", "first_seen": "2026-08-18T09:00:26+00:00", "also": []}, {"site": "tektorg", "site_title": "ТЭК-Торг", "title": "Масла отработанные (моторные, гидравлические, трансмиссионные)", "url": "https://www.tektorg.ru/sale/procedures/19351796", "price": "1899184.1 ₽", "deadline": "2026-08-25 23:30", "seller": "", "first_seen": "2026-08-18T09:00:26+00:00", "also": []}, {"site": "b2b_center", "site_title": "B2B-Center", "title": "Масло Отработанное микс. моторные, трансформаторные", "url": "https://www.b2b-center.ru/market/maslo-otrabotannoe/tender-4547423/", "price": "", "deadline": "", "seller": "", "first_seen": "2026-08-18T09:00:17+00:00", "also": []}, {"site": "b2b_center", "site_title": "B2B-Center", "title": "НЕФТЕПРОДУКТЫ ОТ ЗАМАСЛЕННОЙ ОКАЛИНЫ Н.С. № 13 НЕФТЕПРОДУКТЫ ОТ ЗАМАСЛЕННОЙ ОКАЛИНЫ Н.С. № 13", "url": "https://www.b2b-center.ru/market/nefteprodukty-ot-zamaslennoi-okaliny-n-s-13/tender-4551033/", "price": "", "deadline": "", "seller": "", "first_seen": "2026-08-18T08:33:28+00:00", "also": []}, {"site": "b2b_center", "site_title": "B2B-Center", "title": "Реализация керосина авиационного с хранения от ООО \"Савинское карьероуправление\" Керосин авиационный ТС-1 ГОСТ 10227-86 (л) - 600 литров", "url": "https://www.b2b-center.ru/market/realizatsiia-kerosina-aviatsionnogo-s-khraneniia-ot-ooo-savinskoe/tender-4053806/", "price": "", "deadline": "", "seller": "", "first_seen": "2026-08-18T08:33:28+00:00", "also": []}, {"site": "b2b_center", "site_title": "B2B-Center", "title": "Реализация топлива дизельного обводненного с хранения от ООО \"Савинское карьероуправление\" Топливо дизельное Евро сорт F экологический класс К5 ГОСТ Р 52368 (обводненное) – 6 245 л.", "url": "https://www.b2b-center.ru/market/realizatsiia-topliva-dizelnogo-obvodnennogo-s-khraneniia-ot-ooo/tender-4547902/", "price": "", "deadline": "", "seller": "", "first_seen": "2026-08-18T08:33:28+00:00", "also": []}, {"site": "b2b_center", "site_title": "B2B-Center", "title": "Продажа мазута на ПАО \"Казаньоргсинтез\" Продажа мазута на ПАО \"Казаньоргсинтез\"", "url": "https://www.b2b-center.ru/market/prodazha-mazuta-na-pao-kazanorgsintez/tender-4524410/", "price": "", "deadline": "", "seller": "", "first_seen": "2026-08-18T08:33:28+00:00", "also": []}, {"site": "etpgpb", "site_title": "ЭТП ГПБ", "title": "Реализация Мазута топочного малозольного М-100 ГОСТ 10585-2013в количестве 1395,089т.", "url": "https://etpgpb.ru/procedures/sale/1170154-realizatsiya-mazuta-topochnogo-malozolnogo-m-100-gost-10585-2013v-kolichestve-1395089t/", "price": "0.0 RUB", "deadline": "2026-08-26 16:30", "seller": "АО ЛТЗ", "first_seen": "2026-08-18T08:21:05+00:00", "also": []}, {"site": "sberbank_ast", "site_title": "Сбербанк-АСТ", "title": "Судовое топливо, тяжелый дистиллят – газойль 9411 кг (годные остатки) (Реализация имущества, обращенного в собственность государства)", "url": "https://utp.sberbank-ast.ru/AP/NBT/PurchaseView/13/0/0/4191608", "price": "36138 RUB", "deadline": "06.09.2026 09:00", "seller": "", "first_seen": "2026-08-18T08:21:04+00:00", "also": []}, {"site": "sberbank_ast", "site_title": "Сбербанк-АСТ", "title": "Судовое топливо, тяжелый дистиллят – газойль 17346 кг (годные остатки) (Реализация имущества, обращенного в собственность государства)", "url": "https://utp.sberbank-ast.ru/AP/NBT/PurchaseView/13/0/0/4191608", "price": "66609 RUB", "deadline": "06.09.2026 09:00", "seller": "", "first_seen": "2026-08-18T08:21:04+00:00", "also": []}, {"site": "tektorg", "site_title": "ТЭК-Торг", "title": "Нефтепродукты (Масло электроизоляционное Shell Diala S3 ZX-I Dried (216,5л); Смазка электропроводящая ЭПС-98)", "url": "https://www.tektorg.ru/sale/procedures/19226067", "price": "290274.1 ₽", "deadline": "2026-08-19 14:00", "seller": "", "first_seen": "2026-08-18T08:20:38+00:00", "also": []}, {"site": "tektorg", "site_title": "ТЭК-Торг", "title": "Реализация топлива технологического и моторного", "url": "https://www.tektorg.ru/sale/procedures/18879539", "price": "", "deadline": "2026-09-03 08:00", "seller": "", "first_seen": "2026-08-18T08:20:38+00:00", "also": []}, {"site": "rosneft", "site_title": "Роснефть", "title": "Условия процедуры реализации Нефтепродукты (битум нефтяной строительный марки БН 90/10, смазка антифрикционная термостойкая ЦИАТИМ-221 и прочее) (ПИ4111435)", "url": "https://sale-tender.rosneft.ru/tt208729-08_09_2026.html", "price": "", "deadline": "08.09.2026", "seller": "", "first_seen": "2026-08-17T13:13:17+00:00", "also": [{"site": "tektorg", "site_title": "ТЭК-Торг", "url": "https://www.tektorg.ru/sale/procedures/12739342"}]}, {"site": "rosneft", "site_title": "Роснефть", "title": "Условия проведения процедуры реализации Отработанных масел, находящихся на балансе ООО &quot;РН-ГРП&quot;", "url": "https://sale-tender.rosneft.ru/tt208761-25_08_2026.html", "price": "", "deadline": "25.08.2026", "seller": "", "first_seen": "2026-08-17T13:13:17+00:00", "also": []}, {"site": "rosneft", "site_title": "Роснефть", "title": "Условия процедуры реализации нефтепродуктов (Масло электроизоляционное Shell Diala S3 ZX-I Dried (216,5л); Смазка электропроводящая ЭПС-98) (ПИ606391)", "url": "https://sale-tender.rosneft.ru/tt208188-19_08_2026.html", "price": "", "deadline": "19.08.2026", "seller": "", "first_seen": "2026-08-17T13:13:17+00:00", "also": []}]}/*__DATA_END__*/;</script>
 <script>
-const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-if (tg) {
-  tg.ready(); tg.expand();
-  const apply = () => document.documentElement.setAttribute('data-theme', tg.colorScheme || 'light');
-  apply(); tg.onEvent('themeChanged', apply);
-}
+// заставку убираем принудительно через 2 c (не полагаемся на CSS-анимацию)
+setTimeout(function(){ var s=document.getElementById('splash'); if(s){ s.style.transition='opacity .4s'; s.style.opacity='0'; setTimeout(function(){ if(s&&s.parentNode) s.parentNode.removeChild(s); },450); } }, 2800);
 
-const PLATFORMS = {tektorg:'ТЭК-Торг',rosneft:'Роснефть',etpgpb:'ЭТП ГПБ',b2b_center:'B2B-Center',onlinecontract:'OnlineContract',sberbank_ast:'Сбербанк-АСТ',interrao:'Интер РАО',nelikvidi:'Неликвиды'};
-const PSTATE = {tektorg:'on',rosneft:'on',etpgpb:'on',b2b_center:'on',onlinecontract:'on',sberbank_ast:'on',interrao:'on',nelikvidi:'wait'};
+// Сигнал Telegram «приложение готово» НАПРЯМУЮ, в обход SDK — чтобы
+// экран загрузки Telegram убирался на ЛЮБОЙ версии клиента (иначе на
+// части версий SDK не подаёт сигнал и приложение висит на загрузке).
+function tgRaw(type, data){
+  var payload = JSON.stringify(data || {});
+  try { if (window.TelegramWebviewProxy && window.TelegramWebviewProxy.postEvent)
+        window.TelegramWebviewProxy.postEvent(type, false, payload); } catch(_){}
+  try { if (window.external && window.external.notify)
+        window.external.notify(JSON.stringify({eventType:type, eventData:data||{}})); } catch(_){}
+  try { if (window.parent)
+        window.parent.postMessage(JSON.stringify({eventType:type, eventData:data||{}}), '*'); } catch(_){}
+}
+tgRaw('web_app_ready');
+tgRaw('web_app_expand');
+
+var themePref = 'auto';
+try { themePref = localStorage.getItem('theme') || 'auto'; } catch(_){}
+function applyTheme(){
+  var root = document.documentElement;
+  if (themePref === 'light' || themePref === 'dark') { root.setAttribute('data-theme', themePref); return; }
+  var tgw = window.Telegram && window.Telegram.WebApp;              // auto: как в Telegram
+  if (tgw && tgw.colorScheme) root.setAttribute('data-theme', tgw.colorScheme);
+  else root.removeAttribute('data-theme');                          // вне Telegram — по системной
+}
+function setTheme(v){ themePref = v; try { localStorage.setItem('theme', v); } catch(_){} applyTheme(); }
+applyTheme();
+
+var tg = null;
+try {
+  tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+  if (tg) {
+    try { tg.ready(); } catch(_){}
+    try { tg.expand(); } catch(_){}
+    try {
+      applyTheme(); tg.onEvent('themeChanged', applyTheme);
+    } catch(_){}
+  }
+} catch(_) { tg = null; }
+
+const PLATFORMS = {tektorg:'ТЭК-Торг',rosneft:'Роснефть',etpgpb:'ЭТП ГПБ',b2b_center:'B2B-Center',onlinecontract:'OnlineContract',sberbank_ast:'Сбербанк-АСТ',interrao:'Интер РАО',nelikvidi:'Неликвиды',slavneft:'Славнефть',isource:'isource Reserve',bidzaar:'Bidzaar',alrosa:'АЛРОСА'};
+const PSTATE = {tektorg:'on',rosneft:'on',etpgpb:'on',b2b_center:'on',onlinecontract:'on',sberbank_ast:'on',interrao:'on',nelikvidi:'wait',slavneft:'on',isource:'on',bidzaar:'on',alrosa:'on'};
 const REF = new Date();
-let TENDERS = [], favs = new Set();
+let TENDERS = [], favs = new Set(), seen = new Set(), statuses = {};
 
 function cleanTitle(t){return t.replace(/^Запрос предложений №\s*\d+\s*/,'').replace(/^Условия процедуры реализации\s*/i,'').replace(/\s+/g,' ').trim();}
 function fmtPrice(p){if(!p)return null;const m=p.match(/([\d\s.,]+)\s*(RUB|₽|руб)?/i);if(!m)return p;let n=parseFloat(m[1].replace(/\s/g,'').replace(',','.'));return isNaN(n)?p:n.toLocaleString('ru-RU',{maximumFractionDigits:0})+' ₽';}
@@ -163,17 +412,57 @@ function dlInfo(d){const dt=pDate(d);if(!dt)return{txt:'срок в описан
 const heart=f=>f?'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-7-4.5-9.3-9A5 5 0 0 1 12 5.5 5 5 0 0 1 21.3 11C19 15.5 12 20 12 20Z"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.5-9.3-9A5 5 0 0 1 12 5.5 5 5 0 0 1 21.3 11C19 15.5 12 20 12 20Z"/></svg>';
 
 function key(t){return t.site+':'+(t.url||t.title);}
+function daysLeft(d){const dt=pDate(d);if(!dt)return null;return Math.round((dt-REF)/864e5);}
+function plural(n,a,b,c){n=Math.abs(n)%100;const n1=n%10;if(n>10&&n<20)return c;if(n1>1&&n1<5)return b;if(n1===1)return a;return c;}
+const STAT={'':{t:'+ статус',c:''},interest:{t:'Интересно',c:'st-i'},prep:{t:'Готовим',c:'st-p'},skip:{t:'Пропустить',c:'st-s'}};
+const STAT_ORDER=['','interest','prep','skip'];
+// «новый» = ещё не просмотрен И появился недавно (до 3 дней).
+// при прокрутке карточка помечается просмотренной и рамка снимается.
+function isNew(t){ if(seen.has(key(t))) return false; if(!t.first_seen) return false; var ts=Date.parse(t.first_seen); return !isNaN(ts) && (Date.now()-ts) < 3*24*3600*1000; }
+function priceNum(p){ if(!p) return -1; var m=String(p).match(/([\d\s.,]+)/); if(!m) return -1; var n=parseFloat(m[1].replace(/\s/g,'').replace(',','.')); return isNaN(n)?-1:n; }
 function card(t){
   const price=fmtPrice(t.price), dl=dlInfo(t.deadline), on=favs.has(key(t));
-  const also=(t.also||[]).map(a=>`<span class="also-chip">+ ${a.site_title}</span>`).join(' ');
-  return `<article class="card"><div class="top"><span class="chip">${t.site_title||PLATFORMS[t.site]||t.site}</span>${also}<button class="fav ${on?'on':''}" data-k="${encodeURIComponent(key(t))}">${heart(on)}</button></div>
+  const also=(t.also||[]).length?`<span class="also-chip">+${t.also.length}</span>`:'';
+  const nw=isNew(t); const kk=encodeURIComponent(key(t));
+  const stv=statuses[key(t)]||''; const st=STAT[stv];
+  const dLeft=daysLeft(t.deadline);
+  const hot=on && dLeft!==null && dLeft>=0 && dLeft<=3;   // избранное и ≤3 дней
+  const favCls=on?(hot?' fav-hot':' fav-mark'):'';
+  const cd=hot?`<span class="dleft">${dLeft===0?'сегодня последний день':'осталось '+dLeft+' '+plural(dLeft,'день','дня','дней')}</span>`:'';
+  return `<article class="card${nw?' new':''}${favCls}${stv==='skip'?' skip':''}" data-key="${kk}">${nw?'<span class="new-badge">NEW</span>':''}<div class="c-top"><span class="chip">${t.site_title||PLATFORMS[t.site]||t.site}</span>${also}<span class="stpill ${st.c}" data-st="${kk}">${st.t}</span>${cd}<span class="deadline ${dl.cls}"><span class="dot"></span>${dl.txt}</span><button class="fav ${on?'on':''}" data-k="${kk}">${heart(on)}</button></div>
   <h3>${cleanTitle(t.title)}</h3>
-  <div class="meta">${price?`<span class="price">${price}</span>`:'<span class="price none">цена по запросу</span>'}<span class="deadline ${dl.cls}"><span class="dot"></span>${dl.txt}</span></div>
-  <a class="open" href="${t.url}" target="_blank" rel="noopener">Открыть на площадке<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a></article>`;
+  ${t.seller?`<div class="seller"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>${t.seller}</div>`:''}
+  <div class="c-foot">${price?`<span class="price">${price}</span>`:'<span class="price none">по запросу</span>'}<span class="c-act"><a class="iact" title="Открыть на площадке" href="${t.url}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a><button class="iact send-btn" title="На почту" data-send="${encodeURIComponent(key(t))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button></span></div></article>`;
+}
+const FILT={q:'',site:'',sort:'new',onlyNew:false};
+function feedItems(){
+  let a=TENDERS.slice();
+  if(FILT.q){const q=FILT.q.toLowerCase();a=a.filter(t=>(cleanTitle(t.title)).toLowerCase().includes(q)||(t.site_title||'').toLowerCase().includes(q));}
+  if(FILT.site) a=a.filter(t=>t.site===FILT.site);
+  if(FILT.onlyNew) a=a.filter(isNew);
+  if(FILT.sort==='deadline') a.sort((x,y)=>(pDate(x.deadline)||new Date(9e15))-(pDate(y.deadline)||new Date(9e15)));
+  else if(FILT.sort==='price') a.sort((x,y)=>priceNum(y.price)-priceNum(x.price));
+  else a.sort((x,y)=>(Date.parse(y.first_seen)||0)-(Date.parse(x.first_seen)||0));
+  return a;
+}
+function fillSiteFilter(){
+  const sel=document.getElementById('f-site'); if(!sel||sel.dataset.filled) return;
+  const sites=[...new Set(TENDERS.map(t=>t.site))];
+  sel.insertAdjacentHTML('beforeend', sites.map(s=>`<option value="${s}">${PLATFORMS[s]||s}</option>`).join(''));
+  sel.dataset.filled='1';
+}
+let _io=null;
+function observeNew(){
+  if(!('IntersectionObserver' in window)) return;
+  if(_io) _io.disconnect();
+  _io=new IntersectionObserver((ents)=>{ents.forEach(e=>{ if(e.isIntersecting){ const el=e.target,k=el.dataset.key; _io.unobserve(el); setTimeout(()=>{ if(k&&!seen.has(k)){ seen.add(k); saveSeen(); } el.classList.remove('new'); const b=el.querySelector('.new-badge'); if(b)b.remove(); },1400);}});},{threshold:0.65, root:document.querySelector('main')});
+  document.querySelectorAll('#feed-list .card.new, #fav-list .card.new').forEach(el=>_io.observe(el));
 }
 function render(){
-  document.getElementById('feed-list').innerHTML = TENDERS.length?TENDERS.map(card).join(''):'<div class="empty">Пока нет активных лотов.</div>';
-  document.getElementById('feed-count').textContent = TENDERS.length+' лотов';
+  fillSiteFilter();
+  const items=feedItems();
+  document.getElementById('feed-list').innerHTML = items.length?items.map(card).join(''):'<div class="empty">Ничего не найдено.</div>';
+  document.getElementById('feed-count').textContent = items.length+(items.length===TENDERS.length?' лотов':' из '+TENDERS.length);
   const fv=TENDERS.filter(t=>favs.has(key(t)));
   document.getElementById('fav-list').innerHTML = fv.length?fv.map(card).join(''):`<div class="empty">${heart(false)}<div>Отмечайте лоты ♥ во вкладке «Тендеры» — они появятся здесь.</div></div>`;
   document.getElementById('fav-count').textContent = fv.length+' сохранено';
@@ -181,28 +470,136 @@ function render(){
   document.getElementById('plat-on').textContent = Object.values(PSTATE).filter(s=>s==='on').length;
   const st={on:'работает',off:'выкл',wait:'скоро'};
   document.getElementById('plat-rows').innerHTML = Object.keys(PLATFORMS).map(k=>`<div class="row"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg></span><span class="rl">${PLATFORMS[k]}</span><span class="rv"><span class="status-dot ${PSTATE[k]}"></span>${st[PSTATE[k]]}</span></div>`).join('');
+  requestAnimationFrame(observeNew);
 }
+// фильтры ленты
+document.addEventListener('input',e=>{ if(e.target.id==='search'){ FILT.q=e.target.value.trim(); render(); } });
+document.addEventListener('change',e=>{
+  if(e.target.id==='f-site'){ FILT.site=e.target.value; render(); }
+  else if(e.target.id==='f-sort'){ FILT.sort=e.target.value; render(); }
+  else if(e.target.id==='theme-sel'){ setTheme(e.target.value); if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged(); }
+});
+(function(){ var s=document.getElementById('theme-sel'); if(s) s.value=themePref; })();
 
-// избранное: Telegram CloudStorage, иначе localStorage
+// избранное: Telegram CloudStorage если поддержан (>=6.1), иначе
+// localStorage. Любые ошибки хранилища НЕ должны ронять ленту.
+function cloudOK(){
+  try { return tg && tg.isVersionAtLeast && tg.isVersionAtLeast('6.1')
+        && tg.CloudStorage && tg.CloudStorage.getItem; }
+  catch(_) { return false; }
+}
+function loadLocal(){
+  try{(JSON.parse(localStorage.getItem('favs')||'[]')).forEach(x=>favs.add(x));}catch(_){}
+}
 function loadFavs(cb){
-  if(tg && tg.CloudStorage && tg.CloudStorage.getItem){
-    tg.CloudStorage.getItem('favs',(e,v)=>{try{(JSON.parse(v||'[]')).forEach(x=>favs.add(x));}catch(_){}cb();});
-  } else { try{(JSON.parse(localStorage.getItem('favs')||'[]')).forEach(x=>favs.add(x));}catch(_){}; cb(); }
+  if(cloudOK()){
+    try{
+      tg.CloudStorage.getItem('favs',(e,v)=>{
+        try{ if(v)(JSON.parse(v)).forEach(x=>favs.add(x)); }catch(_){}
+        cb();
+      });
+      return;
+    }catch(_){ /* провал облака — падаем на localStorage */ }
+  }
+  loadLocal(); cb();
 }
 function saveFavs(){
-  const arr=[...favs];
-  if(tg && tg.CloudStorage && tg.CloudStorage.setItem) tg.CloudStorage.setItem('favs',JSON.stringify(arr));
-  else localStorage.setItem('favs',JSON.stringify(arr));
+  const arr=JSON.stringify([...favs]);
+  try{
+    if(cloudOK()){ tg.CloudStorage.setItem('favs',arr); return; }
+  }catch(_){}
+  try{ localStorage.setItem('favs',arr); }catch(_){}
+}
+// «просмотренные» лоты (для снятия зелёной рамки)
+function loadSeen(cb){
+  try{
+    if(cloudOK()){ tg.CloudStorage.getItem('seen',(e,v)=>{ try{ if(v)(JSON.parse(v)).forEach(x=>seen.add(x)); }catch(_){}; cb&&cb(); }); return; }
+  }catch(_){}
+  try{(JSON.parse(localStorage.getItem('seen')||'[]')).forEach(x=>seen.add(x));}catch(_){}
+  cb&&cb();
+}
+let _seenTimer=null;
+function saveSeen(){
+  clearTimeout(_seenTimer);
+  _seenTimer=setTimeout(()=>{ const arr=JSON.stringify([...seen].slice(-2000));
+    try{ if(cloudOK()){ tg.CloudStorage.setItem('seen',arr); return; } }catch(_){}
+    try{ localStorage.setItem('seen',arr); }catch(_){}
+  }, 500);
+}
+// статусы лотов (интересно/готовим/пропустить)
+function loadStatuses(cb){
+  try{ if(cloudOK()){ tg.CloudStorage.getItem('statuses',(e,v)=>{ try{ if(v)statuses=JSON.parse(v)||{}; }catch(_){}; cb&&cb(); }); return; } }catch(_){}
+  try{ statuses=JSON.parse(localStorage.getItem('statuses')||'{}')||{}; }catch(_){}
+  cb&&cb();
+}
+function saveStatuses(){
+  const s=JSON.stringify(statuses);
+  try{ if(cloudOK()){ tg.CloudStorage.setItem('statuses',s); return; } }catch(_){}
+  try{ localStorage.setItem('statuses',s); }catch(_){}
 }
 
+// ——— почта и отправка тендеров через бэкенд ———
+const initData = (tg && tg.initData) || '';
+function api(path, body){
+  return fetch(path, {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(Object.assign({initData}, body||{}))})
+    .then(async r=>{ const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||('ошибка '+r.status)); return d; });
+}
+let EMAIL = {email:'', verified:false};
+function renderEmail(){
+  const st=document.getElementById('email-state'), box=document.getElementById('email-box');
+  if(!st||!box) return;
+  if(EMAIL.verified){
+    st.innerHTML='<span class="everified">✓ подтверждена</span>';
+    box.innerHTML=`<div class="emsg">${EMAIL.email}</div><button class="ebtn ghost" id="e-change">Изменить почту</button>`;
+    document.getElementById('e-change').onclick=()=>{EMAIL.verified=false;renderEmail();};
+  } else {
+    st.textContent='';
+    box.innerHTML=`<div class="efield"><input id="e-input" type="email" inputmode="email" placeholder="you@mail.ru" value="${EMAIL.email||''}"><button class="ebtn" id="e-code">Код</button></div>
+      <div class="efield" id="e-code-row" style="display:none"><input id="e-otp" inputmode="numeric" placeholder="Код из письма"><button class="ebtn" id="e-verify">ОК</button></div>
+      <div class="emsg" id="e-msg"></div>`;
+    const msg=document.getElementById('e-msg');
+    document.getElementById('e-code').onclick=function(){
+      const email=document.getElementById('e-input').value.trim();
+      msg.className='emsg'; msg.textContent='Отправляю код…';
+      api('/api/email/code',{email}).then(()=>{msg.className='emsg ok';msg.textContent='Код отправлен на '+email;document.getElementById('e-code-row').style.display='flex';EMAIL.email=email;})
+        .catch(e=>{msg.className='emsg err';msg.textContent=e.message;});
+    };
+    document.getElementById('e-verify').onclick=function(){
+      const code=document.getElementById('e-otp').value.trim();
+      msg.className='emsg'; msg.textContent='Проверяю…';
+      api('/api/email/verify',{code}).then(()=>{EMAIL.verified=true;renderEmail();})
+        .catch(e=>{msg.className='emsg err';msg.textContent=e.message;});
+    };
+  }
+}
+function loadEmail(){ api('/api/email/status').then(d=>{EMAIL=d;renderEmail();}).catch(()=>{}); }
+
 document.addEventListener('click',e=>{
+  if(e.target.id==='f-new'){ FILT.onlyNew=!FILT.onlyNew; e.target.classList.toggle('on',FILT.onlyNew); render(); return; }
+  const sp=e.target.closest('.stpill');
+  if(sp){ const k=decodeURIComponent(sp.dataset.st); const cur=statuses[k]||''; const nx=STAT_ORDER[(STAT_ORDER.indexOf(cur)+1)%STAT_ORDER.length]; if(nx) statuses[k]=nx; else delete statuses[k]; saveStatuses(); if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged(); render(); return; }
   const f=e.target.closest('.fav');
   if(f){const k=decodeURIComponent(f.dataset.k);favs.has(k)?favs.delete(k):favs.add(k);saveFavs();if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged();render();return;}
+  const s=e.target.closest('.send-btn');
+  if(s){
+    const k=decodeURIComponent(s.dataset.send); const t=TENDERS.find(x=>key(x)===k);
+    if(!t) return;
+    const alert=m=>{ try{ if(tg&&tg.showAlert) tg.showAlert(m); else s.title=m; }catch(_){ s.title=m; } };
+    if(!EMAIL.verified){ alert('Сначала подтвердите e-mail в разделе «Профиль».'); return; }
+    s.style.opacity='.5';
+    api('/api/tender/send',{tender:t}).then(()=>{s.style.opacity='';s.classList.add('sent');s.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>';if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success');})
+      .catch(err=>{s.style.opacity='';alert(err.message);});
+    return;
+  }
   const tab=e.target.closest('nav.tabbar button');
   if(tab){document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0;}
 });
+loadEmail();
 
-fetch('./tenders.json?v='+Date.now()).then(r=>r.json()).then(d=>{TENDERS=d.tenders||[];loadFavs(render);}).catch(()=>{document.getElementById('feed-list').innerHTML='<div class="empty">Не удалось загрузить лоты. Попробуйте позже.</div>';});
+// данные вшиты прямо в страницу (никакого fetch — надёжнее в вебвью)
+try { TENDERS = ((window.TENDERS_DATA)||{}).tenders || []; } catch(_) { TENDERS = []; }
+try { loadStatuses(function(){ loadSeen(function(){ loadFavs(render); }); }); } catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
 </script>
 </body>
 </html>
