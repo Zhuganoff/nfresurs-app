@@ -375,6 +375,7 @@
     <section class="pane" id="pane-profile">
       <div class="pane-head"><h2>Мой профиль</h2></div>
       <button id="share-btn" class="sharebtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Поделиться приложением</button>
+      <div id="stats-line" style="display:none; margin:0 0 14px; padding:11px 14px; border-radius:12px; background:var(--glass); border:1px solid var(--glass-hair); font-size:13px; color:var(--text-dim); text-align:center"></div>
       <div class="group">
         <div class="label">Уведомления</div>
         <div class="rows">
@@ -639,11 +640,16 @@ function saveStatuses(){
 
 // ——— почта и отправка тендеров через бэкенд ———
 const initData = (tg && tg.initData) || '';
+// бэкенд живёт на сервере (nip.io); приложение на github.io — зовём по
+// абсолютному адресу (CORS разрешён на сервере). На самом сервере — относительно.
+const API_BASE = (location.hostname.indexOf('nip.io')>=0 || location.hostname==='127.0.0.1' || location.hostname==='localhost') ? '' : 'https://158-160-197-98.nip.io';
 function api(path, body){
-  return fetch(path, {method:'POST', headers:{'Content-Type':'application/json'},
+  return fetch(API_BASE+path, {method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify(Object.assign({initData}, body||{}))})
     .then(async r=>{ const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||('ошибка '+r.status)); return d; });
 }
+// отметка визита (аналитика; тихо, не мешает загрузке)
+try{ if(initData) api('/api/visit',{}).catch(()=>{}); }catch(_){}
 let EMAIL = {email:'', verified:false};
 function renderEmail(){
   const st=document.getElementById('email-state'), box=document.getElementById('email-box');
@@ -713,6 +719,8 @@ document.addEventListener('click',e=>{
   if(tab){document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0;}
 });
 loadEmail();
+// счётчик пользователей — виден только владельцу (эндпоинт под белым списком)
+try{ api('/api/stats').then(function(d){ var el=document.getElementById('stats-line'); if(el){ el.style.display='block'; el.innerHTML='👥 Пользователей: <b>'+d.visitors+'</b> · за неделю: <b>'+d.active7+'</b>'; } }).catch(function(){}); }catch(_){}
 
 // данные вшиты прямо в страницу (никакого fetch — надёжнее в вебвью)
 try { TENDERS = ((window.TENDERS_DATA)||{}).tenders || []; } catch(_) { TENDERS = []; }
