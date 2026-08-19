@@ -176,6 +176,7 @@
   .mbtn-go { background: var(--accent); color: #fff; }
   .mbtn-send { background: var(--surface-2); color: var(--text); border: 1px solid var(--hair); }
   .mbtn-send.sent { color: var(--fresh); border-color: var(--fresh); }
+  .modal-check { display: block; margin: -4px 0 16px; padding: 11px 13px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); font-size: 12.5px; font-weight: 600; text-decoration: none; text-align: center; border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); }
   .row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--hair); }
   .row:last-child { border-bottom: none; }
   .row .ic { width: 20px; flex: none; color: var(--text-dim); display: grid; place-items: center; }
@@ -457,6 +458,7 @@
       <div class="modal-chips" id="modal-chips"></div>
       <h3 class="modal-title" id="modal-title"></h3>
       <div class="modal-meta" id="modal-meta"></div>
+      <a id="modal-check" class="modal-check" target="_blank" rel="noopener" style="display:none">🔎 Проверить продавца в реестре — ИНН, ОГРН, надёжность</a>
       <div class="modal-acts">
         <a class="mbtn mbtn-go" id="modal-go" target="_blank" rel="noopener">Перейти на площадку</a>
         <button class="mbtn mbtn-send" id="modal-send">Отправить документы</button>
@@ -568,6 +570,9 @@ function openTender(t){
     row('Цена', price||'по запросу') + row('Приём до', dl.txt) +
     row('Продавец', t.seller||'') + row('Вывоз', city||'') +
     row('Площадка', t.site_title||PLATFORMS[t.site]||t.site);
+  var chk=document.getElementById('modal-check');
+  if(t.seller){ chk.href='https://www.rusprofile.ru/search?query='+encodeURIComponent(t.seller); chk.style.display='block'; }
+  else { chk.style.display='none'; }
   document.getElementById('modal-go').href=t.url;
   var sb=document.getElementById('modal-send'); sb.classList.remove('sent'); sb.textContent='Отправить документы'; sb.style.opacity='';
   document.getElementById('modal').style.display='flex';
@@ -734,6 +739,7 @@ document.addEventListener('click',e=>{
   // модалка тендера
   if(e.target.closest('#modal-x') || e.target===document.getElementById('modal')){ closeTender(); return; }
   if(e.target.closest('#modal-go')){ if(_modalT && tg && tg.openLink){ e.preventDefault(); tg.openLink(_modalT.url); } return; }
+  if(e.target.closest('#modal-check')){ if(_modalT && _modalT.seller && tg && tg.openLink){ e.preventDefault(); tg.openLink('https://www.rusprofile.ru/search?query='+encodeURIComponent(_modalT.seller)); } return; }
   if(e.target.closest('#modal-send')){
     var mb=document.getElementById('modal-send'); if(!_modalT) return;
     var al=m=>{ try{ if(tg&&tg.showAlert) tg.showAlert(m); else mb.textContent=m; }catch(_){ mb.textContent=m; } };
