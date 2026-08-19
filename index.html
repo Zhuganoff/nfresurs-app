@@ -170,14 +170,13 @@
   .modal-meta .mrow { display: flex; gap: 9px; font-size: 13.5px; align-items: baseline; }
   .modal-meta .mk { color: var(--text-faint); flex: none; min-width: 82px; }
   .modal-meta .mv { color: var(--text); font-weight: 600; }
-  .modal-acts { display: flex; flex-direction: column; gap: 10px; }
-  .modal-row2 { display: flex; gap: 10px; }
-  .mbtn { flex: 1; text-align: center; padding: 13px 10px; border-radius: 13px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: none; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 7px; line-height: 1.2; }
-  .mbtn svg { width: 16px; height: 16px; }
+  .modal-acts { display: flex; gap: 9px; align-items: stretch; }
+  .mbtn { flex: 1; text-align: center; padding: 14px 10px; border-radius: 13px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 7px; line-height: 1.2; }
   .mbtn-go { background: var(--accent); color: #fff; }
-  .mbtn-send { background: var(--surface-2); color: var(--text); border: 1px solid var(--hair); }
-  .mbtn-mail { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
-  .mbtn-send.sent, .mbtn-mail.sent { color: var(--fresh); border-color: var(--fresh); }
+  .mbtn-ic { flex: none; width: 52px; border-radius: 13px; display: grid; place-items: center; cursor: pointer; border: 1px solid var(--hair); background: var(--surface-2); color: var(--text); transition: opacity .12s; }
+  .mbtn-ic svg { width: 21px; height: 21px; }
+  .mbtn-ic.mail { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
+  .mbtn-ic.sent { color: var(--fresh); border-color: var(--fresh); background: color-mix(in srgb, var(--fresh) 14%, var(--surface)); }
   .row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--hair); }
   .row:last-child { border-bottom: none; }
   .row .ic { width: 20px; flex: none; color: var(--text-dim); display: grid; place-items: center; }
@@ -461,10 +460,8 @@
       <div class="modal-meta" id="modal-meta"></div>
       <div class="modal-acts">
         <a class="mbtn mbtn-go" id="modal-go" target="_blank" rel="noopener">Перейти на площадку</a>
-        <div class="modal-row2">
-          <button class="mbtn mbtn-send" id="modal-send">Отправить документы</button>
-          <button class="mbtn mbtn-mail" id="modal-mail">Отправить на почту</button>
-        </div>
+        <button class="mbtn-ic" id="modal-send" title="Отправить в Телеграм"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M22 3 2 10.5l6.5 2.2M22 3l-3 18-8-6.3M22 3 8.5 14.7M8.5 14.7V20l3-3.9"/></svg></button>
+        <button class="mbtn-ic mail" id="modal-mail" title="Отправить на почту"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button>
       </div>
     </div>
   </div>
@@ -574,21 +571,20 @@ function openTender(t){
     row('Продавец', t.seller||'') + row('Вывоз', city||'') +
     row('Площадка', t.site_title||PLATFORMS[t.site]||t.site);
   document.getElementById('modal-go').href=t.url;
-  var sb=document.getElementById('modal-send'); sb.classList.remove('sent'); sb.textContent='Отправить документы'; sb.style.opacity='';
-  var mm=document.getElementById('modal-mail'); mm.classList.remove('sent'); mm.textContent='Отправить на почту'; mm.style.opacity='';
+  ['modal-send','modal-mail'].forEach(function(id){ var b=document.getElementById(id); if(b){ b.classList.remove('sent'); b.style.opacity=''; b.dataset.busy=''; } });
   document.getElementById('modal').style.display='flex';
   try{ if(tg&&tg.HapticFeedback&&tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light'); }catch(_){}
 }
 function closeTender(){ var m=document.getElementById('modal'); if(m)m.style.display='none'; _modalT=null; }
-function sendDocs(channel, btn, okText){
-  if(!_modalT || !btn) return;
-  var orig=btn.dataset.orig||btn.textContent; btn.dataset.orig=orig;
-  var al=function(m){ try{ if(tg&&tg.showAlert) tg.showAlert(m); else btn.textContent=m; }catch(_){ btn.textContent=m; } };
-  btn.style.opacity='.6'; btn.textContent='Отправляю…';
+function sendDocs(channel, btn, label){
+  if(!_modalT || !btn || btn.dataset.busy) return;
+  btn.dataset.busy='1'; btn.style.opacity='.5';
+  var al=function(m){ try{ if(tg&&tg.showAlert) tg.showAlert(m); }catch(_){} };
   api('/api/tender/docs',{tender:_modalT, channel:channel}).then(function(){
-    btn.style.opacity=''; btn.classList.add('sent'); btn.textContent=okText;
+    btn.style.opacity=''; btn.dataset.busy=''; btn.classList.add('sent');
     if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success');
-  }).catch(function(err){ btn.style.opacity=''; btn.classList.remove('sent'); btn.textContent=orig; al((err&&err.message)||'Не удалось.'); });
+    al(label+' — отправлено ✓');
+  }).catch(function(err){ btn.style.opacity=''; btn.dataset.busy=''; al((err&&err.message)||'Не удалось. Напишите боту /start.'); });
 }
 document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeTender(); });
 const FILT={q:'',site:'',sort:'new',onlyNew:false};
@@ -750,8 +746,8 @@ document.addEventListener('click',e=>{
   // модалка тендера
   if(e.target.closest('#modal-x') || e.target===document.getElementById('modal')){ closeTender(); return; }
   if(e.target.closest('#modal-go')){ if(_modalT && tg && tg.openLink){ e.preventDefault(); tg.openLink(_modalT.url); } return; }
-  if(e.target.closest('#modal-send')){ sendDocs('tg', document.getElementById('modal-send'), '✓ В Телеграм'); return; }
-  if(e.target.closest('#modal-mail')){ sendDocs('email', document.getElementById('modal-mail'), '✓ На почту'); return; }
+  if(e.target.closest('#modal-send')){ sendDocs('tg', document.getElementById('modal-send'), 'В Телеграм'); return; }
+  if(e.target.closest('#modal-mail')){ sendDocs('email', document.getElementById('modal-mail'), 'На почту'); return; }
   if(e.target.id==='f-new'){ FILT.onlyNew=!FILT.onlyNew; e.target.classList.toggle('on',FILT.onlyNew); render(); return; }
   const sp=e.target.closest('.stpill');
   if(sp){ const k=decodeURIComponent(sp.dataset.st); const cur=statuses[k]||''; const nx=STAT_ORDER[(STAT_ORDER.indexOf(cur)+1)%STAT_ORDER.length]; if(nx) statuses[k]=nx; else delete statuses[k]; saveStatuses(); if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged(); render(); return; }
