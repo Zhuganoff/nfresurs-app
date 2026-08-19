@@ -765,7 +765,7 @@ document.addEventListener('click',e=>{
     if(tt){ openTender(tt); return; }
   }
   if(e.target.closest('#share-btn')){
-    var url='https://zhuganoff.github.io/nfresurs-app/';
+    var url='https://t.me/nfresursbot';
     var text='Отходы в доходы — тендеры по реализации нефтепродуктов, металлолома и труб';
     var link='https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);
     try{ if(tg&&tg.openTelegramLink){ tg.openTelegramLink(link); return; } }catch(_){}
