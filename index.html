@@ -932,7 +932,7 @@ document.addEventListener('click',e=>{
     }).catch(function(){ soon(); });
     return;
   }
-  if(e.target.closest('#ad-new')){ var f=document.getElementById('ad-form'); f.style.display=f.style.display==='none'?'flex':'none'; return; }
+  if(e.target.closest('#ad-new')){ var adf=document.getElementById('ad-form'); adf.style.display=adf.style.display==='none'?'flex':'none'; return; }
   if(e.target.closest('.ad-photo-add')){ if(adPhotos.length>=3){ document.getElementById('ad-hint').textContent='Максимум 3 фото'; return; } document.getElementById('ad-files').click(); return; }
   if(e.target.closest('.ad-rm')){ var i=+e.target.closest('.ad-rm').dataset.i; adPhotos.splice(i,1); adThumbs(); return; }
   if(e.target.closest('#ad-submit')){ submitAd(); return; }
