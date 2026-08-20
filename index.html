@@ -181,6 +181,34 @@
   .sub-price.big { color: var(--accent); font-size: 34px; margin-bottom: 16px; }
   .sub-price.big small { color: var(--text-dim); }
   .paywall .sub-btn { background: var(--accent); color: #fff; }
+  /* объявления (маркетплейс) */
+  .ad-intro { font-size: 12.5px; color: var(--text-dim); margin: 0 0 12px; line-height: 1.4; }
+  .ad-new-btn { border: none; background: var(--accent); color: #fff; font-weight: 700; font-size: 13px; padding: 7px 14px; border-radius: 999px; cursor: pointer; }
+  .ad-form { background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; padding: 14px; margin: 0 0 16px; display: flex; flex-direction: column; gap: 9px; }
+  .ad-form input, .ad-form textarea, .ad-form select { width: 100%; padding: 10px 12px; border: 1px solid var(--hair); border-radius: 10px; background: var(--app-bg); color: var(--text); font: inherit; font-size: 14px; box-sizing: border-box; }
+  .ad-form textarea { resize: vertical; }
+  .ad-row { display: flex; gap: 10px; align-items: center; }
+  .ad-row input { flex: 1; }
+  .ad-neg { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-dim); white-space: nowrap; }
+  .ad-photo-add { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--accent); cursor: pointer; }
+  .ad-thumbs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .ad-thumbs .thumb { position: relative; width: 64px; height: 64px; border-radius: 8px; overflow: hidden; border: 1px solid var(--hair); }
+  .ad-thumbs .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .ad-thumbs .thumb button { position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; border: none; border-radius: 50%; background: rgba(0,0,0,.6); color: #fff; font-size: 12px; line-height: 1; cursor: pointer; padding: 0; }
+  .ad-rules-note { font-size: 11px; color: var(--text-faint); line-height: 1.4; }
+  .ad-rules-note a { color: var(--accent); }
+  .ad-submit { border: none; background: var(--accent); color: #fff; font-weight: 700; font-size: 15px; padding: 12px; border-radius: 11px; cursor: pointer; }
+  .ad-hint { font-size: 12.5px; text-align: center; color: var(--text-dim); min-height: 16px; }
+  .ad-card { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; padding: 12px; margin: 0 0 10px; }
+  .ad-card .ac-cat { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .04em; }
+  .ad-card h3 { margin: 3px 0 5px; font-size: 15px; }
+  .ad-card .ac-desc { font-size: 13px; color: var(--text-dim); line-height: 1.4; margin: 0 0 8px; white-space: pre-wrap; }
+  .ad-card .ac-photos { display: flex; gap: 6px; overflow-x: auto; margin: 0 0 8px; }
+  .ad-card .ac-photos img { height: 96px; border-radius: 8px; object-fit: cover; }
+  .ad-card .ac-meta { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: var(--text-dim); margin: 0 0 10px; }
+  .ad-card .ac-price { color: var(--text); font-weight: 700; }
+  .ad-card .ac-go { display: block; text-align: center; text-decoration: none; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); font-weight: 700; font-size: 14px; padding: 10px; border-radius: 10px; }
+  .ads-empty { text-align: center; color: var(--text-faint); font-size: 13px; padding: 30px 0; }
   /* модалка тендера (bottom-sheet) */
   .modal-ov { position: fixed; inset: 0; z-index: 100; display: flex; align-items: flex-end; justify-content: center; background: rgba(8,14,20,.55); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
   .modal { position: relative; width: 100%; max-width: 620px; background: var(--surface); border-radius: 20px 20px 0 0; padding: 22px 18px calc(20px + env(safe-area-inset-bottom)); box-shadow: 0 -8px 40px rgba(0,0,0,.35); animation: modalup .22s ease; max-height: 88vh; overflow-y: auto; }
@@ -224,6 +252,7 @@
   nav.tabbar button[data-tab="pipe"]    { --tab-c: #4f9d94; }
   nav.tabbar button[data-tab="metal"]   { --tab-c: #8b95a1; }
   nav.tabbar button[data-tab="fav"]     { --tab-c: #e5484d; }
+  nav.tabbar button[data-tab="ads"]     { --tab-c: #e08a2f; }
   nav.tabbar button[data-tab="profile"] { --tab-c: #2f7fd9; }
   nav.tabbar button.active { opacity: 1; transform: translateY(-1px); }
   nav.tabbar .badge { position: absolute; top: 0; left: 50%; margin-left: 6px; min-width: 16px; height: 16px; padding: 0 4px; background: var(--accent); color: #fff; border-radius: 999px; font-size: 10px; font-weight: 700; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
@@ -426,6 +455,32 @@
       <div class="pane-head"><h2>Металлолом</h2><span class="count" id="metal-count"></span></div>
       <div id="metal-list"><div class="spinner"></div></div>
     </section>
+    <section class="pane" id="pane-ads">
+      <div class="pane-head"><h2>Объявления</h2><button class="ad-new-btn" id="ad-new">＋ Подать</button></div>
+      <div class="ad-intro">Частные объявления о продаже сырья напрямую. Проходят модерацию перед публикацией.</div>
+      <div id="ad-form" class="ad-form" style="display:none">
+        <select id="ad-cat">
+          <option value="oil">Нефтепродукты</option>
+          <option value="metal">Металлолом</option>
+          <option value="pipe">Трубы</option>
+          <option value="other">Другое</option>
+        </select>
+        <input id="ad-title" maxlength="120" placeholder="Заголовок — что продаёте">
+        <textarea id="ad-desc" maxlength="2000" rows="3" placeholder="Описание: объём, состояние, условия вывоза"></textarea>
+        <div class="ad-row">
+          <input id="ad-price" maxlength="40" placeholder="Цена, ₽">
+          <label class="ad-neg"><input type="checkbox" id="ad-neg"> Договорная</label>
+        </div>
+        <input id="ad-region" maxlength="80" placeholder="Регион / город вывоза">
+        <input id="ad-contact" maxlength="80" placeholder="Контакт: @username или телефон">
+        <label class="ad-photo-add">📷 Добавить фото (до 3)<input type="file" id="ad-files" accept="image/*" multiple hidden></label>
+        <div id="ad-thumbs" class="ad-thumbs"></div>
+        <div class="ad-rules-note">Публикуя объявление, вы принимаете <a href="#" onclick="openDoc('rules.html');return false">правила размещения</a>.</div>
+        <button class="ad-submit" id="ad-submit">Отправить на модерацию</button>
+        <div id="ad-hint" class="ad-hint"></div>
+      </div>
+      <div id="ads-list"><div class="spinner"></div></div>
+    </section>
     <section class="pane" id="pane-fav">
       <div class="pane-head"><h2>Избранное</h2><span class="count" id="fav-count"></span></div>
       <div id="fav-list"></div>
@@ -497,6 +552,7 @@
     <button data-tab="feed" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8c3.7 4.7 6.1 7.8 6.1 11a6.1 6.1 0 0 1-12.2 0c0-3.2 2.4-6.3 6.1-11Z"/><path d="M9 15.2c.5 1.3 1.5 2 3 2.1"/></svg>Нефть</button>
     <button data-tab="pipe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="6.6" cy="12" rx="3.1" ry="7.4"/><path d="M6.6 4.6h9.7c1.7 0 3.1 3.3 3.1 7.4s-1.4 7.4-3.1 7.4H6.6"/><path d="M15.9 7.5c.6 1.1.9 2.7.9 4.5s-.3 3.4-.9 4.5"/></svg>Трубы</button>
     <button data-tab="metal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 4v6a6 6 0 0 0 12 0V4"/><path d="M4 4h4M16 4h4"/></svg>Металл</button>
+    <button data-tab="ads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3z"/><path d="M8 9h8M8 12h5"/></svg>Доска</button>
     <button data-tab="fav"><span class="badge" id="fav-badge" style="display:none">0</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.5-9.3-9A5 5 0 0 1 12 5.5 5 5 0 0 1 21.3 11C19 15.5 12 20 12 20Z"/></svg>Избранное</button>
     <button data-tab="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>Профиль</button>
   </nav>
@@ -876,10 +932,55 @@ document.addEventListener('click',e=>{
     }).catch(function(){ soon(); });
     return;
   }
+  if(e.target.closest('#ad-new')){ var f=document.getElementById('ad-form'); f.style.display=f.style.display==='none'?'flex':'none'; return; }
+  if(e.target.closest('.ad-photo-add')){ if(adPhotos.length>=3){ document.getElementById('ad-hint').textContent='Максимум 3 фото'; return; } document.getElementById('ad-files').click(); return; }
+  if(e.target.closest('.ad-rm')){ var i=+e.target.closest('.ad-rm').dataset.i; adPhotos.splice(i,1); adThumbs(); return; }
+  if(e.target.closest('#ad-submit')){ submitAd(); return; }
   const tab=e.target.closest('nav.tabbar button');
-  if(tab){document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0;}
+  if(tab){document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds();}
 });
 function openDoc(name){ var u; try{ u=new URL(name, location.href).href; }catch(_){ u=name; } try{ if(tg&&tg.openLink){ tg.openLink(u); return; } }catch(_){} window.open(u,'_blank'); }
+// --- объявления (маркетплейс «Прямые лоты») ---
+function escH(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+var adPhotos=[];
+function adThumbs(){ var box=document.getElementById('ad-thumbs'); if(!box)return; box.innerHTML=adPhotos.map(function(src,i){return '<div class="thumb"><img src="'+src+'"><button class="ad-rm" data-i="'+i+'">×</button></div>';}).join(''); }
+function adDownscale(file, cb){ var img=new Image(), url=URL.createObjectURL(file); img.onload=function(){ var max=1280,w=img.width,h=img.height; if(w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;} } var c=document.createElement('canvas'); c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); URL.revokeObjectURL(url); try{cb(c.toDataURL('image/jpeg',0.8));}catch(_){cb(null);} }; img.onerror=function(){ URL.revokeObjectURL(url); cb(null); }; img.src=url; }
+function adFilesChosen(files){ var arr=[].slice.call(files||[]); arr.forEach(function(f){ if(adPhotos.length>=3||!/^image\//.test(f.type))return; adDownscale(f,function(dataUrl){ if(dataUrl&&adPhotos.length<3){ adPhotos.push(dataUrl); adThumbs(); } }); }); }
+function openTg(u){ u=String(u).replace(/^@/,''); var url='https://t.me/'+encodeURIComponent(u); try{ if(tg&&tg.openTelegramLink){ tg.openTelegramLink(url); return; } }catch(_){} try{ if(tg&&tg.openLink){ tg.openLink(url); return; } }catch(_){} window.open(url,'_blank'); }
+function adCard(a){ var cat={oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом',other:'Другое'}[a.category]||'Другое';
+  var price=a.price?(escH(a.price)+(/\d/.test(a.price)?' ₽':'')):(a.price_type==='negotiable'?'Договорная':'—');
+  var photos=''; for(var i=0;i<(a.nphotos||0);i++){ photos+='<img src="'+API_BASE+'/api/ad/photo?id='+a.id+'&n='+i+'" loading="lazy">'; }
+  var go=''; var uname=(a.username||'').replace(/^@/,'');
+  if(uname){ go='<a class="ac-go" href="#" onclick="openTg(\''+escH(uname)+'\');return false">Написать в Telegram</a>'; }
+  else if(a.contact){ go='<div class="ac-meta">📞 '+escH(a.contact)+'</div>'; }
+  return '<div class="ad-card"><div class="ac-cat">'+cat+' · частное</div><h3>'+escH(a.title)+'</h3>'+
+    (a.description?'<div class="ac-desc">'+escH(a.description)+'</div>':'')+
+    (photos?'<div class="ac-photos">'+photos+'</div>':'')+
+    '<div class="ac-meta"><span class="ac-price">'+price+'</span>'+(a.region?'<span>📍 '+escH(a.region)+'</span>':'')+'</div>'+go+'</div>';
+}
+function loadAds(){ var box=document.getElementById('ads-list'); if(!box)return; box.innerHTML='<div class="spinner"></div>';
+  api('/api/ads').then(function(d){ var ads=(d&&d.ads)||[]; if(!ads.length){ box.innerHTML='<div class="ads-empty">Пока нет объявлений. Будьте первым — нажмите «Подать».</div>'; return; } box.innerHTML=ads.map(adCard).join(''); })
+    .catch(function(){ box.innerHTML='<div class="ads-empty">Не удалось загрузить объявления.</div>'; }); }
+function submitAd(){ var btn=document.getElementById('ad-submit'), hint=document.getElementById('ad-hint');
+  var title=(document.getElementById('ad-title').value||'').trim();
+  if(title.length<5){ hint.textContent='Заголовок — минимум 5 символов'; return; }
+  var contact=(document.getElementById('ad-contact').value||'').trim();
+  if(!contact){ hint.textContent='Укажите контакт для связи'; return; }
+  var ad={ category:document.getElementById('ad-cat').value, title:title,
+    description:(document.getElementById('ad-desc').value||'').trim(),
+    price:(document.getElementById('ad-price').value||'').trim(),
+    price_type:document.getElementById('ad-neg').checked?'negotiable':'fixed',
+    region:(document.getElementById('ad-region').value||'').trim(), contact:contact };
+  btn.disabled=true; hint.textContent='Отправляю…';
+  api('/api/ad/create',{ad:ad, images:adPhotos}).then(function(){
+    btn.disabled=false;
+    hint.textContent='✅ Отправлено на модерацию. После проверки объявление появится в ленте.';
+    if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success');
+    ['ad-title','ad-desc','ad-price','ad-region','ad-contact'].forEach(function(id){document.getElementById(id).value='';});
+    adPhotos=[]; adThumbs(); document.getElementById('ad-neg').checked=false;
+    setTimeout(function(){ var f=document.getElementById('ad-form'); if(f)f.style.display='none'; hint.textContent=''; loadAds(); },1600);
+  }).catch(function(err){ btn.disabled=false; hint.textContent=(err&&err.message)||'Не удалось отправить'; }); }
+document.addEventListener('change',function(e){ if(e.target&&e.target.id==='ad-files'){ adFilesChosen(e.target.files); e.target.value=''; } });
 loadEmail();
 loadSubscription();
 function loadSubscription(){
