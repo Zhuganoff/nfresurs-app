@@ -284,8 +284,8 @@
   #feed-list, #pipe-list, #metal-list, #fav-list { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; overflow: hidden; }
   .card { background: var(--surface); border: none; border-bottom: 1px solid var(--hair); border-radius: 0; padding: 9px 12px; margin: 0; box-shadow: none; }
   .card:last-child { border-bottom: none; }
-  .card.new { border: none; border-bottom: 1px solid var(--hair); background: var(--surface); animation: none; box-shadow: none; }
-  .new-badge { top: 6px; right: 8px; font-size: 9px; letter-spacing: .04em; color: var(--fresh); background: var(--accent-soft); padding: 2px 6px; box-shadow: none; }
+  .card.new { border: none; border-bottom: 1px solid var(--hair); background: color-mix(in srgb, #2f7fd9 11%, var(--surface)); animation: none; box-shadow: none; }
+  .new-badge { top: 6px; right: 8px; font-size: 9px; letter-spacing: .04em; color: #fff; background: #2f7fd9; padding: 2px 6px; box-shadow: none; }
   .card.new .c-top { padding-right: 46px; }   /* место под NEW-бейдж, чтобы «(МСК)» не пряталось */
   /* избранное — весь блок жёлтым (без левой полоски) */
   .card.fav-mark, .card.fav-hot { background: color-mix(in srgb, var(--warn) 30%, var(--surface)); }
@@ -552,7 +552,7 @@ const STAT={'':{t:'+ статус',c:''},interest:{t:'Интересно',c:'st-
 const STAT_ORDER=['','interest','prep','skip'];
 // «новый» = ещё не просмотрен И появился недавно (до 3 дней).
 // при прокрутке карточка помечается просмотренной и рамка снимается.
-function isNew(t){ if(!t.first_seen) return false; var ts=Date.parse(t.first_seen); return !isNaN(ts) && ts > VISIT_PREV; }
+function isNew(t){ if(!t.first_seen||seen.has(key(t))) return false; var ts=Date.parse(t.first_seen); return !isNaN(ts) && (Date.now()-ts) < 7*864e5; }
 function priceNum(p){ if(!p) return -1; var m=String(p).match(/([\d\s.,]+)/); if(!m) return -1; var n=parseFloat(m[1].replace(/\s/g,'').replace(',','.')); return isNaN(n)?-1:n; }
 function card(t){
   const price=fmtPrice(t.price), dl=dlInfo(t.deadline), on=favs.has(key(t));
@@ -574,6 +574,10 @@ function card(t){
 let _modalT=null;
 function openTender(t){
   _modalT=t;
+  // открыли предпросмотр — снимаем метку NEW (во всех вкладках)
+  var kk=key(t);
+  if(!seen.has(kk)){ seen.add(kk); saveSeen();
+    document.querySelectorAll('.card[data-key="'+encodeURIComponent(kk)+'"]').forEach(function(el){ el.classList.remove('new'); var b=el.querySelector('.new-badge'); if(b)b.remove(); }); }
   var cat={oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом'}[t.category||'oil']||'Нефтепродукты';
   document.getElementById('modal-chips').innerHTML='<span class="chip">'+(t.site_title||PLATFORMS[t.site]||t.site)+'</span><span class="chip" style="background:var(--surface-2);color:var(--text-dim)">'+cat+'</span>';
   document.getElementById('modal-title').textContent=cleanTitle(t.title);
@@ -619,13 +623,7 @@ function fillSiteFilter(){
   sel.insertAdjacentHTML('beforeend', sites.map(s=>`<option value="${s}">${PLATFORMS[s]||s}</option>`).join(''));
   sel.dataset.filled='1';
 }
-let _io=null;
-function observeNew(){
-  if(!('IntersectionObserver' in window)) return;
-  if(_io) _io.disconnect();
-  _io=new IntersectionObserver((ents)=>{ents.forEach(e=>{ if(e.isIntersecting){ const el=e.target; _io.unobserve(el); setTimeout(()=>{ el.classList.remove('new'); const b=el.querySelector('.new-badge'); if(b)b.remove(); },1400);}});},{threshold:0.65, root:document.querySelector('main')});
-  document.querySelectorAll('#feed-list .card.new, #pipe-list .card.new, #metal-list .card.new, #fav-list .card.new').forEach(el=>_io.observe(el));
-}
+function observeNew(){ /* метка NEW снимается при открытии предпросмотра, не по прокрутке */ }
 function render(){
   fillSiteFilter();
   const items=feedItems('oil'), oilTot=catCount('oil');
@@ -684,25 +682,18 @@ function saveFavs(){
   }catch(_){}
   try{ localStorage.setItem('favs',arr); }catch(_){}
 }
-// «Новые» = появившиеся после прошлого захода (метка времени lastVisit).
-// Надёжнее пер-карточного seen: не зависит от прокрутки и всегда успевает
-// сохраниться (пишем и в localStorage, и в CloudStorage сразу при загрузке).
-let VISIT_PREV = 0;
-function loadVisit(cb){
-  var apply=function(v){
-    var prev=parseInt(v||'0',10)||0;
-    // первый заход: новыми считаем лоты за последние 3 дня, не «всё подряд»
-    VISIT_PREV = prev>0 ? prev : (Date.now() - 3*24*3600*1000);
-    saveVisit();            // помечаем текущий заход
-    cb&&cb();
-  };
-  try{ if(cloudOK()){ tg.CloudStorage.getItem('lastVisit',(e,v)=>apply(v)); return; } }catch(_){}
-  try{ apply(localStorage.getItem('lastVisit')); }catch(_){ apply('0'); }
+// «Новые» = появившиеся недавно (до 7 дней) и ещё НЕ открытые. Метка
+// снимается, когда открыл предпросмотр (openTender). seen хранится в
+// localStorage и CloudStorage.
+function loadSeen(cb){
+  var apply=function(v){ try{ if(v)(JSON.parse(v)).forEach(function(x){seen.add(x);}); }catch(_){}; cb&&cb(); };
+  try{ if(cloudOK()){ tg.CloudStorage.getItem('seen',(e,v)=>apply(v)); return; } }catch(_){}
+  try{ apply(localStorage.getItem('seen')); }catch(_){ apply(null); }
 }
-function saveVisit(){
-  var now=String(Date.now());
-  try{ if(cloudOK()){ tg.CloudStorage.setItem('lastVisit',now); } }catch(_){}
-  try{ localStorage.setItem('lastVisit',now); }catch(_){}
+function saveSeen(){
+  var arr=JSON.stringify([...seen].slice(-3000));
+  try{ if(cloudOK()){ tg.CloudStorage.setItem('seen',arr); } }catch(_){}
+  try{ localStorage.setItem('seen',arr); }catch(_){}
 }
 // статусы лотов (интересно/готовим/пропустить)
 function loadStatuses(cb){
@@ -756,7 +747,7 @@ function renderEmail(){
     };
   }
 }
-function loadEmail(){ api('/api/email/status').then(d=>{EMAIL=d;renderEmail();}).catch(()=>{}); }
+function loadEmail(){ renderEmail(); api('/api/email/status').then(d=>{EMAIL=d;renderEmail();}).catch(()=>{}); }
 
 document.addEventListener('click',e=>{
   // модалка тендера
@@ -813,7 +804,7 @@ try{ api('/api/stats').then(function(d){ var el=document.getElementById('stats-l
 
 // данные вшиты прямо в страницу (никакого fetch — надёжнее в вебвью)
 try { TENDERS = ((window.TENDERS_DATA)||{}).tenders || []; } catch(_) { TENDERS = []; }
-try { loadStatuses(function(){ loadVisit(function(){ loadFavs(render); }); }); } catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
+try { loadStatuses(function(){ loadSeen(function(){ loadFavs(render); }); }); } catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
 </script>
 </body>
 </html>
