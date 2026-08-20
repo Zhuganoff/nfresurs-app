@@ -164,7 +164,10 @@
   .modal { position: relative; width: 100%; max-width: 620px; background: var(--surface); border-radius: 20px 20px 0 0; padding: 22px 18px calc(20px + env(safe-area-inset-bottom)); box-shadow: 0 -8px 40px rgba(0,0,0,.35); animation: modalup .22s ease; max-height: 88vh; overflow-y: auto; }
   @keyframes modalup { from { transform: translateY(40px); opacity: .5; } to { transform: none; opacity: 1; } }
   .modal-x { position: absolute; top: 12px; right: 12px; width: 34px; height: 34px; border-radius: 50%; border: none; background: var(--surface-2); color: var(--text-dim); font-size: 14px; cursor: pointer; display: grid; place-items: center; }
-  .modal-chips { display: flex; gap: 7px; flex-wrap: wrap; margin: 2px 44px 12px 0; }
+  .modal-fav { position: absolute; top: 12px; right: 54px; width: 34px; height: 34px; border-radius: 50%; border: none; background: var(--surface-2); color: var(--text-faint); cursor: pointer; display: grid; place-items: center; }
+  .modal-fav svg { width: 18px; height: 18px; }
+  .modal-fav.on { color: #e5484d; }
+  .modal-chips { display: flex; gap: 7px; flex-wrap: wrap; margin: 2px 96px 12px 0; }
   .modal-title { margin: 0 0 14px; font-size: 16px; font-weight: 700; line-height: 1.32; }
   .modal-meta { display: flex; flex-direction: column; gap: 9px; margin: 0 0 18px; }
   .modal-meta .mrow { display: flex; gap: 9px; font-size: 13.5px; align-items: baseline; }
@@ -467,6 +470,7 @@
   <div id="modal" class="modal-ov" style="display:none">
     <div class="modal" role="dialog">
       <button class="modal-x" id="modal-x" aria-label="Закрыть">✕</button>
+      <button class="modal-fav" id="modal-fav" aria-label="В избранное"></button>
       <div class="modal-chips" id="modal-chips"></div>
       <h3 class="modal-title" id="modal-title"></h3>
       <div class="modal-meta" id="modal-meta"></div>
@@ -587,6 +591,7 @@ function openTender(t){
     row('Цена', price||'по запросу') + row('Приём до', dl.txt) +
     row('Продавец', t.seller||'') + row('Вывоз', city||'') +
     row('Площадка', t.site_title||PLATFORMS[t.site]||t.site);
+  var mf=document.getElementById('modal-fav'), isf=favs.has(key(t)); mf.innerHTML=heart(isf); mf.classList.toggle('on',isf);
   document.getElementById('modal-go').href=t.url;
   ['modal-send','modal-mail'].forEach(function(id){ var b=document.getElementById(id); if(b){ b.classList.remove('sent'); b.style.opacity=''; b.dataset.busy=''; } });
   document.getElementById('modal').style.display='flex';
@@ -713,9 +718,12 @@ const initData = (tg && tg.initData) || '';
 // абсолютному адресу (CORS разрешён на сервере). На самом сервере — относительно.
 const API_BASE = (location.hostname.indexOf('nip.io')>=0 || location.hostname==='127.0.0.1' || location.hostname==='localhost') ? '' : 'https://158-160-197-98.nip.io';
 function api(path, body){
+  var ctrl=window.AbortController?new AbortController():null;
+  var to=ctrl?setTimeout(function(){try{ctrl.abort();}catch(_){}},12000):null;
   return fetch(API_BASE+path, {method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(Object.assign({initData}, body||{}))})
-    .then(async r=>{ const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||('ошибка '+r.status)); return d; });
+    body: JSON.stringify(Object.assign({initData}, body||{})), signal: ctrl&&ctrl.signal})
+    .then(async r=>{ if(to)clearTimeout(to); const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||('ошибка '+r.status)); return d; },
+      err=>{ if(to)clearTimeout(to); throw new Error('Сервер недоступен — возможно, VPN блокирует. Отключите VPN и повторите.'); });
 }
 // отметка визита (аналитика; тихо, не мешает загрузке)
 try{ if(initData) api('/api/visit',{}).catch(()=>{}); }catch(_){}
@@ -747,7 +755,7 @@ function renderEmail(){
     };
   }
 }
-function loadEmail(){ renderEmail(); api('/api/email/status').then(d=>{EMAIL=d;renderEmail();}).catch(()=>{}); }
+function loadEmail(){ renderEmail(); api('/api/email/status').then(d=>{ EMAIL=d; var cr=document.getElementById('e-code-row'); if(cr && cr.style.display!=='none') return; /* не стираем открытый ввод кода */ renderEmail(); }).catch(()=>{}); }
 
 document.addEventListener('click',e=>{
   // модалка тендера
@@ -755,6 +763,7 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#modal-go')){ if(_modalT && tg && tg.openLink){ e.preventDefault(); tg.openLink(_modalT.url); } return; }
   if(e.target.closest('#modal-send')){ sendDocs('tg', document.getElementById('modal-send'), 'В Телеграм'); return; }
   if(e.target.closest('#modal-mail')){ sendDocs('email', document.getElementById('modal-mail'), 'На почту'); return; }
+  if(e.target.closest('#modal-fav')){ if(!_modalT)return; var k=key(_modalT); favs.has(k)?favs.delete(k):favs.add(k); saveFavs(); if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged(); var mf=document.getElementById('modal-fav'),isf=favs.has(k); mf.innerHTML=heart(isf); mf.classList.toggle('on',isf); render(); return; }
   if(e.target.id==='f-new'){ FILT.onlyNew=!FILT.onlyNew; e.target.classList.toggle('on',FILT.onlyNew); render(); return; }
   const sp=e.target.closest('.stpill');
   if(sp){ const k=decodeURIComponent(sp.dataset.st); const cur=statuses[k]||''; const nx=STAT_ORDER[(STAT_ORDER.indexOf(cur)+1)%STAT_ORDER.length]; if(nx) statuses[k]=nx; else delete statuses[k]; saveStatuses(); if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged(); render(); return; }
