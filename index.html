@@ -209,6 +209,21 @@
   .ad-card .ac-price { color: var(--text); font-weight: 700; }
   .ad-card .ac-go { display: block; text-align: center; text-decoration: none; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); font-weight: 700; font-size: 14px; padding: 10px; border-radius: 10px; }
   .ads-empty { text-align: center; color: var(--text-faint); font-size: 13px; padding: 30px 0; }
+  .myads-block { margin: 0 0 16px; }
+  .myads-toggle { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border: 1px solid var(--hair); border-radius: 12px; background: var(--surface); color: var(--text); font-weight: 700; font-size: 14px; cursor: pointer; }
+  .myads-toggle svg { width: 18px; height: 18px; }
+  .myads-list { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .myad { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; padding: 11px 12px; }
+  .myad-top { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .myad-top h4 { margin: 0; font-size: 14px; flex: 1; }
+  .myad-badge { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .myad-badge.pending { background: color-mix(in srgb, #e5a400 22%, transparent); color: #b07d00; }
+  .myad-badge.approved { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); }
+  .myad-badge.rejected, .myad-badge.expired, .myad-badge.banned { background: color-mix(in srgb, #e5484d 18%, transparent); color: #d33; }
+  .myad-meta { font-size: 11.5px; color: var(--text-dim); margin-bottom: 8px; }
+  .myad-acts { display: flex; gap: 8px; }
+  .myad-acts button { flex: 1; padding: 8px; border-radius: 9px; border: 1px solid var(--hair); background: var(--app-bg); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; }
+  .myad-acts .del { color: #d33; }
   /* модалка тендера (bottom-sheet) */
   .modal-ov { position: fixed; inset: 0; z-index: 100; display: flex; align-items: flex-end; justify-content: center; background: rgba(8,14,20,.55); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
   .modal { position: relative; width: 100%; max-width: 620px; background: var(--surface); border-radius: 20px 20px 0 0; padding: 22px 18px calc(20px + env(safe-area-inset-bottom)); box-shadow: 0 -8px 40px rgba(0,0,0,.35); animation: modalup .22s ease; max-height: 88vh; overflow-y: auto; }
@@ -500,6 +515,10 @@
         </ul>
         <button class="sub-btn" id="sub-btn">Оформить за 499 ₽ / мес</button>
         <div class="sub-note">Первые 3 дня — бесплатно. Далее 499 ₽/мес, оплата картой. Отписаться можно в любой момент.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('oferta.html');return false" style="color:#fff;text-decoration:underline">условия оферты</a>.</div>
+      </div>
+      <div class="myads-block">
+        <button class="myads-toggle" id="myads-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3z"/><path d="M8 9h8M8 12h5"/></svg>Мои объявления</button>
+        <div id="myads-list" class="myads-list" style="display:none"></div>
       </div>
       <div class="group">
         <div class="label">Уведомления</div>
@@ -932,10 +951,13 @@ document.addEventListener('click',e=>{
     }).catch(function(){ soon(); });
     return;
   }
-  if(e.target.closest('#ad-new')){ var adf=document.getElementById('ad-form'); adf.style.display=adf.style.display==='none'?'flex':'none'; return; }
+  if(e.target.closest('#ad-new')){ var adf=document.getElementById('ad-form'); var opening=adf.style.display==='none'; adf.style.display=opening?'flex':'none'; if(opening){ _editAd=null; document.getElementById('ad-submit').textContent='Отправить на модерацию'; document.getElementById('ad-hint').textContent=''; } return; }
   if(e.target.closest('.ad-photo-add')){ if(adPhotos.length>=3){ document.getElementById('ad-hint').textContent='Максимум 3 фото'; return; } document.getElementById('ad-files').click(); return; }
   if(e.target.closest('.ad-rm')){ var i=+e.target.closest('.ad-rm').dataset.i; adPhotos.splice(i,1); adThumbs(); return; }
   if(e.target.closest('#ad-submit')){ submitAd(); return; }
+  if(e.target.closest('#myads-toggle')){ var ml=document.getElementById('myads-list'); if(ml.style.display==='none'){ ml.style.display='flex'; loadMyAds(); } else { ml.style.display='none'; } return; }
+  if(e.target.closest('.myad-edit')){ startEditAd(+e.target.closest('.myad-edit').dataset.id); return; }
+  if(e.target.closest('.myad-del')){ deleteAd(+e.target.closest('.myad-del').dataset.id); return; }
   const tab=e.target.closest('nav.tabbar button');
   if(tab){document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds();}
 });
@@ -972,14 +994,48 @@ function submitAd(){ var btn=document.getElementById('ad-submit'), hint=document
     price_type:document.getElementById('ad-neg').checked?'negotiable':'fixed',
     region:(document.getElementById('ad-region').value||'').trim(), contact:contact };
   btn.disabled=true; hint.textContent='Отправляю…';
-  api('/api/ad/create',{ad:ad, images:adPhotos}).then(function(){
+  var body=_editAd?{id:_editAd, ad:ad, images:adPhotos}:{ad:ad, images:adPhotos};
+  var url=_editAd?'/api/ad/update':'/api/ad/create';
+  api(url,body).then(function(){
     btn.disabled=false;
-    hint.textContent='✅ Отправлено на модерацию. После проверки объявление появится в ленте.';
+    hint.textContent=_editAd?'✅ Изменения отправлены на модерацию.':'✅ Отправлено на модерацию. После проверки объявление появится в ленте.';
     if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success');
     ['ad-title','ad-desc','ad-price','ad-region','ad-contact'].forEach(function(id){document.getElementById(id).value='';});
     adPhotos=[]; adThumbs(); document.getElementById('ad-neg').checked=false;
-    setTimeout(function(){ var f=document.getElementById('ad-form'); if(f)f.style.display='none'; hint.textContent=''; loadAds(); },1600);
+    _editAd=null; btn.textContent='Отправить на модерацию';
+    setTimeout(function(){ var f=document.getElementById('ad-form'); if(f)f.style.display='none'; hint.textContent=''; loadAds(); if(document.getElementById('myads-list').style.display!=='none') loadMyAds(); },1600);
   }).catch(function(err){ btn.disabled=false; hint.textContent=(err&&err.message)||'Не удалось отправить'; }); }
+var _editAd=null, MYADS=[];
+function myAdBadge(s){ var m={pending:'на модерации',approved:'опубликовано',rejected:'отклонено',expired:'истекло',banned:'заблокировано'}; return m[s]||s; }
+function myDaysLeft(a){ if(a.status!=='approved'||!a.expires_at) return ''; var ms=Date.parse(a.expires_at)-Date.now(); if(isNaN(ms)||ms<0) return ''; var d=Math.ceil(ms/864e5); return ' · осталось '+d+' дн.'; }
+function loadMyAds(){ var box=document.getElementById('myads-list'); if(!box) return; box.innerHTML='<div class="spinner"></div>';
+  api('/api/ad/mine').then(function(d){ MYADS=(d&&d.ads)||[]; if(!MYADS.length){ box.innerHTML='<div class="ads-empty">У вас пока нет объявлений.</div>'; return; }
+    box.innerHTML=MYADS.map(function(a){ return '<div class="myad"><div class="myad-top"><h4>'+escH(a.title)+'</h4><span class="myad-badge '+a.status+'">'+myAdBadge(a.status)+'</span></div>'+
+      '<div class="myad-meta">'+escH({oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом',other:'Другое'}[a.category]||'')+(a.price?' · '+escH(a.price):'')+myDaysLeft(a)+'</div>'+
+      '<div class="myad-acts"><button class="myad-edit" data-id="'+a.id+'">Редактировать</button><button class="myad-del del" data-id="'+a.id+'">Удалить</button></div></div>'; }).join('');
+  }).catch(function(){ box.innerHTML='<div class="ads-empty">Не удалось загрузить.</div>'; }); }
+function startEditAd(id){ var a=MYADS.find(function(x){return x.id===id;}); if(!a) return; _editAd=id;
+  document.getElementById('ad-cat').value=a.category||'other';
+  document.getElementById('ad-title').value=a.title||'';
+  document.getElementById('ad-desc').value=a.description||'';
+  document.getElementById('ad-price').value=a.price||'';
+  document.getElementById('ad-neg').checked=a.price_type==='negotiable';
+  document.getElementById('ad-region').value=a.region||'';
+  document.getElementById('ad-contact').value=a.contact||'';
+  adPhotos=[]; adThumbs();
+  document.getElementById('ad-submit').textContent='Сохранить изменения';
+  document.getElementById('ad-hint').textContent=a.nphotos?'Фото сохранятся прежние. Добавите новые — заменят их.':'';
+  // переключаемся на вкладку Доска и открываем форму
+  document.querySelectorAll('nav.tabbar button').forEach(function(b){b.classList.remove('active');});
+  document.querySelector('nav.tabbar button[data-tab="ads"]').classList.add('active');
+  document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('pane-ads').classList.add('active');
+  document.getElementById('ad-form').style.display='flex';
+  document.querySelector('main').scrollTop=0;
+}
+function deleteAd(id){ var go=function(){ api('/api/ad/delete',{id:id}).then(function(){ if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success'); loadMyAds(); loadAds(); }).catch(function(err){ try{ if(tg&&tg.showAlert) tg.showAlert((err&&err.message)||'Не удалось удалить'); }catch(_){} }); };
+  try{ if(tg&&tg.showConfirm){ tg.showConfirm('Удалить объявление?',function(ok){ if(ok) go(); }); return; } }catch(_){}
+  if(window.confirm('Удалить объявление?')) go(); }
 document.addEventListener('change',function(e){ if(e.target&&e.target.id==='ad-files'){ adFilesChosen(e.target.files); e.target.value=''; } });
 loadEmail();
 loadSubscription();
