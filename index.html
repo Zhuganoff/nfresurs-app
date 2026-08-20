@@ -827,7 +827,7 @@ function saveStatuses(){
 const initData = (tg && tg.initData) || '';
 // бэкенд живёт на сервере (nip.io); приложение на github.io — зовём по
 // абсолютному адресу (CORS разрешён на сервере). На самом сервере — относительно.
-const API_BASE = (location.hostname.indexOf('nip.io')>=0 || location.hostname==='127.0.0.1' || location.hostname==='localhost') ? '' : 'https://158-160-197-98.nip.io';
+const API_BASE = (location.hostname.indexOf('nip.io')>=0 || location.hostname==='127.0.0.1' || location.hostname==='localhost') ? '' : 'https://soft-snowflake-37cc.zhuganoff.workers.dev';
 function api(path, body){
   var ctrl=window.AbortController?new AbortController():null;
   var to=ctrl?setTimeout(function(){try{ctrl.abort();}catch(_){}},12000):null;
