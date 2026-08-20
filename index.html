@@ -444,7 +444,7 @@
           <li>Все площадки реализации, поиск и избранное</li>
         </ul>
         <button class="sub-btn" id="sub-btn">Оформить за 499 ₽ / мес</button>
-        <div class="sub-note">Первые 3 дня — бесплатно. Далее 499 ₽/мес, оплата картой. Отписаться можно в любой момент.</div>
+        <div class="sub-note">Первые 3 дня — бесплатно. Далее 499 ₽/мес, оплата картой. Отписаться можно в любой момент.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('oferta.html');return false" style="color:#fff;text-decoration:underline">условия оферты</a>.</div>
       </div>
       <div class="group">
         <div class="label">Уведомления</div>
@@ -471,7 +471,7 @@
             <div id="email-box" style="flex-basis:100%; display:flex; flex-direction:column; gap:8px"></div>
           </div>
         </div>
-        <div class="ehint">На эту почту приходят тендеры по кнопке «Отправить на почту». Подтверждается кодом.</div>
+        <div class="ehint">На эту почту приходят тендеры по кнопке «Отправить на почту». Подтверждается кодом.<br>Регистрируя почту, вы соглашаетесь на обработку персональных данных согласно <a href="#" onclick="openDoc('privacy.html');return false" style="color:var(--accent);text-decoration:underline">Политике конфиденциальности</a>.</div>
       </div>
       <div class="group">
         <div class="label">Площадки · <span id="plat-on"></span> из 13</div>
@@ -508,7 +508,7 @@
       <p>3 дня бесплатного доступа истекли. Оформите подписку, чтобы продолжить получать тендеры по реализации.</p>
       <div class="sub-price big">499 ₽<small> / месяц</small></div>
       <button class="sub-btn" id="pw-btn">Оформить подписку</button>
-      <div class="sub-note">Оплата картой через ЮKassa. Отписаться можно в любой момент.</div>
+      <div class="sub-note">Оплата картой через ЮKassa. Отписаться можно в любой момент.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('oferta.html');return false" style="color:var(--accent);text-decoration:underline">условия оферты</a>.</div>
     </div>
   </div>
 
@@ -860,13 +860,26 @@ document.addEventListener('click',e=>{
     return;
   }
   if(e.target.closest('#sub-btn')||e.target.closest('#pw-btn')){
-    try{ if(tg&&tg.showAlert) tg.showAlert('Оплата подписки картой подключается через ЮKassa — совсем скоро вы сможете оформить её прямо здесь. Первые 3 дня доступ бесплатный.'); }catch(_){}
     if(tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light');
+    var soon=function(){ try{ if(tg&&tg.showAlert) tg.showAlert('Оплата подписки картой подключается через ЮKassa — совсем скоро вы сможете оформить её прямо здесь. Первые 3 дня доступ бесплатный.'); }catch(_){} };
+    api('/api/subscription/pay',{}).then(function(d){
+      if(!d || d.not_ready || !d.link){ soon(); return; }
+      if(tg&&tg.openInvoice){
+        tg.openInvoice(d.link, function(status){
+          if(status==='paid'){
+            var pw=document.getElementById('paywall'); if(pw) pw.style.display='none';
+            try{ if(tg&&tg.showAlert) tg.showAlert('✅ Оплата прошла! Полный доступ открыт.'); }catch(_){}
+            loadSubscription();
+          }
+        });
+      } else if(tg&&tg.openLink){ tg.openLink(d.link); }
+    }).catch(function(){ soon(); });
     return;
   }
   const tab=e.target.closest('nav.tabbar button');
   if(tab){document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0;}
 });
+function openDoc(name){ var u; try{ u=new URL(name, location.href).href; }catch(_){ u=name; } try{ if(tg&&tg.openLink){ tg.openLink(u); return; } }catch(_){} window.open(u,'_blank'); }
 loadEmail();
 loadSubscription();
 function loadSubscription(){
