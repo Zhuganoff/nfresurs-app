@@ -285,7 +285,8 @@
   .card { background: var(--surface); border: none; border-bottom: 1px solid var(--hair); border-radius: 0; padding: 9px 12px; margin: 0; box-shadow: none; }
   .card:last-child { border-bottom: none; }
   .card.new { border: none; border-bottom: 1px solid var(--hair); background: var(--surface); animation: none; box-shadow: none; }
-  .new-badge { top: 6px; right: 38px; font-size: 9px; letter-spacing: .04em; color: var(--fresh); background: var(--accent-soft); padding: 2px 6px; box-shadow: none; }
+  .new-badge { top: 6px; right: 8px; font-size: 9px; letter-spacing: .04em; color: var(--fresh); background: var(--accent-soft); padding: 2px 6px; box-shadow: none; }
+  .card.new .c-top { padding-right: 46px; }   /* место под NEW-бейдж, чтобы «(МСК)» не пряталось */
   /* избранное — весь блок жёлтым (без левой полоски) */
   .card.fav-mark, .card.fav-hot { background: color-mix(in srgb, var(--warn) 30%, var(--surface)); }
   .card.fav-hot { background: color-mix(in srgb, var(--urgent) 24%, var(--surface)); }
