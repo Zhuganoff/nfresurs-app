@@ -957,6 +957,7 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#ad-submit')){ submitAd(); return; }
   if(e.target.closest('#myads-toggle')){ var ml=document.getElementById('myads-list'); if(ml.style.display==='none'){ ml.style.display='flex'; loadMyAds(); } else { ml.style.display='none'; } return; }
   if(e.target.closest('.myad-edit')){ startEditAd(+e.target.closest('.myad-edit').dataset.id); return; }
+  if(e.target.closest('.myad-renew')){ renewAd(+e.target.closest('.myad-renew').dataset.id); return; }
   if(e.target.closest('.myad-del')){ deleteAd(+e.target.closest('.myad-del').dataset.id); return; }
   const tab=e.target.closest('nav.tabbar button');
   if(tab){document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds();}
@@ -1012,7 +1013,7 @@ function loadMyAds(){ var box=document.getElementById('myads-list'); if(!box) re
   api('/api/ad/mine').then(function(d){ MYADS=(d&&d.ads)||[]; if(!MYADS.length){ box.innerHTML='<div class="ads-empty">У вас пока нет объявлений.</div>'; return; }
     box.innerHTML=MYADS.map(function(a){ return '<div class="myad"><div class="myad-top"><h4>'+escH(a.title)+'</h4><span class="myad-badge '+a.status+'">'+myAdBadge(a.status)+'</span></div>'+
       '<div class="myad-meta">'+escH({oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом',other:'Другое'}[a.category]||'')+(a.price?' · '+escH(a.price):'')+myDaysLeft(a)+'</div>'+
-      '<div class="myad-acts"><button class="myad-edit" data-id="'+a.id+'">Редактировать</button><button class="myad-del del" data-id="'+a.id+'">Удалить</button></div></div>'; }).join('');
+      '<div class="myad-acts">'+((a.status==='approved'||a.status==='expired')?'<button class="myad-renew" data-id="'+a.id+'">Продлить</button>':'')+'<button class="myad-edit" data-id="'+a.id+'">Редактировать</button><button class="myad-del del" data-id="'+a.id+'">Удалить</button></div></div>'; }).join('');
   }).catch(function(){ box.innerHTML='<div class="ads-empty">Не удалось загрузить.</div>'; }); }
 function startEditAd(id){ var a=MYADS.find(function(x){return x.id===id;}); if(!a) return; _editAd=id;
   document.getElementById('ad-cat').value=a.category||'other';
@@ -1036,6 +1037,7 @@ function startEditAd(id){ var a=MYADS.find(function(x){return x.id===id;}); if(!
 function deleteAd(id){ var go=function(){ api('/api/ad/delete',{id:id}).then(function(){ if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success'); loadMyAds(); loadAds(); }).catch(function(err){ try{ if(tg&&tg.showAlert) tg.showAlert((err&&err.message)||'Не удалось удалить'); }catch(_){} }); };
   try{ if(tg&&tg.showConfirm){ tg.showConfirm('Удалить объявление?',function(ok){ if(ok) go(); }); return; } }catch(_){}
   if(window.confirm('Удалить объявление?')) go(); }
+function renewAd(id){ api('/api/ad/renew',{id:id}).then(function(){ if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success'); try{ if(tg&&tg.showAlert) tg.showAlert('✅ Срок продлён ещё на 10 дней.'); }catch(_){} loadMyAds(); loadAds(); }).catch(function(err){ try{ if(tg&&tg.showAlert) tg.showAlert((err&&err.message)||'Не удалось продлить'); }catch(_){} }); }
 document.addEventListener('change',function(e){ if(e.target&&e.target.id==='ad-files'){ adFilesChosen(e.target.files); e.target.value=''; } });
 loadEmail();
 loadSubscription();
