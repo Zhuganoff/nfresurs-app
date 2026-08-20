@@ -280,15 +280,24 @@
   .fchips { gap: 6px; }
   .fsel { min-width: 105px; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; }
   .fchip { border-radius: 8px; padding: 6px 9px; font-size: 11.5px; box-shadow: none; }
-  .card { background: var(--surface); border: 1px solid var(--hair); border-left: 3px solid var(--accent); border-radius: 9px; padding: 8px 9px 7px; margin-bottom: 5px; box-shadow: 0 2px 8px var(--shadow-s); }
-  .card.new { border: 1px solid var(--hair); border-left: 3px solid var(--fresh); background: var(--surface); animation: none; box-shadow: 0 2px 8px var(--shadow-s); }
-  .new-badge { top: 7px; right: 38px; font-size: 9px; letter-spacing: .04em; color: var(--fresh); background: var(--accent-soft); padding: 2px 6px; box-shadow: none; }
+  /* слитный список: блоки без отступов и скруглений, разделены полоской */
+  #feed-list, #pipe-list, #metal-list, #fav-list { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; overflow: hidden; }
+  .card { background: var(--surface); border: none; border-bottom: 1px solid var(--hair); border-radius: 0; padding: 9px 12px; margin: 0; box-shadow: none; }
+  .card:last-child { border-bottom: none; }
+  .card.new { border: none; border-bottom: 1px solid var(--hair); background: var(--surface); animation: none; box-shadow: none; }
+  .new-badge { top: 6px; right: 38px; font-size: 9px; letter-spacing: .04em; color: var(--fresh); background: var(--accent-soft); padding: 2px 6px; box-shadow: none; }
+  /* избранное — весь блок жёлтым (без левой полоски) */
+  .card.fav-mark, .card.fav-hot { background: color-mix(in srgb, var(--warn) 30%, var(--surface)); }
+  .card.fav-hot { background: color-mix(in srgb, var(--urgent) 24%, var(--surface)); }
+  .card.fav-mark::before, .card.fav-hot::before { display: none; }
   .c-top { gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
   .chip { font-size: 10.5px; color: var(--accent); background: transparent; padding: 0; }
   .also-chip { font-size: 9.5px; padding: 1px 5px; }
   .stpill { font-size: 10px; padding: 1px 6px; }
-  .deadline { font-size: 10.5px; gap: 4px; }
-  .deadline .dot { width: 5px; height: 5px; }
+  .deadline { font-size: 11.5px; gap: 4px; color: #2f7fd9; font-weight: 700; }
+  .deadline .dot { width: 5px; height: 5px; background: #2f7fd9; }
+  .deadline.urgent { color: var(--urgent); font-weight: 700; }
+  .deadline.urgent .dot { background: var(--urgent); }
   .fav { width: 24px; height: 24px; }
   .card h3 { margin: 0 0 5px; font-size: 13px; line-height: 1.25; -webkit-line-clamp: 1; }
   .city { font-size: 12px; margin: 0 8px 4px 0; gap: 4px; }
@@ -402,10 +411,6 @@
       <div class="group">
         <div class="label">Уведомления</div>
         <div class="rows">
-          <div class="row">
-            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 1 6 6v4l2 3H4l2-3V9a6 6 0 0 1 6-6Z"/><path d="M9.5 20a2.5 2.5 0 0 0 5 0"/></svg></span>
-            <span class="rl">Дайджест</span><span class="rv">каждый день · 12:00</span>
-          </div>
           <div class="row">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
             <span class="rl">Часовой пояс</span>
@@ -568,7 +573,7 @@ function card(t){
 let _modalT=null;
 function openTender(t){
   _modalT=t;
-  var cat=(t.category||'oil')==='pipe'?'Трубы':'Нефтепродукты';
+  var cat={oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом'}[t.category||'oil']||'Нефтепродукты';
   document.getElementById('modal-chips').innerHTML='<span class="chip">'+(t.site_title||PLATFORMS[t.site]||t.site)+'</span><span class="chip" style="background:var(--surface-2);color:var(--text-dim)">'+cat+'</span>';
   document.getElementById('modal-title').textContent=cleanTitle(t.title);
   var city=cityOf(t), price=fmtPrice(t.price), dl=dlInfo(t.deadline);
