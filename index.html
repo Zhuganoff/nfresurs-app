@@ -787,7 +787,8 @@ function feedItems(){
   else a=a.filter(t=>!isHidden(t));                      // §5 «Не подходит» скрыты
   if(FILT.q){const q=FILT.q.toLowerCase();a=a.filter(t=>(cleanTitle(t.title)).toLowerCase().includes(q)||(t.site_title||'').toLowerCase().includes(q));}
   if(FILT.site) a=a.filter(t=>t.site===FILT.site);
-  if(FILT.region) a=a.filter(t=>regionOf(t)===FILT.region);
+  if(FILT.region==='__none__') a=a.filter(t=>!regionOf(t));
+  else if(FILT.region) a=a.filter(t=>regionOf(t)===FILT.region);
   if(FILT.city){const c=FILT.city.toLowerCase();a=a.filter(t=>((t.city||'')+' '+cityOf(t)).toLowerCase().includes(c));}
   if(FILT.onlyNew) a=a.filter(isNew);
   if(FILT.sort==='deadline') a.sort((x,y)=>(pDate(x.deadline)||new Date(9e15))-(pDate(y.deadline)||new Date(9e15)));
@@ -805,10 +806,12 @@ function fillRegionFilter(){
   const sel=document.getElementById('f-region'); if(!sel) return;
   // регионы, реально встречающиеся в ленте (у обогащённых лотов)
   const regs=[...new Set(TENDERS.map(regionOf).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ru'));
-  const sig=regs.join('|'); if(sel.dataset.sig===sig) return;
+  const hasNone=TENDERS.some(t=>!regionOf(t));
+  const sig=regs.join('|')+'#'+hasNone; if(sel.dataset.sig===sig) return;
   const cur=sel.value;
-  sel.innerHTML='<option value="">Все области</option>'+regs.map(r=>`<option value="${r}">${r}</option>`).join('');
-  if(regs.indexOf(cur)>=0) sel.value=cur; else FILT.region='';
+  const noneOpt=hasNone?'<option value="__none__">Регион не указан</option>':'';
+  sel.innerHTML='<option value="">Все области</option>'+regs.map(r=>`<option value="${r}">${r}</option>`).join('')+noneOpt;
+  if(cur==='__none__'||regs.indexOf(cur)>=0) sel.value=cur; else FILT.region='';
   sel.dataset.sig=sig;
 }
 function observeNew(){ /* метка NEW снимается при открытии предпросмотра, не по прокрутке */ }
