@@ -210,7 +210,11 @@
   .ad-rules-note a { color: var(--accent); }
   .ad-submit { border: none; background: var(--accent); color: #fff; font-weight: 700; font-size: 15px; padding: 12px; border-radius: 11px; cursor: pointer; }
   .ad-hint { font-size: 12.5px; text-align: center; color: var(--text-dim); min-height: 16px; }
-  .ad-card { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; padding: 12px; margin: 0 0 10px; }
+  .ads-filters { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 0 0 12px; }
+  .ads-filters .fsel { flex: 1 1 160px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--glass-hair); background: var(--glass); color: var(--text); font-size: 13px; }
+  .adf-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-dim); font-weight: 600; white-space: nowrap; cursor: pointer; }
+  .ad-card { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; padding: 12px; margin: 0 0 10px; position: relative; }
+  .ad-card .ac-new { position: absolute; top: 10px; right: 10px; background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px; text-transform: uppercase; letter-spacing: .03em; }
   .ad-card .ac-cat { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .04em; }
   .ad-card h3 { margin: 3px 0 5px; font-size: 15px; }
   .ad-card .ac-desc { font-size: 13px; color: var(--text-dim); line-height: 1.4; margin: 0 0 8px; white-space: pre-wrap; }
@@ -507,6 +511,10 @@
         <div class="ad-rules-note">Публикуя объявление, вы принимаете <a href="#" onclick="openDoc('rules.html');return false">правила размещения</a>.</div>
         <button class="ad-submit" id="ad-submit">Отправить на модерацию</button>
         <div id="ad-hint" class="ad-hint"></div>
+      </div>
+      <div id="ads-filters" class="ads-filters" style="display:none">
+        <select id="adf-region" class="fsel"><option value="">Все области</option></select>
+        <label class="adf-toggle"><input type="checkbox" id="adf-new"> Только новые</label>
       </div>
       <div id="ads-list"><div class="spinner"></div></div>
     </section>
@@ -836,6 +844,8 @@ document.addEventListener('input',e=>{ if(e.target.id==='search'){ FILT.q=e.targ
 document.addEventListener('change',e=>{
   if(e.target.id==='f-site'){ FILT.site=e.target.value; render(); }
   else if(e.target.id==='f-region'){ FILT.region=e.target.value; render(); }
+  else if(e.target.id==='adf-region'){ ADFILT.region=e.target.value; renderAds(); }
+  else if(e.target.id==='adf-new'){ ADFILT.onlyNew=e.target.checked; renderAds(); }
   else if(e.target.id==='f-sort'){ FILT.sort=e.target.value; render(); }
   else if(e.target.id==='f-new-cb'){ FILT.onlyNew=e.target.checked; render(); }
   else if(e.target.id==='f-hidden-cb'){ FILT.showHidden=e.target.checked; render(); }
@@ -1047,13 +1057,33 @@ function adCard(a){ var cat={oil:'Нефтепродукты',pipe:'Трубы',
   var go=''; var uname=(a.username||'').replace(/^@/,'');
   if(uname){ go='<a class="ac-go" href="#" onclick="openTg(\''+escH(uname)+'\');return false">Написать в Telegram</a>'; }
   else if(a.contact){ go='<div class="ac-meta">📞 '+escH(a.contact)+'</div>'; }
-  return '<div class="ad-card"><div class="ac-cat">'+cat+' · частное</div><h3>'+escH(a.title)+'</h3>'+
+  return '<div class="ad-card">'+(isAdNew(a)?'<span class="ac-new">Новое</span>':'')+'<div class="ac-cat">'+cat+' · частное</div><h3>'+escH(a.title)+'</h3>'+
     (a.description?'<div class="ac-desc">'+escH(a.description)+'</div>':'')+
     (photos?'<div class="ac-photos">'+photos+'</div>':'')+
     '<div class="ac-meta"><span class="ac-price">'+price+'</span>'+(a.region?'<span>📍 '+escH(a.region)+'</span>':'')+'</div>'+go+'</div>';
 }
+var ADS=[]; var ADFILT={region:'',onlyNew:false};
+function isAdNew(a){ if(!a.created) return false; var ts=Date.parse(a.created); return !isNaN(ts) && (Date.now()-ts) < 3*864e5; }
+function fillAdRegions(){
+  var sel=document.getElementById('adf-region'); if(!sel) return;
+  var regs=[...new Set(ADS.map(function(a){return (a.region||'').trim();}).filter(Boolean))].sort(function(a,b){return a.localeCompare(b,'ru');});
+  var sig=regs.join('|'); if(sel.dataset.sig===sig) return;
+  var cur=sel.value;
+  sel.innerHTML='<option value="">Все области</option>'+regs.map(function(r){return '<option value="'+escH(r)+'">'+escH(r)+'</option>';}).join('');
+  if(regs.indexOf(cur)>=0) sel.value=cur; else ADFILT.region='';
+  sel.dataset.sig=sig;
+}
+function renderAds(){
+  var box=document.getElementById('ads-list'); if(!box) return;
+  var fp=document.getElementById('ads-filters'); if(fp) fp.style.display=ADS.length?'flex':'none';
+  fillAdRegions();
+  var a=ADS.slice();
+  if(ADFILT.region) a=a.filter(function(x){return (x.region||'').trim()===ADFILT.region;});
+  if(ADFILT.onlyNew) a=a.filter(isAdNew);
+  box.innerHTML=a.length?a.map(adCard).join(''):'<div class="ads-empty">'+(ADS.length?'Ничего не найдено по фильтру.':'Пока нет объявлений. Будьте первым — нажмите «Подать».')+'</div>';
+}
 function loadAds(){ var box=document.getElementById('ads-list'); if(!box)return; box.innerHTML='<div class="spinner"></div>';
-  api('/api/ads').then(function(d){ var ads=(d&&d.ads)||[]; if(!ads.length){ box.innerHTML='<div class="ads-empty">Пока нет объявлений. Будьте первым — нажмите «Подать».</div>'; return; } box.innerHTML=ads.map(adCard).join(''); })
+  api('/api/ads').then(function(d){ ADS=(d&&d.ads)||[]; renderAds(); })
     .catch(function(){ box.innerHTML='<div class="ads-empty">Не удалось загрузить объявления.</div>'; }); }
 function submitAd(){ var btn=document.getElementById('ad-submit'), hint=document.getElementById('ad-hint');
   var title=(document.getElementById('ad-title').value||'').trim();
