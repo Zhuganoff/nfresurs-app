@@ -692,7 +692,11 @@ const STAT={'':{t:'+ статус',c:''},interest:{t:'Интересно',c:'st-
 const STAT_ORDER=['','interest','prep','skip'];
 // «новый» = ещё не просмотрен И появился недавно (до 3 дней).
 // при прокрутке карточка помечается просмотренной и рамка снимается.
-function isNew(t){ if(!t.first_seen||seen.has(key(t))) return false; var ts=Date.parse(t.first_seen); return !isNaN(ts) && (Date.now()-ts) < 7*864e5; }
+// база «Новый»: лот новее прошлого визита пользователя (переживает
+// перезапуск/переоткрытие) И не старше 7 дней И не открыт вручную.
+// Потеря хранилища → база=сейчас → ничего не «новое» (не флудим).
+var SESSION_LASTVISIT = Date.now();
+function isNew(t){ if(!t.first_seen||seen.has(key(t))) return false; var ts=Date.parse(t.first_seen); return !isNaN(ts) && ts>SESSION_LASTVISIT && (Date.now()-ts) < 7*864e5; }
 function priceNum(p){ if(!p) return -1; var m=String(p).match(/([\d\s.,]+)/); if(!m) return -1; var n=parseFloat(m[1].replace(/\s/g,'').replace(',','.')); return isNaN(n)?-1:n; }
 function card(t){
   const price=fmtPrice(t.price), dl=dlInfo(t.deadline), on=favs.has(key(t));
@@ -852,6 +856,20 @@ function saveSeen(){
   var arr=JSON.stringify([...seen].slice(-3000));
   try{ if(cloudOK()){ tg.CloudStorage.setItem('seen',arr); } }catch(_){}
   try{ localStorage.setItem('seen',arr); }catch(_){}
+}
+// метка последнего визита: читаем прошлую (база для «Новый» этой сессии),
+// тут же сохраняем «сейчас» для следующего запуска
+function loadLastVisit(cb){
+  var apply=function(v){
+    var t=parseInt(v,10);
+    SESSION_LASTVISIT=(!isNaN(t)&&t>0)?t:Date.now();  // первый визит → ничего не новое
+    var nowStr=String(Date.now());
+    try{ if(cloudOK()){ tg.CloudStorage.setItem('lastvisit',nowStr); } }catch(_){}
+    try{ localStorage.setItem('lastvisit',nowStr); }catch(_){}
+    cb&&cb();
+  };
+  try{ if(cloudOK()){ tg.CloudStorage.getItem('lastvisit',(e,v)=>apply(v)); return; } }catch(_){}
+  try{ apply(localStorage.getItem('lastvisit')); }catch(_){ apply(null); }
 }
 // статусы лотов (интересно/готовим/пропустить)
 function loadStatuses(cb){
@@ -1070,12 +1088,14 @@ function loadSubscription(){
   api('/api/subscription/status').then(function(d){
     var st=document.getElementById('sub-status');
     if(st){
-      if(d.active){ st.textContent='активна'; }
+      if(d.admin){ st.textContent='бесплатно (админ)'; }
+      else if(d.active){ st.textContent='активна'; }
       else if(d.trial_left>0){ st.textContent='пробный: '+d.trial_left+' дн.'; }
       else { st.textContent='истёк'; }
     }
     var btn=document.getElementById('sub-btn');
-    if(btn && d.active){ btn.textContent='Подписка активна'; btn.disabled=true; btn.style.opacity='.6'; }
+    if(btn && d.admin){ btn.textContent='Бесплатный доступ'; btn.disabled=true; btn.style.opacity='.6'; }
+    else if(btn && d.active){ btn.textContent='Подписка активна'; btn.disabled=true; btn.style.opacity='.6'; }
     if(!d.allowed || /[?&]pay=1/.test(location.search)){ var pw=document.getElementById('paywall'); if(pw) pw.style.display='flex'; }
   }).catch(function(){});
 }
@@ -1084,7 +1104,7 @@ try{ api('/api/stats').then(function(d){ var el=document.getElementById('stats-l
 
 // данные вшиты прямо в страницу (никакого fetch — надёжнее в вебвью)
 try { TENDERS = ((window.TENDERS_DATA)||{}).tenders || []; } catch(_) { TENDERS = []; }
-try { loadStatuses(function(){ loadSeen(function(){ loadFavs(render); }); }); } catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
+try { loadStatuses(function(){ loadSeen(function(){ loadLastVisit(function(){ loadFavs(render); }); }); }); } catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
 </script>
 </body>
 </html>
