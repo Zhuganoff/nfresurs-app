@@ -959,8 +959,15 @@ function renderEmail(){
   if(!st||!box) return;
   if(EMAIL.verified){
     st.innerHTML='<span class="everified">✓ подтверждена</span>';
-    box.innerHTML=`<div class="emsg">${EMAIL.email}</div><button class="ebtn ghost" id="e-change">Изменить почту</button>`;
-    document.getElementById('e-change').onclick=()=>{EMAIL.verified=false;renderEmail();};
+    var byEmail=false;
+    try { byEmail = !!SESS() && !(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData); } catch(_){}
+    if(byEmail){
+      // почта входа — менять её здесь нельзя (это идентификатор аккаунта)
+      box.innerHTML=`<div class="emsg">${EMAIL.email}</div><div class="ehint">Это почта входа — на неё приходят тендеры по кнопке «Отправить на почту».</div>`;
+    } else {
+      box.innerHTML=`<div class="emsg">${EMAIL.email}</div><button class="ebtn ghost" id="e-change">Изменить почту</button>`;
+      document.getElementById('e-change').onclick=()=>{EMAIL.verified=false;renderEmail();};
+    }
   } else {
     st.textContent='';
     box.innerHTML=`<div class="efield"><input id="e-input" type="email" inputmode="email" placeholder="you@mail.ru" value="${EMAIL.email||''}"><button class="ebtn" id="e-code">Код</button></div>
