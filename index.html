@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <title>Отходы в доходы</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#255d51" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#081016" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Отходы в доходы">
 <script src="telegram-web-app.js"></script>
 <style>
   :root {
@@ -1163,6 +1172,73 @@ try{ api('/api/stats').then(function(d){ var el=document.getElementById('stats-l
 // данные вшиты прямо в страницу (никакого fetch — надёжнее в вебвью)
 try { TENDERS = ((window.TENDERS_DATA)||{}).tenders || []; } catch(_) { TENDERS = []; }
 try { loadStatuses(function(){ loadSeen(function(){ loadLastVisit(function(){ loadFavs(render); }); }); }); } catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
+</script>
+<script>
+/* PWA: регистрация service worker + установка на главный экран.
+   Не мешает работе внутри Telegram — там просто ничего не показываем. */
+(function(){
+  try { if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('sw.js').catch(function(){});
+    });
+  }} catch(_){}
+
+  var inTelegram = false;
+  try { inTelegram = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData); } catch(_){}
+  var standalone = false;
+  try { standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; } catch(_){}
+  if (inTelegram || standalone) return;   // уже приложение или мы в Telegram — не навязываемся
+
+  // Android/Chrome: нативное предложение установки
+  var deferred = null;
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault(); deferred = e; showBtn();
+  });
+  function showBtn(){
+    if (document.getElementById('pwa-install')) return;
+    var b = document.createElement('button');
+    b.id = 'pwa-install';
+    b.type = 'button';
+    b.textContent = '⬇ Установить приложение';
+    b.setAttribute('style',
+      'position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));'
+    + 'z-index:9999;border:0;border-radius:14px;padding:12px 18px;font:600 15px/1 system-ui,-apple-system,sans-serif;'
+    + 'color:#fff;background:#255d51;box-shadow:0 8px 24px rgba(24,34,50,.28);cursor:pointer;');
+    b.addEventListener('click', function(){
+      if (!deferred) return;
+      deferred.prompt();
+      deferred.userChoice.finally(function(){ deferred = null; b.remove(); });
+    });
+    document.body.appendChild(b);
+  }
+  window.addEventListener('appinstalled', function(){
+    var b = document.getElementById('pwa-install'); if (b) b.remove();
+  });
+
+  // iOS Safari: beforeinstallprompt нет — разовая подсказка «Поделиться → На экран Домой»
+  try {
+    var ua = navigator.userAgent || '';
+    var iOS = /iPhone|iPad|iPod/.test(ua) && !window.MSStream;
+    var isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
+    var dismissed = false;
+    try { dismissed = localStorage.getItem('pwa_ios_hint') === '1'; } catch(_){}
+    if (iOS && isSafari && !dismissed) {
+      var h = document.createElement('div');
+      h.setAttribute('style',
+        'position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:9999;'
+      + 'background:#17232b;color:#f1f6f4;border-radius:14px;padding:12px 14px;'
+      + 'font:500 14px/1.35 system-ui,-apple-system,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.35);'
+      + 'display:flex;gap:10px;align-items:center;');
+      h.innerHTML = '<span style="flex:1">Установить как приложение: <b>Поделиться</b> ⬆️ → <b>«На экран „Домой“»</b></span>'
+      + '<button type="button" style="border:0;background:#255d51;color:#fff;border-radius:9px;padding:8px 10px;font:600 13px system-ui;cursor:pointer">ОК</button>';
+      h.querySelector('button').addEventListener('click', function(){
+        try { localStorage.setItem('pwa_ios_hint','1'); } catch(_){}
+        h.remove();
+      });
+      document.body.appendChild(h);
+    }
+  } catch(_){}
+})();
 </script>
 </body>
 </html>
