@@ -1041,19 +1041,28 @@ document.addEventListener('click',e=>{
   }
   if(e.target.closest('#sub-btn')||e.target.closest('#pw-btn')){
     if(tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light');
-    var soon=function(){ try{ if(tg&&tg.showAlert) tg.showAlert('Оплата подписки картой подключается через ЮKassa — совсем скоро вы сможете оформить её прямо здесь. Первые 3 дня доступ бесплатный.'); }catch(_){} };
-    api('/api/subscription/pay',{}).then(function(d){
-      if(!d || d.not_ready || !d.link){ soon(); return; }
-      if(tg&&tg.openInvoice){
-        tg.openInvoice(d.link, function(status){
-          if(status==='paid'){
-            var pw=document.getElementById('paywall'); if(pw) pw.style.display='none';
-            try{ if(tg&&tg.showAlert) tg.showAlert('✅ Оплата прошла! Полный доступ открыт.'); }catch(_){}
-            loadSubscription();
-          }
-        });
-      } else if(tg&&tg.openLink){ tg.openLink(d.link); }
-    }).catch(function(){ soon(); });
+    var inTg=false; try{ inTg=!!(tg&&tg.initData); }catch(_){}
+    if(inTg){
+      // Telegram — инвойс через createInvoiceLink
+      api('/api/subscription/pay',{}).then(function(d){
+        if(!d || d.not_ready || !d.link){ if(tg&&tg.showAlert) tg.showAlert('Оплата временно недоступна.'); return; }
+        if(tg&&tg.openInvoice){
+          tg.openInvoice(d.link, function(status){
+            if(status==='paid'){ var pw=document.getElementById('paywall'); if(pw) pw.style.display='none';
+              try{ if(tg&&tg.showAlert) tg.showAlert('✅ Оплата прошла! Полный доступ открыт.'); }catch(_){}
+              loadSubscription(); }
+          });
+        } else if(tg&&tg.openLink){ tg.openLink(d.link); }
+      }).catch(function(){ if(tg&&tg.showAlert) tg.showAlert('Оплата временно недоступна.'); });
+    } else {
+      // Браузер — веб-касса ЮKassa: редирект на страницу оплаты
+      var b=e.target.closest('#sub-btn')||e.target.closest('#pw-btn'); var old=b?b.textContent:'';
+      if(b){ b.disabled=true; b.textContent='Открываем оплату…'; }
+      api('/api/pay/create',{}).then(function(d){
+        if(d && d.confirmation_url){ window.location.href=d.confirmation_url; }
+        else { if(b){ b.disabled=false; b.textContent=old; } alert('Не удалось начать оплату.'); }
+      }).catch(function(err){ if(b){ b.disabled=false; b.textContent=old; } alert((err&&err.message)||'Оплата недоступна'); });
+    }
     return;
   }
   if(e.target.closest('#ad-new')){ var adf=document.getElementById('ad-form'); var opening=adf.style.display==='none'; adf.style.display=opening?'flex':'none'; if(opening){ _editAd=null; document.getElementById('ad-submit').textContent='Отправить на модерацию'; document.getElementById('ad-hint').textContent=''; } return; }
@@ -1165,7 +1174,8 @@ function deleteAd(id){ var go=function(){ api('/api/ad/delete',{id:id}).then(fun
 function renewAd(id){ api('/api/ad/renew',{id:id}).then(function(){ if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success'); try{ if(tg&&tg.showAlert) tg.showAlert('✅ Срок продлён ещё на 10 дней.'); }catch(_){} loadMyAds(); loadAds(); }).catch(function(err){ try{ if(tg&&tg.showAlert) tg.showAlert((err&&err.message)||'Не удалось продлить'); }catch(_){} }); }
 document.addEventListener('change',function(e){ if(e.target&&e.target.id==='ad-files'){ adFilesChosen(e.target.files); e.target.value=''; } });
 loadEmail();
-loadSubscription();
+// сверить недавно завершённую оплату (вебхук мог опоздать), затем показать статус
+api('/api/pay/status',{}).catch(function(){}).then(function(){ loadSubscription(); });
 function loadSubscription(){
   api('/api/subscription/status').then(function(d){
     var st=document.getElementById('sub-status');
