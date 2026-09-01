@@ -542,6 +542,15 @@
       <div class="pane-head"><h2>Мой профиль</h2></div>
       <button id="share-btn" class="sharebtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Поделиться приложением</button>
       <div id="stats-line" style="display:none; margin:0 0 14px; padding:11px 14px; border-radius:12px; background:var(--glass); border:1px solid var(--glass-hair); font-size:13px; color:var(--text-dim); text-align:center"></div>
+      <div class="group" id="install-group" style="display:none">
+        <div class="label">Установить на телефон</div>
+        <div class="rows"><div class="row" style="flex-wrap:wrap; gap:8px">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/><path d="M9 6h6"/></svg></span>
+          <span class="rl" style="flex-basis:100%; font-weight:600" id="install-title">Добавьте приложение на экран «Домой»</span>
+          <div id="install-steps" style="flex-basis:100%; font-size:13px; color:var(--text-dim); line-height:1.65"></div>
+          <button class="ebtn" id="install-btn" style="display:none; align-self:flex-start">⬇ Установить</button>
+        </div></div>
+      </div>
       <div class="sub-card">
         <div class="sub-head"><span class="sub-plan">Подписка</span><span class="sub-status" id="sub-status">пробный период</span></div>
         <div class="sub-price">499 ₽<small> / месяц</small></div>
@@ -1174,6 +1183,29 @@ function deleteAd(id){ var go=function(){ api('/api/ad/delete',{id:id}).then(fun
 function renewAd(id){ api('/api/ad/renew',{id:id}).then(function(){ if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success'); try{ if(tg&&tg.showAlert) tg.showAlert('✅ Срок продлён ещё на 10 дней.'); }catch(_){} loadMyAds(); loadAds(); }).catch(function(err){ try{ if(tg&&tg.showAlert) tg.showAlert((err&&err.message)||'Не удалось продлить'); }catch(_){} }); }
 document.addEventListener('change',function(e){ if(e.target&&e.target.id==='ad-files'){ adFilesChosen(e.target.files); e.target.value=''; } });
 loadEmail();
+function renderInstallHelp(){
+  var g=document.getElementById('install-group'); if(!g) return;
+  var inTg=false, standalone=false;
+  try{ inTg=!!(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData); }catch(_){}
+  try{ standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true; }catch(_){}
+  if(inTg||standalone){ g.style.display='none'; return; }  // уже приложение / в Telegram
+  var ua=navigator.userAgent||'', iOS=/iPhone|iPad|iPod/.test(ua);
+  var steps=document.getElementById('install-steps'), title=document.getElementById('install-title'), btn=document.getElementById('install-btn');
+  if(iOS){
+    title.textContent='iPhone / iPad — 3 шага:';
+    steps.innerHTML='1. Нажмите «Поделиться» ⬆️ внизу браузера (Safari).<br>2. Пролистайте вниз → «На экран „Домой“».<br>3. Нажмите «Добавить» — иконка появится на экране.';
+    btn.style.display='none';
+  } else {
+    title.textContent='Android — установка:';
+    steps.innerHTML='Нажмите кнопку ниже, либо меню ⋮ браузера → «Установить приложение» / «Добавить на главный экран».';
+    if(window.__pwaPrompt){
+      btn.style.display='inline-flex';
+      btn.onclick=function(){ window.__pwaPrompt.prompt(); window.__pwaPrompt.userChoice.finally(function(){ window.__pwaPrompt=null; btn.style.display='none'; }); };
+    } else { btn.style.display='none'; }
+  }
+  g.style.display='block';
+}
+renderInstallHelp();
 // сверить недавно завершённую оплату (вебхук мог опоздать), затем показать статус
 api('/api/pay/status',{}).catch(function(){}).then(function(){ loadSubscription(); });
 function loadSubscription(){
@@ -1272,7 +1304,8 @@ function showLogin(msg){
   // Android/Chrome: нативное предложение установки
   var deferred = null;
   window.addEventListener('beforeinstallprompt', function(e){
-    e.preventDefault(); deferred = e; showBtn();
+    e.preventDefault(); deferred = e; window.__pwaPrompt = e; showBtn();
+    try { renderInstallHelp(); } catch(_){}
   });
   function showBtn(){
     if (document.getElementById('pwa-install')) return;
