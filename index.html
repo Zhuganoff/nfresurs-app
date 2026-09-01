@@ -1274,6 +1274,12 @@ function bootFeed(tries){
     catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
     var g=document.getElementById('login-gate'); if(g) g.style.display='none';
   }).catch(function(e){
+    if(e && e.status===402){                                  // триал истёк — пейвол
+      TENDERS=[]; try{ render(); }catch(_){}
+      var pw=document.getElementById('paywall'); if(pw) pw.style.display='flex';
+      var g=document.getElementById('login-gate'); if(g) g.style.display='none';
+      return;                                                 // обработано, вход не показываем
+    }
     if(e && e.status===401) throw e;                          // сессия невалидна — наверх
     if(tries>1) return new Promise(function(r){ setTimeout(r,1500); }).then(function(){ return bootFeed(tries-1); });
     throw e;                                                  // не 401 и ретраи кончились
