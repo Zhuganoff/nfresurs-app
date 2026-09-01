@@ -1215,6 +1215,19 @@ function showLogin(msg){
   if (inTg || SESS()) { bootFeed().catch(function(){ if(!inTg) showLogin('Сессия истекла — войдите заново'); }); return; }
   showLogin();
 })();
+// Обновлять ленту при возврате приложения на передний план: iOS-PWA не
+// перезагружает web-view, и без этого показывалась устаревшая лента
+// (например лот, ушедший на модерацию). Дребезг гасим — не чаще раза в 30 с.
+(function freshOnResume(){
+  var last=Date.now();
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden) return;
+    if(Date.now()-last < 30000) return;
+    last=Date.now();
+    var authed=false; try{ authed = !!(SESS() || (window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData)); }catch(_){}
+    if(authed){ bootFeed().catch(function(){}); }
+  });
+})();
 (function loginHandlers(){
   var stage='email';
   var btn=document.getElementById('lg-btn'), em=document.getElementById('lg-email'),
