@@ -3,7 +3,7 @@
    при каждом refresh_app.sh: HTML берём network-first (иначе замёрзнет старая
    лента лотов), статику (иконки, manifest, telegram-web-app.js) — cache-first.
    Онлайн → всегда свежие лоты; офлайн → последняя виденная версия. */
-const CACHE = 'ovd-v2';
+const CACHE = 'ovd-v3';
 const ASSETS = [
   './',
   './manifest.webmanifest',

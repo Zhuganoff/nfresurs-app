@@ -961,8 +961,8 @@ function api(path, body){
   var to=ctrl?setTimeout(function(){try{ctrl.abort();}catch(_){}},12000):null;
   return fetch(API_BASE+path, {method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify(Object.assign({initData:initData, session:SESS()}, body||{})), signal: ctrl&&ctrl.signal})
-    .then(async r=>{ if(to)clearTimeout(to); const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||('ошибка '+r.status)); return d; },
-      err=>{ if(to)clearTimeout(to); throw new Error('Сервер недоступен — возможно, VPN блокирует. Отключите VPN и повторите.'); });
+    .then(async r=>{ if(to)clearTimeout(to); const d=await r.json().catch(()=>({})); if(!r.ok){ var e1=new Error(d.error||('ошибка '+r.status)); e1.status=r.status; throw e1; } return d; },
+      err=>{ if(to)clearTimeout(to); var e2=new Error('Сервер недоступен — возможно, VPN блокирует. Отключите VPN и повторите.'); e2.status=0; throw e2; });
 }
 // отметка визита (аналитика; тихо, не мешает загрузке)
 try{ if(initData) api('/api/visit',{}).catch(()=>{}); }catch(_){}
@@ -1266,12 +1266,17 @@ function loadSubscription(){
 
 // Лента больше НЕ вшита в страницу — грузим её с авторизованного API.
 // В Telegram авторизация по initData; в браузере — по сессии из localStorage.
-function bootFeed(){
+function bootFeed(tries){
+  tries = (tries==null)?3:tries;
   return api('/api/tenders', {}).then(function(d){
     TENDERS = (d && d.tenders) || [];
     try { loadStatuses(function(){ loadSeen(function(){ loadLastVisit(function(){ loadFavs(render); }); }); }); }
     catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
     var g=document.getElementById('login-gate'); if(g) g.style.display='none';
+  }).catch(function(e){
+    if(e && e.status===401) throw e;                          // сессия невалидна — наверх
+    if(tries>1) return new Promise(function(r){ setTimeout(r,1500); }).then(function(){ return bootFeed(tries-1); });
+    throw e;                                                  // не 401 и ретраи кончились
   });
 }
 function showLogin(msg){
@@ -1282,7 +1287,10 @@ function showLogin(msg){
 (function initAuth(){
   var inTg = false;
   try { inTg = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData); } catch(_){}
-  if (inTg || SESS()) { bootFeed().catch(function(){ if(!inTg) showLogin('Сессия истекла — войдите заново'); }); return; }
+  if (inTg || SESS()) { bootFeed().catch(function(e){
+    if(e && e.status===401){ try{ localStorage.removeItem('session'); }catch(_){}; if(!inTg) showLogin('Сессия истекла — войдите заново'); }
+    else if(!inTg){ showLogin('Не удалось загрузить ленту — проверьте связь и обновите. Повторный вход не нужен.'); }
+  }); return; }
   showLogin();
 })();
 // Обновлять ленту при возврате приложения на передний план: iOS-PWA не
@@ -1317,7 +1325,8 @@ function showLogin(msg){
       btn.disabled=true; btn.textContent='Проверяем…';
       api('/api/auth/verify', {email:email, code:code}).then(function(d){
         try{ localStorage.setItem('session', d.session); }catch(_){}
-        btn.textContent='Готово'; bootFeed();
+        btn.textContent='Готово';
+        bootFeed().catch(function(){ msg.textContent='Вход выполнен, но лента не загрузилась — обновите страницу.'; btn.disabled=false; btn.textContent='Войти'; });
       }).catch(function(e){ msg.textContent=(e&&e.message)||'Неверный код'; btn.disabled=false; btn.textContent='Войти'; });
     }
   });
