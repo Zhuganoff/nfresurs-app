@@ -1208,8 +1208,8 @@ function renderInstallHelp(){
     title.textContent='Установить приложение на экран телефона';
     steps.innerHTML='Нажмите кнопку — приложение откроется в браузере, дальше добавьте на «Домой»:<br>iPhone: «Поделиться» ⬆️ → «На экран „Домой“». Android: меню ⋮ → «Установить приложение».';
     var appUrl=location.origin+location.pathname;
-    btn.textContent='🌐 Открыть в браузере';
-    btn.style.display='inline-flex';
+    btn.textContent='📲 Добавить на рабочий стол';
+    btn.style.cssText='display:block;width:min(340px,92%);margin:12px auto 0;padding:15px 18px;border:0;border-radius:14px;background:#255d51;color:#fff;font-weight:700;font-size:16px;cursor:pointer;text-align:center';
     btn.onclick=function(){
       try{ if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.openLink){ window.Telegram.WebApp.openLink(appUrl); return; } }catch(_){}
       window.open(appUrl,'_blank');
@@ -1229,7 +1229,8 @@ function renderInstallHelp(){
     title.textContent='Android — установка:';
     steps.innerHTML='Нажмите кнопку ниже, либо меню ⋮ браузера → «Установить приложение» / «Добавить на главный экран».';
     if(window.__pwaPrompt){
-      btn.style.display='inline-flex';
+      btn.textContent='📲 Добавить на рабочий стол';
+      btn.style.cssText='display:block;width:min(340px,92%);margin:12px auto 0;padding:15px 18px;border:0;border-radius:14px;background:#255d51;color:#fff;font-weight:700;font-size:16px;cursor:pointer;text-align:center';
       btn.onclick=function(){ window.__pwaPrompt.prompt(); window.__pwaPrompt.userChoice.finally(function(){ window.__pwaPrompt=null; btn.style.display='none'; }); };
     } else { btn.style.display='none'; }
   }
