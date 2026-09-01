@@ -1188,10 +1188,14 @@ function renderInstallHelp(){
   var inTg=false, standalone=false;
   try{ inTg=!!(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData); }catch(_){}
   try{ standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true; }catch(_){}
-  if(inTg||standalone){ g.style.display='none'; return; }  // уже приложение / в Telegram
+  if(inTg){ g.style.display='none'; return; }  // в Telegram незачем
   var ua=navigator.userAgent||'', iOS=/iPhone|iPad|iPod/.test(ua);
   var steps=document.getElementById('install-steps'), title=document.getElementById('install-title'), btn=document.getElementById('install-btn');
-  if(iOS){
+  if(standalone){
+    title.textContent='✓ Приложение установлено на этом устройстве';
+    steps.innerHTML='Чтобы поставить на другой телефон: откройте адрес приложения в браузере и добавьте на экран «Домой».<br>iPhone: «Поделиться» ⬆️ → «На экран „Домой“».<br>Android: меню ⋮ → «Установить приложение».';
+    btn.style.display='none';
+  } else if(iOS){
     title.textContent='iPhone / iPad — 3 шага:';
     steps.innerHTML='1. Нажмите «Поделиться» ⬆️ внизу браузера (Safari).<br>2. Пролистайте вниз → «На экран „Домой“».<br>3. Нажмите «Добавить» — иконка появится на экране.';
     btn.style.display='none';
