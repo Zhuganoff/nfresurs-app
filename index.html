@@ -543,6 +543,7 @@
       <div class="pane-head"><h2>Мой профиль</h2></div>
       <button id="share-btn" class="sharebtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Поделиться приложением</button>
       <div id="stats-line" style="display:none; margin:0 0 14px; padding:11px 14px; border-radius:12px; background:var(--glass); border:1px solid var(--glass-hair); font-size:13px; color:var(--text-dim); text-align:center"></div>
+      <button id="export-btn" class="sharebtn" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Выгрузить компании и e-mail на почту</button>
       <div class="group" id="install-group" style="display:none">
         <div class="label">Установить на телефон</div>
         <div class="rows"><div class="row" style="flex-wrap:wrap; gap:8px">
@@ -699,7 +700,9 @@ const PSTATE = {tektorg:'on',rosneft:'on',etpgpb:'on',b2b_center:'on',onlinecont
 const REF = new Date();
 let TENDERS = [], favs = new Set(), seen = new Set(), statuses = {};
 
-function cleanTitle(t){return t.replace(/^Запрос предложений №\s*\d+\s*/,'').replace(/^Условия процедуры реализации\s*/i,'').replace(/\s+/g,' ').trim();}
+function cleanTitle(t){return String(t==null?'':t).replace(/^Запрос предложений №\s*\d+\s*/,'').replace(/^Условия процедуры реализации\s*/i,'').replace(/\s+/g,' ').trim();}
+// XSS-защита: данные тендеров скрейпятся с внешних площадок — не доверяем.
+function safeUrl(u){ u=String(u==null?'':u); return /^https?:\/\//i.test(u)?u.replace(/"/g,'%22'):'#'; }
 function fmtPrice(p){if(!p)return null;const m=p.match(/([\d\s.,]+)\s*(RUB|₽|руб)?/i);if(!m)return p;let n=parseFloat(m[1].replace(/\s/g,'').replace(',','.'));if(isNaN(n))return p;if(n===0)return null;return n.toLocaleString('ru-RU',{maximumFractionDigits:0})+' ₽';}
 function pDate(d){if(!d)return null;let m=d.match(/(\d{4})-(\d{2})-(\d{2})/);if(m)return new Date(+m[1],+m[2]-1,+m[3]);m=d.match(/(\d{2})\.(\d{2})\.(\d{4})/);if(m)return new Date(+m[3],+m[2]-1,+m[1]);return null;}
 function dlTime(d){var m=String(d||'').match(/(?:T|\s)(\d{2}):(\d{2})/);if(!m||m[1]==='00'&&m[2]==='00')return '';return ' в '+m[1]+':'+m[2]+' (МСК)';}
@@ -749,12 +752,12 @@ function card(t){
   const favCls=on?(hot?' fav-hot':' fav-mark'):'';
   const cd=hot?`<span class="dleft">${dLeft===0?'сегодня последний день':'осталось '+dLeft+' '+plural(dLeft,'день','дня','дней')}</span>`:'';
   const city=cityOf(t);
-  return `<article class="card${nw?' new':''}${favCls}" data-key="${kk}">${nw?'<span class="new-badge">Новый</span>':''}<div class="c-top"><span class="chip">${t.site_title||PLATFORMS[t.site]||t.site}</span>${also}${cd}<span class="deadline ${dl.cls}"><span class="dot"></span>${dl.txt}</span><button class="fav ${on?'on':''}" data-k="${kk}">${heart(on)}</button></div>
-  <h3>${cleanTitle(t.title)}</h3>
-  ${city?`<div class="city"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>Вывоз: ${city}</div>`:''}
-  ${t.volume?`<div class="vol">📦 ${t.volume}</div>`:''}
-  ${t.seller?`<div class="seller"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>${t.seller}</div>`:''}
-  <div class="c-foot">${price?`<span class="price">${price}</span>`:'<span class="price none">Цена не указана</span>'}<span class="c-act"><a class="iact" title="Открыть на площадке" href="${t.url}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a><button class="iact send-btn" title="На почту" data-send="${encodeURIComponent(key(t))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button></span></div></article>`;
+  return `<article class="card${nw?' new':''}${favCls}" data-key="${kk}">${nw?'<span class="new-badge">Новый</span>':''}<div class="c-top"><span class="chip">${escH(t.site_title||PLATFORMS[t.site]||t.site)}</span>${also}${cd}<span class="deadline ${dl.cls}"><span class="dot"></span>${dl.txt}</span><button class="fav ${on?'on':''}" data-k="${kk}">${heart(on)}</button></div>
+  <h3>${escH(cleanTitle(t.title))}</h3>
+  ${city?`<div class="city"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>Вывоз: ${escH(city)}</div>`:''}
+  ${t.volume?`<div class="vol">📦 ${escH(t.volume)}</div>`:''}
+  ${t.seller?`<div class="seller"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>${escH(t.seller)}</div>`:''}
+  <div class="c-foot">${price?`<span class="price">${escH(price)}</span>`:'<span class="price none">Цена не указана</span>'}<span class="c-act"><a class="iact" title="Открыть на площадке" href="${safeUrl(t.url)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a><button class="iact send-btn" title="На почту" data-send="${encodeURIComponent(key(t))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button></span></div></article>`;
 }
 // модалка тендера: краткое описание + Перейти / Отправить документы
 let _modalT=null;
@@ -765,7 +768,7 @@ function openTender(t){
   if(!seen.has(kk)){ seen.add(kk); saveSeen();
     document.querySelectorAll('.card[data-key="'+encodeURIComponent(kk)+'"]').forEach(function(el){ el.classList.remove('new'); var b=el.querySelector('.new-badge'); if(b)b.remove(); }); }
   var cat={oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом'}[t.category||'oil']||'Нефтепродукты';
-  document.getElementById('modal-chips').innerHTML='<span class="chip">'+(t.site_title||PLATFORMS[t.site]||t.site)+'</span><span class="chip" style="background:var(--surface-2);color:var(--text-dim)">'+cat+'</span>';
+  document.getElementById('modal-chips').innerHTML='<span class="chip">'+escH(t.site_title||PLATFORMS[t.site]||t.site)+'</span><span class="chip" style="background:var(--surface-2);color:var(--text-dim)">'+cat+'</span>';
   document.getElementById('modal-title').textContent=cleanTitle(t.title);
   var city=cityOf(t), price=fmtPrice(t.price), dl=dlInfo(t.deadline);
   function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
@@ -1031,6 +1034,15 @@ document.addEventListener('click',e=>{
     const tt=TENDERS.find(x=>key(x)===decodeURIComponent(cardEl.dataset.key));
     if(tt){ openTender(tt); return; }
   }
+  if(e.target.closest('#export-btn')){
+    var eb=e.target.closest('#export-btn'), oldt=eb.textContent;
+    eb.disabled=true; eb.textContent='Выгружаю…';
+    api('/api/admin/export',{}).then(function(d){
+      eb.disabled=false; eb.textContent=oldt;
+      alert('Отправлено на '+d.sent_to+':\nкомпаний '+d.companies+', e-mail '+d.emails+'.');
+    }).catch(function(err){ eb.disabled=false; eb.textContent=oldt; alert((err&&err.message)||'Не удалось выгрузить'); });
+    return;
+  }
   if(e.target.closest('#share-btn')){
     var url='https://t.me/nfresursbot';
     var text='Отходы в доходы — тендеры по реализации нефтепродуктов, металлолома и труб';
@@ -1239,10 +1251,17 @@ function loadSubscription(){
     if(btn && d.admin){ btn.textContent='Бесплатный доступ'; btn.disabled=true; btn.style.opacity='.6'; }
     else if(btn && d.active){ btn.textContent='Подписка активна'; btn.disabled=true; btn.style.opacity='.6'; }
     if(!d.allowed || /[?&]pay=1/.test(location.search)){ var pw=document.getElementById('paywall'); if(pw) pw.style.display='flex'; }
+    // счётчик пользователей и админ-выгрузка — ТОЛЬКО владельцу (по d.admin)
+    var statsEl=document.getElementById('stats-line'), expBtn=document.getElementById('export-btn');
+    if(d.admin){
+      if(expBtn) expBtn.style.display='flex';
+      api('/api/stats').then(function(s){ if(statsEl){ statsEl.style.display='block'; statsEl.innerHTML='👥 Пользователей: <b>'+s.visitors+'</b> · за неделю: <b>'+s.active7+'</b>'; } }).catch(function(){});
+    } else {
+      if(statsEl) statsEl.style.display='none';
+      if(expBtn) expBtn.style.display='none';
+    }
   }).catch(function(){});
 }
-// счётчик пользователей — виден только владельцу (эндпоинт под белым списком)
-try{ api('/api/stats').then(function(d){ var el=document.getElementById('stats-line'); if(el){ el.style.display='block'; el.innerHTML='👥 Пользователей: <b>'+d.visitors+'</b> · за неделю: <b>'+d.active7+'</b>'; } }).catch(function(){}); }catch(_){}
 
 // Лента больше НЕ вшита в страницу — грузим её с авторизованного API.
 // В Telegram авторизация по initData; в браузере — по сессии из localStorage.
