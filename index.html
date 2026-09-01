@@ -569,6 +569,18 @@
         <button class="myads-toggle" id="myads-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3z"/><path d="M8 9h8M8 12h5"/></svg>Мои объявления</button>
         <div id="myads-list" class="myads-list" style="display:none"></div>
       </div>
+      <div class="group" id="alerts-group">
+        <div class="label">🔔 Мои уведомления</div>
+        <div class="ehint" style="margin-bottom:8px">Получайте лот сразу, как он появится. Слова через запятую (совпадение по любому). Регион и категория — по желанию.</div>
+        <div id="alerts-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+        <div class="rows"><div class="row" style="flex-wrap:wrap;gap:8px">
+          <input id="al-kw" type="text" placeholder="напр.: отработанное масло, мазут" style="flex-basis:100%;padding:11px;border-radius:10px;border:1px solid var(--hair);font-size:15px">
+          <select id="al-cat" class="tz" style="flex:1;min-width:130px"><option value="">Все категории</option><option value="oil">Нефтепродукты</option><option value="pipe">Трубы</option><option value="metal">Металлолом</option></select>
+          <input id="al-reg" type="text" placeholder="регион (необязательно)" style="flex:1;min-width:130px;padding:11px;border-radius:10px;border:1px solid var(--hair);font-size:15px">
+          <button class="ebtn" id="al-add" type="button">Добавить подписку</button>
+          <div class="emsg" id="al-msg"></div>
+        </div></div>
+      </div>
       <div class="group">
         <div class="label">Уведомления</div>
         <div class="rows">
@@ -1034,6 +1046,16 @@ document.addEventListener('click',e=>{
     const tt=TENDERS.find(x=>key(x)===decodeURIComponent(cardEl.dataset.key));
     if(tt){ openTender(tt); return; }
   }
+  if(e.target.closest('#al-add')){
+    var kw=(document.getElementById('al-kw').value||'').trim();
+    var cat=document.getElementById('al-cat').value, reg=(document.getElementById('al-reg').value||'').trim();
+    var m=document.getElementById('al-msg');
+    if(!kw){ m.className='emsg err'; m.textContent='Укажите ключевые слова'; return; }
+    api('/api/alerts/create',{keywords:kw,regions:reg,category:cat}).then(function(){ document.getElementById('al-kw').value=''; document.getElementById('al-reg').value=''; m.className='emsg ok'; m.textContent='Подписка добавлена'; loadAlerts(); }).catch(function(err){ m.className='emsg err'; m.textContent=(err&&err.message)||'Ошибка'; });
+    return;
+  }
+  var _alrm=e.target.closest('[data-al]');
+  if(_alrm){ api('/api/alerts/delete',{id:+_alrm.getAttribute('data-al')}).then(loadAlerts).catch(function(){}); return; }
   if(e.target.closest('#export-btn')){
     var eb=e.target.closest('#export-btn'), oldt=eb.textContent;
     eb.disabled=true; eb.textContent='Выгружаю…';
@@ -1237,6 +1259,19 @@ function renderInstallHelp(){
   g.style.display='block';
 }
 renderInstallHelp();
+function loadAlerts(){
+  var box=document.getElementById('alerts-list'); if(!box) return;
+  api('/api/alerts/list').then(function(d){
+    var a=(d&&d.alerts)||[];
+    box.innerHTML = a.length ? a.map(function(x){
+      var meta=[x.keywords];
+      if(x.category) meta.push({oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом'}[x.category]||x.category);
+      if(x.regions) meta.push('📍 '+x.regions);
+      return '<div class="myad" style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:13px">'+escH(meta.join(' · '))+'</span><button class="ad-rm" data-al="'+x.id+'" type="button">✕</button></div>';
+    }).join('') : '<div style="font-size:12px;color:var(--text-faint,#8b949e)">Пока нет подписок — добавьте первую ниже.</div>';
+  }).catch(function(){});
+}
+loadAlerts();
 // сверить недавно завершённую оплату (вебхук мог опоздать), затем показать статус
 api('/api/pay/status',{}).catch(function(){}).then(function(){ loadSubscription(); });
 function loadSubscription(){
