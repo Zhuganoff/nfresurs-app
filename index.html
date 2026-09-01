@@ -1188,9 +1188,16 @@ function renderInstallHelp(){
   var inTg=false, standalone=false;
   try{ inTg=!!(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData); }catch(_){}
   try{ standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true; }catch(_){}
-  if(inTg){ g.style.display='none'; return; }  // в Telegram незачем
   var ua=navigator.userAgent||'', iOS=/iPhone|iPad|iPod/.test(ua);
   var steps=document.getElementById('install-steps'), title=document.getElementById('install-title'), btn=document.getElementById('install-btn');
+  if(inTg){
+    // внутри Telegram PWA не установить — ведём в браузер
+    title.textContent='Установить приложение на экран телефона';
+    steps.innerHTML='Внутри Telegram установить на экран нельзя. Откройте приложение в браузере и добавьте на «Домой»:<br>1. Меню бота ⋮ (справа вверху) → «Открыть в браузере», либо наберите <b>zhuganoff.github.io/nfresurs-app</b>.<br>2. iPhone: «Поделиться» ⬆️ → «На экран „Домой“». Android: меню ⋮ → «Установить приложение».';
+    btn.style.display='none';
+    g.style.display='block';
+    return;
+  }
   if(standalone){
     title.textContent='✓ Приложение установлено на этом устройстве';
     steps.innerHTML='Чтобы поставить на другой телефон: откройте адрес приложения в браузере и добавьте на экран «Домой».<br>iPhone: «Поделиться» ⬆️ → «На экран „Домой“».<br>Android: меню ⋮ → «Установить приложение».';
