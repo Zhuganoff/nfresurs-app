@@ -543,7 +543,7 @@
       <div class="pane-head"><h2>Мой профиль</h2></div>
       <button id="share-btn" class="sharebtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Поделиться приложением</button>
       <div id="stats-line" style="display:none; margin:0 0 14px; padding:11px 14px; border-radius:12px; background:var(--glass); border:1px solid var(--glass-hair); font-size:13px; color:var(--text-dim); text-align:center"></div>
-      <button id="export-btn" class="sharebtn" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Выгрузить компании и e-mail на почту</button>
+      <button id="export-btn" class="sharebtn" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Выгрузить пользователей на почту</button>
       <div class="group" id="install-group" style="display:none">
         <div class="label">Установить на телефон</div>
         <div class="rows"><div class="row" style="flex-wrap:wrap; gap:8px">
@@ -1039,7 +1039,7 @@ document.addEventListener('click',e=>{
     eb.disabled=true; eb.textContent='Выгружаю…';
     api('/api/admin/export',{}).then(function(d){
       eb.disabled=false; eb.textContent=oldt;
-      alert('Отправлено на '+d.sent_to+':\nкомпаний '+d.companies+', e-mail '+d.emails+'.');
+      alert('Отправлено на '+d.sent_to+':\nпользователей '+d.users+', e-mail '+d.emails+', компаний '+d.companies+'.');
     }).catch(function(err){ eb.disabled=false; eb.textContent=oldt; alert((err&&err.message)||'Не удалось выгрузить'); });
     return;
   }
