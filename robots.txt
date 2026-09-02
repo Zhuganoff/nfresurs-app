@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /app/
+
+Sitemap: https://xn-----elcgda8dafa0bybh2fi.xn--p1ai/sitemap.xml

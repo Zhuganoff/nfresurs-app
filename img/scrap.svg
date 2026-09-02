@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" role="img" aria-label="Пакет прессованного металлолома">
+  <ellipse cx="122" cy="172" rx="90" ry="12" fill="#1c2329" opacity=".55"/>
+  <!-- пресс-пакет, изометрия -->
+  <g transform="translate(40 30)">
+    <polygon points="0,52 80,20 160,52 80,84" fill="#8e9aa5"/>
+    <polygon points="0,52 80,84 80,150 0,118" fill="#5b6873"/>
+    <polygon points="80,84 160,52 160,118 80,150" fill="#465059"/>
+    <!-- фактура: полосы обрези -->
+    <g stroke="#2c343b" stroke-width="3" stroke-linecap="round" fill="none">
+      <path d="M12 66l24-10M20 92l30-12M10 100l40-16M26 118l28-11M8 82l16-6"/>
+      <path d="M96 100l40-16M92 126l52-21M110 140l38-15M128 96l22-9M90 112l14-6"/>
+      <path d="M40 34l30-12M64 52l40-16M100 44l28-11M36 56l50-20M70 66l40-16"/>
+    </g>
+    <!-- обвязка -->
+    <path d="M40 36v104M120 68v82" stroke="#d6dde3" stroke-width="4" fill="none" opacity=".9"/>
+    <path d="M40 36l80 32" stroke="#d6dde3" stroke-width="4" fill="none" opacity=".9"/>
+  </g>
+  <!-- россыпь -->
+  <g fill="#6E7B86">
+    <rect x="18" y="146" width="30" height="10" rx="2" transform="rotate(-18 33 151)"/>
+    <rect x="196" y="140" width="26" height="8" rx="2" transform="rotate(14 209 144)"/>
+    <circle cx="206" cy="164" r="6"/>
+  </g>
+</svg>

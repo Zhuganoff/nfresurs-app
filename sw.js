@@ -1,11 +1,12 @@
 /* Service worker «Отходы в доходы».
-   Стратегия подобрана под то, что данные ВШИТЫ в index.html и обновляются
-   при каждом refresh_app.sh: HTML берём network-first (иначе замёрзнет старая
-   лента лотов), статику (иконки, manifest, telegram-web-app.js) — cache-first.
-   Онлайн → всегда свежие лоты; офлайн → последняя виденная версия. */
-const CACHE = 'ovd-v4';
+   Корень сайта — лендинг, приложение живёт в /app/ (SW зарегистрирован из
+   /app/ на корневой sw.js → scope «/»). HTML берём network-first (свежая
+   оболочка), статику (иконки, manifest, telegram-web-app.js) — cache-first.
+   Офлайн: навигация внутри /app/ → последняя виденная оболочка приложения. */
+const CACHE = 'ovd-v5';
+const APP = '/app/';
 const ASSETS = [
-  './',
+  APP,
   './manifest.webmanifest',
   './telegram-web-app.js',
   './icons/icon-192.png',
@@ -38,13 +39,14 @@ self.addEventListener('fetch', (e) => {
     (req.headers.get('accept') || '').includes('text/html');
 
   if (isHTML) {
-    // свежие лоты важнее — сеть, кэш только как офлайн-фолбэк
+    // свежая оболочка важнее — сеть, кэш только как офлайн-фолбэк
     e.respondWith(
       fetch(req).then((r) => {
         const cp = r.clone();
-        caches.open(CACHE).then((c) => c.put('./', cp)).catch(() => {});
+        caches.open(CACHE).then((c) => c.put(req, cp)).catch(() => {});
         return r;
-      }).catch(() => caches.match('./').then((m) => m || caches.match(req)))
+      }).catch(() => caches.match(req).then((m) =>
+        m || (url.pathname.indexOf(APP) === 0 ? caches.match(APP) : undefined)))
     );
     return;
   }

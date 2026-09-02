@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" role="img" aria-label="Бочка с нефтепродуктами">
+  <defs>
+    <linearGradient id="d" x1="0" x2="1"><stop offset="0" stop-color="#3a3028"/><stop offset=".55" stop-color="#26201b"/><stop offset="1" stop-color="#181411"/></linearGradient>
+  </defs>
+  <!-- лужа -->
+  <ellipse cx="128" cy="170" rx="86" ry="14" fill="#1a1512" opacity=".9"/>
+  <ellipse cx="128" cy="168" rx="70" ry="9" fill="#C98A2E" opacity=".35"/>
+  <!-- бочка -->
+  <g transform="translate(70 34)">
+    <rect x="0" y="12" width="104" height="128" rx="10" fill="url(#d)"/>
+    <ellipse cx="52" cy="12" rx="52" ry="12" fill="#4a3d31"/>
+    <ellipse cx="52" cy="12" rx="40" ry="8" fill="#2c241e"/>
+    <rect x="-3" y="40" width="110" height="9" rx="4.5" fill="#5a4a3a"/>
+    <rect x="-3" y="98" width="110" height="9" rx="4.5" fill="#5a4a3a"/>
+    <!-- бирка -->
+    <rect x="30" y="58" width="44" height="30" rx="3" fill="#C98A2E"/>
+    <rect x="36" y="66" width="32" height="3" rx="1.5" fill="#26201b"/>
+    <rect x="36" y="74" width="20" height="3" rx="1.5" fill="#26201b"/>
+    <!-- капля -->
+    <path d="M96 118c0-8 8-14 8-22 0 8 8 14 8 22a8 8 0 0 1-16 0z" fill="#C98A2E"/>
+  </g>
+</svg>

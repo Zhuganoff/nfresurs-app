@@ -1,0 +1,1446 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Отходы в доходы — приложение</title>
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#255d51" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#081016" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Отходы в доходы">
+<script src="../telegram-web-app.js"></script>
+<style>
+  :root {
+    --app-bg: #eef1f5; --app-bg2: #e6eaf0; --surface: #ffffff; --surface-2: #eef1f4;
+    --text: #14181d; --text-dim: #5a636d; --text-faint: #8b949e;
+    --hair: #d9e2e0; --accent: #255d51; --accent-soft: #e5f1ed;
+    --urgent: #c1443b; --fresh: #2f8065; --warn: #c78a24; --nav-bg: rgba(247,251,250,.72);
+    --glass: #ffffff; --glass-2: #f6f9f8;
+    --glass-brd: rgba(255,255,255,.85); --glass-hair: rgba(120,130,145,.16);
+    --shadow: rgba(24,34,50,.10); --shadow-s: rgba(24,34,50,.06);
+    --glow-a: rgba(65,151,126,.10); --glow-b: rgba(37,93,81,.08);
+  }
+  :root:not([data-theme="light"]) { @media (prefers-color-scheme: dark) {
+    --app-bg:#081016; --app-bg2:#101b22; --surface:#17232b; --surface-2:#1d2b34;
+    --text:#f1f6f4; --text-dim:#b5c3bf; --text-faint:#91a49e;
+    --hair:#2a3a42; --accent:#7fd0b4; --accent-soft:#173a31;
+    --urgent:#ff8178; --fresh:#7fd0b4; --warn:#e2ad58; --nav-bg:rgba(8,16,22,.74);
+    --glass:#17232b; --glass-2:#1d2b34;
+    --glass-brd: rgba(255,255,255,.10); --glass-hair: rgba(255,255,255,.07);
+    --shadow: rgba(0,0,0,.45); --shadow-s: rgba(0,0,0,.3);
+    --glow-a: rgba(75,156,130,.12); --glow-b: rgba(54,121,104,.08);
+  }}
+  :root[data-theme="dark"] {
+    --app-bg:#081016; --app-bg2:#101b22; --surface:#17232b; --surface-2:#1d2b34;
+    --text:#f1f6f4; --text-dim:#b5c3bf; --text-faint:#91a49e;
+    --hair:#2a3a42; --accent:#7fd0b4; --accent-soft:#173a31;
+    --urgent:#ff8178; --fresh:#7fd0b4; --warn:#e2ad58; --nav-bg:rgba(8,16,22,.74);
+    --glass:#17232b; --glass-2:#1d2b34;
+    --glass-brd: rgba(255,255,255,.10); --glass-hair: rgba(255,255,255,.07);
+    --shadow: rgba(0,0,0,.45); --shadow-s: rgba(0,0,0,.3);
+    --glow-a: rgba(75,156,130,.12); --glow-b: rgba(54,121,104,.08);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: linear-gradient(180deg, var(--app-bg), var(--app-bg2)); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    display: flex; flex-direction: column; height: 100vh; position: relative;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* ambient-свечение под стеклом (фиксировано — не перерисовывается при скролле) */
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(120% 60% at 85% -5%, var(--glow-a), transparent 60%),
+      radial-gradient(110% 55% at -10% 105%, var(--glow-b), transparent 60%);
+  }
+  header.app, main { position: relative; z-index: 1; }
+  header.app {
+    flex: none; padding: 11px 16px 11px; display: flex; align-items: center; gap: 12px;
+    background: var(--nav-bg);
+    backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border-bottom: 1px solid var(--glass-hair);
+    box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 4px 18px var(--shadow-s);
+    padding-top: calc(11px + env(safe-area-inset-top)); z-index: 2;
+  }
+  .logo {
+    width: 38px; height: 38px; border-radius: 12px; flex: none;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 88%, #fff), color-mix(in srgb, var(--accent) 55%, #000));
+    display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 18px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.4), inset 0 0 0 1px rgba(255,255,255,.12), 0 4px 12px color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  .app-name { font-size: 16.5px; font-weight: 700; letter-spacing: -.015em; }
+  .app-sub { font-size: 10.5px; color: var(--text-faint); margin-top: 1px; letter-spacing: .07em; text-transform: uppercase; }
+  main { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+  .pane { display: none; padding: 10px 12px calc(64px + env(safe-area-inset-bottom)); max-width: 620px; margin: 0 auto; }
+  .pane.active { display: block; }
+  .pane-head { display: flex; align-items: baseline; justify-content: space-between; padding: 4px 2px 10px; }
+  .pane-head h2 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+  .pane-head .count { font-size: 12px; color: var(--text-faint); font-variant-numeric: tabular-nums; }
+  .toolbar { margin: 0 0 10px; display: flex; flex-direction: row; align-items: center; gap: 8px; }
+  .catseg { display: flex; gap: 6px; overflow-x: auto; margin: 0 0 10px; padding-bottom: 2px; -webkit-overflow-scrolling: touch; }
+  .catseg button { flex: 0 0 auto; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--glass-hair); background: var(--glass); color: var(--text-dim); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .catseg button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .filters-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--glass-hair); background: var(--glass); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .filters-btn svg { width: 16px; height: 16px; }
+  .filters-btn.on { border-color: var(--accent); color: var(--accent); }
+  .filters-panel { display: flex; flex-direction: column; gap: 10px; background: var(--glass); border: 1px solid var(--glass-hair); border-radius: 12px; padding: 12px 14px; margin: 0 0 12px; }
+  .fp-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--text-dim); }
+  .fp-row select { flex: 0 1 auto; max-width: 60%; }
+  .fp-toggle input { width: 20px; height: 20px; accent-color: var(--accent); }
+  .search { width: 100%; background: var(--glass); color: var(--text); border: 1px solid var(--glass-hair); border-radius: 13px; padding: 11px 14px; font-size: 14px; box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 2px 8px var(--shadow-s); }
+  .search::placeholder { color: var(--text-faint); }
+  .search:focus { outline: none; border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
+  .fchips { display: flex; gap: 7px; flex-wrap: wrap; }
+  .fsel { flex: 1; min-width: 120px; background: var(--glass); color: var(--text); border: 1px solid var(--glass-hair); border-radius: 10px; padding: 8px 10px; font-size: 12.5px; }
+  .fchip { flex: none; background: var(--glass); color: var(--text-dim); border: 1px solid var(--glass-hair); border-radius: 999px; padding: 7px 13px; font-size: 12.5px; font-weight: 600; cursor: pointer; box-shadow: 0 1px 4px var(--shadow-s); }
+  .fchip.on { background: var(--accent-soft); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+  .card { background: var(--glass);
+    border: 1px solid var(--glass-hair); border-radius: 16px; padding: 12px 13px 11px; margin-bottom: 9px; position: relative;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 6px 20px var(--shadow-s), 0 2px 6px var(--shadow-s); }
+  /* новый тендер — переливающаяся зелёная подсветка */
+  .card.new { border-color: transparent; background:
+      linear-gradient(var(--glass),var(--glass)) padding-box,
+      linear-gradient(110deg,#2fbf6e,#7ff0a6,#1f9d55,#7ff0a6,#2fbf6e) border-box;
+    border: 2px solid transparent; background-size: 100% 100%, 300% 100%;
+    animation: shimmer 3s linear infinite;
+    box-shadow: 0 0 0 1px rgba(47,191,110,.15), 0 6px 20px rgba(47,191,110,.18); }
+  @keyframes shimmer { to { background-position: 0 0, -300% 0; } }
+  @media (prefers-reduced-motion: reduce){ .card.new{ animation:none; } }
+  .new-badge { position:absolute; top:-8px; right:14px; z-index:1;
+    font-size:10px; font-weight:700; letter-spacing:.08em; color:#052e16;
+    background:linear-gradient(110deg,#7ff0a6,#2fbf6e); padding:3px 9px;
+    border-radius:999px; box-shadow:0 2px 8px rgba(47,191,110,.4); }
+  /* избранное: жёлтая метка; за ≤3 дня до конца — ярко-красная */
+  .card.fav-mark, .card.fav-hot { background: color-mix(in srgb, var(--warn) 9%, var(--surface)); }
+  .card.fav-mark::before, .card.fav-hot::before { content:''; position:absolute; left:0; top:10px; bottom:10px; width:4px; border-radius:0 3px 3px 0; background: var(--warn); }
+  .card.fav-hot { background: color-mix(in srgb, var(--urgent) 12%, var(--surface));
+    box-shadow: 0 0 0 1px color-mix(in srgb,var(--urgent) 45%,transparent), 0 6px 18px color-mix(in srgb,var(--urgent) 22%,transparent); }
+  .card.fav-hot::before { background: var(--urgent); }
+  .dleft { font-size: 10px; font-weight: 700; color: #fff; background: var(--urgent); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .c-top { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; flex-wrap: wrap; }
+  .chip { font-size: 10.5px; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .also-chip { font-size: 10px; font-weight: 600; color: var(--text-faint); background: var(--surface-2); padding: 2px 6px; border-radius: 999px; }
+  .c-top .deadline { margin-left: auto; }
+  .fav { flex: none; width: 26px; height: 26px; border-radius: 50%; border: none; background: transparent; cursor: pointer; display: grid; place-items: center; color: var(--text-faint); transition: transform .12s, color .12s; }
+  .fav:active { transform: scale(1.15); }
+  .fav.on { color: var(--accent); }
+  .fav svg { width: 16px; height: 16px; }
+  .card h3 { margin: 0 0 9px; font-size: 13.5px; line-height: 1.3; font-weight: 600; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .seller { font-size: 11.5px; color: var(--text-dim); margin: -3px 0 8px; display: flex; align-items: center; gap: 5px; line-height: 1.3; }
+  .city { font-size: 14.5px; font-weight: 700; color: var(--accent); margin: 4px 0 8px; display: inline-flex; align-items: center; gap: 6px; letter-spacing: -.01em; }
+  .city svg { width: 16px; height: 16px; flex: none; }
+  .vol { font-size: 13px; font-weight: 600; color: var(--text-dim); margin: 2px 0 7px; }
+  .seller svg { width: 13px; height: 13px; flex: none; color: var(--text-faint); }
+  .c-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .price { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .price.none { font-weight: 500; color: var(--text-faint); font-size: 12px; }
+  .deadline { font-size: 11.5px; color: var(--text-dim); display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .deadline .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-faint); flex: none; }
+  .deadline.urgent { color: var(--urgent); font-weight: 600; }
+  .deadline.urgent .dot { background: var(--urgent); }
+  .deadline.fresh .dot { background: var(--fresh); }
+  .stpill { font-size: 10.5px; font-weight: 600; padding: 2px 9px; border-radius: 999px; cursor: pointer; border: 1px dashed var(--hair); color: var(--text-faint); background: transparent; white-space: nowrap; }
+  .stpill.st-i { color: #2f7fd9; background: color-mix(in srgb,#2f7fd9 12%,transparent); border: 1px solid color-mix(in srgb,#2f7fd9 40%,transparent); }
+  .stpill.st-p { color: var(--accent); background: var(--accent-soft); border: 1px solid color-mix(in srgb,var(--accent) 40%,transparent); }
+  .stpill.st-s { color: var(--text-faint); background: var(--surface-2); border: 1px solid var(--hair); }
+  .card.skip { opacity: .5; }
+  .c-act { display: inline-flex; gap: 6px; flex: none; }
+  .iact { width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--hair); background: var(--surface-2); color: var(--text-dim); display: grid; place-items: center; cursor: pointer; text-decoration: none; }
+  .iact:active { transform: scale(.94); }
+  .iact svg { width: 15px; height: 15px; }
+  .iact.send-btn.sent { color: var(--fresh); border-color: var(--fresh); }
+  .send-btn.sent { color: var(--fresh); border-color: var(--fresh); }
+  .efield { display: flex; gap: 8px; }
+  .efield input { flex: 1; min-width: 0; background: var(--surface-2); color: var(--text); border: 1px solid var(--hair); border-radius: 9px; padding: 9px 11px; font-size: 14px; }
+  .ebtn { flex: none; background: var(--accent); color: #fff; border: none; border-radius: 9px; padding: 0 14px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .ebtn.ghost { background: var(--surface-2); color: var(--text-dim); border: 1px solid var(--hair); }
+  .ehint { font-size: 11.5px; color: var(--text-faint); padding: 8px 6px 0; line-height: 1.5; }
+  .emsg { font-size: 12px; padding: 2px 2px; }
+  .emsg.err { color: var(--urgent); } .emsg.ok { color: var(--fresh); }
+  .everified { color: var(--fresh); font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+  .empty { text-align: center; color: var(--text-faint); padding: 60px 30px; font-size: 14px; line-height: 1.6; }
+  .empty svg { width: 40px; height: 40px; opacity: .4; margin-bottom: 12px; }
+  .group { margin-bottom: 22px; }
+  .group > .label { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--text-faint); font-weight: 600; padding: 0 6px 8px; }
+  .rows { background: var(--glass); border: 1px solid var(--glass-hair); border-radius: 16px; overflow: hidden; box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 6px 18px var(--shadow-s); }
+  .sharebtn { width: 100%; margin: 0 0 16px; display: flex; align-items: center; justify-content: center; gap: 9px; background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 92%, #fff), color-mix(in srgb, var(--accent) 58%, #000)); color: #fff; border: none; border-radius: 14px; padding: 13px; font-size: 14.5px; font-weight: 700; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 5px 16px color-mix(in srgb, var(--accent) 35%, transparent); }
+  .sharebtn svg { width: 18px; height: 18px; }
+  .sharebtn:active { transform: translateY(1px); }
+  .rows.about { display: block; padding: 14px 16px; font-size: 13px; line-height: 1.55; color: var(--text-dim); }
+  .rows.about p { margin: 0 0 11px; }
+  .rows.about p:last-child { margin: 0; }
+  .ab-t { color: var(--text); }
+  .rows.about .lic { padding: 11px 12px; margin: 0 0 11px; background: color-mix(in srgb, var(--urgent) 8%, transparent); border: 1px solid color-mix(in srgb, var(--urgent) 30%, transparent); border-radius: 11px; color: var(--text); }
+  .ab-link a { color: var(--accent); font-weight: 600; text-decoration: none; }
+  /* подписка */
+  .sub-card { margin: 0 0 16px; padding: 16px; border-radius: 16px; background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 92%, #fff), color-mix(in srgb, var(--accent) 55%, #000)); color: #fff; box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 30%, transparent); }
+  .sub-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .sub-plan { font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; opacity: .92; }
+  .sub-status { font-size: 11px; font-weight: 600; background: rgba(255,255,255,.22); padding: 3px 9px; border-radius: 999px; }
+  .sub-price { font-size: 30px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 12px; }
+  .sub-price small { font-size: 15px; font-weight: 600; opacity: .85; }
+  .sub-benefits { margin: 0 0 14px; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .sub-benefits li { font-size: 13px; line-height: 1.3; padding-left: 22px; position: relative; }
+  .sub-benefits li::before { content: '✓'; position: absolute; left: 0; font-weight: 800; }
+  .sub-btn { width: 100%; padding: 13px; border-radius: 12px; border: none; background: #fff; color: var(--accent); font-size: 15px; font-weight: 800; cursor: pointer; }
+  .sub-btn:active { transform: translateY(1px); }
+  .sub-note { font-size: 11px; opacity: .85; margin-top: 9px; line-height: 1.4; text-align: center; }
+  .paywall { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 22px; background: color-mix(in srgb, var(--app-bg) 90%, #000); }
+  .paywall-box { max-width: 360px; text-align: center; background: var(--surface); border: 1px solid var(--hair); border-radius: 20px; padding: 28px 22px; box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+  .pw-logo { width: 56px; height: 56px; margin: 0 auto 14px; border-radius: 16px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+  .pw-logo svg { width: 30px; height: 30px; }
+  .paywall-box h2 { margin: 0 0 8px; font-size: 20px; font-weight: 800; }
+  .paywall-box p { margin: 0 0 16px; font-size: 14px; color: var(--text-dim); line-height: 1.5; }
+  .sub-price.big { color: var(--accent); font-size: 34px; margin-bottom: 16px; }
+  .sub-price.big small { color: var(--text-dim); }
+  .paywall .sub-btn { background: var(--accent); color: #fff; }
+  /* объявления (маркетплейс) */
+  .ad-intro { font-size: 12.5px; color: var(--text-dim); margin: 0 0 12px; line-height: 1.4; }
+  .ad-new-btn { border: none; background: var(--accent); color: #fff; font-weight: 700; font-size: 13px; padding: 7px 14px; border-radius: 999px; cursor: pointer; }
+  .ad-form { background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; padding: 14px; margin: 0 0 16px; display: flex; flex-direction: column; gap: 9px; }
+  .ad-form input, .ad-form textarea, .ad-form select { width: 100%; padding: 10px 12px; border: 1px solid var(--hair); border-radius: 10px; background: var(--app-bg); color: var(--text); font: inherit; font-size: 14px; box-sizing: border-box; }
+  .ad-form textarea { resize: vertical; }
+  .ad-row { display: flex; gap: 10px; align-items: center; }
+  .ad-row input { flex: 1; }
+  .ad-neg { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-dim); white-space: nowrap; }
+  .ad-photo-add { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--accent); cursor: pointer; }
+  .ad-thumbs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .ad-thumbs .thumb { position: relative; width: 64px; height: 64px; border-radius: 8px; overflow: hidden; border: 1px solid var(--hair); }
+  .ad-thumbs .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .ad-thumbs .thumb button { position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; border: none; border-radius: 50%; background: rgba(0,0,0,.6); color: #fff; font-size: 12px; line-height: 1; cursor: pointer; padding: 0; }
+  .ad-rules-note { font-size: 11px; color: var(--text-faint); line-height: 1.4; }
+  .ad-rules-note a { color: var(--accent); }
+  .ad-submit { border: none; background: var(--accent); color: #fff; font-weight: 700; font-size: 15px; padding: 12px; border-radius: 11px; cursor: pointer; }
+  .ad-hint { font-size: 12.5px; text-align: center; color: var(--text-dim); min-height: 16px; }
+  .ads-filters { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 0 0 12px; }
+  .ads-filters .fsel { flex: 1 1 160px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--glass-hair); background: var(--glass); color: var(--text); font-size: 13px; }
+  .adf-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-dim); font-weight: 600; white-space: nowrap; cursor: pointer; }
+  .ad-card { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; padding: 12px; margin: 0 0 10px; position: relative; }
+  .ad-card .ac-new { position: absolute; top: 10px; right: 10px; background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px; text-transform: uppercase; letter-spacing: .03em; }
+  .ad-card .ac-cat { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .04em; }
+  .ad-card h3 { margin: 3px 0 5px; font-size: 15px; }
+  .ad-card .ac-desc { font-size: 13px; color: var(--text-dim); line-height: 1.4; margin: 0 0 8px; white-space: pre-wrap; }
+  .ad-card .ac-photos { display: flex; gap: 6px; overflow-x: auto; margin: 0 0 8px; }
+  .ad-card .ac-photos img { height: 96px; border-radius: 8px; object-fit: cover; }
+  .ad-card .ac-meta { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: var(--text-dim); margin: 0 0 10px; }
+  .ad-card .ac-price { color: var(--text); font-weight: 700; }
+  .ad-card .ac-go { display: block; text-align: center; text-decoration: none; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); font-weight: 700; font-size: 14px; padding: 10px; border-radius: 10px; }
+  .ads-empty { text-align: center; color: var(--text-faint); font-size: 13px; padding: 30px 0; }
+  .myads-block { margin: 0 0 16px; }
+  .myads-toggle { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border: 1px solid var(--hair); border-radius: 12px; background: var(--surface); color: var(--text); font-weight: 700; font-size: 14px; cursor: pointer; }
+  .myads-toggle svg { width: 18px; height: 18px; }
+  .myads-list { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .myad { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; padding: 11px 12px; }
+  .myad-top { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .myad-top h4 { margin: 0; font-size: 14px; flex: 1; }
+  .myad-badge { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .myad-badge.pending { background: color-mix(in srgb, #e5a400 22%, transparent); color: #b07d00; }
+  .myad-badge.approved { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); }
+  .myad-badge.rejected, .myad-badge.expired, .myad-badge.banned { background: color-mix(in srgb, #e5484d 18%, transparent); color: #d33; }
+  .myad-meta { font-size: 11.5px; color: var(--text-dim); margin-bottom: 8px; }
+  .myad-acts { display: flex; gap: 8px; }
+  .myad-acts button { flex: 1; padding: 8px; border-radius: 9px; border: 1px solid var(--hair); background: var(--app-bg); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; }
+  .myad-acts .del { color: #d33; }
+  /* модалка тендера (bottom-sheet) */
+  .modal-ov { position: fixed; inset: 0; z-index: 100; display: flex; align-items: flex-end; justify-content: center; background: rgba(8,14,20,.55); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+  .modal { position: relative; width: 100%; max-width: 620px; background: var(--surface); border-radius: 20px 20px 0 0; padding: 22px 18px calc(20px + env(safe-area-inset-bottom)); box-shadow: 0 -8px 40px rgba(0,0,0,.35); animation: modalup .22s ease; max-height: 88vh; overflow-y: auto; }
+  @keyframes modalup { from { transform: translateY(40px); opacity: .5; } to { transform: none; opacity: 1; } }
+  .modal-x { position: absolute; top: 12px; right: 12px; width: 34px; height: 34px; border-radius: 50%; border: none; background: var(--surface-2); color: var(--text-dim); font-size: 14px; cursor: pointer; display: grid; place-items: center; }
+  .modal-fav { position: absolute; top: 12px; right: 54px; width: 34px; height: 34px; border-radius: 50%; border: none; background: var(--surface-2); color: var(--text-faint); cursor: pointer; display: grid; place-items: center; }
+  .modal-fav svg { width: 18px; height: 18px; }
+  .modal-fav.on { color: #e5484d; }
+  .modal-hide { width: 100%; margin-top: 10px; padding: 9px; border: none; background: transparent; color: var(--text-faint); font-size: 13px; cursor: pointer; }
+  .toast { position: fixed; left: 50%; bottom: calc(74px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 300; display: flex; align-items: center; gap: 14px; background: #1e2a24; color: #fff; padding: 10px 16px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.35); font-size: 13px; max-width: 90vw; }
+  .toast button { background: none; border: none; color: #7fd0b4; font-weight: 700; font-size: 13px; cursor: pointer; }
+  .modal-chips { display: flex; gap: 7px; flex-wrap: wrap; margin: 2px 96px 12px 0; }
+  .modal-title { margin: 0 0 14px; font-size: 16px; font-weight: 700; line-height: 1.32; }
+  .modal-meta { display: flex; flex-direction: column; gap: 9px; margin: 0 0 18px; }
+  .modal-meta .mrow { display: flex; gap: 9px; font-size: 13.5px; align-items: baseline; }
+  .modal-meta .mk { color: var(--text-faint); flex: none; min-width: 82px; }
+  .modal-meta .mv { color: var(--text); font-weight: 600; }
+  .modal-acts { display: flex; gap: 9px; align-items: stretch; }
+  .mbtn { flex: 1; text-align: center; padding: 14px 10px; border-radius: 13px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 7px; line-height: 1.2; }
+  .mbtn-go { background: var(--accent); color: #fff; }
+  .mbtn-ic { flex: none; width: 52px; border-radius: 13px; display: grid; place-items: center; cursor: pointer; border: 1px solid var(--hair); background: var(--surface-2); color: var(--text); transition: opacity .12s; }
+  .mbtn-ic svg { width: 21px; height: 21px; }
+  .mbtn-ic.mail { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
+  .mbtn-ic.sent { color: var(--fresh); border-color: var(--fresh); background: color-mix(in srgb, var(--fresh) 14%, var(--surface)); }
+  .row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--hair); }
+  .row:last-child { border-bottom: none; }
+  .row .ic { width: 20px; flex: none; color: var(--text-dim); display: grid; place-items: center; }
+  .row .ic svg { width: 18px; height: 18px; }
+  .row .rl { font-size: 14.5px; }
+  .row .rv { margin-left: auto; font-size: 13.5px; color: var(--text-dim); font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 7px; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .status-dot.on { background: var(--fresh); }
+  .status-dot.off { background: var(--text-faint); }
+  .status-dot.wait { background: var(--accent); }
+  select.tz { background: var(--surface-2); color: var(--text); border: 1px solid var(--hair); border-radius: 8px; padding: 4px 8px; font-size: 13px; }
+  nav.tabbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 10; display: flex;
+    background: var(--nav-bg);
+    backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border-top: 1px solid color-mix(in srgb, var(--hair) 55%, transparent);
+    padding: 4px 8px calc(4px + env(safe-area-inset-bottom)); }
+  nav.tabbar button { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--tab-c, var(--text-faint)); opacity: .5; font-size: 8.5px; font-weight: 600; padding: 2px 0; transition: opacity .14s, transform .14s; position: relative; }
+  nav.tabbar button svg { width: 19px; height: 19px; }
+  nav.tabbar button[data-tab="tenders"] { --tab-c: var(--accent); }
+  nav.tabbar button[data-tab="fav"]     { --tab-c: #e5484d; }
+  nav.tabbar button[data-tab="ads"]     { --tab-c: #e08a2f; }
+  nav.tabbar button[data-tab="profile"] { --tab-c: #2f7fd9; }
+  nav.tabbar button.active { opacity: 1; transform: translateY(-1px); }
+  nav.tabbar .badge { position: absolute; top: 0; left: 50%; margin-left: 6px; min-width: 16px; height: 16px; padding: 0 4px; background: var(--accent); color: #fff; border-radius: 999px; font-size: 10px; font-weight: 700; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+  .spinner { width: 26px; height: 26px; border: 3px solid var(--hair); border-top-color: var(--accent); border-radius: 50%; margin: 60px auto; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+
+  /* ——— заставка: буровая вышка + нефтяной фонтан ——— */
+  #splash {
+    position: fixed; inset: 0; z-index: 1000;
+    display: grid; place-items: center;
+    background:
+      radial-gradient(120% 90% at 50% 34%, #16324a 0%, #0c1a29 46%, #050c14 100%);
+    animation: splashOut .55s ease 2.15s forwards;
+    overflow: hidden;
+  }
+  /* тёплое свечение «нефтяного пласта» снизу */
+  #splash::after {
+    content:""; position:absolute; left:50%; top:34%;
+    width:320px; height:320px; transform:translate(-50%,-50%);
+    background: radial-gradient(circle, rgba(88,185,154,.20), transparent 62%);
+    animation: glow 2.4s ease-in-out infinite; pointer-events:none;
+  }
+  #splash .flash {
+    position: absolute; inset: 0; background:
+      radial-gradient(circle at 50% 34%, #fff 0%, rgba(255,240,210,.6) 30%, transparent 60%);
+    animation: flash .6s ease .15s forwards; opacity:0;
+  }
+  #splash .stage { position: relative; width: 230px; height: 250px;
+    opacity: 0; transform: scale(.9) translateY(8px);
+    animation: rigIn .8s cubic-bezier(.2,.85,.25,1) .2s forwards; }
+  #splash .rig { position:absolute; inset:0; width:100%; height:100%;
+    filter: drop-shadow(0 6px 20px rgba(0,0,0,.5)); }
+  #splash .drop { fill: #58b99a; opacity: 0;
+    transform-box: fill-box; transform-origin: center;
+    animation: gush 1.5s cubic-bezier(.3,.1,.4,1) .55s forwards; }
+  #splash .drop:nth-child(2){ animation-delay:.62s }
+  #splash .drop:nth-child(3){ animation-delay:.7s }
+  #splash .drop:nth-child(4){ animation-delay:.78s }
+  #splash .drop:nth-child(5){ animation-delay:.86s }
+  #splash .word {
+    position: absolute; bottom: 26%; width: 100%; text-align: center;
+    font-size: 12px; letter-spacing: .42em; text-transform: uppercase;
+    font-weight: 700;
+    background: linear-gradient(100deg,#58b99a,#b8f1df,#58b99a);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    opacity: 0; animation: rigIn .7s ease .7s forwards;
+  }
+  #splash .word small { display:block; margin-top:7px; font-size:9px;
+    letter-spacing:.34em; font-weight:600; color: #6b8299;
+    -webkit-text-fill-color:#6b8299; }
+  @keyframes flash { 0%{opacity:0} 18%{opacity:.85} 100%{opacity:0} }
+  @keyframes glow { 0%,100%{opacity:.6} 50%{opacity:1} }
+  @keyframes rigIn { to { opacity: 1; transform: scale(1) translateY(0); } }
+  @keyframes splashOut { to { opacity: 0; visibility: hidden; } }
+  @keyframes gush {
+    0%   { opacity:0; transform: translateY(0) scale(.5); }
+    18%  { opacity:1; }
+    100% { opacity:0; transform: translateY(-70px) translateX(var(--dx,0)) scale(1.1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #splash { animation: splashOut .3s ease .8s forwards; }
+    #splash .flash, #splash::after { display: none; }
+    #splash .stage, #splash .word { animation: rigIn .3s ease forwards; }
+    #splash .drop { animation: none; opacity:.9; }
+  }
+
+  /* Dense Ledger — компактная рабочая лента */
+  header.app { padding: 8px 13px; padding-top: calc(8px + env(safe-area-inset-top)); gap: 10px; }
+  .logo { width: 36px; height: 36px; border-radius: 11px; background: linear-gradient(145deg,#58b99a,#1b5a49); box-shadow: 0 5px 15px rgba(40,130,105,.22); }
+  .logo svg { width: 21px; height: 21px; fill: none; stroke: #effff9; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .app-name { font-size: 14px; }
+  .app-sub { font-size: 9px; letter-spacing: .11em; margin-top: 3px; }
+  .pane { padding: 8px 8px calc(68px + env(safe-area-inset-bottom)); }
+  .pane-head { padding: 2px 2px 8px; }
+  .pane-head h2 { font-size: 19px; }
+  .toolbar { gap: 6px; margin-bottom: 7px; }
+  .search { border-radius: 10px; padding: 9px 11px; font-size: 13px; box-shadow: none; }
+  .fchips { gap: 6px; }
+  .fsel { min-width: 105px; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; }
+  .fchip { border-radius: 8px; padding: 6px 9px; font-size: 11.5px; box-shadow: none; }
+  /* слитный список: блоки без отступов и скруглений, разделены полоской */
+  #tenders-list, #fav-list { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; overflow: hidden; }
+  .card { background: var(--surface); border: none; border-bottom: 1px solid var(--hair); border-radius: 0; padding: 9px 12px; margin: 0; box-shadow: none; }
+  .card:last-child { border-bottom: none; }
+  .card.new { border: none; border-bottom: 1px solid var(--hair); background: color-mix(in srgb, #2f7fd9 11%, var(--surface)); animation: none; box-shadow: none; }
+  .new-badge { top: 6px; right: 8px; font-size: 9px; letter-spacing: .04em; color: #fff; background: #2f7fd9; padding: 2px 6px; box-shadow: none; }
+  .card.new .c-top { padding-right: 46px; }   /* место под NEW-бейдж, чтобы «(МСК)» не пряталось */
+  /* избранное — весь блок жёлтым (без левой полоски) */
+  .card.fav-mark, .card.fav-hot { background: color-mix(in srgb, var(--warn) 30%, var(--surface)); }
+  .card.fav-hot { background: color-mix(in srgb, var(--urgent) 24%, var(--surface)); }
+  .card.fav-mark::before, .card.fav-hot::before { display: none; }
+  .c-top { gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
+  .chip { font-size: 10.5px; color: var(--accent); background: transparent; padding: 0; }
+  .also-chip { font-size: 9.5px; padding: 1px 5px; }
+  .stpill { font-size: 10px; padding: 1px 6px; }
+  .deadline { font-size: 11.5px; gap: 4px; color: #2f7fd9; font-weight: 700; }
+  .deadline .dot { width: 5px; height: 5px; background: #2f7fd9; }
+  .deadline.urgent { color: var(--urgent); font-weight: 700; }
+  .deadline.urgent .dot { background: var(--urgent); }
+  .fav { width: 24px; height: 24px; }
+  .card h3 { margin: 0 0 5px; font-size: 13px; line-height: 1.25; -webkit-line-clamp: 1; }
+  .city { font-size: 12px; margin: 0 8px 4px 0; gap: 4px; }
+  .city svg { width: 13px; height: 13px; }
+  .seller { font-size: 11px; margin: 0 0 5px; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .seller svg { width: 11px; height: 11px; }
+  .price { font-size: 13.5px; }
+  .price.none { font-size: 11px; }
+  .iact { width: 27px; height: 27px; border-radius: 7px; }
+  .iact svg { width: 14px; height: 14px; }
+  nav.tabbar { background: var(--nav-bg); padding: 5px 8px calc(5px + env(safe-area-inset-bottom)); box-shadow: 0 -7px 28px var(--shadow); }
+  nav.tabbar button { --tab-c: var(--text-faint) !important; opacity: .8; font-size: 8.5px; gap: 1px; }
+  nav.tabbar button.active { --tab-c: var(--accent) !important; opacity: 1; }
+  nav.tabbar button svg { width: 20px; height: 20px; stroke-width: 1.8; }
+  .sharebtn { background: linear-gradient(145deg,#4a9a82,#255d51); box-shadow: 0 5px 16px rgba(37,93,81,.25); }
+  :root[data-theme="dark"] .card, :root[data-theme="dark"] .rows { box-shadow: 0 3px 10px rgba(0,0,0,.24); }
+  :root[data-theme="dark"] header.app { box-shadow: 0 5px 22px rgba(0,0,0,.28); }
+</style>
+</head>
+<body>
+  <div id="login-gate" style="display:none;position:fixed;inset:0;z-index:10000;background:var(--app-bg,#eef1f5);flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;font-family:system-ui,-apple-system,sans-serif">
+    <div style="font-weight:700;font-size:20px;color:var(--text,#14181d)">Отходы в доходы</div>
+    <div id="lg-msg" style="color:var(--text-dim,#5a636d);text-align:center;max-width:320px">Войдите по e-mail, чтобы открыть тендеры</div>
+    <input id="lg-email" type="email" inputmode="email" autocomplete="email" placeholder="you@mail.ru" style="width:min(320px,90vw);padding:12px;border-radius:12px;border:1px solid var(--hair,#d9e2e0);font-size:16px">
+    <input id="lg-code" type="text" inputmode="numeric" maxlength="6" placeholder="код из письма" style="display:none;width:min(320px,90vw);padding:12px;border-radius:12px;border:1px solid var(--hair,#d9e2e0);font-size:16px;letter-spacing:4px;text-align:center">
+    <button id="lg-btn" type="button" style="width:min(320px,90vw);padding:12px;border:0;border-radius:12px;background:#255d51;color:#fff;font-weight:600;font-size:16px;cursor:pointer">Получить код</button>
+    <div style="max-width:320px;font-size:11px;line-height:1.45;color:var(--text-faint,#8b949e);text-align:center">Нажимая «Войти», вы соглашаетесь на обработку персональных данных согласно <a href="../privacy.html" target="_blank" rel="noopener" style="color:var(--accent,#255d51)">Политике конфиденциальности</a>.</div>
+  </div>
+  <div id="splash" aria-hidden="true">
+    <div class="flash"></div>
+    <div class="stage">
+      <svg class="rig" viewBox="0 0 200 240" fill="none"
+           stroke-linecap="round" stroke-linejoin="round">
+        <defs>
+          <linearGradient id="steel" gradientUnits="userSpaceOnUse"
+              x1="100" y1="30" x2="100" y2="210">
+            <stop offset="0" stop-color="#b8f1df"/>
+            <stop offset=".5" stop-color="#58b99a"/>
+            <stop offset="1" stop-color="#1b5a49"/>
+          </linearGradient>
+        </defs>
+        <g stroke="url(#steel)" stroke-width="2.6">
+          <!-- ноги вышки -->
+          <path d="M52 206 L86 44"/><path d="M148 206 L114 44"/>
+          <!-- горизонтальные пояса -->
+          <path d="M60 180 H140"/><path d="M66 150 H134"/>
+          <path d="M72 120 H128"/><path d="M77 92 H123"/><path d="M82 66 H118"/>
+          <!-- X-раскосы -->
+          <path d="M52 206 L140 180 M148 206 L60 180"/>
+          <path d="M60 180 L134 150 M140 180 L66 150"/>
+          <path d="M66 150 L128 120 M134 150 L72 120"/>
+          <path d="M72 120 L123 92 M128 120 L77 92"/>
+          <path d="M77 92 L118 66 M123 92 L82 66"/>
+          <!-- корона и кронблок -->
+          <path d="M86 44 H114 L100 26 Z"/>
+          <circle cx="100" cy="38" r="4" fill="none"/>
+          <path d="M100 26 V16"/>
+          <!-- талевый блок с крюком -->
+          <path d="M94 96 H106 V108 H94 Z" fill="rgba(88,185,154,.15)"/>
+          <path d="M100 108 V118 M96 118 q4 6 8 0"/>
+          <!-- основание -->
+          <path d="M40 206 H160" stroke-width="3.4"/>
+        </g>
+        <!-- штабель труб у основания (трубы · металлолом) -->
+        <g stroke="url(#steel)" stroke-width="2" fill="rgba(88,185,154,.10)">
+          <circle cx="70" cy="226" r="7.5"/><circle cx="85" cy="226" r="7.5"/><circle cx="100" cy="226" r="7.5"/><circle cx="115" cy="226" r="7.5"/><circle cx="130" cy="226" r="7.5"/>
+          <circle cx="77.5" cy="212" r="7.5"/><circle cx="92.5" cy="212" r="7.5"/><circle cx="107.5" cy="212" r="7.5"/><circle cx="122.5" cy="212" r="7.5"/>
+        </g>
+        <!-- нефтяной фонтан из устья -->
+        <g>
+          <circle class="drop" cx="100" cy="30" r="4" style="--dx:-14px"/>
+          <circle class="drop" cx="100" cy="30" r="3" style="--dx:12px"/>
+          <circle class="drop" cx="100" cy="30" r="3.5" style="--dx:-4px"/>
+          <circle class="drop" cx="100" cy="30" r="2.5" style="--dx:20px"/>
+          <circle class="drop" cx="100" cy="30" r="3" style="--dx:-22px"/>
+        </g>
+      </svg>
+    </div>
+    <div class="word">ОТХОДЫ В ДОХОДЫ<small>нефтепродукты · металлолом · трубы</small></div>
+  </div>
+
+  <header class="app">
+    <div class="logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 16.5c0-2.6 2-5.3 5-9.2 3 3.9 5 6.6 5 9.2a5 5 0 0 1-10 0Z"/><path d="M15.7 5.7 18.5 3M17.2 8.3h3.6"/></svg></div>
+    <div>
+      <div class="app-name">ОТХОДЫ В ДОХОДЫ</div>
+      <div class="app-sub">НЕФТЕПРОДУКТЫ · МЕТАЛЛОЛОМ · ТРУБЫ</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="pane active" id="pane-tenders">
+      <div class="pane-head"><h2>Тендеры</h2><span class="count" id="tenders-count"></span></div>
+      <div class="catseg" id="catseg">
+        <button data-cat="all" class="on">Все</button>
+        <button data-cat="oil">Нефтепродукты</button>
+        <button data-cat="pipe">Трубы</button>
+        <button data-cat="metal">Металлолом</button>
+      </div>
+      <div class="toolbar">
+        <input id="search" class="search" type="search" placeholder="Поиск по названию…" autocomplete="off">
+        <button id="filters-btn" class="filters-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>Фильтры</button>
+      </div>
+      <div id="filters-panel" class="filters-panel" style="display:none">
+        <label class="fp-row"><span>Площадка</span><select id="f-site" class="fsel"><option value="">Все площадки</option></select></label>
+        <label class="fp-row"><span>Область</span><select id="f-region" class="fsel"><option value="">Все области</option></select></label>
+        <label class="fp-row"><span>Город</span><input id="f-city" class="fsel" type="text" placeholder="Любой город" autocomplete="off"></label>
+        <label class="fp-row"><span>Сортировка</span><select id="f-sort" class="fsel"><option value="new">Сначала новые</option><option value="deadline">Скоро дедлайн</option><option value="price">Дороже</option></select></label>
+        <label class="fp-row fp-toggle"><span>Только новые</span><input type="checkbox" id="f-new-cb"></label>
+        <label class="fp-row fp-toggle"><span>Показать скрытые</span><input type="checkbox" id="f-hidden-cb"></label>
+      </div>
+      <div id="tenders-list"><div class="spinner"></div></div>
+    </section>
+    <section class="pane" id="pane-ads">
+      <div class="pane-head"><h2>Объявления</h2><button class="ad-new-btn" id="ad-new">＋ Подать</button></div>
+      <div class="ad-intro">Частные объявления о продаже сырья напрямую. Проходят модерацию перед публикацией.</div>
+      <div id="ad-form" class="ad-form" style="display:none">
+        <select id="ad-cat">
+          <option value="oil">Нефтепродукты</option>
+          <option value="metal">Металлолом</option>
+          <option value="pipe">Трубы</option>
+          <option value="other">Другое</option>
+        </select>
+        <input id="ad-title" maxlength="120" placeholder="Заголовок — что продаёте">
+        <textarea id="ad-desc" maxlength="2000" rows="3" placeholder="Описание: объём, состояние, условия вывоза"></textarea>
+        <div class="ad-row">
+          <input id="ad-price" maxlength="40" placeholder="Цена, ₽">
+          <label class="ad-neg"><input type="checkbox" id="ad-neg"> Договорная</label>
+        </div>
+        <input id="ad-region" maxlength="80" placeholder="Регион / город вывоза">
+        <input id="ad-contact" maxlength="80" placeholder="Контакт: @username или телефон">
+        <label class="ad-photo-add">📷 Добавить фото (до 3)<input type="file" id="ad-files" accept="image/*" multiple hidden></label>
+        <div id="ad-thumbs" class="ad-thumbs"></div>
+        <div class="ad-rules-note">Публикуя объявление, вы принимаете <a href="#" onclick="openDoc('../rules.html');return false">правила размещения</a>.</div>
+        <button class="ad-submit" id="ad-submit">Отправить на модерацию</button>
+        <div id="ad-hint" class="ad-hint"></div>
+      </div>
+      <div id="ads-filters" class="ads-filters" style="display:none">
+        <select id="adf-region" class="fsel"><option value="">Все области</option></select>
+        <label class="adf-toggle"><input type="checkbox" id="adf-new"> Только новые</label>
+      </div>
+      <div id="ads-list"><div class="spinner"></div></div>
+    </section>
+    <section class="pane" id="pane-fav">
+      <div class="pane-head"><h2>Избранное</h2><span class="count" id="fav-count"></span></div>
+      <div id="fav-list"></div>
+    </section>
+    <section class="pane" id="pane-profile">
+      <div class="pane-head"><h2>Мой профиль</h2></div>
+      <button id="share-btn" class="sharebtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Поделиться приложением</button>
+      <div id="stats-line" style="display:none; margin:0 0 14px; padding:11px 14px; border-radius:12px; background:var(--glass); border:1px solid var(--glass-hair); font-size:13px; color:var(--text-dim); text-align:center"></div>
+      <button id="export-btn" class="sharebtn" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Выгрузить пользователей на почту</button>
+      <div class="group" id="install-group" style="display:none">
+        <div class="label">Установить на телефон</div>
+        <div class="rows"><div class="row" style="flex-wrap:wrap; gap:8px">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/><path d="M9 6h6"/></svg></span>
+          <span class="rl" style="flex-basis:100%; font-weight:600" id="install-title">Добавьте приложение на экран «Домой»</span>
+          <div id="install-steps" style="flex-basis:100%; font-size:13px; color:var(--text-dim); line-height:1.65"></div>
+          <button class="ebtn" id="install-btn" style="display:none; align-self:flex-start">⬇ Установить</button>
+        </div></div>
+      </div>
+      <div class="sub-card">
+        <div class="sub-head"><span class="sub-plan">Подписка</span><span class="sub-status" id="sub-status">пробный период</span></div>
+        <div class="sub-price">499 ₽<small> / месяц</small></div>
+        <ul class="sub-benefits">
+          <li>Мгновенные алерты о новых тендерах</li>
+          <li>Полная лента: нефтепродукты, металлолом, трубы</li>
+          <li>Отправка документов лота в Телеграм и на почту</li>
+          <li>Все площадки реализации, поиск и избранное</li>
+        </ul>
+        <button class="sub-btn" id="sub-btn">Оформить за 499 ₽ / мес</button>
+        <div class="sub-note">Первые 3 дня — бесплатно. Далее 499 ₽/мес, оплата картой. Отписаться можно в любой момент.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:#fff;text-decoration:underline">условия оферты</a>.</div>
+      </div>
+      <div class="myads-block">
+        <button class="myads-toggle" id="myads-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3z"/><path d="M8 9h8M8 12h5"/></svg>Мои объявления</button>
+        <div id="myads-list" class="myads-list" style="display:none"></div>
+      </div>
+      <div class="group" id="alerts-group">
+        <div class="label">🔔 Мои уведомления</div>
+        <div class="ehint" style="margin-bottom:8px">Получайте лот сразу, как он появится. Слова через запятую (совпадение по любому). Регион и категория — по желанию.</div>
+        <div id="alerts-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+        <div class="rows"><div class="row" style="flex-wrap:wrap;gap:8px">
+          <input id="al-kw" type="text" placeholder="напр.: отработанное масло, мазут" style="flex-basis:100%;padding:11px;border-radius:10px;border:1px solid var(--hair);font-size:15px">
+          <select id="al-cat" class="tz" style="flex:1;min-width:130px"><option value="">Все категории</option><option value="oil">Нефтепродукты</option><option value="pipe">Трубы</option><option value="metal">Металлолом</option></select>
+          <input id="al-reg" type="text" placeholder="регион (необязательно)" style="flex:1;min-width:130px;padding:11px;border-radius:10px;border:1px solid var(--hair);font-size:15px">
+          <button class="ebtn" id="al-add" type="button">Добавить подписку</button>
+          <div class="emsg" id="al-msg"></div>
+        </div></div>
+      </div>
+      <div class="group">
+        <div class="label">Уведомления</div>
+        <div class="rows">
+          <div class="row">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <span class="rl">Часовой пояс</span>
+            <span class="rv"><select class="tz" id="tz"><option>МСК (UTC+3)</option><option>Екатеринбург (UTC+5)</option><option>Новосибирск (UTC+7)</option><option>Владивосток (UTC+10)</option></select></span>
+          </div>
+          <div class="row">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"/></svg></span>
+            <span class="rl">Оформление</span>
+            <span class="rv"><select class="tz" id="theme-sel"><option value="auto">Как в Telegram</option><option value="light">Светлая</option><option value="dark">Тёмная</option></select></span>
+          </div>
+        </div>
+      </div>
+      <div class="group">
+        <div class="label">Электронная почта</div>
+        <div class="rows">
+          <div class="row" style="flex-wrap:wrap; gap:10px">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+            <span class="rl">E-mail</span>
+            <span class="rv" id="email-state"></span>
+            <div id="email-box" style="flex-basis:100%; display:flex; flex-direction:column; gap:8px"></div>
+          </div>
+        </div>
+        <div class="ehint">На эту почту приходят тендеры по кнопке «Отправить на почту». Подтверждается кодом.<br>Регистрируя почту, вы соглашаетесь на обработку персональных данных согласно <a href="#" onclick="openDoc('../privacy.html');return false" style="color:var(--accent);text-decoration:underline">Политике конфиденциальности</a>.</div>
+      </div>
+      <div class="group">
+        <div class="label">Площадки · <span id="plat-on"></span> из 13</div>
+        <div class="efield">
+          <input id="suggest-url" class="search" type="url" placeholder="Ссылка на площадку — предложить" autocomplete="off" style="font-size:13px">
+          <button class="ebtn" id="suggest-btn">Предложить</button>
+        </div>
+        <div class="ehint" id="suggest-hint" style="margin-bottom:10px">Вставьте ссылку на площадку реализации — изучим и подключим. Авто-подключение к любому сайту невозможно (у каждого свой формат), но каждую заявку разбираем вручную.</div>
+        <div class="rows" id="plat-rows"></div>
+      </div>
+      <div class="group">
+        <div class="label">О приложении и лицензии</div>
+        <div class="rows about">
+          <p><b class="ab-t">Отходы в доходы</b> — тендеры на <b>реализацию</b> (продажу): нефтепродукты, металлолом, трубы. Только продажи — закупки, поставки и услуги отфильтрованы.</p>
+          <div class="lic"><b>⚠️ Лицензии для участия.</b> Для законной работы, как правило, нужны:<br>• на <b>лом</b> чёрных/цветных металлов — лицензия на заготовку, хранение, переработку и реализацию лома (ФЗ-99 «О лицензировании»);<br>• на <b>отходы</b> I–IV классов опасности (отработанные нефтепродукты, масла, нефтешлам) — лицензия на сбор, транспортирование, обработку, утилизацию и обезвреживание (Росприроднадзор; ФЗ-99 и ФЗ-89 «Об отходах»).<br>Перечень зависит от вида лома/отхода и региона — уточняйте у профильного юриста и в условиях каждого лота. Это информационная справка, не юридическая консультация.</div>
+          <p class="ab-link"><a href="https://t.me/nfresursbot" target="_blank" rel="noopener">Бот: @nfresursbot</a> · команды /faq, /help</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <button data-tab="tenders" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Тендеры</button>
+    <button data-tab="fav"><span class="badge" id="fav-badge" style="display:none">0</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.5-9.3-9A5 5 0 0 1 12 5.5 5 5 0 0 1 21.3 11C19 15.5 12 20 12 20Z"/></svg>Избранное</button>
+    <button data-tab="ads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 6h18l-2 7H7L5 4H2"/><circle cx="9" cy="19" r="1.6"/><circle cx="17" cy="19" r="1.6"/></svg>Продать</button>
+    <button data-tab="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>Профиль</button>
+  </nav>
+
+  <div id="paywall" class="paywall" style="display:none">
+    <div class="paywall-box">
+      <div class="pw-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+      <h2>Пробный период закончился</h2>
+      <p>3 дня бесплатного доступа истекли. Оформите подписку, чтобы продолжить получать тендеры по реализации.</p>
+      <div class="sub-price big">499 ₽<small> / месяц</small></div>
+      <button class="sub-btn" id="pw-btn">Оформить подписку</button>
+      <div class="sub-note">Оплата картой через ЮKassa. Отписаться можно в любой момент.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:var(--accent);text-decoration:underline">условия оферты</a>.</div>
+    </div>
+  </div>
+
+  <div id="modal" class="modal-ov" style="display:none">
+    <div class="modal" role="dialog">
+      <button class="modal-x" id="modal-x" aria-label="Закрыть">✕</button>
+      <button class="modal-fav" id="modal-fav" aria-label="В избранное"></button>
+      <div class="modal-chips" id="modal-chips"></div>
+      <h3 class="modal-title" id="modal-title"></h3>
+      <div class="modal-meta" id="modal-meta"></div>
+      <div class="modal-acts">
+        <a class="mbtn mbtn-go" id="modal-go" target="_blank" rel="noopener">Открыть тендер</a>
+        <button class="mbtn-ic" id="modal-send" title="Отправить карточку в Телеграм"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M22 3 2 10.5l6.5 2.2M22 3l-3 18-8-6.3M22 3 8.5 14.7M8.5 14.7V20l3-3.9"/></svg></button>
+        <button class="mbtn-ic mail" id="modal-mail" title="Отправить карточку на почту"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button>
+      </div>
+      <button class="modal-hide" id="modal-hide">Не подходит — скрыть из ленты</button>
+    </div>
+  </div>
+  <div id="toast" class="toast" style="display:none"><span id="toast-msg"></span><button id="toast-undo">Отменить</button></div>
+
+<script>window.TENDERS_DATA=/*__DATA_START__*/{"tenders":[]}/*__DATA_END__*/;</script>
+<script>
+// заставку убираем принудительно через 2 c (не полагаемся на CSS-анимацию)
+setTimeout(function(){ var s=document.getElementById('splash'); if(s){ s.style.transition='opacity .4s'; s.style.opacity='0'; setTimeout(function(){ if(s&&s.parentNode) s.parentNode.removeChild(s); },450); } }, 2800);
+
+// Сигнал Telegram «приложение готово» НАПРЯМУЮ, в обход SDK — чтобы
+// экран загрузки Telegram убирался на ЛЮБОЙ версии клиента (иначе на
+// части версий SDK не подаёт сигнал и приложение висит на загрузке).
+function tgRaw(type, data){
+  var payload = JSON.stringify(data || {});
+  try { if (window.TelegramWebviewProxy && window.TelegramWebviewProxy.postEvent)
+        window.TelegramWebviewProxy.postEvent(type, false, payload); } catch(_){}
+  try { if (window.external && window.external.notify)
+        window.external.notify(JSON.stringify({eventType:type, eventData:data||{}})); } catch(_){}
+  try { if (window.parent)
+        window.parent.postMessage(JSON.stringify({eventType:type, eventData:data||{}}), '*'); } catch(_){}
+}
+tgRaw('web_app_ready');
+tgRaw('web_app_expand');
+
+var themePref = 'auto';
+try { themePref = localStorage.getItem('theme') || 'auto'; } catch(_){}
+function applyTheme(){
+  var root = document.documentElement;
+  if (themePref === 'light' || themePref === 'dark') { root.setAttribute('data-theme', themePref); return; }
+  var tgw = window.Telegram && window.Telegram.WebApp;              // auto: как в Telegram
+  if (tgw && tgw.colorScheme) root.setAttribute('data-theme', tgw.colorScheme);
+  else root.removeAttribute('data-theme');                          // вне Telegram — по системной
+}
+function setTheme(v){ themePref = v; try { localStorage.setItem('theme', v); } catch(_){} applyTheme(); }
+applyTheme();
+
+var tg = null;
+try {
+  tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+  if (tg) {
+    try { tg.ready(); } catch(_){}
+    try { tg.expand(); } catch(_){}
+    try {
+      applyTheme(); tg.onEvent('themeChanged', applyTheme);
+    } catch(_){}
+  }
+} catch(_) { tg = null; }
+
+const PLATFORMS = {tektorg:'ТЭК-Торг',rosneft:'Роснефть',etpgpb:'ЭТП ГПБ',b2b_center:'B2B-Center',onlinecontract:'OnlineContract',sberbank_ast:'Сбербанк-АСТ',interrao:'Интер РАО',nelikvidi:'Неликвиды',slavneft:'Славнефть',isource:'isource Reserve',bidzaar:'Bidzaar',alrosa:'АЛРОСА',reo:'ЭТП РЭО'};
+const PSTATE = {tektorg:'on',rosneft:'on',etpgpb:'on',b2b_center:'on',onlinecontract:'on',sberbank_ast:'on',interrao:'on',nelikvidi:'wait',slavneft:'on',isource:'on',bidzaar:'on',alrosa:'on',reo:'on'};
+const REF = new Date();
+let TENDERS = [], favs = new Set(), seen = new Set(), statuses = {};
+
+function cleanTitle(t){return String(t==null?'':t).replace(/^Запрос предложений №\s*\d+\s*/,'').replace(/^Условия процедуры реализации\s*/i,'').replace(/\s+/g,' ').trim();}
+// XSS-защита: данные тендеров скрейпятся с внешних площадок — не доверяем.
+function safeUrl(u){ u=String(u==null?'':u); return /^https?:\/\//i.test(u)?u.replace(/"/g,'%22'):'#'; }
+function fmtPrice(p){if(!p)return null;const m=p.match(/([\d\s.,]+)\s*(RUB|₽|руб)?/i);if(!m)return p;let n=parseFloat(m[1].replace(/\s/g,'').replace(',','.'));if(isNaN(n))return p;if(n===0)return null;return n.toLocaleString('ru-RU',{maximumFractionDigits:0})+' ₽';}
+function pDate(d){if(!d)return null;let m=d.match(/(\d{4})-(\d{2})-(\d{2})/);if(m)return new Date(+m[1],+m[2]-1,+m[3]);m=d.match(/(\d{2})\.(\d{2})\.(\d{4})/);if(m)return new Date(+m[3],+m[2]-1,+m[1]);return null;}
+function dlTime(d){var m=String(d||'').match(/(?:T|\s)(\d{2}):(\d{2})/);if(!m||m[1]==='00'&&m[2]==='00')return '';return ' в '+m[1]+':'+m[2]+' (МСК)';}
+// абсолютное время дедлайна (трактуем как МСК, UTC+3); без времени — конец дня 23:59
+function pDateMs(d){ if(!d)return null; var s=String(d),m=s.match(/(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?/),y,mo,dd,hh,mm;
+  if(m){y=+m[1];mo=+m[2];dd=+m[3];hh=m[4]!=null?+m[4]:23;mm=m[5]!=null?+m[5]:59;}
+  else{m=s.match(/(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2}))?/);if(!m)return null;dd=+m[1];mo=+m[2];y=+m[3];hh=m[4]!=null?+m[4]:23;mm=m[5]!=null?+m[5]:59;}
+  return Date.UTC(y,mo-1,dd,hh-3,mm); }
+function dlInfo(d){var ms=pDateMs(d);if(ms==null)return{txt:'срок в описании',cls:''};var now=Date.now();var tm=dlTime(d);var lab=new Date(ms).toLocaleDateString('ru-RU',{day:'numeric',month:'short',timeZone:'Europe/Moscow'});if(ms<now)return{txt:'завершён',cls:''};var days=Math.floor((ms-now)/864e5);if(days<=2)return{txt:`до ${lab}${tm} · ${days===0?'сегодня':days+' дн.'}`,cls:'urgent'};return{txt:`до ${lab}${tm}`,cls:days<=14?'':'fresh'};}
+const heart=f=>f?'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-7-4.5-9.3-9A5 5 0 0 1 12 5.5 5 5 0 0 1 21.3 11C19 15.5 12 20 12 20Z"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.5-9.3-9A5 5 0 0 1 12 5.5 5 5 0 0 1 21.3 11C19 15.5 12 20 12 20Z"/></svg>';
+
+function key(t){return t.site+':'+(t.url||t.title);}
+function daysLeft(d){const dt=pDate(d);if(!dt)return null;return Math.round((dt-REF)/864e5);}
+// регион с сервера (обогащение по детальной странице)
+function regionOf(t){ return (t.region||'').trim(); }
+// город вывоза — с сервера, иначе вытягиваем из названия/продавца
+function cityOf(t){
+  if(t.city) return (/^г\.?\s/i.test(t.city)?'':'г. ')+t.city;
+  if(t.region) return t.region;
+  var s=(t.title||'')+' | '+(t.seller||'');
+  var m=s.match(/\bг\.?\s*([А-ЯЁ][а-яё][а-яё\-]{2,})/);
+  if(m) return 'г. '+m[1];
+  m=s.match(/([А-ЯЁ][а-яё\-]+ская)\s+(?:област|обл)/i);
+  if(m) return m[1]+' обл.';
+  m=s.match(/(Ханты-Мансийск|Нижневартовск|Сургут|Ноябрьск|Уренгой|Усинск|Альметьевск|Оренбург|Астрахан[ьи]|Самар[аы]|Уф[аы]|Казан[ьи]|Пермь|Тюмен[ьи]|Ижевск)/i);
+  if(m) return 'г. '+m[1];
+  return '';
+}
+function plural(n,a,b,c){n=Math.abs(n)%100;const n1=n%10;if(n>10&&n<20)return c;if(n1>1&&n1<5)return b;if(n1===1)return a;return c;}
+const STAT={'':{t:'+ статус',c:''},interest:{t:'Интересно',c:'st-i'},prep:{t:'Готовим',c:'st-p'},skip:{t:'Пропустить',c:'st-s'}};
+const STAT_ORDER=['','interest','prep','skip'];
+// «новый» = ещё не просмотрен И появился недавно (до 3 дней).
+// при прокрутке карточка помечается просмотренной и рамка снимается.
+// база «Новый»: лот новее прошлого визита пользователя (переживает
+// перезапуск/переоткрытие) И не старше 7 дней И не открыт вручную.
+// Потеря хранилища → база=сейчас → ничего не «новое» (не флудим).
+var SESSION_LASTVISIT = Date.now();
+function isNew(t){ if(!t.first_seen||seen.has(key(t))) return false; var ts=Date.parse(t.first_seen); return !isNaN(ts) && ts>SESSION_LASTVISIT && (Date.now()-ts) < 7*864e5; }
+function priceNum(p){ if(!p) return -1; var m=String(p).match(/([\d\s.,]+)/); if(!m) return -1; var n=parseFloat(m[1].replace(/\s/g,'').replace(',','.')); return isNaN(n)?-1:n; }
+function card(t){
+  const price=fmtPrice(t.price), dl=dlInfo(t.deadline), on=favs.has(key(t));
+  const also=(t.also||[]).length?`<span class="also-chip">+${t.also.length}</span>`:'';
+  const nw=isNew(t); const kk=encodeURIComponent(key(t));
+  const stv=statuses[key(t)]||''; const st=STAT[stv];
+  const dLeft=daysLeft(t.deadline);
+  const hot=on && dLeft!==null && dLeft>=0 && dLeft<=3;   // избранное и ≤3 дней
+  const favCls=on?(hot?' fav-hot':' fav-mark'):'';
+  const cd=hot?`<span class="dleft">${dLeft===0?'сегодня последний день':'осталось '+dLeft+' '+plural(dLeft,'день','дня','дней')}</span>`:'';
+  const city=cityOf(t);
+  return `<article class="card${nw?' new':''}${favCls}" data-key="${kk}">${nw?'<span class="new-badge">Новый</span>':''}<div class="c-top"><span class="chip">${escH(t.site_title||PLATFORMS[t.site]||t.site)}</span>${also}${cd}<span class="deadline ${dl.cls}"><span class="dot"></span>${dl.txt}</span><button class="fav ${on?'on':''}" data-k="${kk}">${heart(on)}</button></div>
+  <h3>${escH(cleanTitle(t.title))}</h3>
+  ${city?`<div class="city"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>Вывоз: ${escH(city)}</div>`:''}
+  ${t.volume?`<div class="vol">📦 ${escH(t.volume)}</div>`:''}
+  ${t.seller?`<div class="seller"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>${escH(t.seller)}</div>`:''}
+  <div class="c-foot">${price?`<span class="price">${escH(price)}</span>`:'<span class="price none">Цена не указана</span>'}<span class="c-act"><a class="iact" title="Открыть на площадке" href="${safeUrl(t.url)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a><button class="iact send-btn" title="На почту" data-send="${encodeURIComponent(key(t))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button></span></div></article>`;
+}
+// модалка тендера: краткое описание + Перейти / Отправить документы
+let _modalT=null;
+function openTender(t){
+  _modalT=t;
+  // открыли предпросмотр — снимаем метку NEW (во всех вкладках)
+  var kk=key(t);
+  if(!seen.has(kk)){ seen.add(kk); saveSeen();
+    document.querySelectorAll('.card[data-key="'+encodeURIComponent(kk)+'"]').forEach(function(el){ el.classList.remove('new'); var b=el.querySelector('.new-badge'); if(b)b.remove(); }); }
+  var cat={oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом'}[t.category||'oil']||'Нефтепродукты';
+  document.getElementById('modal-chips').innerHTML='<span class="chip">'+escH(t.site_title||PLATFORMS[t.site]||t.site)+'</span><span class="chip" style="background:var(--surface-2);color:var(--text-dim)">'+cat+'</span>';
+  document.getElementById('modal-title').textContent=cleanTitle(t.title);
+  var city=cityOf(t), price=fmtPrice(t.price), dl=dlInfo(t.deadline);
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function row(k,v){ return v?'<div class="mrow"><span class="mk">'+k+'</span><span class="mv">'+esc(v)+'</span></div>':''; }
+  var also=(t.also&&t.also.length)?t.also.map(function(a){return a.site_title||PLATFORMS[a.site]||a.site;}).join(', '):'';
+  document.getElementById('modal-meta').innerHTML =
+    row('Номер закупки', t.number||'') +
+    row('Категория', cat) +
+    row('Цена', price||'Цена не указана') + row('Приём до', dl.txt) +
+    row('Объём', t.volume||'') +
+    row('Продавец', t.seller||'') +
+    row('Область', regionOf(t)||'') + row('Регион вывоза', city||'') +
+    row('Площадка', t.site_title||PLATFORMS[t.site]||t.site) +
+    row('Также на', also);
+  var mf=document.getElementById('modal-fav'), isf=favs.has(key(t)); mf.innerHTML=heart(isf); mf.classList.toggle('on',isf);
+  document.getElementById('modal-go').href=t.url;
+  ['modal-send','modal-mail'].forEach(function(id){ var b=document.getElementById(id); if(b){ b.classList.remove('sent'); b.style.opacity=''; b.dataset.busy=''; } });
+  document.getElementById('modal').style.display='flex';
+  try{ if(tg&&tg.HapticFeedback&&tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light'); }catch(_){}
+}
+function closeTender(){ var m=document.getElementById('modal'); if(m)m.style.display='none'; _modalT=null; }
+var _toastT=null;
+function showToast(msg, undoFn){
+  var el=document.getElementById('toast'); if(!el) return;
+  document.getElementById('toast-msg').textContent=msg;
+  el.style.display='flex'; el._undo=undoFn||null;
+  if(_toastT) clearTimeout(_toastT);
+  _toastT=setTimeout(function(){ el.style.display='none'; el._undo=null; }, 5000);
+}
+function hideTender(t){ if(!t)return; var k=key(t); statuses[k]='skip'; saveStatuses();
+  if(tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light'); render();
+  showToast('Скрыто из ленты', function(){ if(statuses[k]==='skip'){ delete statuses[k]; saveStatuses(); render(); } });
+}
+function sendDocs(channel, btn, label){
+  if(!_modalT || !btn || btn.dataset.busy) return;
+  btn.dataset.busy='1'; btn.style.opacity='.5';
+  var al=function(m){ try{ if(tg&&tg.showAlert) tg.showAlert(m); }catch(_){} };
+  api('/api/tender/docs',{tender:_modalT, channel:channel}).then(function(){
+    btn.style.opacity=''; btn.dataset.busy=''; btn.classList.add('sent');
+    if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success');
+    al(label+' — отправлено ✓');
+  }).catch(function(err){ btn.style.opacity=''; btn.dataset.busy=''; al((err&&err.message)||'Не удалось. Напишите боту /start.'); });
+}
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeTender(); });
+const FILT={q:'',site:'',region:'',city:'',sort:'new',onlyNew:false,showHidden:false,cat:'all'};
+function catCount(cat){return TENDERS.filter(t=>(t.category||'oil')===cat).length;}
+function isHidden(t){ return statuses[key(t)]==='skip'; }
+function feedItems(){
+  let a=TENDERS.slice();
+  if(FILT.cat!=='all') a=a.filter(t=>(t.category||'oil')===FILT.cat); // переключатель
+  a=a.filter(t=>dlInfo(t.deadline).txt!=='завершён');   // §3 завершённые прячем
+  if(FILT.showHidden) a=a.filter(isHidden);              // режим «Скрытые»
+  else a=a.filter(t=>!isHidden(t));                      // §5 «Не подходит» скрыты
+  if(FILT.q){const q=FILT.q.toLowerCase();a=a.filter(t=>(cleanTitle(t.title)).toLowerCase().includes(q)||(t.site_title||'').toLowerCase().includes(q));}
+  if(FILT.site) a=a.filter(t=>t.site===FILT.site);
+  if(FILT.region==='__none__') a=a.filter(t=>!regionOf(t));
+  else if(FILT.region) a=a.filter(t=>regionOf(t)===FILT.region);
+  if(FILT.city){const c=FILT.city.toLowerCase();a=a.filter(t=>((t.city||'')+' '+cityOf(t)).toLowerCase().includes(c));}
+  if(FILT.onlyNew) a=a.filter(isNew);
+  if(FILT.sort==='deadline') a.sort((x,y)=>(pDate(x.deadline)||new Date(9e15))-(pDate(y.deadline)||new Date(9e15)));
+  else if(FILT.sort==='price') a.sort((x,y)=>priceNum(y.price)-priceNum(x.price));
+  else a.sort((x,y)=>(Date.parse(y.first_seen)||0)-(Date.parse(x.first_seen)||0));
+  return a;
+}
+function fillSiteFilter(){
+  const sel=document.getElementById('f-site'); if(!sel||sel.dataset.filled) return;
+  const sites=[...new Set(TENDERS.map(t=>t.site))];
+  sel.insertAdjacentHTML('beforeend', sites.map(s=>`<option value="${s}">${PLATFORMS[s]||s}</option>`).join(''));
+  sel.dataset.filled='1';
+}
+function fillRegionFilter(){
+  const sel=document.getElementById('f-region'); if(!sel) return;
+  // регионы, реально встречающиеся в ленте (у обогащённых лотов)
+  const regs=[...new Set(TENDERS.map(regionOf).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ru'));
+  const hasNone=TENDERS.some(t=>!regionOf(t));
+  const sig=regs.join('|')+'#'+hasNone; if(sel.dataset.sig===sig) return;
+  const cur=sel.value;
+  const noneOpt=hasNone?'<option value="__none__">Регион не указан</option>':'';
+  sel.innerHTML='<option value="">Все области</option>'+regs.map(r=>`<option value="${r}">${r}</option>`).join('')+noneOpt;
+  if(cur==='__none__'||regs.indexOf(cur)>=0) sel.value=cur; else FILT.region='';
+  sel.dataset.sig=sig;
+}
+function observeNew(){ /* метка NEW снимается при открытии предпросмотра, не по прокрутке */ }
+function render(){
+  fillSiteFilter();
+  fillRegionFilter();
+  const items=feedItems();
+  document.getElementById('tenders-list').innerHTML = items.length?items.map(card).join(''):`<div class="empty">${FILT.showHidden?'Скрытых тендеров нет.':'Ничего не найдено.'}</div>`;
+  document.getElementById('tenders-count').textContent = items.length+' '+plural(items.length,'тендер','тендера','тендеров');
+  const fv=TENDERS.filter(t=>favs.has(key(t)));
+  document.getElementById('fav-list').innerHTML = fv.length?fv.map(card).join(''):`<div class="empty">${heart(false)}<div>Отмечайте тендеры ♥ — они появятся здесь.</div></div>`;
+  document.getElementById('fav-count').textContent = fv.length+' сохранено';
+  const b=document.getElementById('fav-badge'); b.textContent=fv.length; b.style.display=fv.length?'grid':'none';
+  document.getElementById('plat-on').textContent = Object.values(PSTATE).filter(s=>s==='on').length;
+  const st={on:'работает',off:'выкл',wait:'скоро'};
+  document.getElementById('plat-rows').innerHTML = Object.keys(PLATFORMS).map(k=>`<div class="row"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg></span><span class="rl">${PLATFORMS[k]}</span><span class="rv"><span class="status-dot ${PSTATE[k]}"></span>${st[PSTATE[k]]}</span></div>`).join('');
+  requestAnimationFrame(observeNew);
+}
+// фильтры ленты
+document.addEventListener('input',e=>{ if(e.target.id==='search'){ FILT.q=e.target.value.trim(); render(); }
+  else if(e.target.id==='f-city'){ FILT.city=e.target.value.trim(); render(); } });
+document.addEventListener('change',e=>{
+  if(e.target.id==='f-site'){ FILT.site=e.target.value; render(); }
+  else if(e.target.id==='f-region'){ FILT.region=e.target.value; render(); }
+  else if(e.target.id==='adf-region'){ ADFILT.region=e.target.value; renderAds(); }
+  else if(e.target.id==='adf-new'){ ADFILT.onlyNew=e.target.checked; renderAds(); }
+  else if(e.target.id==='f-sort'){ FILT.sort=e.target.value; render(); }
+  else if(e.target.id==='f-new-cb'){ FILT.onlyNew=e.target.checked; render(); }
+  else if(e.target.id==='f-hidden-cb'){ FILT.showHidden=e.target.checked; render(); }
+  else if(e.target.id==='theme-sel'){ setTheme(e.target.value); if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged(); }
+});
+(function(){ var s=document.getElementById('theme-sel'); if(s) s.value=themePref; })();
+
+// избранное: Telegram CloudStorage если поддержан (>=6.1), иначе
+// localStorage. Любые ошибки хранилища НЕ должны ронять ленту.
+function cloudOK(){
+  try { return tg && tg.isVersionAtLeast && tg.isVersionAtLeast('6.1')
+        && tg.CloudStorage && tg.CloudStorage.getItem; }
+  catch(_) { return false; }
+}
+function loadLocal(){
+  try{(JSON.parse(localStorage.getItem('favs')||'[]')).forEach(x=>favs.add(x));}catch(_){}
+}
+function loadFavs(cb){
+  if(cloudOK()){
+    try{
+      tg.CloudStorage.getItem('favs',(e,v)=>{
+        try{ if(v)(JSON.parse(v)).forEach(x=>favs.add(x)); }catch(_){}
+        cb();
+      });
+      return;
+    }catch(_){ /* провал облака — падаем на localStorage */ }
+  }
+  loadLocal(); cb();
+}
+function saveFavs(){
+  const arr=JSON.stringify([...favs]);
+  try{
+    if(cloudOK()){ tg.CloudStorage.setItem('favs',arr); return; }
+  }catch(_){}
+  try{ localStorage.setItem('favs',arr); }catch(_){}
+}
+// «Новые» = появившиеся недавно (до 7 дней) и ещё НЕ открытые. Метка
+// снимается, когда открыл предпросмотр (openTender). seen хранится в
+// localStorage и CloudStorage.
+function loadSeen(cb){
+  var apply=function(v){ try{ if(v)(JSON.parse(v)).forEach(function(x){seen.add(x);}); }catch(_){}; cb&&cb(); };
+  try{ if(cloudOK()){ tg.CloudStorage.getItem('seen',(e,v)=>apply(v)); return; } }catch(_){}
+  try{ apply(localStorage.getItem('seen')); }catch(_){ apply(null); }
+}
+function saveSeen(){
+  var arr=JSON.stringify([...seen].slice(-3000));
+  try{ if(cloudOK()){ tg.CloudStorage.setItem('seen',arr); } }catch(_){}
+  try{ localStorage.setItem('seen',arr); }catch(_){}
+}
+// метка последнего визита: читаем прошлую (база для «Новый» этой сессии),
+// тут же сохраняем «сейчас» для следующего запуска
+function loadLastVisit(cb){
+  var apply=function(v){
+    var t=parseInt(v,10);
+    SESSION_LASTVISIT=(!isNaN(t)&&t>0)?t:Date.now();  // первый визит → ничего не новое
+    var nowStr=String(Date.now());
+    try{ if(cloudOK()){ tg.CloudStorage.setItem('lastvisit',nowStr); } }catch(_){}
+    try{ localStorage.setItem('lastvisit',nowStr); }catch(_){}
+    cb&&cb();
+  };
+  try{ if(cloudOK()){ tg.CloudStorage.getItem('lastvisit',(e,v)=>apply(v)); return; } }catch(_){}
+  try{ apply(localStorage.getItem('lastvisit')); }catch(_){ apply(null); }
+}
+// статусы лотов (интересно/готовим/пропустить)
+function loadStatuses(cb){
+  try{ if(cloudOK()){ tg.CloudStorage.getItem('statuses',(e,v)=>{ try{ if(v)statuses=JSON.parse(v)||{}; }catch(_){}; cb&&cb(); }); return; } }catch(_){}
+  try{ statuses=JSON.parse(localStorage.getItem('statuses')||'{}')||{}; }catch(_){}
+  cb&&cb();
+}
+function saveStatuses(){
+  const s=JSON.stringify(statuses);
+  try{ if(cloudOK()){ tg.CloudStorage.setItem('statuses',s); return; } }catch(_){}
+  try{ localStorage.setItem('statuses',s); }catch(_){}
+}
+
+// ——— почта и отправка тендеров через бэкенд ———
+const initData = (tg && tg.initData) || '';
+function SESS(){ try{ return localStorage.getItem('session')||''; }catch(_){ return ''; } }
+// бэкенд живёт на сервере (nip.io); приложение на github.io — зовём по
+// абсолютному адресу (CORS разрешён на сервере). На самом сервере — относительно.
+const API_BASE = (location.hostname.indexOf('nip.io')>=0 || location.hostname==='127.0.0.1' || location.hostname==='localhost') ? '' : 'https://soft-snowflake-37cc.zhuganoff.workers.dev';
+function api(path, body){
+  var ctrl=window.AbortController?new AbortController():null;
+  var to=ctrl?setTimeout(function(){try{ctrl.abort();}catch(_){}},12000):null;
+  return fetch(API_BASE+path, {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(Object.assign({initData:initData, session:SESS()}, body||{})), signal: ctrl&&ctrl.signal})
+    .then(async r=>{ if(to)clearTimeout(to); const d=await r.json().catch(()=>({})); if(!r.ok){ var e1=new Error(d.error||('ошибка '+r.status)); e1.status=r.status; throw e1; } return d; },
+      err=>{ if(to)clearTimeout(to); var e2=new Error('Сервер недоступен — возможно, VPN блокирует. Отключите VPN и повторите.'); e2.status=0; throw e2; });
+}
+// отметка визита (аналитика; тихо, не мешает загрузке)
+try{ if(initData) api('/api/visit',{}).catch(()=>{}); }catch(_){}
+let EMAIL = {email:'', verified:false};
+function renderEmail(){
+  const st=document.getElementById('email-state'), box=document.getElementById('email-box');
+  if(!st||!box) return;
+  if(EMAIL.verified){
+    st.innerHTML='<span class="everified">✓ подтверждена</span>';
+    var byEmail=false;
+    try { byEmail = !!SESS() && !(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData); } catch(_){}
+    if(byEmail){
+      // почта входа — менять её здесь нельзя (это идентификатор аккаунта)
+      box.innerHTML=`<div class="emsg">${EMAIL.email}</div><div class="ehint">Это почта входа — на неё приходят тендеры по кнопке «Отправить на почту».</div>`;
+    } else {
+      box.innerHTML=`<div class="emsg">${EMAIL.email}</div><button class="ebtn ghost" id="e-change">Изменить почту</button>`;
+      document.getElementById('e-change').onclick=()=>{EMAIL.verified=false;renderEmail();};
+    }
+  } else {
+    st.textContent='';
+    box.innerHTML=`<div class="efield"><input id="e-input" type="email" inputmode="email" placeholder="you@mail.ru" value="${EMAIL.email||''}"><button class="ebtn" id="e-code">Код</button></div>
+      <div class="efield" id="e-code-row" style="display:none"><input id="e-otp" inputmode="numeric" placeholder="Код из письма"><button class="ebtn" id="e-verify">ОК</button></div>
+      <div class="emsg" id="e-msg"></div>`;
+    const msg=document.getElementById('e-msg');
+    document.getElementById('e-code').onclick=function(){
+      const email=document.getElementById('e-input').value.trim();
+      msg.className='emsg'; msg.textContent='Отправляю код…';
+      api('/api/email/code',{email}).then(()=>{msg.className='emsg ok';msg.textContent='Код отправлен на '+email;document.getElementById('e-code-row').style.display='flex';EMAIL.email=email;})
+        .catch(e=>{msg.className='emsg err';msg.textContent=e.message;});
+    };
+    document.getElementById('e-verify').onclick=function(){
+      const code=document.getElementById('e-otp').value.trim();
+      msg.className='emsg'; msg.textContent='Проверяю…';
+      api('/api/email/verify',{code}).then(()=>{EMAIL.verified=true;renderEmail();})
+        .catch(e=>{msg.className='emsg err';msg.textContent=e.message;});
+    };
+  }
+}
+function loadEmail(){ renderEmail(); api('/api/email/status').then(d=>{ EMAIL=d; var cr=document.getElementById('e-code-row'); if(cr && cr.style.display!=='none') return; /* не стираем открытый ввод кода */ renderEmail(); }).catch(()=>{}); }
+
+document.addEventListener('click',e=>{
+  // модалка тендера
+  if(e.target.closest('#modal-x') || e.target===document.getElementById('modal')){ closeTender(); return; }
+  if(e.target.closest('#modal-go')){ if(_modalT && tg && tg.openLink){ e.preventDefault(); tg.openLink(_modalT.url); } return; }
+  if(e.target.closest('#modal-send')){ sendDocs('tg', document.getElementById('modal-send'), 'В Телеграм'); return; }
+  if(e.target.closest('#modal-mail')){ sendDocs('email', document.getElementById('modal-mail'), 'На почту'); return; }
+  if(e.target.closest('#modal-fav')){ if(!_modalT)return; var k=key(_modalT); favs.has(k)?favs.delete(k):favs.add(k); saveFavs(); if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged(); var mf=document.getElementById('modal-fav'),isf=favs.has(k); mf.innerHTML=heart(isf); mf.classList.toggle('on',isf); render(); return; }
+  var cseg=e.target.closest('#catseg button');
+  if(cseg){ FILT.cat=cseg.dataset.cat; document.querySelectorAll('#catseg button').forEach(function(b){b.classList.toggle('on',b===cseg);}); document.querySelector('main').scrollTop=0; render(); return; }
+  if(e.target.closest('#filters-btn')){ var fp=document.getElementById('filters-panel'); var open=fp.style.display==='none'; fp.style.display=open?'flex':'none'; e.target.closest('#filters-btn').classList.toggle('on',open); return; }
+  if(e.target.closest('#modal-hide')){ var _t=_modalT; closeTender(); hideTender(_t); return; }
+  if(e.target.closest('#toast-undo')){ var el=document.getElementById('toast'); if(el&&el._undo){ el._undo(); } if(el){ el.style.display='none'; el._undo=null; } return; }
+  const f=e.target.closest('.fav');
+  if(f){const k=decodeURIComponent(f.dataset.k);favs.has(k)?favs.delete(k):favs.add(k);saveFavs();if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged();render();return;}
+  const s=e.target.closest('.send-btn');
+  if(s){
+    const k=decodeURIComponent(s.dataset.send); const t=TENDERS.find(x=>key(x)===k);
+    if(!t) return;
+    const alert=m=>{ try{ if(tg&&tg.showAlert) tg.showAlert(m); else s.title=m; }catch(_){ s.title=m; } };
+    if(!EMAIL.verified){ alert('Сначала подтвердите e-mail в разделе «Профиль».'); return; }
+    s.style.opacity='.5';
+    api('/api/tender/send',{tender:t}).then(()=>{s.style.opacity='';s.classList.add('sent');s.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>';if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success');})
+      .catch(err=>{s.style.opacity='';alert(err.message);});
+    return;
+  }
+  // тап по карточке (не по кнопкам) → модалка тендера
+  const cardEl=e.target.closest('.card');
+  if(cardEl && !e.target.closest('.c-act') && !e.target.closest('.fav') && !e.target.closest('.stpill')){
+    const tt=TENDERS.find(x=>key(x)===decodeURIComponent(cardEl.dataset.key));
+    if(tt){ openTender(tt); return; }
+  }
+  if(e.target.closest('#al-add')){
+    var kw=(document.getElementById('al-kw').value||'').trim();
+    var cat=document.getElementById('al-cat').value, reg=(document.getElementById('al-reg').value||'').trim();
+    var m=document.getElementById('al-msg');
+    if(!kw){ m.className='emsg err'; m.textContent='Укажите ключевые слова'; return; }
+    api('/api/alerts/create',{keywords:kw,regions:reg,category:cat}).then(function(){ document.getElementById('al-kw').value=''; document.getElementById('al-reg').value=''; m.className='emsg ok'; m.textContent='Подписка добавлена'; loadAlerts(); }).catch(function(err){ m.className='emsg err'; m.textContent=(err&&err.message)||'Ошибка'; });
+    return;
+  }
+  var _alrm=e.target.closest('[data-al]');
+  if(_alrm){ api('/api/alerts/delete',{id:+_alrm.getAttribute('data-al')}).then(loadAlerts).catch(function(){}); return; }
+  if(e.target.closest('#export-btn')){
+    var eb=e.target.closest('#export-btn'), oldt=eb.textContent;
+    eb.disabled=true; eb.textContent='Выгружаю…';
+    api('/api/admin/export',{}).then(function(d){
+      eb.disabled=false; eb.textContent=oldt;
+      alert('Отправлено на '+d.sent_to+':\nпользователей '+d.users+', e-mail '+d.emails+', компаний '+d.companies+'.');
+    }).catch(function(err){ eb.disabled=false; eb.textContent=oldt; alert((err&&err.message)||'Не удалось выгрузить'); });
+    return;
+  }
+  if(e.target.closest('#share-btn')){
+    var url='https://t.me/nfresursbot';
+    var text='Отходы в доходы — тендеры по реализации нефтепродуктов, металлолома и труб';
+    var link='https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);
+    try{ if(tg&&tg.openTelegramLink){ tg.openTelegramLink(link); return; } }catch(_){}
+    try{ if(navigator.share){ navigator.share({title:'Отходы в доходы',text:text,url:url}); return; } }catch(_){}
+    try{ window.open(link,'_blank'); }catch(_){}
+    return;
+  }
+  if(e.target.closest('#suggest-btn')){
+    var inp=document.getElementById('suggest-url'), hint=document.getElementById('suggest-hint');
+    var u=(inp.value||'').trim();
+    if(!/^https?:\/\/.+\..+/.test(u)){ hint.textContent='Вставьте корректную ссылку (https://…)'; return; }
+    hint.textContent='Отправляю…';
+    api('/api/suggest',{url:u}).then(()=>{ inp.value=''; hint.textContent='✅ Заявка на добавление площадки отправлена. Площадка появится в списке после модерации.'; if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success'); try{ if(tg&&tg.showAlert) tg.showAlert('✅ Заявка отправлена!\nПлощадка добавится после модерации — мы проверим её и подключим.'); }catch(_){} })
+      .catch(()=>{ hint.textContent='Не удалось отправить (нет связи с сервером). Пришлите ссылку владельцу напрямую.'; });
+    return;
+  }
+  if(e.target.closest('#sub-btn')||e.target.closest('#pw-btn')){
+    if(tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light');
+    var inTg=false; try{ inTg=!!(tg&&tg.initData); }catch(_){}
+    if(inTg){
+      // Telegram — инвойс через createInvoiceLink
+      api('/api/subscription/pay',{}).then(function(d){
+        if(!d || d.not_ready || !d.link){ if(tg&&tg.showAlert) tg.showAlert('Оплата временно недоступна.'); return; }
+        if(tg&&tg.openInvoice){
+          tg.openInvoice(d.link, function(status){
+            if(status==='paid'){ var pw=document.getElementById('paywall'); if(pw) pw.style.display='none';
+              try{ if(tg&&tg.showAlert) tg.showAlert('✅ Оплата прошла! Полный доступ открыт.'); }catch(_){}
+              loadSubscription(); }
+          });
+        } else if(tg&&tg.openLink){ tg.openLink(d.link); }
+      }).catch(function(){ if(tg&&tg.showAlert) tg.showAlert('Оплата временно недоступна.'); });
+    } else {
+      // Браузер — веб-касса ЮKassa: редирект на страницу оплаты
+      var b=e.target.closest('#sub-btn')||e.target.closest('#pw-btn'); var old=b?b.textContent:'';
+      if(b){ b.disabled=true; b.textContent='Открываем оплату…'; }
+      api('/api/pay/create',{}).then(function(d){
+        if(d && d.confirmation_url){ window.location.href=d.confirmation_url; }
+        else { if(b){ b.disabled=false; b.textContent=old; } alert('Не удалось начать оплату.'); }
+      }).catch(function(err){ if(b){ b.disabled=false; b.textContent=old; } alert((err&&err.message)||'Оплата недоступна'); });
+    }
+    return;
+  }
+  if(e.target.closest('#ad-new')){ var adf=document.getElementById('ad-form'); var opening=adf.style.display==='none'; adf.style.display=opening?'flex':'none'; if(opening){ _editAd=null; document.getElementById('ad-submit').textContent='Отправить на модерацию'; document.getElementById('ad-hint').textContent=''; } return; }
+  if(e.target.closest('.ad-photo-add')){ if(adPhotos.length>=3){ document.getElementById('ad-hint').textContent='Максимум 3 фото'; return; } document.getElementById('ad-files').click(); return; }
+  if(e.target.closest('.ad-rm')){ var i=+e.target.closest('.ad-rm').dataset.i; adPhotos.splice(i,1); adThumbs(); return; }
+  if(e.target.closest('#ad-submit')){ submitAd(); return; }
+  if(e.target.closest('#myads-toggle')){ var ml=document.getElementById('myads-list'); if(ml.style.display==='none'){ ml.style.display='flex'; loadMyAds(); } else { ml.style.display='none'; } return; }
+  if(e.target.closest('.myad-edit')){ startEditAd(+e.target.closest('.myad-edit').dataset.id); return; }
+  if(e.target.closest('.myad-renew')){ renewAd(+e.target.closest('.myad-renew').dataset.id); return; }
+  if(e.target.closest('.myad-del')){ deleteAd(+e.target.closest('.myad-del').dataset.id); return; }
+  const tab=e.target.closest('nav.tabbar button');
+  if(tab){document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds();}
+});
+function openDoc(name){ var u; try{ u=new URL(name, location.href).href; }catch(_){ u=name; } try{ if(tg&&tg.openLink){ tg.openLink(u); return; } }catch(_){} window.open(u,'_blank'); }
+// --- объявления (маркетплейс «Прямые лоты») ---
+function escH(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+var adPhotos=[];
+function adThumbs(){ var box=document.getElementById('ad-thumbs'); if(!box)return; box.innerHTML=adPhotos.map(function(src,i){return '<div class="thumb"><img src="'+src+'"><button class="ad-rm" data-i="'+i+'">×</button></div>';}).join(''); }
+function adDownscale(file, cb){ var img=new Image(), url=URL.createObjectURL(file); img.onload=function(){ var max=1280,w=img.width,h=img.height; if(w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;} } var c=document.createElement('canvas'); c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); URL.revokeObjectURL(url); try{cb(c.toDataURL('image/jpeg',0.8));}catch(_){cb(null);} }; img.onerror=function(){ URL.revokeObjectURL(url); cb(null); }; img.src=url; }
+function adFilesChosen(files){ var arr=[].slice.call(files||[]); arr.forEach(function(f){ if(adPhotos.length>=3||!/^image\//.test(f.type))return; adDownscale(f,function(dataUrl){ if(dataUrl&&adPhotos.length<3){ adPhotos.push(dataUrl); adThumbs(); } }); }); }
+function openTg(u){ u=String(u).replace(/^@/,''); var url='https://t.me/'+encodeURIComponent(u); try{ if(tg&&tg.openTelegramLink){ tg.openTelegramLink(url); return; } }catch(_){} try{ if(tg&&tg.openLink){ tg.openLink(url); return; } }catch(_){} window.open(url,'_blank'); }
+function adCard(a){ var cat={oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом',other:'Другое'}[a.category]||'Другое';
+  var price=a.price?(escH(a.price)+(/\d/.test(a.price)?' ₽':'')):(a.price_type==='negotiable'?'Договорная':'—');
+  var photos=''; for(var i=0;i<(a.nphotos||0);i++){ photos+='<img src="'+API_BASE+'/api/ad/photo?id='+a.id+'&n='+i+'" loading="lazy">'; }
+  var go=''; var uname=(a.username||'').replace(/^@/,'');
+  if(uname){ go='<a class="ac-go" href="#" onclick="openTg(\''+escH(uname)+'\');return false">Написать в Telegram</a>'; }
+  else if(a.contact){ go='<div class="ac-meta">📞 '+escH(a.contact)+'</div>'; }
+  return '<div class="ad-card">'+(isAdNew(a)?'<span class="ac-new">Новое</span>':'')+'<div class="ac-cat">'+cat+' · частное</div><h3>'+escH(a.title)+'</h3>'+
+    (a.description?'<div class="ac-desc">'+escH(a.description)+'</div>':'')+
+    (photos?'<div class="ac-photos">'+photos+'</div>':'')+
+    '<div class="ac-meta"><span class="ac-price">'+price+'</span>'+(a.region?'<span>📍 '+escH(a.region)+'</span>':'')+'</div>'+go+'</div>';
+}
+var ADS=[]; var ADFILT={region:'',onlyNew:false};
+function isAdNew(a){ if(!a.created) return false; var ts=Date.parse(a.created); return !isNaN(ts) && (Date.now()-ts) < 3*864e5; }
+function fillAdRegions(){
+  var sel=document.getElementById('adf-region'); if(!sel) return;
+  var regs=[...new Set(ADS.map(function(a){return (a.region||'').trim();}).filter(Boolean))].sort(function(a,b){return a.localeCompare(b,'ru');});
+  var sig=regs.join('|'); if(sel.dataset.sig===sig) return;
+  var cur=sel.value;
+  sel.innerHTML='<option value="">Все области</option>'+regs.map(function(r){return '<option value="'+escH(r)+'">'+escH(r)+'</option>';}).join('');
+  if(regs.indexOf(cur)>=0) sel.value=cur; else ADFILT.region='';
+  sel.dataset.sig=sig;
+}
+function renderAds(){
+  var box=document.getElementById('ads-list'); if(!box) return;
+  var fp=document.getElementById('ads-filters'); if(fp) fp.style.display=ADS.length?'flex':'none';
+  fillAdRegions();
+  var a=ADS.slice();
+  if(ADFILT.region) a=a.filter(function(x){return (x.region||'').trim()===ADFILT.region;});
+  if(ADFILT.onlyNew) a=a.filter(isAdNew);
+  box.innerHTML=a.length?a.map(adCard).join(''):'<div class="ads-empty">'+(ADS.length?'Ничего не найдено по фильтру.':'Пока нет объявлений. Будьте первым — нажмите «Подать».')+'</div>';
+}
+function loadAds(){ var box=document.getElementById('ads-list'); if(!box)return; box.innerHTML='<div class="spinner"></div>';
+  api('/api/ads').then(function(d){ ADS=(d&&d.ads)||[]; renderAds(); })
+    .catch(function(){ box.innerHTML='<div class="ads-empty">Не удалось загрузить объявления.</div>'; }); }
+function submitAd(){ var btn=document.getElementById('ad-submit'), hint=document.getElementById('ad-hint');
+  var title=(document.getElementById('ad-title').value||'').trim();
+  if(title.length<5){ hint.textContent='Заголовок — минимум 5 символов'; return; }
+  var contact=(document.getElementById('ad-contact').value||'').trim();
+  if(!contact){ hint.textContent='Укажите контакт для связи'; return; }
+  var ad={ category:document.getElementById('ad-cat').value, title:title,
+    description:(document.getElementById('ad-desc').value||'').trim(),
+    price:(document.getElementById('ad-price').value||'').trim(),
+    price_type:document.getElementById('ad-neg').checked?'negotiable':'fixed',
+    region:(document.getElementById('ad-region').value||'').trim(), contact:contact };
+  btn.disabled=true; hint.textContent='Отправляю…';
+  var body=_editAd?{id:_editAd, ad:ad, images:adPhotos}:{ad:ad, images:adPhotos};
+  var url=_editAd?'/api/ad/update':'/api/ad/create';
+  api(url,body).then(function(){
+    btn.disabled=false;
+    hint.textContent=_editAd?'✅ Изменения отправлены на модерацию.':'✅ Отправлено на модерацию. После проверки объявление появится в ленте.';
+    if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success');
+    ['ad-title','ad-desc','ad-price','ad-region','ad-contact'].forEach(function(id){document.getElementById(id).value='';});
+    adPhotos=[]; adThumbs(); document.getElementById('ad-neg').checked=false;
+    _editAd=null; btn.textContent='Отправить на модерацию';
+    setTimeout(function(){ var f=document.getElementById('ad-form'); if(f)f.style.display='none'; hint.textContent=''; loadAds(); if(document.getElementById('myads-list').style.display!=='none') loadMyAds(); },1600);
+  }).catch(function(err){ btn.disabled=false; hint.textContent=(err&&err.message)||'Не удалось отправить'; }); }
+var _editAd=null, MYADS=[];
+function myAdBadge(s){ var m={pending:'на модерации',approved:'опубликовано',rejected:'отклонено',expired:'истекло',banned:'заблокировано'}; return m[s]||s; }
+function myDaysLeft(a){ if(a.status!=='approved'||!a.expires_at) return ''; var ms=Date.parse(a.expires_at)-Date.now(); if(isNaN(ms)||ms<0) return ''; var d=Math.ceil(ms/864e5); return ' · осталось '+d+' дн.'; }
+function loadMyAds(){ var box=document.getElementById('myads-list'); if(!box) return; box.innerHTML='<div class="spinner"></div>';
+  api('/api/ad/mine').then(function(d){ MYADS=(d&&d.ads)||[]; if(!MYADS.length){ box.innerHTML='<div class="ads-empty">У вас пока нет объявлений.</div>'; return; }
+    box.innerHTML=MYADS.map(function(a){ return '<div class="myad"><div class="myad-top"><h4>'+escH(a.title)+'</h4><span class="myad-badge '+a.status+'">'+myAdBadge(a.status)+'</span></div>'+
+      '<div class="myad-meta">'+escH({oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом',other:'Другое'}[a.category]||'')+(a.price?' · '+escH(a.price):'')+myDaysLeft(a)+'</div>'+
+      '<div class="myad-acts">'+((a.status==='approved'||a.status==='expired')?'<button class="myad-renew" data-id="'+a.id+'">Продлить</button>':'')+'<button class="myad-edit" data-id="'+a.id+'">Редактировать</button><button class="myad-del del" data-id="'+a.id+'">Удалить</button></div></div>'; }).join('');
+  }).catch(function(){ box.innerHTML='<div class="ads-empty">Не удалось загрузить.</div>'; }); }
+function startEditAd(id){ var a=MYADS.find(function(x){return x.id===id;}); if(!a) return; _editAd=id;
+  document.getElementById('ad-cat').value=a.category||'other';
+  document.getElementById('ad-title').value=a.title||'';
+  document.getElementById('ad-desc').value=a.description||'';
+  document.getElementById('ad-price').value=a.price||'';
+  document.getElementById('ad-neg').checked=a.price_type==='negotiable';
+  document.getElementById('ad-region').value=a.region||'';
+  document.getElementById('ad-contact').value=a.contact||'';
+  adPhotos=[]; adThumbs();
+  document.getElementById('ad-submit').textContent='Сохранить изменения';
+  document.getElementById('ad-hint').textContent=a.nphotos?'Фото сохранятся прежние. Добавите новые — заменят их.':'';
+  // переключаемся на вкладку Доска и открываем форму
+  document.querySelectorAll('nav.tabbar button').forEach(function(b){b.classList.remove('active');});
+  document.querySelector('nav.tabbar button[data-tab="ads"]').classList.add('active');
+  document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('pane-ads').classList.add('active');
+  document.getElementById('ad-form').style.display='flex';
+  document.querySelector('main').scrollTop=0;
+}
+function deleteAd(id){ var go=function(){ api('/api/ad/delete',{id:id}).then(function(){ if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success'); loadMyAds(); loadAds(); }).catch(function(err){ try{ if(tg&&tg.showAlert) tg.showAlert((err&&err.message)||'Не удалось удалить'); }catch(_){} }); };
+  try{ if(tg&&tg.showConfirm){ tg.showConfirm('Удалить объявление?',function(ok){ if(ok) go(); }); return; } }catch(_){}
+  if(window.confirm('Удалить объявление?')) go(); }
+function renewAd(id){ api('/api/ad/renew',{id:id}).then(function(){ if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success'); try{ if(tg&&tg.showAlert) tg.showAlert('✅ Срок продлён ещё на 10 дней.'); }catch(_){} loadMyAds(); loadAds(); }).catch(function(err){ try{ if(tg&&tg.showAlert) tg.showAlert((err&&err.message)||'Не удалось продлить'); }catch(_){} }); }
+document.addEventListener('change',function(e){ if(e.target&&e.target.id==='ad-files'){ adFilesChosen(e.target.files); e.target.value=''; } });
+loadEmail();
+function renderInstallHelp(){
+  var g=document.getElementById('install-group'); if(!g) return;
+  var inTg=false, standalone=false;
+  try{ inTg=!!(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData); }catch(_){}
+  try{ standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true; }catch(_){}
+  var ua=navigator.userAgent||'', iOS=/iPhone|iPad|iPod/.test(ua);
+  var steps=document.getElementById('install-steps'), title=document.getElementById('install-title'), btn=document.getElementById('install-btn');
+  if(inTg){
+    // внутри Telegram PWA не установить — кнопкой открываем сайт в браузере
+    title.textContent='Установить приложение на экран телефона';
+    steps.innerHTML='Нажмите кнопку — приложение откроется в браузере, дальше добавьте на «Домой»:<br>iPhone: «Поделиться» ⬆️ → «На экран „Домой“». Android: меню ⋮ → «Установить приложение».';
+    var appUrl=location.origin+location.pathname;
+    btn.textContent='📲 Добавить на рабочий стол';
+    btn.style.cssText='display:block;width:min(340px,92%);margin:12px auto 0;padding:15px 18px;border:0;border-radius:14px;background:#255d51;color:#fff;font-weight:700;font-size:16px;cursor:pointer;text-align:center';
+    btn.onclick=function(){
+      try{ if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.openLink){ window.Telegram.WebApp.openLink(appUrl); return; } }catch(_){}
+      window.open(appUrl,'_blank');
+    };
+    g.style.display='block';
+    return;
+  }
+  if(standalone){
+    title.textContent='✓ Приложение установлено на этом устройстве';
+    steps.innerHTML='Чтобы поставить на другой телефон: откройте адрес приложения в браузере и добавьте на экран «Домой».<br>iPhone: «Поделиться» ⬆️ → «На экран „Домой“».<br>Android: меню ⋮ → «Установить приложение».';
+    btn.style.display='none';
+  } else if(iOS){
+    title.textContent='iPhone / iPad — 3 шага:';
+    steps.innerHTML='1. Нажмите «Поделиться» ⬆️ внизу браузера (Safari).<br>2. Пролистайте вниз → «На экран „Домой“».<br>3. Нажмите «Добавить» — иконка появится на экране.';
+    btn.style.display='none';
+  } else {
+    title.textContent='Android — установка:';
+    steps.innerHTML='Нажмите кнопку ниже, либо меню ⋮ браузера → «Установить приложение» / «Добавить на главный экран».';
+    if(window.__pwaPrompt){
+      btn.textContent='📲 Добавить на рабочий стол';
+      btn.style.cssText='display:block;width:min(340px,92%);margin:12px auto 0;padding:15px 18px;border:0;border-radius:14px;background:#255d51;color:#fff;font-weight:700;font-size:16px;cursor:pointer;text-align:center';
+      btn.onclick=function(){ window.__pwaPrompt.prompt(); window.__pwaPrompt.userChoice.finally(function(){ window.__pwaPrompt=null; btn.style.display='none'; }); };
+    } else { btn.style.display='none'; }
+  }
+  g.style.display='block';
+}
+renderInstallHelp();
+function loadAlerts(){
+  var box=document.getElementById('alerts-list'); if(!box) return;
+  api('/api/alerts/list').then(function(d){
+    var a=(d&&d.alerts)||[];
+    box.innerHTML = a.length ? a.map(function(x){
+      var meta=[x.keywords];
+      if(x.category) meta.push({oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом'}[x.category]||x.category);
+      if(x.regions) meta.push('📍 '+x.regions);
+      return '<div class="myad" style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:13px">'+escH(meta.join(' · '))+'</span><button class="ad-rm" data-al="'+x.id+'" type="button">✕</button></div>';
+    }).join('') : '<div style="font-size:12px;color:var(--text-faint,#8b949e)">Пока нет подписок — добавьте первую ниже.</div>';
+  }).catch(function(){});
+}
+loadAlerts();
+// сверить недавно завершённую оплату (вебхук мог опоздать), затем показать статус
+api('/api/pay/status',{}).catch(function(){}).then(function(){ loadSubscription(); });
+function loadSubscription(){
+  api('/api/subscription/status').then(function(d){
+    var st=document.getElementById('sub-status');
+    if(st){
+      if(d.admin){ st.textContent='бесплатно (админ)'; }
+      else if(d.active){ st.textContent='активна'; }
+      else if(d.trial_left>0){ st.textContent='пробный: '+d.trial_left+' дн.'; }
+      else { st.textContent='истёк'; }
+    }
+    var btn=document.getElementById('sub-btn');
+    if(btn && d.admin){ btn.textContent='Бесплатный доступ'; btn.disabled=true; btn.style.opacity='.6'; }
+    else if(btn && d.active){ btn.textContent='Подписка активна'; btn.disabled=true; btn.style.opacity='.6'; }
+    if(!d.allowed || /[?&]pay=1/.test(location.search)){ var pw=document.getElementById('paywall'); if(pw) pw.style.display='flex'; }
+    // счётчик пользователей и админ-выгрузка — ТОЛЬКО владельцу (по d.admin)
+    var statsEl=document.getElementById('stats-line'), expBtn=document.getElementById('export-btn');
+    if(d.admin){
+      if(expBtn) expBtn.style.display='flex';
+      api('/api/stats').then(function(s){ if(statsEl){ statsEl.style.display='block'; statsEl.innerHTML='👥 Пользователей: <b>'+s.visitors+'</b> · за неделю: <b>'+s.active7+'</b>'; } }).catch(function(){});
+    } else {
+      if(statsEl) statsEl.style.display='none';
+      if(expBtn) expBtn.style.display='none';
+    }
+  }).catch(function(){});
+}
+
+// Лента больше НЕ вшита в страницу — грузим её с авторизованного API.
+// В Telegram авторизация по initData; в браузере — по сессии из localStorage.
+function bootFeed(tries){
+  tries = (tries==null)?3:tries;
+  return api('/api/tenders', {}).then(function(d){
+    TENDERS = (d && d.tenders) || [];
+    try { loadStatuses(function(){ loadSeen(function(){ loadLastVisit(function(){ loadFavs(render); }); }); }); }
+    catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
+    var g=document.getElementById('login-gate'); if(g) g.style.display='none';
+  }).catch(function(e){
+    if(e && e.status===402){                                  // триал истёк — пейвол
+      TENDERS=[]; try{ render(); }catch(_){}
+      var pw=document.getElementById('paywall'); if(pw) pw.style.display='flex';
+      var g=document.getElementById('login-gate'); if(g) g.style.display='none';
+      return;                                                 // обработано, вход не показываем
+    }
+    if(e && e.status===401) throw e;                          // сессия невалидна — наверх
+    if(tries>1) return new Promise(function(r){ setTimeout(r,1500); }).then(function(){ return bootFeed(tries-1); });
+    throw e;                                                  // не 401 и ретраи кончились
+  });
+}
+function showLogin(msg){
+  var g=document.getElementById('login-gate'); if(!g) return;
+  if(msg){ var m=document.getElementById('lg-msg'); if(m) m.textContent=msg; }
+  g.style.display='flex';
+}
+(function initAuth(){
+  var inTg = false;
+  try { inTg = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData); } catch(_){}
+  if (inTg || SESS()) { bootFeed().catch(function(e){
+    if(e && e.status===401){ try{ localStorage.removeItem('session'); }catch(_){}; if(!inTg) showLogin('Сессия истекла — войдите заново'); }
+    else if(!inTg){ showLogin('Не удалось загрузить ленту — проверьте связь и обновите. Повторный вход не нужен.'); }
+  }); return; }
+  showLogin();
+})();
+// Обновлять ленту при возврате приложения на передний план: iOS-PWA не
+// перезагружает web-view, и без этого показывалась устаревшая лента
+// (например лот, ушедший на модерацию). Дребезг гасим — не чаще раза в 30 с.
+(function freshOnResume(){
+  var last=Date.now();
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden) return;
+    if(Date.now()-last < 30000) return;
+    last=Date.now();
+    var authed=false; try{ authed = !!(SESS() || (window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData)); }catch(_){}
+    if(authed){ bootFeed().catch(function(){}); }
+  });
+})();
+(function loginHandlers(){
+  var stage='email';
+  var btn=document.getElementById('lg-btn'), em=document.getElementById('lg-email'),
+      cd=document.getElementById('lg-code'), msg=document.getElementById('lg-msg');
+  if(!btn) return;
+  btn.addEventListener('click', function(){
+    if(stage==='email'){
+      var email=(em.value||'').trim();
+      if(email.indexOf('@')<0){ msg.textContent='Введите корректный e-mail'; return; }
+      btn.disabled=true; btn.textContent='Отправляем…';
+      api('/api/auth/request', {email:email}).then(function(){
+        stage='code'; cd.style.display='block'; btn.textContent='Войти';
+        msg.textContent='Код отправлен на '+email; btn.disabled=false; cd.focus();
+      }).catch(function(e){ msg.textContent=(e&&e.message)||'Ошибка отправки'; btn.disabled=false; btn.textContent='Получить код'; });
+    } else {
+      var email=(em.value||'').trim(), code=(cd.value||'').trim();
+      btn.disabled=true; btn.textContent='Проверяем…';
+      api('/api/auth/verify', {email:email, code:code}).then(function(d){
+        try{ localStorage.setItem('session', d.session); }catch(_){}
+        btn.textContent='Готово';
+        bootFeed().catch(function(){ msg.textContent='Вход выполнен, но лента не загрузилась — обновите страницу.'; btn.disabled=false; btn.textContent='Войти'; });
+      }).catch(function(e){ msg.textContent=(e&&e.message)||'Неверный код'; btn.disabled=false; btn.textContent='Войти'; });
+    }
+  });
+})();
+</script>
+<script>
+/* PWA: регистрация service worker + установка на главный экран.
+   Не мешает работе внутри Telegram — там просто ничего не показываем. */
+(function(){
+  try { if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('../sw.js').catch(function(){});
+    });
+  }} catch(_){}
+
+  var inTelegram = false;
+  try { inTelegram = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData); } catch(_){}
+  var standalone = false;
+  try { standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; } catch(_){}
+  if (inTelegram || standalone) return;   // уже приложение или мы в Telegram — не навязываемся
+
+  // Android/Chrome: нативное предложение установки
+  var deferred = null;
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault(); deferred = e; window.__pwaPrompt = e; showBtn();
+    try { renderInstallHelp(); } catch(_){}
+  });
+  function showBtn(){
+    if (document.getElementById('pwa-install')) return;
+    var b = document.createElement('button');
+    b.id = 'pwa-install';
+    b.type = 'button';
+    b.textContent = '⬇ Установить приложение';
+    b.setAttribute('style',
+      'position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));'
+    + 'z-index:9999;border:0;border-radius:14px;padding:12px 18px;font:600 15px/1 system-ui,-apple-system,sans-serif;'
+    + 'color:#fff;background:#255d51;box-shadow:0 8px 24px rgba(24,34,50,.28);cursor:pointer;');
+    b.addEventListener('click', function(){
+      if (!deferred) return;
+      deferred.prompt();
+      deferred.userChoice.finally(function(){ deferred = null; b.remove(); });
+    });
+    document.body.appendChild(b);
+  }
+  window.addEventListener('appinstalled', function(){
+    var b = document.getElementById('pwa-install'); if (b) b.remove();
+  });
+
+  // iOS Safari: beforeinstallprompt нет — разовая подсказка «Поделиться → На экран Домой»
+  try {
+    var ua = navigator.userAgent || '';
+    var iOS = /iPhone|iPad|iPod/.test(ua) && !window.MSStream;
+    var isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
+    var dismissed = false;
+    try { dismissed = localStorage.getItem('pwa_ios_hint') === '1'; } catch(_){}
+    if (iOS && isSafari && !dismissed) {
+      var h = document.createElement('div');
+      h.setAttribute('style',
+        'position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:9999;'
+      + 'background:#17232b;color:#f1f6f4;border-radius:14px;padding:12px 14px;'
+      + 'font:500 14px/1.35 system-ui,-apple-system,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.35);'
+      + 'display:flex;gap:10px;align-items:center;');
+      h.innerHTML = '<span style="flex:1">Установить как приложение: <b>Поделиться</b> ⬆️ → <b>«На экран „Домой“»</b></span>'
+      + '<button type="button" style="border:0;background:#255d51;color:#fff;border-radius:9px;padding:8px 10px;font:600 13px system-ui;cursor:pointer">ОК</button>';
+      h.querySelector('button').addEventListener('click', function(){
+        try { localStorage.setItem('pwa_ios_hint','1'); } catch(_){}
+        h.remove();
+      });
+      document.body.appendChild(h);
+    }
+  } catch(_){}
+})();
+</script>
+</body>
+</html>
