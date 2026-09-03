@@ -434,9 +434,23 @@
   @media (min-width: 1024px) {
     :root { --side: 280px; }
     body { font-family: "Golos Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: block; height: auto; min-height: 100dvh; background: var(--app-bg); }
+    /* неподвижный фон как на лендинге: перелив цветов сырья + сетка */
     body::before { background:
-      radial-gradient(60% 50% at 0% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
-      radial-gradient(50% 45% at 100% 100%, rgba(217,160,74,.10), transparent 70%); }
+      radial-gradient(55% 60% at 30% -10%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 60%),
+      radial-gradient(40% 45% at 100% 15%, rgba(217,160,74,.26), transparent 60%),
+      radial-gradient(45% 45% at 75% 110%, rgba(212,116,79,.22), transparent 60%),
+      radial-gradient(35% 40% at 45% 60%, rgba(159,176,192,.12), transparent 60%); }
+    body::after { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .7;
+      background-image: linear-gradient(color-mix(in srgb, var(--text) 8%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--text) 8%, transparent) 1px, transparent 1px);
+      background-size: 72px 72px; -webkit-mask-image: radial-gradient(80% 80% at 50% 40%, #000 30%, transparent 100%); mask-image: radial-gradient(80% 80% at 50% 40%, #000 30%, transparent 100%); }
+    :root { --dglass: color-mix(in srgb, var(--surface) 55%, transparent); --dglass-brd: color-mix(in srgb, var(--text) 12%, transparent); --dglass-hi: color-mix(in srgb, var(--text) 8%, transparent); }
+    .card, .rows, .filters-panel, .ad-card, .ad-form, .myad, .sim, .modal-meta, .myads-toggle { background: var(--dglass) !important; border-color: var(--dglass-brd) !important; -webkit-backdrop-filter: blur(12px) saturate(140%); backdrop-filter: blur(12px) saturate(140%); box-shadow: inset 0 1px 0 var(--dglass-hi) !important; }
+    .search, .fsel, .catseg button, .filters-btn { background: var(--dglass); border-color: var(--dglass-brd); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+    .catseg button.on { background: var(--accent); border-color: var(--accent); }
+    body[data-pane="tenders"] .modal, body[data-pane="fav"] .modal { background: color-mix(in srgb, var(--surface) 50%, transparent); border-color: var(--dglass-brd); -webkit-backdrop-filter: blur(18px) saturate(150%); backdrop-filter: blur(18px) saturate(150%); box-shadow: inset 0 1px 0 var(--dglass-hi); }
+    .modal-ov[style*="none"]::after { border-color: var(--dglass-brd); background: color-mix(in srgb, var(--surface) 25%, transparent); }
+    #tenders-list .card:hover, #fav-list .card:hover { background: color-mix(in srgb, var(--surface) 80%, transparent) !important; }
+    #tenders-list .card.sel, #fav-list .card.sel { background: color-mix(in srgb, var(--accent) 14%, transparent) !important; }
     /* левая колонка: логотип сверху, навигация под ним */
     header.app { position: fixed; left: 0; top: 0; width: var(--side); height: 96px; padding: 0 22px; gap: 12px;
       background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; border: none; box-shadow: none; z-index: 12; }
@@ -444,7 +458,7 @@
     .app-name { font-family: "Unbounded", "Golos Text", sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0; line-height: 1.2; }
     .app-sub { font-size: 9.5px; letter-spacing: .1em; }
     nav.tabbar { position: fixed; left: 0; top: 96px; bottom: 0; right: auto; width: var(--side); flex-direction: column; align-items: stretch; gap: 4px;
-      padding: 8px 14px 24px; border-top: none; border-right: 1px solid var(--hair); background: color-mix(in srgb, var(--app-bg) 70%, transparent);
+      padding: 8px 14px 24px; border-top: none; border-right: 1px solid var(--dglass-brd, var(--hair)); background: color-mix(in srgb, var(--app-bg) 45%, transparent);
       backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%); box-shadow: none; }
     nav.tabbar button { flex: none; flex-direction: row; justify-content: flex-start; gap: 14px; padding: 12px 14px; border-radius: 13px; font-size: 15px; font-weight: 500; opacity: .72; color: var(--text-dim); transition: background .18s, opacity .18s, color .18s; }
     nav.tabbar button:hover { opacity: 1; background: var(--surface); }

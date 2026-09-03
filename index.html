@@ -92,7 +92,10 @@
   .nav .btn-primary { color: var(--accent-ink); }
 
   /* ——— первый экран: сцена в перспективе ——— */
-  .hero-wrap { position: relative; overflow: hidden; isolation: isolate; }
+  /* неподвижный фон за всей страницей: перелив цветов сырья + сетка; прокручивается только контент */
+  .bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  main, footer { position: relative; z-index: 1; }
+  .hero-wrap { position: relative; }
   .glow { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
   .glow i { position: absolute; border-radius: 50%; will-change: transform; }
   .glow .g1 { width: 70vw; height: 70vw; left: -22vw; top: -30vw; background: radial-gradient(circle, rgba(47,128,101,.55) 0%, rgba(47,128,101,0) 62%); animation: g1 38s ease-in-out infinite alternate; }
@@ -101,7 +104,7 @@
   @keyframes g1 { to { transform: translate(12vw, 8vw) scale(1.15); } }
   @keyframes g2 { to { transform: translate(-10vw, 10vw) scale(.9); } }
   @keyframes g3 { to { transform: translate(-8vw, -10vw) scale(1.12); } }
-  .grid-lines { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .5;
+  .grid-lines { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .45;
     background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
     background-size: 72px 72px; -webkit-mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); }
   .hero { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 96px 0 120px; min-height: calc(100vh - 68px); }
@@ -137,7 +140,7 @@
   .lot-price { color: var(--text); font-family: "JetBrains Mono", monospace; font-size: 13.5px; white-space: nowrap; }
 
   /* ——— бегущая строка площадок ——— */
-  .ticker { border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); background: var(--bg-2); overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+  .ticker { border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); background: rgba(7,13,11,.35); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
   .ticker-in { display: flex; gap: 0; width: max-content; animation: ticker 60s linear infinite; }
   .ticker:hover .ticker-in { animation-play-state: paused; }
   .ticker span { padding: 22px 34px; color: var(--dim); font-size: 15px; white-space: nowrap; display: inline-flex; align-items: center; gap: 34px; }
@@ -155,7 +158,7 @@
 
   /* цифры */
   .proof { padding: 0 0 128px; }
-  .stat { padding: 32px 28px; border-radius: 22px; background: var(--surface); border: 1px solid var(--hair); position: relative; overflow: hidden; }
+  .stat { padding: 32px 28px; border-radius: 22px; background: var(--glass); border: 1px solid var(--glass-brd); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 var(--glass-hi); position: relative; overflow: hidden; }
   .stat::before { content: ''; position: absolute; inset: 0; background: radial-gradient(60% 80% at 20% 0%, rgba(127,208,180,.12), transparent 70%); }
   .stat .num { position: relative; font-size: clamp(34px, 3.6vw, 52px); line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .stat .num small { font-size: .5em; color: var(--accent); margin-left: 4px; }
@@ -165,7 +168,7 @@
   .mat { perspective: 1200px; min-height: 420px; }
   .mat-in { position: relative; width: 100%; height: 100%; min-height: 420px; transform-style: preserve-3d; transition: transform .8s var(--ease-out); }
   .mat:hover .mat-in, .mat:focus-within .mat-in { transform: rotateY(180deg); }
-  .face { position: absolute; inset: 0; border-radius: 24px; border: 1px solid var(--hair); overflow: hidden; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; background: var(--bg-2); }
+  .face { position: absolute; inset: 0; border-radius: 24px; border: 1px solid var(--glass-brd); overflow: hidden; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; background: rgba(11,20,17,.72); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
   .face-front .pic { flex: 1; display: grid; place-items: center; padding: 14%; position: relative; }
   .face-front .pic::before { content: ''; position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 60%, var(--m-soft), transparent 70%); }
   .face-front .pic img { width: 100%; height: auto; position: relative; filter: drop-shadow(0 30px 40px rgba(0,0,0,.6)); transition: transform .8s var(--ease-out); }
@@ -185,13 +188,13 @@
   .steps { position: relative; }
   .steps::before { content: ''; position: absolute; left: 0; right: 0; top: 40px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent) 20%, var(--accent) 80%, transparent); opacity: .35; }
   .step { position: relative; padding: 0 8px; }
-  .step .dot { width: 80px; height: 80px; border-radius: 50%; display: grid; place-items: center; background: var(--bg); border: 1px solid var(--hair); box-shadow: 0 0 0 8px var(--bg), 0 0 40px -10px rgba(127,208,180,.6); margin-bottom: 26px; }
+  .step .dot { width: 80px; height: 80px; border-radius: 50%; display: grid; place-items: center; background: rgba(7,13,11,.85); border: 1px solid var(--glass-brd); box-shadow: 0 0 40px -10px rgba(127,208,180,.6); margin-bottom: 26px; }
   .step .dot svg { width: 30px; height: 30px; color: var(--accent); }
   .step h3 { font-size: 21px; margin-bottom: 10px; }
   .step p { color: var(--dim); font-size: 16px; }
 
   /* где пользоваться */
-  .where { position: relative; border-radius: 24px; padding: 34px 32px; background: var(--surface); border: 1px solid var(--hair); overflow: hidden; }
+  .where { position: relative; border-radius: 24px; padding: 34px 32px; background: var(--glass); border: 1px solid var(--glass-brd); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 var(--glass-hi); overflow: hidden; }
   .where::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 0%), rgba(127,208,180,.1), transparent 60%); opacity: 0; transition: opacity .3s; }
   .where:hover::after { opacity: 1; }
   .where h3 { font-size: 24px; margin-bottom: 12px; }
@@ -276,6 +279,11 @@
 </head>
 <body>
 
+<div class="bg" aria-hidden="true">
+  <div class="glow"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
+  <div class="grid-lines"></div>
+</div>
+
 <header class="top">
   <div class="wrap top-in">
     <a class="brand" href="/" aria-label="Отходы в доходы — на главную"><span class="logo">ОД</span><span>Отходы в доходы</span></a>
@@ -290,8 +298,6 @@
 
 <main>
   <div class="hero-wrap">
-    <div class="glow" aria-hidden="true"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
-    <div class="grid-lines" aria-hidden="true"></div>
     <section class="wrap hero">
       <div class="hero-copy">
         <span class="eyebrow mono">Нефтепродукты · Металлолом · Трубы</span>
