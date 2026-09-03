@@ -16,8 +16,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#255d51" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0b1411" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#070d0b">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-180.png">
@@ -34,239 +33,243 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;700&family=Unbounded:wght@700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Unbounded:wght@600;800&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
+  /* ——— токены: тёмная премиальная страница; цвета сырья — как свет ——— */
   :root {
-    --bg: #f2f4f1; --surface: #ffffff; --surface-2: #e9edea;
-    --text: #14181d; --dim: #56606a; --faint: #66717b; --hair: #d8dfdb;
-    --accent: #255d51; --accent-ink: #ffffff; --accent-soft: #e3efea;
-    --oil: #c98a2e; --oil-bg: #26201b; --scrap: #6e7b86; --scrap-bg: #e3e8ec; --pipe: #b85c3b; --pipe-bg: #f3e4dc;
-    --hero-bg: #0b1411; --hero-text: #ecf2ee; --hero-dim: rgba(236,242,238,.72); --hero-faint: rgba(236,242,238,.55);
-    --glass: rgba(255,255,255,.08); --glass-brd: rgba(255,255,255,.16); --glass-hi: rgba(255,255,255,.14);
-    --shadow: 0 1px 2px rgba(20,24,29,.06), 0 12px 32px -16px rgba(20,24,29,.18);
-    --ease: cubic-bezier(.2,.7,.2,1);
-  }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-    --bg: #0b1411; --surface: #131e1a; --surface-2: #1a2723;
-    --text: #ecf2ee; --dim: #aebbb5; --faint: #7f8f88; --hair: #24322d;
-    --accent: #7fd0b4; --accent-ink: #0b1411; --accent-soft: #163229;
-    --scrap-bg: #1f2a31; --pipe-bg: #2c1d17;
-    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.6);
-  }}
-  :root[data-theme="dark"] {
-    --bg: #0b1411; --surface: #131e1a; --surface-2: #1a2723;
-    --text: #ecf2ee; --dim: #aebbb5; --faint: #7f8f88; --hair: #24322d;
-    --accent: #7fd0b4; --accent-ink: #0b1411; --accent-soft: #163229;
-    --scrap-bg: #1f2a31; --pipe-bg: #2c1d17;
-    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.6);
+    --bg: #070d0b; --bg-2: #0b1411; --surface: rgba(255,255,255,.035); --surface-2: rgba(255,255,255,.06);
+    --text: #eef3f0; --dim: rgba(238,243,240,.68); --faint: rgba(238,243,240,.48); --hair: rgba(255,255,255,.09);
+    --accent: #7fd0b4; --accent-deep: #255d51; --accent-ink: #070d0b;
+    --oil: #d9a04a; --scrap: #9fb0c0; --pipe: #d4744f;
+    --glass: rgba(255,255,255,.05); --glass-brd: rgba(255,255,255,.12); --glass-hi: rgba(255,255,255,.16);
+    --ease: cubic-bezier(.2,.7,.2,1); --ease-out: cubic-bezier(.16,1,.3,1);
+    --wrap: 1200px; --pad: 32px;
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; background: var(--bg); }
   body {
     margin: 0; background: var(--bg); color: var(--text);
     font-family: "Golos Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+    font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden;
   }
+  /* зерно плёнки — премиальная текстура, стоит ноль */
+  body::after { content: ''; position: fixed; inset: 0; z-index: 999; pointer-events: none; opacity: .045; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
-  .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; letter-spacing: .02em; }
-  .display { font-family: "Unbounded", "Golos Text", -apple-system, sans-serif; font-weight: 700; letter-spacing: -.02em; }
-  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
-  h1, h2, h3 { margin: 0; font-weight: 700; letter-spacing: -.015em; line-height: 1.15; }
-  h1 { font-size: clamp(32px, 5vw, 56px); line-height: 1.08; }
-  h2 { font-size: clamp(24px, 3vw, 34px); }
-  h3 { font-size: 19px; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; }
+  .display { font-family: "Unbounded", "Golos Text", sans-serif; font-weight: 800; letter-spacing: -.025em; }
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--pad); }
+  h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.015em; line-height: 1.15; }
+  h1 { font-size: clamp(36px, 5.6vw, 72px); line-height: 1.02; overflow-wrap: anywhere; }
+  h2 { font-size: clamp(28px, 3.6vw, 46px); line-height: 1.06; }
+  h3 { font-size: 20px; }
   p { margin: 0; }
-  .lead { font-size: 19px; color: var(--dim); }
-  .eyebrow { display: inline-block; color: var(--accent); text-transform: uppercase; font-weight: 500; margin-bottom: 14px; }
+  .lead { font-size: 19px; color: var(--dim); max-width: 60ch; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--accent); margin-bottom: 18px; }
+  .eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--accent); opacity: .7; }
 
-  /* ——— шапка: тёмное стекло, всегда на месте ——— */
-  .top {
-    position: sticky; top: 0; z-index: 40;
-    background: rgba(11,20,17,.8);
-    -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%);
-    border-bottom: 1px solid rgba(255,255,255,.08);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
-    padding-top: env(safe-area-inset-top);
-  }
-  .top-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 62px; }
-  .brand { display: flex; align-items: center; gap: 10px; color: #ecf2ee; font-weight: 700; }
-  .brand:hover { text-decoration: none; }
-  .logo { width: 34px; height: 34px; border-radius: 10px; background: #7fd0b4; color: #0b1411; display: grid; place-items: center; font-weight: 700; font-size: 14px; letter-spacing: .02em; box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 0 18px rgba(127,208,180,.35); }
-  .nav { display: flex; gap: 22px; align-items: center; }
-  .nav a { color: rgba(236,242,238,.8); font-size: 15px; }
-  .nav a:hover { color: #fff; text-decoration: none; }
-  .nav .btn-primary { color: #0b1411; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; border-radius: 12px; font-weight: 500; font-size: 16px; border: 1px solid transparent; transition: transform .15s var(--ease), box-shadow .15s var(--ease), background .15s ease; min-height: 44px; }
-  .btn:hover { text-decoration: none; transform: translateY(-1px); }
-  .btn:active { transform: translateY(0); }
-  .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 6px 20px -8px rgba(37,93,81,.6); }
-  .btn-ghost { background: var(--surface); color: var(--text); border-color: var(--hair); }
-  .btn-sm { padding: 9px 14px; font-size: 14px; border-radius: 10px; min-height: 40px; }
+  /* ——— кнопки ——— */
+  .btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 15px 24px; border-radius: 14px; font-weight: 600; font-size: 16px; border: 1px solid transparent; min-height: 50px; transition: transform .25s var(--ease-out), box-shadow .25s var(--ease-out), background .2s ease, border-color .2s ease; will-change: transform; }
+  .btn:hover { text-decoration: none; }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 14px 40px -12px rgba(127,208,180,.7); }
+  .btn-primary:hover { background: #96dfc6; box-shadow: 0 0 0 1px rgba(255,255,255,.1), 0 18px 50px -12px rgba(127,208,180,.9); }
+  .btn-ghost { background: var(--glass); color: var(--text); border-color: var(--glass-brd); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+  .btn-ghost:hover { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22); }
+  .btn-sm { padding: 10px 16px; font-size: 14px; border-radius: 11px; min-height: 42px; }
   .btn svg { width: 18px; height: 18px; }
 
-  /* ——— первый экран: aurora из цветов сырья + стекло ——— */
-  .hero-wrap { position: relative; background: var(--hero-bg); color: var(--hero-text); overflow: hidden; isolation: isolate; }
-  .aurora { position: absolute; inset: -20% -10%; z-index: 0; pointer-events: none; filter: blur(64px); opacity: .95; }
-  .aurora i { position: absolute; border-radius: 50%; will-change: transform; mix-blend-mode: screen; }
-  .aurora .a1 { width: 52vw; height: 52vw; left: -8%; top: -10%; background: radial-gradient(circle, #2f8065 0%, rgba(47,128,101,0) 68%); animation: drift1 34s ease-in-out infinite alternate; }
-  .aurora .a2 { width: 44vw; height: 44vw; right: -6%; top: 6%; background: radial-gradient(circle, #c98a2e 0%, rgba(201,138,46,0) 68%); animation: drift2 40s ease-in-out infinite alternate; }
-  .aurora .a3 { width: 38vw; height: 38vw; right: 18%; bottom: -18%; background: radial-gradient(circle, #b85c3b 0%, rgba(184,92,59,0) 68%); animation: drift3 30s ease-in-out infinite alternate; }
-  .aurora .a4 { width: 30vw; height: 30vw; left: 30%; bottom: -8%; background: radial-gradient(circle, #8fa2b3 0%, rgba(143,162,179,0) 68%); animation: drift4 36s ease-in-out infinite alternate; opacity: .7; }
-  @keyframes drift1 { to { transform: translate(14vw, 10vh) scale(1.12); } }
-  @keyframes drift2 { to { transform: translate(-12vw, 14vh) scale(.92); } }
-  @keyframes drift3 { to { transform: translate(-10vw, -12vh) scale(1.1); } }
-  @keyframes drift4 { to { transform: translate(10vw, -8vh) scale(1.05); } }
-  .hero-wrap::after { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(120% 80% at 50% 110%, rgba(11,20,17,.0), rgba(11,20,17,.55)); }
-  .hero { position: relative; z-index: 1; display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; padding: 72px 0 88px; }
-  .hero .eyebrow { color: #7fd0b4; }
-  .hero-copy > * + * { margin-top: 22px; }
-  .hero .lead { color: var(--hero-dim); }
-  .hero .note { color: var(--hero-faint); }
-  .hero .btn-primary { background: #7fd0b4; color: #0b1411; box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 10px 30px -10px rgba(127,208,180,.7); }
-  .hero .btn-primary:hover { background: #93dcc3; }
-  .hero .btn-ghost { background: var(--glass); color: var(--hero-text); border-color: var(--glass-brd); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
-  .hero .btn-ghost:hover { background: rgba(255,255,255,.14); }
-  .cta { display: flex; flex-wrap: wrap; gap: 12px; }
-  .note { color: var(--faint); font-size: 14px; }
-  /* пословное появление заголовка (span.w ставит скрипт; без JS — обычный H1) */
-  h1 .w { display: inline-block; opacity: 0; transform: translateY(.45em); animation: wordin .7s var(--ease) forwards; animation-delay: calc(var(--i) * 45ms); }
+  /* ——— шапка: тонкое стекло ——— */
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(7,13,11,.62); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%); border-bottom: 1px solid var(--hair); padding-top: env(safe-area-inset-top); }
+  .top-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 12px; color: var(--text); font-weight: 600; letter-spacing: -.01em; }
+  .brand:hover { text-decoration: none; }
+  .logo { width: 36px; height: 36px; border-radius: 11px; background: linear-gradient(145deg, #93dcc3, #255d51); color: #070d0b; display: grid; place-items: center; font-weight: 800; font-size: 13px; font-family: "Unbounded", sans-serif; box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 0 24px rgba(127,208,180,.35); }
+  .nav { display: flex; gap: 28px; align-items: center; }
+  .nav a { color: var(--dim); font-size: 15px; transition: color .2s; }
+  .nav a:hover { color: var(--text); text-decoration: none; }
+  .nav .btn-primary { color: var(--accent-ink); }
+
+  /* ——— первый экран: сцена в перспективе ——— */
+  .hero-wrap { position: relative; overflow: hidden; isolation: isolate; }
+  .glow { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .glow i { position: absolute; border-radius: 50%; will-change: transform; }
+  .glow .g1 { width: 70vw; height: 70vw; left: -22vw; top: -30vw; background: radial-gradient(circle, rgba(47,128,101,.55) 0%, rgba(47,128,101,0) 62%); animation: g1 38s ease-in-out infinite alternate; }
+  .glow .g2 { width: 56vw; height: 56vw; right: -16vw; top: -12vw; background: radial-gradient(circle, rgba(217,160,74,.42) 0%, rgba(217,160,74,0) 62%); animation: g2 46s ease-in-out infinite alternate; }
+  .glow .g3 { width: 50vw; height: 50vw; right: 10vw; bottom: -30vw; background: radial-gradient(circle, rgba(212,116,79,.4) 0%, rgba(212,116,79,0) 62%); animation: g3 34s ease-in-out infinite alternate; }
+  @keyframes g1 { to { transform: translate(12vw, 8vw) scale(1.15); } }
+  @keyframes g2 { to { transform: translate(-10vw, 10vw) scale(.9); } }
+  @keyframes g3 { to { transform: translate(-8vw, -10vw) scale(1.12); } }
+  .grid-lines { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .5;
+    background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 72px 72px; -webkit-mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); }
+  .hero { position: relative; z-index: 1; display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; padding: 96px 0 120px; min-height: calc(100vh - 68px); }
+  .hero-copy > * + * { margin-top: 26px; }
+  .hero h1 .w { display: inline-block; opacity: 0; transform: translateY(.5em) rotateX(-40deg); transform-origin: 50% 100%; animation: wordin .9s var(--ease-out) forwards; animation-delay: calc(var(--i) * 55ms); }
+  .hero h1 { perspective: 600px; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
   @keyframes wordin { to { opacity: 1; transform: none; } }
+  .cta { display: flex; flex-wrap: wrap; gap: 14px; }
+  .note { color: var(--faint); font-size: 14px; }
 
-  .feed { display: grid; gap: 12px; }
-  .feed-label { color: var(--hero-faint); margin-bottom: 2px; }
+  /* сцена: стеклянная витрина лотов в 3D */
+  .stage { perspective: 1400px; perspective-origin: 60% 40%; }
+  .stack { position: relative; transform-style: preserve-3d; transform: rotateY(calc(-14deg + var(--ry, 0deg))) rotateX(calc(7deg + var(--rx, 0deg))); transition: transform .6s var(--ease-out); will-change: transform; }
+  .stack-label { color: var(--faint); margin-bottom: 14px; transform: translateZ(10px); }
   .lot {
-    position: relative; padding: 14px 16px 14px 18px; border-radius: 16px;
-    background: var(--glass); border: 1px solid var(--glass-brd);
-    -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%);
-    box-shadow: inset 0 1px 0 var(--glass-hi), 0 20px 40px -24px rgba(0,0,0,.6);
-    animation: rise .7s var(--ease) both; animation-delay: calc(.35s + var(--i, 0) * 90ms);
-    transition: transform .2s var(--ease), background .2s ease;
+    position: relative; margin-top: 14px; padding: 18px 20px 18px 22px; border-radius: 18px;
+    background: linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+    border: 1px solid var(--glass-brd); -webkit-backdrop-filter: blur(12px) saturate(140%); backdrop-filter: blur(12px) saturate(140%);
+    box-shadow: inset 0 1px 0 var(--glass-hi), 0 30px 60px -30px rgba(0,0,0,.9);
+    transform: translateZ(calc(var(--z, 0) * 1px)) translateX(calc(var(--x, 0) * 1px));
+    animation: cardin 1s var(--ease-out) both; animation-delay: calc(.4s + var(--i) * 120ms);
+    transition: transform .5s var(--ease-out), box-shadow .5s var(--ease-out);
   }
-  .lot:hover { transform: translateY(-2px); background: rgba(255,255,255,.12); }
-  .lot::before { content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 4px; border-radius: 0 3px 3px 0; background: var(--m); box-shadow: 0 0 12px var(--m); }
-  .lot-head { display: flex; justify-content: space-between; gap: 10px; color: var(--hero-faint); margin-bottom: 6px; }
-  .lot-title { font-weight: 500; font-size: 15.5px; line-height: 1.35; color: var(--hero-text); }
-  .lot-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--hero-dim); font-size: 14px; margin-top: 8px; }
-  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .lot:hover { transform: translateZ(calc(var(--z, 0) * 1px + 40px)) translateX(calc(var(--x, 0) * 1px)); box-shadow: inset 0 1px 0 var(--glass-hi), 0 40px 80px -30px rgba(0,0,0,.95), 0 0 40px -10px var(--m); }
+  .lot::before { content: ''; position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 0 3px 3px 0; background: var(--m); box-shadow: 0 0 16px var(--m); }
+  .lot::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.12), transparent 60%); opacity: 0; transition: opacity .3s; }
+  .lot:hover::after { opacity: 1; }
+  @keyframes cardin { from { opacity: 0; transform: translateZ(-120px) translateY(30px); } }
+  .lot-head { display: flex; justify-content: space-between; gap: 10px; color: var(--faint); margin-bottom: 8px; }
+  .lot-title { font-weight: 500; font-size: 16px; line-height: 1.35; }
+  .lot-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--dim); font-size: 14px; margin-top: 10px; }
+  .lot-price { color: var(--text); font-family: "JetBrains Mono", monospace; font-size: 13.5px; white-space: nowrap; }
 
-  /* ——— доказательства: цифры ——— */
-  .proof { border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); background: var(--surface); }
-  .proof-in { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 28px 0; }
-  .stat { padding: 6px 0; }
-  .stat .num { font-size: clamp(28px, 3.4vw, 40px); color: var(--text); line-height: 1; font-variant-numeric: tabular-nums; }
-  .stat .num small { font-size: .55em; color: var(--accent); margin-left: 2px; }
-  .stat .lbl { color: var(--dim); font-size: 14px; margin-top: 8px; }
+  /* ——— бегущая строка площадок ——— */
+  .ticker { border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); background: var(--bg-2); overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+  .ticker-in { display: flex; gap: 0; width: max-content; animation: ticker 60s linear infinite; }
+  .ticker:hover .ticker-in { animation-play-state: paused; }
+  .ticker span { padding: 22px 34px; color: var(--dim); font-size: 15px; white-space: nowrap; display: inline-flex; align-items: center; gap: 34px; }
+  .ticker span::after { content: '◆'; color: var(--accent); font-size: 8px; opacity: .8; }
+  @keyframes ticker { to { transform: translateX(-50%); } }
 
   /* ——— секции ——— */
-  .section { padding: 72px 0; }
-  .section + .section { border-top: 1px solid var(--hair); }
-  .section-head { max-width: 640px; margin-bottom: 32px; }
-  .section-head > * + * { margin-top: 12px; }
-  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .section { padding: 128px 0; position: relative; }
+  .section-head { max-width: 720px; margin-bottom: 56px; }
+  .section-head > * + * { margin-top: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 
-  .card-hover { transition: transform .25s var(--ease), box-shadow .25s var(--ease); }
-  .card-hover:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  /* цифры */
+  .proof { padding: 0 0 128px; }
+  .stat { padding: 32px 28px; border-radius: 22px; background: var(--surface); border: 1px solid var(--hair); position: relative; overflow: hidden; }
+  .stat::before { content: ''; position: absolute; inset: 0; background: radial-gradient(60% 80% at 20% 0%, rgba(127,208,180,.12), transparent 70%); }
+  .stat .num { position: relative; font-size: clamp(34px, 3.6vw, 52px); line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .stat .num small { font-size: .5em; color: var(--accent); margin-left: 4px; }
+  .stat .lbl { position: relative; color: var(--dim); font-size: 15px; margin-top: 14px; }
 
-  .mat { border-radius: 20px; overflow: hidden; background: var(--surface); border: 1px solid var(--hair); display: flex; flex-direction: column; }
-  .mat-pic { aspect-ratio: 6 / 5; display: grid; place-items: center; padding: 8%; overflow: hidden; }
-  .mat-pic img { width: 100%; height: auto; display: block; transition: transform .5s var(--ease); }
-  .mat:hover .mat-pic img { transform: translateY(-4px) scale(1.03); }
-  .mat-oil .mat-pic { background: var(--oil-bg); } .mat-scrap .mat-pic { background: var(--scrap-bg); } .mat-pipe .mat-pic { background: var(--pipe-bg); }
-  .mat-body { padding: 18px 20px 22px; }
-  .mat-body p { color: var(--dim); font-size: 15.5px; margin-top: 8px; }
+  /* карточки сырья: объём и переворот */
+  .mat { perspective: 1200px; min-height: 420px; }
+  .mat-in { position: relative; width: 100%; height: 100%; min-height: 420px; transform-style: preserve-3d; transition: transform .8s var(--ease-out); }
+  .mat:hover .mat-in, .mat:focus-within .mat-in { transform: rotateY(180deg); }
+  .face { position: absolute; inset: 0; border-radius: 24px; border: 1px solid var(--hair); overflow: hidden; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; background: var(--bg-2); }
+  .face-front .pic { flex: 1; display: grid; place-items: center; padding: 14%; position: relative; }
+  .face-front .pic::before { content: ''; position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 60%, var(--m-soft), transparent 70%); }
+  .face-front .pic img { width: 100%; height: auto; position: relative; filter: drop-shadow(0 30px 40px rgba(0,0,0,.6)); transition: transform .8s var(--ease-out); }
+  .mat:hover .face-front .pic img { transform: translateY(-6px) scale(1.04); }
+  .face-front .txt { padding: 22px 26px 26px; border-top: 1px solid var(--hair); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .face-front .txt h3 { font-size: 22px; }
+  .face-front .txt .more { color: var(--faint); font-size: 13px; white-space: nowrap; }
+  .face-back { transform: rotateY(180deg); padding: 30px 28px; justify-content: center; gap: 14px; background: linear-gradient(160deg, var(--m-soft), var(--bg-2) 60%); }
+  .face-back h3 { font-size: 24px; }
+  .face-back p { color: var(--dim); font-size: 16px; }
+  .face-back ul { margin: 0; padding: 0 0 0 18px; color: var(--dim); font-size: 15px; line-height: 1.7; }
+  .mat-oil { --m: var(--oil); --m-soft: rgba(217,160,74,.22); }
+  .mat-scrap { --m: var(--scrap); --m-soft: rgba(159,176,192,.2); }
+  .mat-pipe { --m: var(--pipe); --m-soft: rgba(212,116,79,.22); }
 
-  .step { background: var(--surface); border: 1px solid var(--hair); border-radius: 20px; padding: 22px 22px 24px; }
-  .step-n { color: var(--accent); margin-bottom: 12px; }
-  .step p { color: var(--dim); font-size: 15.5px; margin-top: 8px; }
+  /* как работает: линия процесса */
+  .steps { position: relative; }
+  .steps::before { content: ''; position: absolute; left: 0; right: 0; top: 40px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent) 20%, var(--accent) 80%, transparent); opacity: .35; }
+  .step { position: relative; padding: 0 8px; }
+  .step .dot { width: 80px; height: 80px; border-radius: 50%; display: grid; place-items: center; background: var(--bg); border: 1px solid var(--hair); box-shadow: 0 0 0 8px var(--bg), 0 0 40px -10px rgba(127,208,180,.6); margin-bottom: 26px; }
+  .step .dot svg { width: 30px; height: 30px; color: var(--accent); }
+  .step h3 { font-size: 21px; margin-bottom: 10px; }
+  .step p { color: var(--dim); font-size: 16px; }
 
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip { padding: 9px 13px; border-radius: 999px; background: var(--surface); border: 1px solid var(--hair); color: var(--text); font-size: 13px; transition: transform .2s var(--ease), border-color .2s ease; }
-  .chip:hover { transform: translateY(-1px); border-color: var(--accent); }
-  .chip-more { border-style: dashed; color: var(--dim); }
-
-  .where { background: var(--surface); border: 1px solid var(--hair); border-radius: 20px; padding: 24px; }
-  .where h3 { display: flex; align-items: center; gap: 10px; }
-  .where p { color: var(--dim); font-size: 15.5px; margin-top: 8px; }
-  .where .btn { margin-top: 16px; }
-  .install { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
-  .install li { display: grid; grid-template-columns: 86px 1fr; gap: 12px; font-size: 15px; color: var(--dim); }
+  /* где пользоваться */
+  .where { position: relative; border-radius: 24px; padding: 34px 32px; background: var(--surface); border: 1px solid var(--hair); overflow: hidden; }
+  .where::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 0%), rgba(127,208,180,.1), transparent 60%); opacity: 0; transition: opacity .3s; }
+  .where:hover::after { opacity: 1; }
+  .where h3 { font-size: 24px; margin-bottom: 12px; }
+  .where p { color: var(--dim); font-size: 16px; }
+  .where .btn { margin-top: 22px; }
+  .install { margin: 22px 0 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+  .install li { display: grid; grid-template-columns: 92px 1fr; gap: 14px; font-size: 15px; color: var(--dim); }
   .install b { color: var(--text); font-weight: 500; }
-  kbd { font-family: inherit; font-size: 14px; background: var(--surface-2); border: 1px solid var(--hair); border-radius: 6px; padding: 1px 7px; color: var(--text); }
+  kbd { font-family: inherit; font-size: 14px; background: var(--surface-2); border: 1px solid var(--hair); border-radius: 6px; padding: 1px 8px; color: var(--text); }
 
-  /* ——— цена: стекло над мягким свечением ——— */
-  .price-wrap { position: relative; border-radius: 24px; overflow: hidden; isolation: isolate; background: var(--accent-soft); }
-  .price-wrap::before { content: ''; position: absolute; inset: -30%; z-index: 0; background:
-      radial-gradient(40% 50% at 20% 30%, rgba(127,208,180,.55), transparent 70%),
-      radial-gradient(35% 45% at 85% 70%, rgba(201,138,46,.35), transparent 70%); filter: blur(30px); pointer-events: none; }
-  .price { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; padding: 32px;
-      background: rgba(255,255,255,.45); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,.5); border-radius: 24px; }
-  :root[data-theme="dark"] .price { background: rgba(19,30,26,.55); border-color: rgba(255,255,255,.1); }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .price { background: rgba(19,30,26,.55); border-color: rgba(255,255,255,.1); } }
-  .price-big { font-size: clamp(34px, 5vw, 52px); line-height: 1; }
-  .price-big small { font-family: "Golos Text", sans-serif; font-size: 18px; font-weight: 500; color: var(--dim); letter-spacing: 0; }
-  .price p { color: var(--dim); margin-top: 10px; }
+  /* цена: карточка-витрина */
+  .price-wrap { position: relative; border-radius: 28px; overflow: hidden; isolation: isolate; border: 1px solid var(--glass-brd); background: linear-gradient(135deg, rgba(255,255,255,.07), rgba(255,255,255,.02)); }
+  .price-wrap::before { content: ''; position: absolute; inset: -40%; z-index: 0; pointer-events: none; background:
+      radial-gradient(35% 45% at 18% 25%, rgba(127,208,180,.35), transparent 70%),
+      radial-gradient(30% 40% at 85% 80%, rgba(217,160,74,.25), transparent 70%); }
+  .price { position: relative; z-index: 1; display: grid; grid-template-columns: 1.1fr .9fr; gap: 32px; align-items: center; padding: 56px; }
+  .price-big { font-size: clamp(48px, 7vw, 96px); line-height: 1; }
+  .price-big small { font-family: "Golos Text", sans-serif; font-size: 20px; font-weight: 500; color: var(--dim); letter-spacing: 0; margin-left: 8px; }
+  .price p { color: var(--dim); margin-top: 14px; font-size: 17px; }
+  .price .btn { margin-top: 26px; }
 
-  .foot { padding: 32px 0 44px; border-top: 1px solid var(--hair); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; color: var(--faint); font-size: 14px; }
-  .foot nav { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+  .foot { padding: 44px 0 56px; border-top: 1px solid var(--hair); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px 28px; color: var(--faint); font-size: 14px; }
+  .foot nav { display: flex; flex-wrap: wrap; gap: 8px 22px; }
   .foot a { color: var(--dim); }
 
-  /* ——— появление при скролле (класс reveal ставит скрипт) ——— */
-  .reveal { opacity: 0; transform: translateY(14px); transition: opacity .5s var(--ease), transform .5s var(--ease); }
+  /* появление при скролле */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s var(--ease-out), transform .8s var(--ease-out); }
   .reveal.in { opacity: 1; transform: none; }
-  .reveal .grid-3 > *, .reveal .grid-2 > *, .reveal .proof-in > * { transition: opacity .5s var(--ease), transform .5s var(--ease); transition-delay: calc(var(--i, 0) * 70ms); opacity: 0; transform: translateY(10px); }
-  .reveal.in .grid-3 > *, .reveal.in .grid-2 > *, .reveal.in .proof-in > * { opacity: 1; transform: none; }
+  .reveal [data-i] { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease-out), transform .7s var(--ease-out); transition-delay: calc(var(--i, 0) * 110ms); }
+  .reveal.in [data-i] { opacity: 1; transform: none; }
 
-  /* плавающая кнопка для телефона */
   .cta-bar { display: none; }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .aurora i, .lot, h1 .w { animation: none !important; opacity: 1; transform: none; }
-    .reveal, .reveal .grid-3 > *, .reveal .grid-2 > *, .reveal .proof-in > * { opacity: 1; transform: none; transition: none; }
-    .btn, .lot, .chip, .card-hover, .mat-pic img, .cta-bar { transition: none; }
+    .glow i, .hero h1 .w, .lot, .ticker-in { animation: none !important; opacity: 1; transform: none; }
+    .reveal, .reveal [data-i] { opacity: 1; transform: none; transition: none; }
+    .stack { transform: none; transition: none; }
+    .mat-in, .btn, .lot, .cta-bar { transition: none; }
   }
+  @media (hover: none) { .mat:hover .mat-in { transform: none; } .mat.flip .mat-in { transform: rotateY(180deg); } }
 
-  @media (max-width: 860px) {
-    .hero { grid-template-columns: 1fr; gap: 32px; padding: 40px 0 56px; }
+  @media (max-width: 960px) {
+    :root { --pad: 24px; }
+    .hero { grid-template-columns: 1fr; gap: 44px; padding: 56px 0 72px; min-height: 0; }
+    .stage { perspective: 1000px; perspective-origin: 50% 30%; }
+    .stack { transform: rotateX(4deg); }
+    .lot { --x: 0 !important; --z: 0 !important; }
     .grid-3, .grid-2, .price { grid-template-columns: 1fr; }
-    .proof-in { grid-template-columns: 1fr 1fr; gap: 16px; padding: 22px 0; }
+    .grid-4 { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .stat { padding: 24px 20px; }
     .nav a:not(.btn) { display: none; }
-    .section { padding: 48px 0; }
-    .section-head { margin-bottom: 24px; }
+    .section { padding: 80px 0; }
+    .proof { padding-bottom: 80px; }
+    .section-head { margin-bottom: 36px; }
     .brand, .nav .btn { white-space: nowrap; }
-    .nav .btn { padding: 9px 12px; font-size: 14px; }
-    .top-in { height: 56px; }
-    .mat-pic { aspect-ratio: 16 / 10; padding: 6% 18%; }
+    .nav .btn { padding: 10px 14px; font-size: 14px; }
+    .top-in { height: 60px; }
     .lead { font-size: 17px; }
-    h1 { font-size: clamp(30px, 8.2vw, 40px); }
-    h2 { font-size: 24px; }
-    .cta .btn { flex: 1 1 100%; padding: 14px 20px; }
-    .price { padding: 24px 20px; }
-    .foot { padding-bottom: 96px; }
+    h1 { font-size: clamp(26px, 7.2vw, 40px); overflow-wrap: normal; }
+    h2 { font-size: clamp(28px, 7vw, 36px); }
+    .cta .btn { flex: 1 1 100%; padding: 16px 20px; }
+    .steps::before { display: none; }
+    .mat, .mat-in { min-height: 380px; }
+    .price { padding: 32px 24px; }
+    .foot { padding-bottom: 104px; }
     .foot nav a { padding: 6px 0; display: inline-block; }
-    .aurora { filter: blur(48px); }
-    .aurora .a1 { width: 110vw; height: 110vw; } .aurora .a2 { width: 90vw; height: 90vw; } .aurora .a3 { width: 80vw; height: 80vw; } .aurora .a4 { display: none; }
-    .cta-bar {
-      display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
-      padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-      background: rgba(11,20,17,.6);
-      -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%);
-      border-top: 1px solid rgba(255,255,255,.08);
-      transform: translateY(110%); transition: transform .25s var(--ease);
-    }
+    .cta-bar { display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); background: rgba(7,13,11,.7); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%); border-top: 1px solid var(--hair); transform: translateY(110%); transition: transform .3s var(--ease-out); }
     .cta-bar.show { transform: none; }
-    .cta-bar .btn { width: 100%; padding: 14px 16px; font-size: 15px; white-space: nowrap; background: #7fd0b4; color: #0b1411; }
+    .cta-bar .btn { width: 100%; font-size: 15px; white-space: nowrap; }
   }
   @media (max-width: 420px) {
-    .wrap { padding: 0 16px; }
+    :root { --pad: 20px; }
     .brand span:last-child { font-size: 15px; }
-    .nav .btn { padding: 8px 10px; font-size: 13px; }
-    .lot { padding: 12px 14px 12px 16px; }
-    .install li { grid-template-columns: 78px 1fr; font-size: 14px; }
-    .stat .num { font-size: 26px; }
+    .nav .btn { padding: 9px 12px; font-size: 13px; }
+    .lot { padding: 15px 16px 15px 18px; }
+    .install li { grid-template-columns: 80px 1fr; font-size: 14px; }
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+    .stat .num { font-size: 32px; }
   }
 </style>
 </head>
@@ -277,7 +280,7 @@
     <a class="brand" href="/" aria-label="Отходы в доходы — на главную"><span class="logo">ОД</span><span>Отходы в доходы</span></a>
     <nav class="nav">
       <a href="#inside">Что внутри</a>
-      <a href="#sources">Площадки</a>
+      <a href="#how">Как работает</a>
       <a href="#price">Стоимость</a>
       <a class="btn btn-primary btn-sm" href="/app/">Открыть приложение</a>
     </nav>
@@ -286,69 +289,108 @@
 
 <main>
   <div class="hero-wrap">
-    <div class="aurora" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i><i class="a4"></i></div>
-  <section class="wrap hero">
-    <div class="hero-copy">
-      <span class="eyebrow mono">Нефтепродукты · Металлолом · Трубы</span>
-      <h1 class="display">Тендеры на продажу нефтепродуктов, лома и труб — в одном месте</h1>
-      <p class="lead">Предприятия по всей России продают отработанное масло, лом и трубы б/у через десятки торговых площадок. Мы каждый час обходим эти площадки, убираем закупки и оставляем только продажу. Новые лоты — в ленте приложения и уведомлением в Telegram.</p>
-      <div class="cta">
-        <a class="btn btn-primary" href="https://t.me/nfresursbot">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.6 15.5l-.4 5.3c.6 0 .8-.2 1.1-.5l2.6-2.5 5.4 4c1 .5 1.7.3 2-.9L23.9 4c.3-1.5-.5-2-1.5-1.7L1.8 10.2c-1.4.5-1.4 1.3-.2 1.7l5.3 1.6L18.9 6c.6-.4 1.1-.2.7.2z"/></svg>
-          Открыть в Telegram
-        </a>
-        <a class="btn btn-ghost" href="/app/">Открыть в браузере</a>
+    <div class="glow" aria-hidden="true"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
+    <div class="grid-lines" aria-hidden="true"></div>
+    <section class="wrap hero">
+      <div class="hero-copy">
+        <span class="eyebrow mono">Нефтепродукты · Металлолом · Трубы</span>
+        <h1 class="display">Тендеры на продажу нефтепродуктов, лома и труб — <em>в одном месте</em></h1>
+        <p class="lead">Предприятия по всей России продают отработанное масло, лом и трубы б/у через десятки торговых площадок. Мы каждый час обходим эти площадки, убираем закупки и оставляем только продажу. Новые лоты — в ленте приложения и уведомлением в Telegram.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="https://t.me/nfresursbot">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.6 15.5l-.4 5.3c.6 0 .8-.2 1.1-.5l2.6-2.5 5.4 4c1 .5 1.7.3 2-.9L23.9 4c.3-1.5-.5-2-1.5-1.7L1.8 10.2c-1.4.5-1.4 1.3-.2 1.7l5.3 1.6L18.9 6c.6-.4 1.1-.2.7.2z"/></svg>
+            Открыть в Telegram
+          </a>
+          <a class="btn btn-ghost" href="/app/">Открыть в браузере</a>
+        </div>
+        <p class="note">Первые 3 дня бесплатно. Дальше — 499 ₽ в месяц, картой или через СБП.</p>
       </div>
-      <p class="note">Первые 3 дня бесплатно. Дальше — 499 ₽ в месяц.</p>
-    </div>
-    <div class="feed" aria-label="Примеры лотов из ленты">
-      <div class="feed-label mono">Так выглядят лоты в ленте</div>
-      <article class="lot" style="--m: var(--oil); --i: 0">
-        <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
-        <div class="lot-title">Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Нефтеюганск</div>
-        <div class="lot-meta"><span>ХМАО — Югра</span><span>приём заявок до 15 сентября</span></div>
-      </article>
-      <article class="lot" style="--m: var(--scrap); --i: 1">
-        <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
-        <div class="lot-title">Лом чёрных металлов, 200 т, Жердевский сахарный завод</div>
-        <div class="lot-meta"><span>Тамбовская область</span><span>самовывоз</span></div>
-      </article>
-      <article class="lot" style="--m: var(--pipe); --i: 2">
-        <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
-        <div class="lot-title">Труба обсадная 139,7×9,17 P-110 с муфтами, 61 т</div>
-        <div class="lot-meta"><span>Ямало-Ненецкий АО</span><span>начальная цена 6 285 866 ₽</span></div>
-      </article>
-    </div>
-  </section>
+      <div class="stage" id="stage" aria-label="Примеры лотов из ленты">
+        <div class="stack" id="stack">
+          <div class="stack-label mono">Так выглядят лоты в ленте</div>
+          <article class="lot" style="--m: var(--oil); --i: 0; --z: 60; --x: -18">
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Нефтеюганск</div>
+            <div class="lot-meta"><span>ХМАО — Югра</span><span>приём заявок до 15 сентября</span></div>
+          </article>
+          <article class="lot" style="--m: var(--scrap); --i: 1; --z: 20; --x: 8">
+            <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
+            <div class="lot-title">Лом чёрных металлов, 200 т, Жердевский сахарный завод</div>
+            <div class="lot-meta"><span>Тамбовская область</span><span>самовывоз</span></div>
+          </article>
+          <article class="lot" style="--m: var(--pipe); --i: 2; --z: -20; --x: 30">
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Труба обсадная 139,7×9,17 P-110 с муфтами, 61 т</div>
+            <div class="lot-meta"><span>Ямало-Ненецкий АО</span><span class="lot-price">6 285 866 ₽</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
   </div>
 
-  <section class="proof" aria-label="Сервис в цифрах">
-    <div class="wrap proof-in">
-      <div class="stat" style="--i:0"><div class="num display" data-to="16">16</div><div class="lbl">площадок под наблюдением</div></div>
-      <div class="stat" style="--i:1"><div class="num display" data-to="1000" data-suffix="+">1000<small>+</small></div><div class="lbl">лотов на продажу в базе</div></div>
-      <div class="stat" style="--i:2"><div class="num display" data-to="24" data-suffix="/7">24<small>/7</small></div><div class="lbl">обход площадок каждый час</div></div>
-      <div class="stat" style="--i:3"><div class="num display" data-to="3">3</div><div class="lbl">вида сырья: нефтепродукты, лом, трубы</div></div>
+  <div class="ticker" aria-label="Площадки-источники">
+    <div class="ticker-in" id="ticker">
+      <span>ТЭК-Торг</span><span>B2B-Center</span><span>Сбербанк-АСТ</span><span>ЭТП ГПБ</span><span>OnlineContract</span><span>Bidzaar</span><span>isource Reserve</span><span>Фабрикант</span><span>ЗаказРФ</span><span>Tender.Pro</span><span>lot-online (РАД)</span><span>ЭТП РЭО</span><span>Интер РАО</span><span>Роснефть</span><span>Славнефть</span><span>АЛРОСА</span>
+    </div>
+  </div>
+
+  <section class="section proof" style="padding-top:96px" aria-label="Сервис в цифрах">
+    <div class="wrap">
+      <div class="grid-4">
+        <div class="stat" data-i style="--i:0"><div class="num display" data-to="16">16</div><div class="lbl">площадок под наблюдением, список растёт</div></div>
+        <div class="stat" data-i style="--i:1"><div class="num display" data-to="1000" data-suffix="+">1000<small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
+        <div class="stat" data-i style="--i:2"><div class="num display" data-to="24" data-suffix="/7">24<small>/7</small></div><div class="lbl">обход площадок каждый час, без выходных</div></div>
+        <div class="stat" data-i style="--i:3"><div class="num display" data-to="3">3</div><div class="lbl">вида сырья: нефтепродукты, лом, трубы</div></div>
+      </div>
     </div>
   </section>
 
-  <section class="section" id="inside">
+  <section class="section" id="inside" style="padding-top:0">
     <div class="wrap">
       <div class="section-head">
-        <h2>Что внутри</h2>
-        <p class="lead">Три вида сырья, которые предприятия списывают и продают. Каждый лот — это чья-то реализация, а не закупка.</p>
+        <span class="eyebrow mono">Что внутри</span>
+        <h2 class="display">Три вида сырья, которые предприятия списывают и продают</h2>
+        <p class="lead">Каждый лот — это чья-то реализация, а не закупка. Наведите на карточку, чтобы увидеть, что именно попадает в ленту.</p>
       </div>
       <div class="grid-3">
-        <article class="mat mat-oil card-hover" style="--i:0">
-          <div class="mat-pic"><img src="img/oil.svg" alt="Бочка с нефтепродуктами" width="240" height="200" loading="lazy"></div>
-          <div class="mat-body"><h3>Нефтепродукты</h3><p>Отработанные масла и лежалое топливо, керосин, дизель, бензин, всплывшие нефтепродукты из нефтеловушек, смесь нефтеотходов.</p></div>
+        <article class="mat mat-oil" data-i style="--i:0" tabindex="0">
+          <div class="mat-in">
+            <div class="face face-front">
+              <div class="pic"><img src="img/oil.svg" alt="Бочка с нефтепродуктами" width="240" height="200" loading="lazy"></div>
+              <div class="txt"><h3>Нефтепродукты</h3><span class="more">подробнее →</span></div>
+            </div>
+            <div class="face face-back">
+              <h3>Нефтепродукты</h3>
+              <p>Отработанные масла и лежалое топливо, всплывшие нефтепродукты из нефтеловушек, смесь нефтеотходов.</p>
+              <ul><li>керосин, дизель, бензин</li><li>отработанные и лежалые масла</li><li>нефтешлам, СНО, льяльные воды</li></ul>
+            </div>
+          </div>
         </article>
-        <article class="mat mat-scrap card-hover" style="--i:1">
-          <div class="mat-pic"><img src="img/scrap.svg" alt="Пакет прессованного металлолома" width="240" height="200" loading="lazy"></div>
-          <div class="mat-body"><h3>Металлолом</h3><p>Лом чёрных и цветных металлов: 3А, 5А, 12А, медь, алюминий, обрезь, списанная техника и оборудование на металл.</p></div>
+        <article class="mat mat-scrap" data-i style="--i:1" tabindex="0">
+          <div class="mat-in">
+            <div class="face face-front">
+              <div class="pic"><img src="img/scrap.svg" alt="Пакет прессованного металлолома" width="240" height="200" loading="lazy"></div>
+              <div class="txt"><h3>Металлолом</h3><span class="more">подробнее →</span></div>
+            </div>
+            <div class="face face-back">
+              <h3>Металлолом</h3>
+              <p>Лом чёрных и цветных металлов, обрезь, списанная техника и оборудование на металл.</p>
+              <ul><li>категории 3А, 5А, 12А</li><li>медь, алюминий, латунь</li><li>лом с демонтажем и самовывозом</li></ul>
+            </div>
+          </div>
         </article>
-        <article class="mat mat-pipe card-hover" style="--i:2">
-          <div class="mat-pic"><img src="img/pipes.svg" alt="Пакет стальных труб, вид с торца" width="240" height="200" loading="lazy"></div>
-          <div class="mat-body"><h3>Трубы</h3><p>НКТ, обсадные, бесшовные и электросварные. Б/у и неликвид со складов, лом труб.</p></div>
+        <article class="mat mat-pipe" data-i style="--i:2" tabindex="0">
+          <div class="mat-in">
+            <div class="face face-front">
+              <div class="pic"><img src="img/pipes.svg" alt="Пакет стальных труб, вид с торца" width="240" height="200" loading="lazy"></div>
+              <div class="txt"><h3>Трубы</h3><span class="more">подробнее →</span></div>
+            </div>
+            <div class="face face-back">
+              <h3>Трубы</h3>
+              <p>Б/у и неликвид со складов, лом труб.</p>
+              <ul><li>НКТ и обсадные</li><li>бесшовные и электросварные</li><li>трубы с покрытием, детали трубопроводов</li></ul>
+            </div>
+          </div>
         </article>
       </div>
     </div>
@@ -357,22 +399,23 @@
   <section class="section" id="how">
     <div class="wrap">
       <div class="section-head">
-        <h2>Как это работает</h2>
-        <p class="lead">Ничего искать руками не нужно. Площадки обходим мы, вам остаётся выбрать лот и подать заявку.</p>
+        <span class="eyebrow mono">Как это работает</span>
+        <h2 class="display">Ничего искать руками не нужно</h2>
+        <p class="lead">Площадки обходим мы, вам остаётся выбрать лот и подать заявку.</p>
       </div>
-      <div class="grid-3">
-        <article class="step card-hover" style="--i:0">
-          <div class="step-n mono">Шаг 1</div>
+      <div class="grid-3 steps">
+        <article class="step" data-i style="--i:0">
+          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
           <h3>Раз в час обходим площадки</h3>
           <p>Парсер заходит на каждую площадку из списка и забирает новые процедуры вместе с документами, ценой и сроком подачи заявок.</p>
         </article>
-        <article class="step card-hover" style="--i:1">
-          <div class="step-n mono">Шаг 2</div>
+        <article class="step" data-i style="--i:1">
+          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-6 8v5l-4 2v-7z"/></svg></div>
           <h3>Оставляем только продажу</h3>
           <p>Закупки, поставки и услуги отсекаем. Нефтяные лоты дополнительно проверяет человек, чтобы в ленту не попадал мусор.</p>
         </article>
-        <article class="step card-hover" style="--i:2">
-          <div class="step-n mono">Шаг 3</div>
+        <article class="step" data-i style="--i:2">
+          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 6 2 8 2 8H4s2-2 2-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div>
           <h3>Сообщаем вам</h3>
           <p>Лот появляется в ленте. Если он подходит под ваши слова и регион — приходит уведомление в Telegram или на почту.</p>
         </article>
@@ -380,48 +423,20 @@
     </div>
   </section>
 
-  <section class="section" id="sources">
-    <div class="wrap">
-      <div class="section-head">
-        <h2>Откуда лоты</h2>
-        <p class="lead">Сейчас подключено 16 площадок — от крупных ЭТП до разделов реализации на сайтах компаний.</p>
-      </div>
-      <div class="chips">
-        <span class="chip">ТЭК-Торг</span>
-        <span class="chip">B2B-Center</span>
-        <span class="chip">Сбербанк-АСТ</span>
-        <span class="chip">ЭТП ГПБ</span>
-        <span class="chip">OnlineContract</span>
-        <span class="chip">Bidzaar</span>
-        <span class="chip">isource Reserve</span>
-        <span class="chip">Фабрикант</span>
-        <span class="chip">ЗаказРФ</span>
-        <span class="chip">Tender.Pro</span>
-        <span class="chip">lot-online (РАД)</span>
-        <span class="chip">ЭТП РЭО</span>
-        <span class="chip">Интер РАО</span>
-        <span class="chip">Роснефть (реализация имущества)</span>
-        <span class="chip">Славнефть</span>
-        <span class="chip">АЛРОСА</span>
-        <span class="chip chip-more">+ следующая</span>
-      </div>
-      <p class="lead" style="margin-top:22px;max-width:640px">Список не закрыт: площадки добавляем постоянно, в том числе по просьбам пользователей. Знаете, где ещё продают сырьё, — напишите в бот, подключим.</p>
-    </div>
-  </section>
-
   <section class="section" id="where">
     <div class="wrap">
       <div class="section-head">
-        <h2>Где пользоваться</h2>
-        <p class="lead">Одно приложение, два входа. Аккаунт общий: избранное и уведомления не теряются.</p>
+        <span class="eyebrow mono">Где пользоваться</span>
+        <h2 class="display">Одно приложение, два входа</h2>
+        <p class="lead">Аккаунт общий: избранное и уведомления не теряются.</p>
       </div>
       <div class="grid-2">
-        <article class="where card-hover" style="--i:0">
+        <article class="where" data-i style="--i:0">
           <h3>В Telegram</h3>
           <p>Откройте бота <a href="https://t.me/nfresursbot">@nfresursbot</a> и нажмите кнопку меню — приложение откроется внутри Telegram. Ставить ничего не нужно, вход по вашему аккаунту.</p>
           <a class="btn btn-primary btn-sm" href="https://t.me/nfresursbot">Открыть бота</a>
         </article>
-        <article class="where card-hover" style="--i:1">
+        <article class="where" data-i style="--i:1">
           <h3>В браузере и на рабочем столе</h3>
           <p>Откройте <a href="/app/">отходы-в-доходы.рф/app</a>, вход по коду на почту. Приложение можно поставить на телефон или компьютер, как обычное:</p>
           <ul class="install">
@@ -434,26 +449,27 @@
     </div>
   </section>
 
-  <section class="section" id="board">
+  <section class="section" id="board" style="padding-top:0">
     <div class="wrap">
       <div class="section-head">
-        <h2>Доска объявлений</h2>
-        <p class="lead">Кроме тендеров, в приложении есть доска частных объявлений. Продаёте партию лома, трубы со склада или бочки отработки — разместите объявление бесплатно. Оно проходит модерацию и висит 10 дней, потом можно продлить. <a href="rules.html">Правила размещения</a>.</p>
+        <span class="eyebrow mono">Доска объявлений</span>
+        <h2 class="display">Продаёте сами? Разместите объявление</h2>
+        <p class="lead">Кроме тендеров, в приложении есть доска частных объявлений. Партия лома, трубы со склада или бочки отработки — объявление бесплатно, проходит модерацию и висит 10 дней, потом можно продлить. <a href="rules.html">Правила размещения</a>.</p>
       </div>
     </div>
   </section>
 
-  <section class="section" id="price">
+  <section class="section" id="price" style="padding-top:0">
     <div class="wrap">
       <div class="price-wrap"><div class="price">
         <div>
-          <h2>Стоимость</h2>
-          <p>Первые 3 дня — бесплатно, чтобы посмотреть ленту и понять, есть ли в ней ваши лоты. Дальше подписка. Оплата картой или через СБП на сайте, либо прямо в Telegram. Условия — в <a href="oferta.html">публичной оферте</a>.</p>
+          <span class="eyebrow mono">Стоимость</span>
+          <h2 class="display">Один тариф. Всё включено</h2>
+          <p>Первые 3 дня — бесплатно, чтобы посмотреть ленту и понять, есть ли в ней ваши лоты. Дальше подписка: все площадки, уведомления и доска объявлений. Оплата картой или через СБП на сайте, либо прямо в Telegram. Условия — в <a href="oferta.html">публичной оферте</a>.</p>
         </div>
         <div>
-          <div class="price-big display">499 ₽ <small>в месяц</small></div>
-          <p>Один тариф. Все площадки, уведомления и доска объявлений.</p>
-          <a class="btn btn-primary" href="/app/" style="margin-top:18px">Попробовать бесплатно</a>
+          <div class="price-big display">499 ₽<small>в месяц</small></div>
+          <a class="btn btn-primary" href="/app/">Попробовать бесплатно</a>
         </div>
       </div></div>
     </div>
@@ -476,18 +492,56 @@
     Открыть в Telegram · 3 дня бесплатно
   </a>
 </div>
+
 <script>
 (function(){
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // 1. заголовок — пословно
+  var fine = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // 1. заголовок — пословно (em сохраняем как акцент)
   var h1 = document.querySelector('h1');
   if (h1 && !reduce) {
-    var words = h1.textContent.split(/\s+/).filter(Boolean);
-    h1.textContent = '';
-    words.forEach(function(w, i){ var sp = document.createElement('span'); sp.className = 'w'; sp.style.setProperty('--i', i); sp.textContent = w; h1.appendChild(sp); h1.appendChild(document.createTextNode(' ')); });
+    var i = 0, out = document.createDocumentFragment();
+    Array.prototype.slice.call(h1.childNodes).forEach(function(node){
+      var accent = node.nodeName === 'EM';
+      node.textContent.split(/\s+/).filter(Boolean).forEach(function(w){
+        var sp = document.createElement('span'); sp.className = 'w'; sp.style.setProperty('--i', i++); sp.textContent = w;
+        if (accent) { var em = document.createElement('em'); em.appendChild(sp); out.appendChild(em); } else out.appendChild(sp);
+        out.appendChild(document.createTextNode(' '));
+      });
+    });
+    h1.textContent = ''; h1.appendChild(out);
   }
-  // 2. появление секций при скролле
-  var targets = document.querySelectorAll('.proof, .section');
+
+  // 2. 3D-витрина: наклон за курсором + блик на карточках
+  var stage = document.getElementById('stage'), stack = document.getElementById('stack');
+  if (stage && stack && fine && !reduce) {
+    stage.addEventListener('pointermove', function(e){
+      var r = stage.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5;
+      stack.style.setProperty('--ry', (px * 16).toFixed(2) + 'deg');
+      stack.style.setProperty('--rx', (-py * 10).toFixed(2) + 'deg');
+    });
+    stage.addEventListener('pointerleave', function(){ stack.style.setProperty('--ry', '0deg'); stack.style.setProperty('--rx', '0deg'); });
+  }
+  document.querySelectorAll('.lot, .where').forEach(function(el){
+    el.addEventListener('pointermove', function(e){
+      var r = el.getBoundingClientRect();
+      el.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
+      el.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%');
+    });
+  });
+  // карточки сырья на тач-экранах — переворот по тапу
+  document.querySelectorAll('.mat').forEach(function(m){
+    m.addEventListener('click', function(){ if (!fine) m.classList.toggle('flip'); });
+  });
+
+  // 3. бегущая строка — дублируем содержимое для бесшовной петли
+  var t = document.getElementById('ticker');
+  if (t) { t.innerHTML += t.innerHTML; }
+
+  // 4. появление секций
+  var targets = document.querySelectorAll('.section');
   if ('IntersectionObserver' in window && !reduce) {
     targets.forEach(function(el){ el.classList.add('reveal'); });
     var io = new IntersectionObserver(function(es){
@@ -495,20 +549,21 @@
     }, {rootMargin: '0px 0px -4% 0px', threshold: 0.02});
     targets.forEach(function(el){ io.observe(el); });
   }
-  // 3. счётчики
-  var nums = document.querySelectorAll('.num[data-to]');
+
+  // 5. счётчики
   function run(el){
-    var to = +el.dataset.to, suf = el.dataset.suffix || '', t0 = null, dur = 1200;
-    function fmt(v){ return String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u2009') + (suf ? '<small>' + suf + '</small>' : ''); }
+    var to = +el.dataset.to, suf = el.dataset.suffix || '', t0 = null, dur = 1400;
+    function fmt(v){ return String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + (suf ? '<small>' + suf + '</small>' : ''); }
     if (reduce) { el.innerHTML = fmt(to); return; }
     function step(ts){ if (!t0) t0 = ts; var k = Math.min(1, (ts - t0) / dur); k = 1 - Math.pow(1 - k, 3); el.innerHTML = fmt(to * k); if (k < 1) requestAnimationFrame(step); }
     requestAnimationFrame(step);
   }
   if ('IntersectionObserver' in window) {
-    var io2 = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { run(e.target); io2.unobserve(e.target); } }); }, {threshold: .6});
-    nums.forEach(function(n){ io2.observe(n); });
+    var io2 = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { run(e.target); io2.unobserve(e.target); } }); }, {threshold: .5});
+    document.querySelectorAll('.num[data-to]').forEach(function(n){ io2.observe(n); });
   }
-  // 4. плавающая кнопка на телефоне
+
+  // 6. плавающая кнопка на телефоне
   var bar = document.getElementById('cta-bar'), hero = document.querySelector('.hero .cta');
   if (bar && hero && 'IntersectionObserver' in window) {
     new IntersectionObserver(function(es){
