@@ -94,6 +94,10 @@
   .filters-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--glass-hair); background: var(--glass); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
   .filters-btn svg { width: 16px; height: 16px; }
   .filters-btn.on { border-color: var(--accent); color: var(--accent); }
+  .filters-btn { position: relative; }
+  .filters-btn.has::after { content: ''; position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 0 2px var(--app-bg); }
+  .empty-filters { font-size: 13px; color: var(--text-dim); margin: 10px 0 12px; }
+  .empty .ebtn { padding: 10px 16px; }
   .filters-panel { display: flex; flex-direction: column; gap: 10px; background: var(--glass); border: 1px solid var(--glass-hair); border-radius: 12px; padding: 12px 14px; margin: 0 0 12px; }
   .fp-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--text-dim); }
   .fp-row select { flex: 0 1 auto; max-width: 60%; }
@@ -1111,6 +1115,15 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeTende
 const FILT={q:'',site:'',region:'',city:'',sort:'new',onlyNew:false,showHidden:false,cat:'oil'};
 function catCount(cat){return TENDERS.filter(t=>(t.category||'oil')===cat).length;}
 function isHidden(t){ return statuses[key(t)]==='skip'; }
+function activeFilters(){
+  var a=[]; if(FILT.q) a.push('поиск «'+FILT.q+'»'); if(FILT.site) a.push('площадка'); if(FILT.region) a.push(FILT.region==='__none__'?'без области':'область «'+FILT.region+'»'); if(FILT.city) a.push('город «'+FILT.city+'»'); if(FILT.onlyNew) a.push('только новые'); if(FILT.showHidden) a.push('показать скрытые'); return a;
+}
+function resetFilters(){
+  FILT.q=''; FILT.site=''; FILT.region=''; FILT.city=''; FILT.onlyNew=false; FILT.showHidden=false;
+  var ids={'search':'', 'f-site':'', 'f-region':'', 'f-city':''}; Object.keys(ids).forEach(function(id){ var el=document.getElementById(id); if(el) el.value=ids[id]; });
+  ['f-new-cb','f-hidden-cb'].forEach(function(id){ var el=document.getElementById(id); if(el) el.checked=false; });
+  render();
+}
 function feedItems(){
   let a=TENDERS.slice();
   if(FILT.cat!=='all') a=a.filter(t=>(t.category||'oil')===FILT.cat); // переключатель
@@ -1151,7 +1164,9 @@ function render(){
   fillSiteFilter();
   fillRegionFilter();
   const items=feedItems();
-  document.getElementById('tenders-list').innerHTML = items.length?items.map(card).join(''):`<div class="empty">${FILT.showHidden?'Скрытых тендеров нет.':'Ничего не найдено.'}</div>`;
+  var af=activeFilters();
+  document.getElementById('tenders-list').innerHTML = items.length?items.map(card).join(''):`<div class="empty">${FILT.showHidden?'Скрытых тендеров нет.':'Ничего не найдено.'}${af.length?'<div class="empty-filters">Включены фильтры: <b>'+escH(af.join(', '))+'</b></div><button class="ebtn" id="f-reset" type="button">Сбросить фильтры</button>':''}</div>`;
+  var fb=document.getElementById('filters-btn'); if(fb){ fb.classList.toggle('has', af.length>0); fb.title=af.length?('Включены фильтры: '+af.join(', ')):''; }
   document.getElementById('tenders-count').textContent = items.length+' '+plural(items.length,'тендер','тендера','тендеров');
   const fv=TENDERS.filter(t=>favs.has(key(t)));
   document.getElementById('fav-list').innerHTML = fv.length?fv.map(card).join(''):`<div class="empty">${heart(false)}<div>Отмечайте тендеры ♥ — они появятся здесь.</div></div>`;
@@ -1312,6 +1327,7 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#modal-send')){ sendDocs('tg', document.getElementById('modal-send'), 'В Телеграм'); return; }
   if(e.target.closest('#modal-mail')){ sendDocs('email', document.getElementById('modal-mail'), 'На почту'); return; }
   if(e.target.closest('#modal-fav')){ if(!_modalT)return; var k=key(_modalT); favs.has(k)?favs.delete(k):favs.add(k); saveFavs(); if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged(); var mf=document.getElementById('modal-fav'),isf=favs.has(k); mf.innerHTML=heart(isf); mf.classList.toggle('on',isf); render(); return; }
+  if(e.target.closest('#f-reset')){ resetFilters(); return; }
   var cseg=e.target.closest('#catseg button');
   if(cseg){ FILT.cat=cseg.dataset.cat; document.querySelectorAll('#catseg button').forEach(function(b){b.classList.toggle('on',b===cseg);}); document.querySelector('main').scrollTop=0; render(); return; }
   if(e.target.closest('#filters-btn')){ var fp=document.getElementById('filters-panel'); var open=fp.style.display==='none'; fp.style.display=open?'flex':'none'; e.target.closest('#filters-btn').classList.toggle('on',open); return; }
