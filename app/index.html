@@ -15,6 +15,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Отходы в доходы">
 <script src="../telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" media="(min-width: 1024px)" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Unbounded:wght@700&display=swap">
 <style>
   :root {
     --app-bg: #eef1f5; --app-bg2: #e6eaf0; --surface: #ffffff; --surface-2: #eef1f4;
@@ -27,21 +30,21 @@
     --glow-a: rgba(65,151,126,.10); --glow-b: rgba(37,93,81,.08);
   }
   :root:not([data-theme="light"]) { @media (prefers-color-scheme: dark) {
-    --app-bg:#081016; --app-bg2:#101b22; --surface:#17232b; --surface-2:#1d2b34;
-    --text:#f1f6f4; --text-dim:#b5c3bf; --text-faint:#91a49e;
-    --hair:#2a3a42; --accent:#7fd0b4; --accent-soft:#173a31;
-    --urgent:#ff8178; --fresh:#7fd0b4; --warn:#e2ad58; --nav-bg:rgba(8,16,22,.52);
-    --glass:#17232b; --glass-2:#1d2b34;
+    --app-bg:#070d0b; --app-bg2:#0b1411; --surface:#0f1a16; --surface-2:#142320;
+    --text:#eef3f0; --text-dim:#aebbb5; --text-faint:#8a9a93;
+    --hair:#1f2e29; --accent:#7fd0b4; --accent-soft:#163229;
+    --urgent:#ff8178; --fresh:#7fd0b4; --warn:#e2ad58; --nav-bg:rgba(7,13,11,.55);
+    --glass:#0f1a16; --glass-2:#142320;
     --glass-brd: rgba(255,255,255,.10); --glass-hair: rgba(255,255,255,.07);
     --shadow: rgba(0,0,0,.45); --shadow-s: rgba(0,0,0,.3);
     --glow-a: rgba(75,156,130,.12); --glow-b: rgba(54,121,104,.08);
   }}
   :root[data-theme="dark"] {
-    --app-bg:#081016; --app-bg2:#101b22; --surface:#17232b; --surface-2:#1d2b34;
-    --text:#f1f6f4; --text-dim:#b5c3bf; --text-faint:#91a49e;
-    --hair:#2a3a42; --accent:#7fd0b4; --accent-soft:#173a31;
-    --urgent:#ff8178; --fresh:#7fd0b4; --warn:#e2ad58; --nav-bg:rgba(8,16,22,.52);
-    --glass:#17232b; --glass-2:#1d2b34;
+    --app-bg:#070d0b; --app-bg2:#0b1411; --surface:#0f1a16; --surface-2:#142320;
+    --text:#eef3f0; --text-dim:#aebbb5; --text-faint:#8a9a93;
+    --hair:#1f2e29; --accent:#7fd0b4; --accent-soft:#163229;
+    --urgent:#ff8178; --fresh:#7fd0b4; --warn:#e2ad58; --nav-bg:rgba(7,13,11,.55);
+    --glass:#0f1a16; --glass-2:#142320;
     --glass-brd: rgba(255,255,255,.10); --glass-hair: rgba(255,255,255,.07);
     --shadow: rgba(0,0,0,.45); --shadow-s: rgba(0,0,0,.3);
     --glow-a: rgba(75,156,130,.12); --glow-b: rgba(54,121,104,.08);
@@ -418,16 +421,110 @@
   .sharebtn { background: linear-gradient(145deg,#4a9a82,#255d51); box-shadow: 0 5px 16px rgba(37,93,81,.25); }
   :root[data-theme="dark"] .card, :root[data-theme="dark"] .rows { box-shadow: 0 3px 10px rgba(0,0,0,.24); }
   :root[data-theme="dark"] header.app { box-shadow: 0 5px 22px rgba(0,0,0,.28); }
+  .lg-card { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; }
+  /* ═══════════ Личный кабинет — десктоп (≥1024px): боковая панель, сетка, две колонки ═══════════ */
+  @media (min-width: 1024px) {
+    :root { --side: 280px; }
+    body { font-family: "Golos Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: block; height: auto; min-height: 100dvh; background: var(--app-bg); }
+    body::before { background:
+      radial-gradient(60% 50% at 0% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+      radial-gradient(50% 45% at 100% 100%, rgba(217,160,74,.10), transparent 70%); }
+    /* левая колонка: логотип сверху, навигация под ним */
+    header.app { position: fixed; left: 0; top: 0; width: var(--side); height: 96px; padding: 0 22px; gap: 12px;
+      background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; border: none; box-shadow: none; z-index: 12; }
+    header.app .logo { width: 42px; height: 42px; border-radius: 13px; font-size: 19px; }
+    .app-name { font-family: "Unbounded", "Golos Text", sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0; line-height: 1.2; }
+    .app-sub { font-size: 9.5px; letter-spacing: .1em; }
+    nav.tabbar { position: fixed; left: 0; top: 96px; bottom: 0; right: auto; width: var(--side); flex-direction: column; align-items: stretch; gap: 4px;
+      padding: 8px 14px 24px; border-top: none; border-right: 1px solid var(--hair); background: color-mix(in srgb, var(--app-bg) 70%, transparent);
+      backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%); box-shadow: none; }
+    nav.tabbar button { flex: none; flex-direction: row; justify-content: flex-start; gap: 14px; padding: 12px 14px; border-radius: 13px; font-size: 15px; font-weight: 500; opacity: .72; color: var(--text-dim); transition: background .18s, opacity .18s, color .18s; }
+    nav.tabbar button:hover { opacity: 1; background: var(--surface); }
+    nav.tabbar button.active { opacity: 1; color: var(--text); background: var(--surface); box-shadow: inset 0 0 0 1px var(--hair), inset 3px 0 0 var(--tab-c); }
+    nav.tabbar button svg { width: 22px; height: 22px; color: var(--tab-c); }
+    nav.tabbar .badge { position: static; margin-left: auto; order: 3; }
+    /* контент */
+    main { margin-left: var(--side); overflow: visible; }
+    .pane { max-width: 1280px; margin: 0; padding: 36px 44px 72px; }
+    .pane-head { padding: 0 0 22px; align-items: center; }
+    .pane-head h2 { font-family: "Unbounded", "Golos Text", sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+    .pane-head .count { font-size: 13px; }
+    .catseg { gap: 8px; margin-bottom: 16px; }
+    .catseg button { padding: 9px 18px; font-size: 14px; }
+    .toolbar { gap: 12px; margin-bottom: 16px; }
+    .search { max-width: 560px; padding: 13px 16px; font-size: 15px; border-radius: 14px; }
+    .filters-btn { padding: 12px 18px; font-size: 14px; }
+    .filters-panel { flex-direction: row; flex-wrap: wrap; gap: 12px 20px; padding: 16px 20px; border-radius: 16px; margin-bottom: 20px; }
+    .fp-row { flex: 1 1 240px; }
+    .fp-row.fp-toggle { flex: 0 1 200px; }
+    .fp-row select, .fsel { max-width: none; }
+    /* сетка карточек — карточки снова карточки, не строки */
+    #tenders-list, #fav-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    #tenders-list .spinner, #tenders-list .empty, #fav-list .empty { grid-column: 1 / -1; }
+    .card { background: var(--surface); border: 1px solid var(--hair); border-radius: 18px; padding: 16px 18px 14px; margin: 0; box-shadow: none;
+      transition: transform .25s cubic-bezier(.2,.7,.2,1), border-color .2s, box-shadow .25s; display: flex; flex-direction: column; }
+    .card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 45%, var(--hair)); box-shadow: 0 24px 48px -28px rgba(0,0,0,.7), 0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent); }
+    .card:last-child { border-bottom: 1px solid var(--hair); }
+    .card.new { border: 1px solid color-mix(in srgb, #2fbf6e 55%, var(--hair)); background: color-mix(in srgb, #2fbf6e 6%, var(--surface)); box-shadow: 0 0 30px -14px rgba(47,191,110,.6); }
+    .card h3 { font-size: 15px; -webkit-line-clamp: 3; margin-bottom: 10px; }
+    .c-foot { margin-top: auto; }
+    .city { font-size: 14px; }
+    .price { font-size: 15px; }
+    .iact { width: 32px; height: 32px; border-radius: 9px; }
+    .iact svg { width: 16px; height: 16px; }
+    /* объявления */
+    #ads-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    #ads-list .ads-empty { grid-column: 1 / -1; }
+    .ad-card { margin: 0; border-radius: 18px; padding: 16px 18px; }
+    .ad-form { padding: 20px; border-radius: 18px; }
+    /* профиль — две колонки */
+    #pane-profile.active { display: block; columns: 2; column-gap: 32px; }
+    #pane-profile > * { break-inside: avoid; }
+    #pane-profile > .pane-head, #pane-profile > #stats-line, #pane-profile > .sharebtn { column-span: all; }
+    #pane-profile > .sharebtn { width: auto; justify-self: start; padding: 12px 22px; }
+    .group > .label { font-size: 11.5px; padding: 0 4px 10px; }
+    .rows { border-radius: 18px; }
+    .row { padding: 14px 18px; }
+    .row .rl { font-size: 15px; }
+    .sub-card { padding: 22px; border-radius: 18px; }
+    .sub-price { font-family: "Unbounded", sans-serif; font-size: 34px; }
+    /* модалка — по центру, как окно */
+    .modal-ov { align-items: center; }
+    .modal { border-radius: 22px; max-width: 760px; padding: 28px 28px 24px; max-height: 86vh; }
+    .toast { bottom: 28px; left: calc(var(--side) + (100vw - var(--side)) / 2); }
+    /* вход — полупрозрачный фон над кабинетом + небольшой стеклянный блок по центру */
+    #login-gate { background: color-mix(in srgb, var(--app-bg) 55%, transparent) !important;
+      -webkit-backdrop-filter: blur(10px) saturate(140%); backdrop-filter: blur(10px) saturate(140%); }
+    #login-gate::before { content: ''; position: absolute; inset: 0; pointer-events: none; background:
+      radial-gradient(40% 40% at 20% 15%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%),
+      radial-gradient(35% 35% at 85% 85%, rgba(217,160,74,.12), transparent 70%); }
+    .lg-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 14px; width: 400px; padding: 30px 30px 24px; border-radius: 22px;
+      background: color-mix(in srgb, var(--surface) 72%, transparent); border: 1px solid rgba(255,255,255,.12);
+      -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 40px 80px -30px rgba(0,0,0,.8);
+      animation: lgin .5s cubic-bezier(.16,1,.3,1) both; }
+    @keyframes lgin { from { opacity: 0; transform: translateY(14px) scale(.98); } }
+    .lg-card > div:first-child { font-family: "Unbounded", sans-serif !important; font-size: 22px !important; }
+    .lg-card input { width: 100% !important; background: var(--surface-2); color: var(--text); font-size: 15px !important; }
+    .lg-card button { width: 100% !important; background: var(--accent) !important; color: var(--app-bg) !important; box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--accent) 70%, transparent); }
+    @media (prefers-reduced-motion: reduce) { .lg-card { animation: none; } }
+  }
+  @media (min-width: 1500px) {
+    #tenders-list, #fav-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .pane { padding: 44px 56px 80px; }
+  }
 </style>
 </head>
 <body>
   <div id="login-gate" style="display:none;position:fixed;inset:0;z-index:10000;background:var(--app-bg,#eef1f5);flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;font-family:system-ui,-apple-system,sans-serif">
-    <div style="font-weight:700;font-size:20px;color:var(--text,#14181d)">Отходы в доходы</div>
-    <div id="lg-msg" style="color:var(--text-dim,#5a636d);text-align:center;max-width:320px">Войдите по e-mail, чтобы открыть тендеры</div>
-    <input id="lg-email" type="email" inputmode="email" autocomplete="email" placeholder="you@mail.ru" style="width:min(320px,90vw);padding:12px;border-radius:12px;border:1px solid var(--hair,#d9e2e0);font-size:16px">
-    <input id="lg-code" type="text" inputmode="numeric" maxlength="6" placeholder="код из письма" style="display:none;width:min(320px,90vw);padding:12px;border-radius:12px;border:1px solid var(--hair,#d9e2e0);font-size:16px;letter-spacing:4px;text-align:center">
-    <button id="lg-btn" type="button" style="width:min(320px,90vw);padding:12px;border:0;border-radius:12px;background:#255d51;color:#fff;font-weight:600;font-size:16px;cursor:pointer">Получить код</button>
-    <div style="max-width:320px;font-size:11px;line-height:1.45;color:var(--text-faint,#8b949e);text-align:center">Нажимая «Войти», вы соглашаетесь на обработку персональных данных согласно <a href="../privacy.html" target="_blank" rel="noopener" style="color:var(--accent,#255d51)">Политике конфиденциальности</a>.</div>
+    <div class="lg-card">
+      <div style="font-weight:700;font-size:20px;color:var(--text,#14181d)">Отходы в доходы</div>
+      <div id="lg-msg" style="color:var(--text-dim,#5a636d);text-align:center;max-width:320px">Войдите по e-mail, чтобы открыть тендеры</div>
+      <input id="lg-email" type="email" inputmode="email" autocomplete="email" placeholder="you@mail.ru" style="width:min(320px,90vw);padding:12px;border-radius:12px;border:1px solid var(--hair,#d9e2e0);font-size:16px">
+      <input id="lg-code" type="text" inputmode="numeric" maxlength="6" placeholder="код из письма" style="display:none;width:min(320px,90vw);padding:12px;border-radius:12px;border:1px solid var(--hair,#d9e2e0);font-size:16px;letter-spacing:4px;text-align:center">
+      <button id="lg-btn" type="button" style="width:min(320px,90vw);padding:12px;border:0;border-radius:12px;background:#255d51;color:#fff;font-weight:600;font-size:16px;cursor:pointer">Получить код</button>
+      <div style="max-width:320px;font-size:11px;line-height:1.45;color:var(--text-faint,#8b949e);text-align:center">Нажимая «Войти», вы соглашаетесь на обработку персональных данных согласно <a href="../privacy.html" target="_blank" rel="noopener" style="color:var(--accent,#255d51)">Политике конфиденциальности</a>.</div>
+    </div>
   </div>
   <div id="splash" aria-hidden="true">
     <div class="flash"></div>
@@ -699,6 +796,8 @@ function applyTheme(){
   var root = document.documentElement;
   if (themePref === 'light' || themePref === 'dark') { root.setAttribute('data-theme', themePref); return; }
   var tgw = window.Telegram && window.Telegram.WebApp;              // auto: как в Telegram
+  // десктопный кабинет в браузере — тёмный, как лендинг (пока пользователь не выбрал тему сам)
+  try { if (!(tgw && tgw.initData) && matchMedia('(min-width: 1024px)').matches) { root.setAttribute('data-theme', 'dark'); return; } } catch(_){}
   if (tgw && tgw.colorScheme) root.setAttribute('data-theme', tgw.colorScheme);
   else root.removeAttribute('data-theme');                          // вне Telegram — по системной
 }
