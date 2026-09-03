@@ -271,6 +271,13 @@
   .modal-meta .mrow { display: flex; gap: 9px; font-size: 13.5px; align-items: baseline; }
   .modal-meta .mk { color: var(--text-faint); flex: none; min-width: 82px; }
   .modal-meta .mv { color: var(--text); font-weight: 600; }
+  .modal-docs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+  .modal-docs:empty { display: none; }
+  .doc-btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 13px; border-radius: 11px; border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; max-width: 100%; }
+  .doc-btn svg { width: 15px; height: 15px; flex: none; }
+  .doc-btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .doc-btn[disabled] { opacity: .6; cursor: progress; }
+  .doc-note { font-size: 12px; color: var(--text-faint); flex-basis: 100%; }
   .modal-acts { display: flex; gap: 9px; align-items: stretch; }
   .mbtn { flex: 1; text-align: center; padding: 14px 10px; border-radius: 13px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 7px; line-height: 1.2; }
   .mbtn-go { background: var(--accent); color: #fff; }
@@ -509,13 +516,36 @@
     .lg-card button { width: 100% !important; background: var(--accent) !important; color: var(--app-bg) !important; box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--accent) 70%, transparent); }
     @media (prefers-reduced-motion: reduce) { .lg-card { animation: none; } }
   }
+  @media (min-width: 1024px) {
+    :root { --detail: clamp(400px, 40vw, 620px); }
+    /* «Профиль» — в самый низ панели; лишнее на десктопе прячем */
+    nav.tabbar button[data-tab="profile"] { margin-top: auto; }
+    #share-btn, #install-group { display: none !important; }
+    /* лента — узкая сплошная колонка слева, предпросмотр — справа */
+    body[data-pane="tenders"] main, body[data-pane="fav"] main { padding-right: var(--detail); }
+    #tenders-list, #fav-list { display: block; }
+    #tenders-list .card, #fav-list .card { border-radius: 0; margin: 0; padding: 14px 16px 12px; border-bottom: none; cursor: pointer; transition: background .15s, border-color .15s; }
+    #tenders-list .card:first-child, #fav-list .card:first-child { border-radius: 16px 16px 0 0; }
+    #tenders-list .card:last-child, #fav-list .card:last-child { border-radius: 0 0 16px 16px; border-bottom: 1px solid var(--hair); }
+    #tenders-list .card:hover, #fav-list .card:hover { transform: none; box-shadow: none; background: var(--surface-2); border-color: var(--hair); }
+    #tenders-list .card.sel, #fav-list .card.sel { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); box-shadow: inset 3px 0 0 var(--accent); }
+    #tenders-list .card h3, #fav-list .card h3 { -webkit-line-clamp: 2; font-size: 14px; }
+    body:not([data-pane="tenders"]):not([data-pane="fav"]) .modal-ov { display: none !important; }
+    body[data-pane="tenders"] .modal-ov, body[data-pane="fav"] .modal-ov { display: flex !important; position: fixed; left: auto; top: 0; bottom: 0; right: 0; width: var(--detail); padding: 24px 24px 24px 0; background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; align-items: stretch; z-index: 5; }
+    body[data-pane="tenders"] .modal, body[data-pane="fav"] .modal { width: 100%; max-width: none; height: 100%; max-height: none; border-radius: 22px; border: 1px solid var(--hair); box-shadow: none; animation: none; padding: 28px 28px 24px; }
+    .modal-ov[style*="none"] .modal { display: none; }
+    .modal-ov[style*="none"]::after { content: 'Выберите лот в ленте — карточка появится здесь'; display: flex; align-items: center; justify-content: center; text-align: center; width: 100%; height: 100%; border: 1px dashed var(--hair); border-radius: 22px; color: var(--text-faint); font-size: 15px; padding: 40px; }
+    .modal-title { font-size: 20px; line-height: 1.3; }
+    .modal-meta .mrow { font-size: 14.5px; }
+    .modal-x { top: 18px; right: 18px; }
+    .modal-fav { top: 18px; right: 60px; }
+  }
   @media (min-width: 1500px) {
-    #tenders-list, #fav-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .pane { padding: 44px 56px 80px; }
   }
 </style>
 </head>
-<body>
+<body data-pane="tenders">
   <div id="login-gate" style="display:none;position:fixed;inset:0;z-index:10000;background:var(--app-bg,#eef1f5);flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;font-family:system-ui,-apple-system,sans-serif">
     <div class="lg-card">
       <div style="font-weight:700;font-size:20px;color:var(--text,#14181d)">Отходы в доходы</div>
@@ -760,6 +790,7 @@
       <div class="modal-chips" id="modal-chips"></div>
       <h3 class="modal-title" id="modal-title"></h3>
       <div class="modal-meta" id="modal-meta"></div>
+      <div class="modal-docs" id="modal-docs"></div>
       <div class="modal-acts">
         <a class="mbtn mbtn-go" id="modal-go" target="_blank" rel="noopener">Открыть тендер</a>
         <button class="mbtn-ic" id="modal-send" title="Отправить карточку в Телеграм"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M22 3 2 10.5l6.5 2.2M22 3l-3 18-8-6.3M22 3 8.5 14.7M8.5 14.7V20l3-3.9"/></svg></button>
@@ -882,6 +913,25 @@ function card(t){
 }
 // модалка тендера: краткое описание + Перейти / Отправить документы
 let _modalT=null;
+function docName(u, i){ try{ var n=decodeURIComponent((u.split('?')[0].split('/').pop()||'')); return n||('Документ '+(i+1)); }catch(_){ return 'Документ '+(i+1); } }
+function renderDocs(t){
+  var box=document.getElementById('modal-docs'); if(!box) return;
+  var links=String(t.docs||'').split(/\r?\n/).map(function(x){return x.trim();}).filter(Boolean);
+  if(!links.length){ box.innerHTML='<span class="doc-note">Прямых файлов нет — документы на странице лота.</span>'; return; }
+  var ic='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></svg>';
+  box.innerHTML=links.map(function(u,i){ return '<button class="doc-btn" data-doc="'+i+'" title="'+escH(docName(u,i))+'">'+ic+'<span>'+escH(docName(u,i))+'</span></button>'; }).join('')
+    +(links.length>1?'<span class="doc-note">Документов: '+links.length+' — нажмите, чтобы скачать на компьютер.</span>':'');
+}
+function downloadDoc(t, n, btn){
+  var links=String(t.docs||'').split(/\r?\n/).map(function(x){return x.trim();}).filter(Boolean); var u=links[n]; if(!u) return;
+  var inTg=false; try{ inTg=!!(tg&&tg.initData); }catch(_){}
+  if(inTg){ try{ tg.openLink(u); }catch(_){ window.open(u,'_blank'); } return; }   // в Telegram — открыть ссылку
+  var old=btn.innerHTML; btn.disabled=true; btn.querySelector('span').textContent='Скачиваю…';
+  fetch(API_BASE+'/api/tender/file',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData:initData, session:SESS(), site:t.site, number:t.number, n:n})})
+    .then(function(r){ if(!r.ok) return r.json().then(function(j){ throw new Error(j.error||('HTTP '+r.status)); }); return r.blob(); })
+    .then(function(blob){ var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=docName(u,n); document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000); btn.disabled=false; btn.innerHTML=old; })
+    .catch(function(e){ btn.disabled=false; btn.innerHTML=old; alert('Не удалось скачать: '+e.message+'\nОткройте документ на странице лота.'); });
+}
 function openTender(t){
   _modalT=t;
   // открыли предпросмотр — снимаем метку NEW (во всех вкладках)
@@ -906,6 +956,9 @@ function openTender(t){
     row('Также на', also);
   var mf=document.getElementById('modal-fav'), isf=favs.has(key(t)); mf.innerHTML=heart(isf); mf.classList.toggle('on',isf);
   document.getElementById('modal-go').href=t.url;
+  renderDocs(t);
+  document.querySelectorAll('.card.sel').forEach(function(c){ c.classList.remove('sel'); });
+  document.querySelectorAll('.card[data-key="'+encodeURIComponent(kk)+'"]').forEach(function(c){ c.classList.add('sel'); });
   ['modal-send','modal-mail'].forEach(function(id){ var b=document.getElementById(id); if(b){ b.classList.remove('sent'); b.style.opacity=''; b.dataset.busy=''; } });
   document.getElementById('modal').style.display='flex';
   try{ if(tg&&tg.HapticFeedback&&tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light'); }catch(_){}
@@ -1126,6 +1179,7 @@ function loadEmail(){ renderEmail(); api('/api/email/status').then(d=>{ EMAIL=d;
 
 document.addEventListener('click',e=>{
   // модалка тендера
+  var db=e.target.closest('.doc-btn'); if(db && _modalT){ downloadDoc(_modalT, +db.dataset.doc, db); return; }
   if(e.target.closest('#modal-x') || e.target===document.getElementById('modal')){ closeTender(); return; }
   if(e.target.closest('#modal-go')){ if(_modalT && tg && tg.openLink){ e.preventDefault(); tg.openLink(_modalT.url); } return; }
   if(e.target.closest('#modal-send')){ sendDocs('tg', document.getElementById('modal-send'), 'В Телеграм'); return; }
@@ -1241,7 +1295,7 @@ document.addEventListener('click',e=>{
   if(e.target.closest('.myad-renew')){ renewAd(+e.target.closest('.myad-renew').dataset.id); return; }
   if(e.target.closest('.myad-del')){ deleteAd(+e.target.closest('.myad-del').dataset.id); return; }
   const tab=e.target.closest('nav.tabbar button');
-  if(tab){document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds();}
+  if(tab){document.body.dataset.pane=tab.dataset.tab;document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds();}
 });
 function openDoc(name){ var u; try{ u=new URL(name, location.href).href; }catch(_){ u=name; } try{ if(tg&&tg.openLink){ tg.openLink(u); return; } }catch(_){} window.open(u,'_blank'); }
 // --- объявления (маркетплейс «Прямые лоты») ---
