@@ -278,6 +278,7 @@
   .doc-btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .doc-btn[disabled] { opacity: .6; cursor: progress; }
   .doc-note { font-size: 12px; color: var(--text-faint); flex-basis: 100%; }
+  .modal-similar { display: none; }
   .modal-acts { display: flex; gap: 9px; align-items: stretch; }
   .mbtn { flex: 1; text-align: center; padding: 14px 10px; border-radius: 13px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 7px; line-height: 1.2; }
   .mbtn-go { background: var(--accent); color: #fff; }
@@ -551,8 +552,19 @@
     body[data-pane="tenders"] .modal, body[data-pane="fav"] .modal { width: 100%; max-width: none; height: 100%; max-height: none; border-radius: 22px; border: 1px solid var(--hair); box-shadow: none; animation: none; padding: 28px 28px 24px; }
     .modal-ov[style*="none"] .modal { display: none; }
     .modal-ov[style*="none"]::after { content: 'Выберите лот в ленте — карточка появится здесь'; display: flex; align-items: center; justify-content: center; text-align: center; width: 100%; height: 100%; border: 1px dashed var(--hair); border-radius: 22px; color: var(--text-faint); font-size: 15px; padding: 40px; }
-    .modal-title { font-size: 20px; line-height: 1.3; }
-    .modal-meta .mrow { font-size: 14.5px; }
+    .modal-title { font-size: 22px; line-height: 1.28; margin: 0 0 18px; }
+    .modal-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 28px; padding: 16px 18px; border: 1px solid var(--hair); border-radius: 16px; background: var(--surface); margin-bottom: 18px; }
+    .modal-meta .mrow { font-size: 14.5px; flex-direction: column; gap: 3px; }
+    .modal-meta .mk { min-width: 0; font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; }
+    .modal-docs { margin-bottom: 16px; }
+    .modal-similar { display: block; margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--hair); }
+    .sim-head { font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-faint); font-weight: 600; margin-bottom: 12px; }
+    .sim { padding: 12px 14px; border: 1px solid var(--hair); border-radius: 14px; background: var(--surface); cursor: pointer; margin-bottom: 8px; transition: background .15s, border-color .15s; }
+    .sim:hover { background: var(--surface-2); border-color: color-mix(in srgb, var(--accent) 40%, var(--hair)); }
+    .sim-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+    .sim-title { font-size: 13.5px; font-weight: 600; line-height: 1.35; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .sim-meta { display: flex; gap: 14px; margin-top: 6px; font-size: 12.5px; color: var(--text-dim); }
+    .sim-price { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
     .modal-x { top: 18px; right: 18px; }
     .modal-fav { top: 18px; right: 60px; }
   }
@@ -813,6 +825,7 @@
         <button class="mbtn-ic mail" id="modal-mail" title="Отправить карточку на почту"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button>
       </div>
       <button class="modal-hide" id="modal-hide">Не подходит — скрыть из ленты</button>
+      <div class="modal-similar" id="modal-similar"></div>
     </div>
   </div>
   <div id="toast" class="toast" style="display:none"><span id="toast-msg"></span><button id="toast-undo">Отменить</button></div>
@@ -957,6 +970,21 @@ function downloadDoc(t, n, btn){
     .then(function(blob){ var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=d.name||('Документ '+(n+1)); document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000); btn.disabled=false; btn.innerHTML=old; })
     .catch(function(e){ btn.disabled=false; btn.innerHTML=old; alert('Не удалось скачать: '+e.message+'\nОткройте документ на странице лота.'); });
 }
+function renderSimilar(t){
+  var box=document.getElementById('modal-similar'); if(!box) return;
+  var kk=key(t), cat=t.category||'oil';
+  var same=TENDERS.filter(function(x){ return key(x)!==kk && (x.category||'oil')===cat; });
+  var bySeller=same.filter(function(x){ return t.seller && x.seller===t.seller; });
+  var byRegion=same.filter(function(x){ return bySeller.indexOf(x)<0 && regionOf(x) && regionOf(x)===regionOf(t); });
+  var rest=same.filter(function(x){ return bySeller.indexOf(x)<0 && byRegion.indexOf(x)<0; });
+  var list=bySeller.concat(byRegion, rest).slice(0,6);
+  if(!list.length){ box.innerHTML=''; return; }
+  var catName={oil:'нефтепродукты',pipe:'трубы',metal:'металлолом'}[cat]||cat;
+  box.innerHTML='<div class="sim-head">Похожие лоты · '+catName+'</div>'+list.map(function(x){
+    var dl=dlInfo(x.deadline), price=fmtPrice(x.price), reg=regionOf(x)||cityOf(x)||'';
+    return '<div class="sim" data-key="'+encodeURIComponent(key(x))+'"><div class="sim-top"><span class="chip">'+escH(x.site_title||PLATFORMS[x.site]||x.site)+'</span><span class="deadline '+dl.cls+'"><span class="dot"></span>'+dl.txt+'</span></div><div class="sim-title">'+escH(cleanTitle(x.title))+'</div><div class="sim-meta">'+(reg?'<span>'+escH(reg)+'</span>':'')+(price?'<span class="sim-price">'+escH(price)+'</span>':'')+'</div></div>';
+  }).join('');
+}
 function openTender(t){
   _modalT=t;
   // открыли предпросмотр — снимаем метку NEW (во всех вкладках)
@@ -982,6 +1010,7 @@ function openTender(t){
   var mf=document.getElementById('modal-fav'), isf=favs.has(key(t)); mf.innerHTML=heart(isf); mf.classList.toggle('on',isf);
   document.getElementById('modal-go').href=t.url;
   renderDocs(t);
+  renderSimilar(t);
   document.querySelectorAll('.card.sel').forEach(function(c){ c.classList.remove('sel'); });
   document.querySelectorAll('.card[data-key="'+encodeURIComponent(kk)+'"]').forEach(function(c){ c.classList.add('sel'); });
   ['modal-send','modal-mail'].forEach(function(id){ var b=document.getElementById(id); if(b){ b.classList.remove('sent'); b.style.opacity=''; b.dataset.busy=''; } });
@@ -1079,7 +1108,12 @@ document.addEventListener('change',e=>{
   else if(e.target.id==='f-hidden-cb'){ FILT.showHidden=e.target.checked; render(); }
   else if(e.target.id==='theme-sel'){ setTheme(e.target.value); if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged(); }
 });
-(function(){ var s=document.getElementById('theme-sel'); if(s) s.value=themePref; })();
+(function(){ var s=document.getElementById('theme-sel'); if(!s) return;
+  var inTg=false; try{ inTg=!!(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData); }catch(_){}
+  if(!inTg){ var a=s.querySelector('option[value="auto"]'); if(a) a.remove();           // в браузере — только Светлая / Тёмная
+    var eff=document.documentElement.getAttribute('data-theme'); if(!eff){ try{ eff=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; }catch(_){ eff='light'; } }
+    s.value=(themePref==='light'||themePref==='dark')?themePref:eff; return; }
+  s.value=themePref; })();
 
 // избранное: Telegram CloudStorage если поддержан (>=6.1), иначе
 // localStorage. Любые ошибки хранилища НЕ должны ронять ленту.
@@ -1204,6 +1238,7 @@ function loadEmail(){ renderEmail(); api('/api/email/status').then(d=>{ EMAIL=d;
 
 document.addEventListener('click',e=>{
   // модалка тендера
+  var sm=e.target.closest('.sim'); if(sm){ var st=TENDERS.find(function(x){ return key(x)===decodeURIComponent(sm.dataset.key); }); if(st){ openTender(st); var m=document.querySelector('.modal'); if(m) m.scrollTop=0; } return; }
   var db=e.target.closest('.doc-btn'); if(db && _modalT){ downloadDoc(_modalT, +db.dataset.doc, db); return; }
   if(e.target.closest('#modal-x') || e.target===document.getElementById('modal')){ closeTender(); return; }
   if(e.target.closest('#modal-go')){ if(_modalT && tg && tg.openLink){ e.preventDefault(); tg.openLink(_modalT.url); } return; }
