@@ -914,22 +914,31 @@ function card(t){
 // модалка тендера: краткое описание + Перейти / Отправить документы
 let _modalT=null;
 function docName(u, i){ try{ var n=decodeURIComponent((u.split('?')[0].split('/').pop()||'')); return n||('Документ '+(i+1)); }catch(_){ return 'Документ '+(i+1); } }
+var _docsCache={};
 function renderDocs(t){
   var box=document.getElementById('modal-docs'); if(!box) return;
-  var links=String(t.docs||'').split(/\r?\n/).map(function(x){return x.trim();}).filter(Boolean);
-  if(!links.length){ box.innerHTML='<span class="doc-note">Прямых файлов нет — документы на странице лота.</span>'; return; }
   var ic='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></svg>';
-  box.innerHTML=links.map(function(u,i){ return '<button class="doc-btn" data-doc="'+i+'" title="'+escH(docName(u,i))+'">'+ic+'<span>'+escH(docName(u,i))+'</span></button>'; }).join('')
-    +(links.length>1?'<span class="doc-note">Документов: '+links.length+' — нажмите, чтобы скачать на компьютер.</span>':'');
+  var k=t.site+':'+t.number;
+  function draw(docs){
+    if(!docs.length){ box.innerHTML='<span class="doc-note">Прямых файлов нет — документы на странице лота.</span>'; return; }
+    box.innerHTML=docs.map(function(d){ return '<button class="doc-btn" data-doc="'+d.n+'" title="'+escH(d.name)+'">'+ic+'<span>'+escH(d.name)+'</span></button>'; }).join('')
+      +(docs.length>1?'<span class="doc-note">Документов: '+docs.length+' — нажмите, чтобы скачать на компьютер.</span>':'');
+  }
+  if(_docsCache[k]){ draw(_docsCache[k]); return; }
+  box.innerHTML='<span class="doc-note">Ищу документы лота…</span>';
+  api('/api/tender/doclist',{site:t.site, number:t.number}).then(function(d){
+    var docs=(d&&d.docs)||[]; _docsCache[k]=docs; if(_modalT===t) draw(docs);
+  }).catch(function(){ if(_modalT===t) box.innerHTML='<span class="doc-note">Документы не загрузились — попробуйте позже или откройте страницу лота.</span>'; });
 }
 function downloadDoc(t, n, btn){
-  var links=String(t.docs||'').split(/\r?\n/).map(function(x){return x.trim();}).filter(Boolean); var u=links[n]; if(!u) return;
+  var docs=_docsCache[t.site+':'+t.number]||[]; var d=docs.filter(function(x){return x.n===n;})[0]; if(!d) return;
   var inTg=false; try{ inTg=!!(tg&&tg.initData); }catch(_){}
-  if(inTg){ try{ tg.openLink(u); }catch(_){ window.open(u,'_blank'); } return; }   // в Telegram — открыть ссылку
+  if(inTg){ api('/api/tender/docs',{tender:t, channel:'tg'}).then(function(){ try{ tg.showAlert('Документы отправлены в чат с ботом.'); }catch(_){} }).catch(function(){ try{ tg.showAlert('Не удалось отправить — откройте страницу лота.'); }catch(_){} }); return; }
+  var u=d.name;
   var old=btn.innerHTML; btn.disabled=true; btn.querySelector('span').textContent='Скачиваю…';
   fetch(API_BASE+'/api/tender/file',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData:initData, session:SESS(), site:t.site, number:t.number, n:n})})
     .then(function(r){ if(!r.ok) return r.json().then(function(j){ throw new Error(j.error||('HTTP '+r.status)); }); return r.blob(); })
-    .then(function(blob){ var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=docName(u,n); document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000); btn.disabled=false; btn.innerHTML=old; })
+    .then(function(blob){ var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=d.name||('Документ '+(n+1)); document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000); btn.disabled=false; btn.innerHTML=old; })
     .catch(function(e){ btn.disabled=false; btn.innerHTML=old; alert('Не удалось скачать: '+e.message+'\nОткройте документ на странице лота.'); });
 }
 function openTender(t){
