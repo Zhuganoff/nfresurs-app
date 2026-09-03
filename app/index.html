@@ -202,6 +202,8 @@
   .sub-price.big { color: var(--accent); font-size: 34px; margin-bottom: 16px; }
   .sub-price.big small { color: var(--text-dim); }
   .paywall .sub-btn { background: var(--accent); color: #fff; }
+  .sub-btn-alt { margin-top: 8px; background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.75); font-weight: 600; }
+  .paywall .sub-btn-alt { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
   /* объявления (маркетплейс) */
   .ad-intro { font-size: 12.5px; color: var(--text-dim); margin: 0 0 12px; line-height: 1.4; }
   .ad-new-btn { border: none; background: var(--accent); color: #fff; font-weight: 700; font-size: 13px; padding: 7px 14px; border-radius: 999px; cursor: pointer; }
@@ -564,7 +566,8 @@
           <li>Все площадки реализации, поиск и избранное</li>
         </ul>
         <button class="sub-btn" id="sub-btn">Оформить за 499 ₽ / мес</button>
-        <div class="sub-note">Первые 3 дня — бесплатно. Далее 499 ₽/мес, оплата картой. Отписаться можно в любой момент.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:#fff;text-decoration:underline">условия оферты</a>.</div>
+        <button class="sub-btn sub-btn-alt" id="sub-sbp" style="display:none">Оплатить через СБП или картой на сайте</button>
+        <div class="sub-note">Первые 3 дня — бесплатно. Далее 499 ₽/мес, оплата картой или через СБП. Отписаться можно в любой момент.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:#fff;text-decoration:underline">условия оферты</a>.</div>
       </div>
       <div class="myads-block">
         <button class="myads-toggle" id="myads-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3z"/><path d="M8 9h8M8 12h5"/></svg>Мои объявления</button>
@@ -643,7 +646,8 @@
       <p>3 дня бесплатного доступа истекли. Оформите подписку, чтобы продолжить получать тендеры по реализации.</p>
       <div class="sub-price big">499 ₽<small> / месяц</small></div>
       <button class="sub-btn" id="pw-btn">Оформить подписку</button>
-      <div class="sub-note">Оплата картой через ЮKassa. Отписаться можно в любой момент.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:var(--accent);text-decoration:underline">условия оферты</a>.</div>
+      <button class="sub-btn sub-btn-alt" id="pw-sbp" style="display:none">Оплатить через СБП или картой на сайте</button>
+      <div class="sub-note">Оплата картой или через СБП (ЮKassa). Отписаться можно в любой момент.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:var(--accent);text-decoration:underline">условия оферты</a>.</div>
     </div>
   </div>
 
@@ -1084,6 +1088,20 @@ document.addEventListener('click',e=>{
       .catch(()=>{ hint.textContent='Не удалось отправить (нет связи с сервером). Пришлите ссылку владельцу напрямую.'; });
     return;
   }
+  if(e.target.closest('#sub-sbp')||e.target.closest('#pw-sbp')){
+    // Telegram: инвойс умеет только карты — СБП доступен на странице ЮKassa
+    // во внешнем браузере; подписку зачислит вебхук, вернём в бота.
+    if(tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light');
+    var sb=e.target.closest('#sub-sbp')||e.target.closest('#pw-sbp'); var sold=sb?sb.textContent:'';
+    if(sb){ sb.disabled=true; sb.textContent='Открываем оплату…'; }
+    api('/api/pay/create',{}).then(function(d){
+      if(sb){ sb.disabled=false; sb.textContent=sold; }
+      if(d && d.confirmation_url){ if(tg&&tg.openLink) tg.openLink(d.confirmation_url); else window.open(d.confirmation_url,'_blank');
+        try{ if(tg&&tg.showAlert) tg.showAlert('Страница оплаты открыта в браузере. После оплаты вернитесь в приложение — доступ включится автоматически.'); }catch(_){} }
+      else { try{ if(tg&&tg.showAlert) tg.showAlert('Не удалось начать оплату.'); }catch(_){} }
+    }).catch(function(err){ if(sb){ sb.disabled=false; sb.textContent=sold; } try{ if(tg&&tg.showAlert) tg.showAlert((err&&err.message)||'Оплата недоступна'); }catch(_){} });
+    return;
+  }
   if(e.target.closest('#sub-btn')||e.target.closest('#pw-btn')){
     if(tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light');
     var inTg=false; try{ inTg=!!(tg&&tg.initData); }catch(_){}
@@ -1441,6 +1459,9 @@ function showLogin(msg){
     }
   } catch(_){}
 })();
+// Кнопка «СБП или картой на сайте» нужна только внутри Telegram (в браузере
+// основная кнопка и так ведёт на страницу ЮKassa со всеми способами).
+try{ if(tg&&tg.initData){ ['pw-sbp','sub-sbp'].forEach(function(id){ var b=document.getElementById(id); if(b) b.style.display='block'; }); } }catch(_){}
 </script>
 </body>
 </html>
