@@ -279,6 +279,28 @@
   .doc-btn[disabled] { opacity: .6; cursor: progress; }
   .doc-note { font-size: 12px; color: var(--text-faint); flex-basis: 100%; }
   .modal-similar { display: none; }
+  .modal-details { margin: 0 0 14px; }
+  .modal-details:empty { display: none; }
+  .det-head { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-faint); font-weight: 600; margin: 4px 0 10px; }
+  .det-text { font-size: 13.5px; line-height: 1.5; color: var(--text); white-space: normal; margin-bottom: 10px; }
+  .det-rows { display: flex; flex-direction: column; border: 1px solid var(--hair); border-radius: 12px; overflow: hidden; }
+  .det-row { display: grid; grid-template-columns: 150px 1fr; gap: 10px; padding: 9px 12px; border-bottom: 1px solid var(--hair); font-size: 13px; line-height: 1.45; }
+  .det-row:last-child { border-bottom: none; }
+  .det-k { color: var(--text-faint); }
+  .det-v { color: var(--text); word-break: break-word; }
+  .det-note { font-size: 12px; color: var(--text-faint); padding: 2px 0 8px; }
+  /* мои уведомления — ровная форма */
+  .al-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; padding: 14px; }
+  .al-form input, .al-form select { width: 100%; min-width: 0; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--hair); background: var(--surface-2); color: var(--text); font: inherit; font-size: 14px; }
+  .al-form .al-kw { grid-column: 1 / -1; }
+  .al-form .ebtn { padding: 0 16px; border-radius: 10px; white-space: nowrap; }
+  .al-form .emsg { grid-column: 1 / -1; }
+  .al-form .emsg:empty { display: none; }
+  .al-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--hair); border-radius: 12px; background: var(--surface); font-size: 13px; }
+  .al-item .al-kws { font-weight: 600; flex: 1; min-width: 0; }
+  .al-item .al-tag { font-size: 11px; color: var(--text-dim); background: var(--surface-2); padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
+  .al-item .ad-rm { flex: none; }
+  @media (max-width: 480px) { .al-form { grid-template-columns: 1fr 1fr; } .al-form .ebtn { grid-column: 1 / -1; padding: 11px; } }
   .modal-acts { display: flex; gap: 9px; align-items: stretch; }
   .mbtn { flex: 1; text-align: center; padding: 14px 10px; border-radius: 13px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 7px; line-height: 1.2; }
   .mbtn-go { background: var(--accent); color: #fff; }
@@ -751,12 +773,12 @@
       <div class="group" id="alerts-group">
         <div class="label">🔔 Мои уведомления</div>
         <div class="ehint" style="margin-bottom:8px">Получайте лот сразу, как он появится. Слова через запятую (совпадение по любому). Регион и категория — по желанию.</div>
-        <div id="alerts-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
-        <div class="rows"><div class="row" style="flex-wrap:wrap;gap:8px">
-          <input id="al-kw" type="text" placeholder="напр.: отработанное масло, мазут" style="flex-basis:100%;padding:11px;border-radius:10px;border:1px solid var(--hair);font-size:15px">
-          <select id="al-cat" class="tz" style="flex:1;min-width:130px"><option value="">Все категории</option><option value="oil">Нефтепродукты</option><option value="pipe">Трубы</option><option value="metal">Металлолом</option></select>
-          <input id="al-reg" type="text" placeholder="регион (необязательно)" style="flex:1;min-width:130px;padding:11px;border-radius:10px;border:1px solid var(--hair);font-size:15px">
-          <button class="ebtn" id="al-add" type="button">Добавить подписку</button>
+        <div id="alerts-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px"></div>
+        <div class="rows"><div class="al-form">
+          <input id="al-kw" class="al-kw" type="text" placeholder="слова через запятую: отработанное масло, мазут">
+          <select id="al-cat" class="tz"><option value="">Все категории</option><option value="oil">Нефтепродукты</option><option value="pipe">Трубы</option><option value="metal">Металлолом</option></select>
+          <input id="al-reg" type="text" placeholder="регион (необязательно)">
+          <button class="ebtn" id="al-add" type="button">Добавить</button>
           <div class="emsg" id="al-msg"></div>
         </div></div>
       </div>
@@ -833,6 +855,7 @@
       <div class="modal-chips" id="modal-chips"></div>
       <h3 class="modal-title" id="modal-title"></h3>
       <div class="modal-meta" id="modal-meta"></div>
+      <div class="modal-details" id="modal-details"></div>
       <div class="modal-docs" id="modal-docs"></div>
       <div class="modal-acts">
         <a class="mbtn mbtn-go" id="modal-go" target="_blank" rel="noopener">Открыть тендер</a>
@@ -1000,6 +1023,25 @@ function renderSimilar(t){
     return '<div class="sim" data-key="'+encodeURIComponent(key(x))+'"><div class="sim-top"><span class="chip">'+escH(x.site_title||PLATFORMS[x.site]||x.site)+'</span><span class="deadline '+dl.cls+'"><span class="dot"></span>'+dl.txt+'</span></div><div class="sim-title">'+escH(cleanTitle(x.title))+'</div><div class="sim-meta">'+(reg?'<span>'+escH(reg)+'</span>':'')+(price?'<span class="sim-price">'+escH(price)+'</span>':'')+'</div></div>';
   }).join('');
 }
+var _detCache={};
+function renderDetails(t){
+  var box=document.getElementById('modal-details'); if(!box) return;
+  var k=t.site+':'+t.number;
+  function draw(d){
+    var party=(d&&d.party)||[], rows=(d&&d.rows)||[], text=(d&&d.text)||'';
+    var meta=document.getElementById('modal-meta');
+    if(meta){ meta.querySelectorAll('.mrow.party').forEach(function(x){x.remove();});
+      party.forEach(function(r){ meta.insertAdjacentHTML('beforeend','<div class="mrow party"><span class="mk">'+escH(r[0])+'</span><span class="mv">'+escH(r[1])+'</span></div>'); }); }
+    if(!rows.length && !text){ box.innerHTML=(d&&d.error)?'<div class="det-note">Подробности с площадки сейчас недоступны.</div>':''; return; }
+    box.innerHTML='<div class="det-head">Подробности с площадки</div>'
+      +(text?'<div class="det-text">'+escH(text).replace(/\n/g,'<br>')+'</div>':'')
+      +(rows.length?'<div class="det-rows">'+rows.map(function(r){ return '<div class="det-row"><div class="det-k">'+escH(r[0])+'</div><div class="det-v">'+escH(r[1]).replace(/\n/g,'<br>')+'</div></div>'; }).join('')+'</div>':'');
+  }
+  if(_detCache[k]){ draw(_detCache[k]); return; }
+  box.innerHTML='<div class="det-note">Загружаю подробности с площадки…</div>';
+  api('/api/tender/details',{site:t.site, number:t.number}).then(function(d){ if(!d.error) _detCache[k]=d; if(_modalT===t) draw(d); })
+    .catch(function(){ if(_modalT===t) box.innerHTML='<div class="det-note">Подробности с площадки сейчас недоступны.</div>'; });
+}
 function openTender(t){
   _modalT=t;
   // открыли предпросмотр — снимаем метку NEW (во всех вкладках)
@@ -1025,6 +1067,7 @@ function openTender(t){
   var mf=document.getElementById('modal-fav'), isf=favs.has(key(t)); mf.innerHTML=heart(isf); mf.classList.toggle('on',isf);
   document.getElementById('modal-go').href=t.url;
   renderDocs(t);
+  renderDetails(t);
   renderSimilar(t);
   document.querySelectorAll('.card.sel').forEach(function(c){ c.classList.remove('sel'); });
   document.querySelectorAll('.card[data-key="'+encodeURIComponent(kk)+'"]').forEach(function(c){ c.classList.add('sel'); });
@@ -1519,7 +1562,8 @@ function loadAlerts(){
       var meta=[x.keywords];
       if(x.category) meta.push({oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом'}[x.category]||x.category);
       if(x.regions) meta.push('📍 '+x.regions);
-      return '<div class="myad" style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:13px">'+escH(meta.join(' · '))+'</span><button class="ad-rm" data-al="'+x.id+'" type="button">✕</button></div>';
+      var tags=[]; if(x.category) tags.push({oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом'}[x.category]||x.category); if(x.regions) tags.push('📍 '+x.regions);
+      return '<div class="al-item"><span class="al-kws">'+escH(x.keywords)+'</span>'+tags.map(function(g){return '<span class="al-tag">'+escH(g)+'</span>';}).join('')+'<button class="ad-rm" data-al="'+x.id+'" type="button">✕</button></div>';
     }).join('') : '<div style="font-size:12px;color:var(--text-faint,#8b949e)">Пока нет подписок — добавьте первую ниже.</div>';
   }).catch(function(){});
 }
