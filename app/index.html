@@ -972,7 +972,8 @@ const STAT_ORDER=['','interest','prep','skip'];
 // перезапуск/переоткрытие) И не старше 7 дней И не открыт вручную.
 // Потеря хранилища → база=сейчас → ничего не «новое» (не флудим).
 var SESSION_LASTVISIT = Date.now();
-function isNew(t){ if(!t.first_seen||seen.has(key(t))) return false; var ts=Date.parse(t.first_seen); return !isNaN(ts) && ts>SESSION_LASTVISIT && (Date.now()-ts) < 7*864e5; }
+// «Новый» = ещё не открывали И (появился после прошлого визита ИЛИ за последние сутки); старше 7 дней — не новый
+function isNew(t){ if(!t.first_seen||seen.has(key(t))) return false; var ts=Date.parse(t.first_seen); if(isNaN(ts)||(Date.now()-ts)>=7*864e5) return false; return ts>SESSION_LASTVISIT || (Date.now()-ts)<864e5; }
 function priceNum(p){ if(!p) return -1; var m=String(p).match(/([\d\s.,]+)/); if(!m) return -1; var n=parseFloat(m[1].replace(/\s/g,'').replace(',','.')); return isNaN(n)?-1:n; }
 function card(t){
   const price=fmtPrice(t.price), dl=dlInfo(t.deadline), on=favs.has(key(t));
