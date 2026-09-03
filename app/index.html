@@ -424,13 +424,21 @@
   #tenders-list, #fav-list { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; overflow: hidden; }
   .card { background: var(--surface); border: none; border-bottom: 1px solid var(--hair); border-radius: 0; padding: 9px 12px; margin: 0; box-shadow: none; }
   .card:last-child { border-bottom: none; }
-  .card.new { border: none; border-bottom: 1px solid var(--hair); background: color-mix(in srgb, #2f7fd9 11%, var(--surface)); animation: none; box-shadow: none; }
+  /* телефон/Telegram: новые — синий, избранное — золото, с лёгким переливом */
+  .card.new { border: none; border-bottom: 1px solid var(--hair); box-shadow: none;
+    background: linear-gradient(110deg, color-mix(in srgb, var(--newc) 10%, var(--surface)) 0%, color-mix(in srgb, var(--newc) 24%, var(--surface)) 45%, color-mix(in srgb, var(--newc) 10%, var(--surface)) 90%);
+    background-size: 300% 100%; animation: shine-m 5s linear infinite; }
+  .card.new::after { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 4px; border-radius: 0 3px 3px 0;
+    background: linear-gradient(180deg, #8fc6ff, #1e5aa8); box-shadow: 0 0 10px rgba(74,155,232,.7); }
+  .card.fav-mark:not(.new) { background: linear-gradient(110deg, color-mix(in srgb, var(--favc) 10%, var(--surface)) 0%, color-mix(in srgb, var(--favc) 24%, var(--surface)) 45%, color-mix(in srgb, var(--favc) 10%, var(--surface)) 90%);
+    background-size: 300% 100%; animation: shine-m 5s linear infinite; }
+  .card.fav-mark::before { background: linear-gradient(180deg, #f2c9a0, #b87333); box-shadow: 0 0 10px rgba(217,160,74,.6); }
+  @keyframes shine-m { to { background-position: -300% 0; } }
+  @media (prefers-reduced-motion: reduce) { .card.new, .card.fav-mark:not(.new) { animation: none; } }
   .new-badge { top: 6px; right: 8px; font-size: 9px; letter-spacing: .04em; color: #fff; background: #2f7fd9; padding: 2px 6px; box-shadow: none; }
   .card.new .c-top { padding-right: 46px; }   /* место под NEW-бейдж, чтобы «(МСК)» не пряталось */
   /* избранное — весь блок жёлтым (без левой полоски) */
-  .card.fav-mark, .card.fav-hot { background: color-mix(in srgb, var(--warn) 30%, var(--surface)); }
   .card.fav-hot { background: color-mix(in srgb, var(--urgent) 24%, var(--surface)); }
-  .card.fav-mark::before, .card.fav-hot::before { display: none; }
   .c-top { gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
   .chip { font-size: 10.5px; color: var(--accent); background: transparent; padding: 0; }
   .also-chip { font-size: 9.5px; padding: 1px 5px; }
