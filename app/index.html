@@ -499,6 +499,7 @@
     .modal-ov { align-items: center; }
     .modal { border-radius: 22px; max-width: 760px; padding: 28px 28px 24px; max-height: 86vh; }
     .toast { bottom: 28px; left: calc(var(--side) + (100vw - var(--side)) / 2); }
+    .modal { max-width: 900px; }
     /* вход — полупрозрачный фон над кабинетом + небольшой стеклянный блок по центру */
     #login-gate { background: color-mix(in srgb, var(--app-bg) 55%, transparent) !important;
       -webkit-backdrop-filter: blur(10px) saturate(140%); backdrop-filter: blur(10px) saturate(140%); }
@@ -517,21 +518,36 @@
     @media (prefers-reduced-motion: reduce) { .lg-card { animation: none; } }
   }
   @media (min-width: 1024px) {
-    :root { --detail: clamp(400px, 40vw, 620px); }
+    :root { --list: 380px; --list-pad: 28px; }
     /* «Профиль» — в самый низ панели; лишнее на десктопе прячем */
     nav.tabbar button[data-tab="profile"] { margin-top: auto; }
     #share-btn, #install-group { display: none !important; }
     /* лента — узкая сплошная колонка слева, предпросмотр — справа */
-    body[data-pane="tenders"] main, body[data-pane="fav"] main { padding-right: var(--detail); }
+    /* узкая колонка ленты фиксированной ширины; предпросмотр — сразу за ней, до правого края */
+    body[data-pane="tenders"] #pane-tenders, body[data-pane="fav"] #pane-fav { width: calc(var(--list) + var(--list-pad) + 12px); max-width: none; padding: 28px 12px 72px var(--list-pad); }
+    body[data-pane="tenders"] .pane-head h2, body[data-pane="fav"] .pane-head h2 { font-size: 22px; }
+    body[data-pane="tenders"] .catseg button { padding: 7px 12px; font-size: 13px; }
+    body[data-pane="tenders"] .toolbar { gap: 8px; }
+    body[data-pane="tenders"] .search { padding: 10px 12px; font-size: 14px; }
+    body[data-pane="tenders"] .filters-btn { padding: 10px 12px; font-size: 13px; }
+    body[data-pane="tenders"] .filters-panel { padding: 12px 14px; gap: 10px; }
+    body[data-pane="tenders"] .fp-row { flex: 1 1 100%; }
     #tenders-list, #fav-list { display: block; }
-    #tenders-list .card, #fav-list .card { border-radius: 0; margin: 0; padding: 14px 16px 12px; border-bottom: none; cursor: pointer; transition: background .15s, border-color .15s; }
+    #tenders-list .card, #fav-list .card { border-radius: 0; margin: 0; padding: 11px 12px 10px; border-bottom: none; cursor: pointer; transition: background .15s, border-color .15s; }
+    #tenders-list .card .c-top, #fav-list .card .c-top { margin-bottom: 5px; }
+    #tenders-list .card .chip, #fav-list .card .chip { font-size: 10px; }
+    #tenders-list .card .deadline, #fav-list .card .deadline { font-size: 11px; }
+    #tenders-list .card .city, #fav-list .card .city { font-size: 13px; margin: 2px 0 5px; }
+    #tenders-list .card .seller, #fav-list .card .seller { font-size: 11px; }
+    #tenders-list .card .price, #fav-list .card .price { font-size: 13.5px; }
+    #tenders-list .card .iact, #fav-list .card .iact { width: 28px; height: 28px; }
     #tenders-list .card:first-child, #fav-list .card:first-child { border-radius: 16px 16px 0 0; }
     #tenders-list .card:last-child, #fav-list .card:last-child { border-radius: 0 0 16px 16px; border-bottom: 1px solid var(--hair); }
     #tenders-list .card:hover, #fav-list .card:hover { transform: none; box-shadow: none; background: var(--surface-2); border-color: var(--hair); }
     #tenders-list .card.sel, #fav-list .card.sel { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); box-shadow: inset 3px 0 0 var(--accent); }
-    #tenders-list .card h3, #fav-list .card h3 { -webkit-line-clamp: 2; font-size: 14px; }
+    #tenders-list .card h3, #fav-list .card h3 { -webkit-line-clamp: 2; font-size: 13.5px; margin-bottom: 7px; }
     body:not([data-pane="tenders"]):not([data-pane="fav"]) .modal-ov { display: none !important; }
-    body[data-pane="tenders"] .modal-ov, body[data-pane="fav"] .modal-ov { display: flex !important; position: fixed; left: auto; top: 0; bottom: 0; right: 0; width: var(--detail); padding: 24px 24px 24px 0; background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; align-items: stretch; z-index: 5; }
+    body[data-pane="tenders"] .modal-ov, body[data-pane="fav"] .modal-ov { display: flex !important; position: fixed; left: calc(var(--side) + var(--list) + var(--list-pad) + 12px); top: 0; bottom: 0; right: 0; width: auto; padding: 28px 28px 28px 0; background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; align-items: stretch; z-index: 5; }
     body[data-pane="tenders"] .modal, body[data-pane="fav"] .modal { width: 100%; max-width: none; height: 100%; max-height: none; border-radius: 22px; border: 1px solid var(--hair); box-shadow: none; animation: none; padding: 28px 28px 24px; }
     .modal-ov[style*="none"] .modal { display: none; }
     .modal-ov[style*="none"]::after { content: 'Выберите лот в ленте — карточка появится здесь'; display: flex; align-items: center; justify-content: center; text-align: center; width: 100%; height: 100%; border: 1px dashed var(--hair); border-radius: 22px; color: var(--text-faint); font-size: 15px; padding: 40px; }
