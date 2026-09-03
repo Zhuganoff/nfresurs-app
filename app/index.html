@@ -20,7 +20,7 @@
     --app-bg: #eef1f5; --app-bg2: #e6eaf0; --surface: #ffffff; --surface-2: #eef1f4;
     --text: #14181d; --text-dim: #5a636d; --text-faint: #8b949e;
     --hair: #d9e2e0; --accent: #255d51; --accent-soft: #e5f1ed;
-    --urgent: #c1443b; --fresh: #2f8065; --warn: #c78a24; --nav-bg: rgba(247,251,250,.72);
+    --urgent: #c1443b; --fresh: #2f8065; --warn: #c78a24; --nav-bg: rgba(247,251,250,.5);
     --glass: #ffffff; --glass-2: #f6f9f8;
     --glass-brd: rgba(255,255,255,.85); --glass-hair: rgba(120,130,145,.16);
     --shadow: rgba(24,34,50,.10); --shadow-s: rgba(24,34,50,.06);
@@ -30,7 +30,7 @@
     --app-bg:#081016; --app-bg2:#101b22; --surface:#17232b; --surface-2:#1d2b34;
     --text:#f1f6f4; --text-dim:#b5c3bf; --text-faint:#91a49e;
     --hair:#2a3a42; --accent:#7fd0b4; --accent-soft:#173a31;
-    --urgent:#ff8178; --fresh:#7fd0b4; --warn:#e2ad58; --nav-bg:rgba(8,16,22,.74);
+    --urgent:#ff8178; --fresh:#7fd0b4; --warn:#e2ad58; --nav-bg:rgba(8,16,22,.52);
     --glass:#17232b; --glass-2:#1d2b34;
     --glass-brd: rgba(255,255,255,.10); --glass-hair: rgba(255,255,255,.07);
     --shadow: rgba(0,0,0,.45); --shadow-s: rgba(0,0,0,.3);
@@ -40,7 +40,7 @@
     --app-bg:#081016; --app-bg2:#101b22; --surface:#17232b; --surface-2:#1d2b34;
     --text:#f1f6f4; --text-dim:#b5c3bf; --text-faint:#91a49e;
     --hair:#2a3a42; --accent:#7fd0b4; --accent-soft:#173a31;
-    --urgent:#ff8178; --fresh:#7fd0b4; --warn:#e2ad58; --nav-bg:rgba(8,16,22,.74);
+    --urgent:#ff8178; --fresh:#7fd0b4; --warn:#e2ad58; --nav-bg:rgba(8,16,22,.52);
     --glass:#17232b; --glass-2:#1d2b34;
     --glass-brd: rgba(255,255,255,.10); --glass-hair: rgba(255,255,255,.07);
     --shadow: rgba(0,0,0,.45); --shadow-s: rgba(0,0,0,.3);
@@ -51,7 +51,7 @@
   body {
     background: linear-gradient(180deg, var(--app-bg), var(--app-bg2)); color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    display: flex; flex-direction: column; height: 100vh; position: relative;
+    display: flex; flex-direction: column; height: 100vh; height: 100dvh; position: relative;
     -webkit-font-smoothing: antialiased;
   }
   /* ambient-свечение под стеклом (фиксировано — не перерисовывается при скролле) */
@@ -286,13 +286,18 @@
   .status-dot.off { background: var(--text-faint); }
   .status-dot.wait { background: var(--accent); }
   select.tz { background: var(--surface-2); color: var(--text); border: 1px solid var(--hair); border-radius: 8px; padding: 4px 8px; font-size: 13px; }
-  nav.tabbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 10; display: flex;
+  nav.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: flex;
     background: var(--nav-bg);
     backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
     border-top: 1px solid color-mix(in srgb, var(--hair) 55%, transparent);
-    padding: 4px 8px calc(4px + env(safe-area-inset-bottom)); }
-  nav.tabbar button { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--tab-c, var(--text-faint)); opacity: .5; font-size: 8.5px; font-weight: 600; padding: 2px 0; transition: opacity .14s, transform .14s; position: relative; }
-  nav.tabbar button svg { width: 19px; height: 19px; }
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); }
+  nav.tabbar button { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--tab-c, var(--text-faint)); opacity: .55; font-size: 10px; font-weight: 600; padding: 3px 0; transition: opacity .14s, transform .14s; position: relative; -webkit-tap-highlight-color: transparent; }
+  nav.tabbar button svg { width: 26px; height: 26px; transition: filter .18s ease; }
+  /* «загорается»: активная вкладка светится своим цветом + короткий импульс при нажатии */
+  nav.tabbar button.active svg { filter: drop-shadow(0 0 5px var(--tab-c)) drop-shadow(0 0 12px color-mix(in srgb, var(--tab-c) 55%, transparent)); }
+  nav.tabbar button.pulse svg { animation: tabpulse .22s ease-out; }
+  @keyframes tabpulse { 0% { transform: scale(1); } 45% { transform: scale(1.22); } 100% { transform: scale(1); } }
+  @media (prefers-reduced-motion: reduce) { nav.tabbar button.pulse svg { animation: none; } }
   nav.tabbar button[data-tab="tenders"] { --tab-c: var(--accent); }
   nav.tabbar button[data-tab="fav"]     { --tab-c: #e5484d; }
   nav.tabbar button[data-tab="ads"]     { --tab-c: #e08a2f; }
@@ -407,9 +412,9 @@
   .iact { width: 27px; height: 27px; border-radius: 7px; }
   .iact svg { width: 14px; height: 14px; }
   nav.tabbar { background: var(--nav-bg); padding: 5px 8px calc(5px + env(safe-area-inset-bottom)); box-shadow: 0 -7px 28px var(--shadow); }
-  nav.tabbar button { --tab-c: var(--text-faint) !important; opacity: .8; font-size: 8.5px; gap: 1px; }
-  nav.tabbar button.active { --tab-c: var(--accent) !important; opacity: 1; }
-  nav.tabbar button svg { width: 20px; height: 20px; stroke-width: 1.8; }
+  nav.tabbar button { opacity: .6; font-size: 10px; gap: 2px; }
+  nav.tabbar button.active { opacity: 1; }
+  nav.tabbar button svg { width: 26px; height: 26px; stroke-width: 1.8; }
   .sharebtn { background: linear-gradient(145deg,#4a9a82,#255d51); box-shadow: 0 5px 16px rgba(37,93,81,.25); }
   :root[data-theme="dark"] .card, :root[data-theme="dark"] .rows { box-shadow: 0 3px 10px rgba(0,0,0,.24); }
   :root[data-theme="dark"] header.app { box-shadow: 0 5px 22px rgba(0,0,0,.28); }
@@ -1137,7 +1142,7 @@ document.addEventListener('click',e=>{
   if(e.target.closest('.myad-renew')){ renewAd(+e.target.closest('.myad-renew').dataset.id); return; }
   if(e.target.closest('.myad-del')){ deleteAd(+e.target.closest('.myad-del').dataset.id); return; }
   const tab=e.target.closest('nav.tabbar button');
-  if(tab){document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds();}
+  if(tab){document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds();}
 });
 function openDoc(name){ var u; try{ u=new URL(name, location.href).href; }catch(_){ u=name; } try{ if(tg&&tg.openLink){ tg.openLink(u); return; } }catch(_){} window.open(u,'_blank'); }
 // --- объявления (маркетплейс «Прямые лоты») ---
