@@ -62,8 +62,8 @@
   .display { font-family: "Unbounded", "Golos Text", sans-serif; font-weight: 800; letter-spacing: -.025em; }
   .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--pad); }
   h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.015em; line-height: 1.15; }
-  h1 { font-size: clamp(34px, 4.6vw, 62px); line-height: 1.04; overflow-wrap: normal; word-break: keep-all; hyphens: none; }
-  h2 { font-size: clamp(28px, 3.6vw, 46px); line-height: 1.06; }
+  h1 { font-size: clamp(30px, 3.4vw, 50px); line-height: 1.06; white-space: nowrap; overflow-wrap: normal; word-break: keep-all; hyphens: none; }
+  h2 { font-size: clamp(26px, 2.8vw, 40px); line-height: 1.08; }
   h3 { font-size: 20px; }
   p { margin: 0; }
   .lead { font-size: 19px; color: var(--dim); max-width: 60ch; }
@@ -104,7 +104,7 @@
   .grid-lines { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .5;
     background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
     background-size: 72px 72px; -webkit-mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); }
-  .hero { position: relative; z-index: 1; display: grid; grid-template-columns: 1.3fr .9fr; gap: 48px; align-items: center; padding: 96px 0 120px; min-height: calc(100vh - 68px); }
+  .hero { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 96px 0 120px; min-height: calc(100vh - 68px); }
   .hero-copy > * + * { margin-top: 26px; }
   .hero h1 .w { display: inline-block; opacity: 0; transform: translateY(.5em) rotateX(-40deg); transform-origin: 50% 100%; animation: wordin .9s var(--ease-out) forwards; animation-delay: calc(var(--i) * 55ms); }
   .hero h1 { perspective: 600px; }
@@ -114,19 +114,19 @@
   .note { color: var(--faint); font-size: 14px; }
 
   /* сцена: стеклянная витрина лотов в 3D */
-  .stage { perspective: 1400px; perspective-origin: 60% 40%; }
-  .stack { position: relative; transform-style: preserve-3d; transform: rotateY(calc(-14deg + var(--ry, 0deg))) rotateX(calc(7deg + var(--rx, 0deg))); transition: transform .6s var(--ease-out); will-change: transform; }
+  .stage { perspective: 1400px; perspective-origin: 50% 45%; }
+  .stack { position: relative; transform-style: preserve-3d; transform: rotateY(calc(-10deg + var(--ry, 0deg))) rotateX(calc(6deg + var(--rx, 0deg))); transition: transform .6s var(--ease-out); will-change: transform; }
   .stack-label { color: var(--faint); margin-bottom: 14px; transform: translateZ(10px); }
   .lot {
     position: relative; margin-top: 14px; padding: 18px 20px 18px 22px; border-radius: 18px;
     background: linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
     border: 1px solid var(--glass-brd); -webkit-backdrop-filter: blur(12px) saturate(140%); backdrop-filter: blur(12px) saturate(140%);
     box-shadow: inset 0 1px 0 var(--glass-hi), 0 30px 60px -30px rgba(0,0,0,.9);
-    transform: translateZ(calc(var(--z, 0) * 1px)) translateX(calc(var(--x, 0) * 1px));
+    transform: translateZ(calc(var(--z, 0) * 1px));
     animation: cardin 1s var(--ease-out) both; animation-delay: calc(.4s + var(--i) * 120ms);
     transition: transform .5s var(--ease-out), box-shadow .5s var(--ease-out);
   }
-  .lot:hover { transform: translateZ(calc(var(--z, 0) * 1px + 40px)) translateX(calc(var(--x, 0) * 1px)); box-shadow: inset 0 1px 0 var(--glass-hi), 0 40px 80px -30px rgba(0,0,0,.95), 0 0 40px -10px var(--m); }
+  .lot:hover { transform: translateZ(calc(var(--z, 0) * 1px + 60px)) scale(1.02); box-shadow: inset 0 1px 0 var(--glass-hi), 0 40px 80px -30px rgba(0,0,0,.95), 0 0 40px -10px var(--m); }
   .lot::before { content: ''; position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 0 3px 3px 0; background: var(--m); box-shadow: 0 0 16px var(--m); }
   .lot::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.12), transparent 60%); opacity: 0; transition: opacity .3s; }
   .lot:hover::after { opacity: 1; }
@@ -146,7 +146,8 @@
 
   /* ——— секции ——— */
   .section { padding: 128px 0; position: relative; }
-  .section-head { max-width: 720px; margin-bottom: 56px; }
+  .section-head { max-width: 920px; margin-bottom: 56px; }
+  @media (min-width: 961px) { .section-head h2.one { white-space: nowrap; } }
   .section-head > * + * { margin-top: 16px; }
   .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
@@ -238,7 +239,7 @@
     .hero { grid-template-columns: 1fr; gap: 44px; padding: 56px 0 72px; min-height: 0; }
     .stage { perspective: 1000px; perspective-origin: 50% 30%; }
     .stack { transform: rotateX(4deg); }
-    .lot { --x: 0 !important; --z: 0 !important; }
+    .lot { --z: 0 !important; }
     .grid-3, .grid-2, .price { grid-template-columns: 1fr; }
     .grid-4 { grid-template-columns: 1fr 1fr; gap: 14px; }
     .stat { padding: 24px 20px; }
@@ -250,7 +251,7 @@
     .nav .btn { padding: 10px 14px; font-size: 14px; }
     .top-in { height: 60px; }
     .lead { font-size: 17px; }
-    h1 { font-size: clamp(26px, 7.2vw, 40px); }
+    h1 { font-size: clamp(24px, 6.6vw, 40px); }
     h2 { font-size: clamp(28px, 7vw, 36px); }
     .cta .btn { flex: 1 1 100%; padding: 16px 20px; }
     .steps::before { display: none; }
@@ -294,7 +295,7 @@
     <section class="wrap hero">
       <div class="hero-copy">
         <span class="eyebrow mono">Нефтепродукты · Металлолом · Трубы</span>
-        <h1 class="display">Тендеры на продажу нефтепродуктов, лома и труб — <em>в одном месте</em></h1>
+        <h1 class="display">Тендеры на продажу<br>нефтепродуктов,<br>лома и труб —<br><em>в одном месте</em></h1>
         <p class="lead">Предприятия по всей России продают отработанное масло, лом и трубы б/у через десятки торговых площадок. Мы каждый час обходим эти площадки, убираем закупки и оставляем только продажу. Новые лоты — в ленте приложения и уведомлением в Telegram.</p>
         <div class="cta">
           <a class="btn btn-primary" href="https://t.me/nfresursbot">
@@ -308,17 +309,17 @@
       <div class="stage" id="stage" aria-label="Примеры лотов из ленты">
         <div class="stack" id="stack">
           <div class="stack-label mono">Так выглядят лоты в ленте</div>
-          <article class="lot" style="--m: var(--oil); --i: 0; --z: 60; --x: -18">
+          <article class="lot" style="--m: var(--oil); --i: 0; --z: 48">
             <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
             <div class="lot-title">Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Нефтеюганск</div>
             <div class="lot-meta"><span>ХМАО — Югра</span><span>приём заявок до 15 сентября</span></div>
           </article>
-          <article class="lot" style="--m: var(--scrap); --i: 1; --z: 20; --x: 8">
+          <article class="lot" style="--m: var(--scrap); --i: 1; --z: 24">
             <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
             <div class="lot-title">Лом чёрных металлов, 200 т, Жердевский сахарный завод</div>
             <div class="lot-meta"><span>Тамбовская область</span><span>самовывоз</span></div>
           </article>
-          <article class="lot" style="--m: var(--pipe); --i: 2; --z: -20; --x: 30">
+          <article class="lot" style="--m: var(--pipe); --i: 2; --z: 0">
             <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
             <div class="lot-title">Труба обсадная 139,7×9,17 P-110 с муфтами, 61 т</div>
             <div class="lot-meta"><span>Ямало-Ненецкий АО</span><span class="lot-price">6 285 866 ₽</span></div>
@@ -400,7 +401,7 @@
     <div class="wrap">
       <div class="section-head">
         <span class="eyebrow mono">Как это работает</span>
-        <h2 class="display">Ничего искать руками не нужно</h2>
+        <h2 class="display one">Ничего искать руками не нужно</h2>
         <p class="lead">Площадки обходим мы, вам остаётся выбрать лот и подать заявку.</p>
       </div>
       <div class="grid-3 steps">
@@ -427,18 +428,18 @@
     <div class="wrap">
       <div class="section-head">
         <span class="eyebrow mono">Где пользоваться</span>
-        <h2 class="display">Одно приложение, два входа</h2>
-        <p class="lead">Аккаунт общий: избранное и уведомления не теряются.</p>
+        <h2 class="display one">Бот в Telegram или приложение</h2>
+        <p class="lead">Установите как удобно: бот прямо в Telegram или приложение на экран телефона и рабочий стол компьютера. Аккаунт общий, избранное и уведомления не теряются.</p>
       </div>
       <div class="grid-2">
         <article class="where" data-i style="--i:0">
-          <h3>В Telegram</h3>
-          <p>Откройте бота <a href="https://t.me/nfresursbot">@nfresursbot</a> и нажмите кнопку меню — приложение откроется внутри Telegram. Ставить ничего не нужно, вход по вашему аккаунту.</p>
+          <h3>Бот в Telegram</h3>
+          <p>Откройте бота <a href="https://t.me/nfresursbot">@nfresursbot</a> и нажмите кнопку меню — приложение откроется внутри Telegram. Ставить ничего не нужно, вход по вашему аккаунту, уведомления о новых лотах приходят туда же.</p>
           <a class="btn btn-primary btn-sm" href="https://t.me/nfresursbot">Открыть бота</a>
         </article>
         <article class="where" data-i style="--i:1">
-          <h3>В браузере и на рабочем столе</h3>
-          <p>Откройте <a href="/app/">отходы-в-доходы.рф/app</a>, вход по коду на почту. Приложение можно поставить на телефон или компьютер, как обычное:</p>
+          <h3>Приложение на телефоне и компьютере</h3>
+          <p>Откройте <a href="/app/">отходы-в-доходы.рф/app</a>, вход по коду на почту. Один раз поставьте на экран телефона или рабочий стол — дальше открывается как обычное приложение, со своей иконкой:</p>
           <ul class="install">
             <li><b>iPhone</b><span>Safari → <kbd>Поделиться</kbd> → <kbd>На экран «Домой»</kbd></span></li>
             <li><b>Android</b><span>Chrome → меню <kbd>⋮</kbd> → <kbd>Установить приложение</kbd></span></li>
@@ -464,7 +465,7 @@
       <div class="price-wrap"><div class="price">
         <div>
           <span class="eyebrow mono">Стоимость</span>
-          <h2 class="display">Один тариф. Всё включено</h2>
+          <h2 class="display one">Один тариф. Всё включено</h2>
           <p>Первые 3 дня — бесплатно, чтобы посмотреть ленту и понять, есть ли в ней ваши лоты. Дальше подписка: все площадки, уведомления и доска объявлений. Оплата картой или через СБП на сайте, либо прямо в Telegram. Условия — в <a href="oferta.html">публичной оферте</a>.</p>
         </div>
         <div>
@@ -503,6 +504,7 @@
   if (h1 && !reduce) {
     var i = 0, out = document.createDocumentFragment();
     Array.prototype.slice.call(h1.childNodes).forEach(function(node){
+      if (node.nodeName === 'BR') { out.appendChild(document.createElement('br')); return; }
       var accent = node.nodeName === 'EM';
       node.textContent.split(/\s+/).filter(Boolean).forEach(function(w){
         var sp = document.createElement('span'); sp.className = 'w'; sp.style.setProperty('--i', i++); sp.textContent = w;
