@@ -431,24 +431,26 @@
   :root[data-theme="dark"] header.app { box-shadow: 0 5px 22px rgba(0,0,0,.28); }
   .lg-card { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; }
   /* ═══════════ Личный кабинет — десктоп (≥1024px): боковая панель, сетка, две колонки ═══════════ */
+  /* неподвижный фон как на лендинге (все экраны): перелив цветов сырья + сетка; блоки — стекло */
+  body::before { background:
+    radial-gradient(55% 60% at 30% -10%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 60%),
+    radial-gradient(40% 45% at 100% 15%, rgba(217,160,74,.26), transparent 60%),
+    radial-gradient(45% 45% at 75% 110%, rgba(212,116,79,.22), transparent 60%),
+    radial-gradient(35% 40% at 45% 60%, rgba(159,176,192,.12), transparent 60%); }
+  body::after { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .7;
+    background-image: linear-gradient(color-mix(in srgb, var(--text) 8%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--text) 8%, transparent) 1px, transparent 1px);
+    background-size: 72px 72px; -webkit-mask-image: radial-gradient(80% 80% at 50% 40%, #000 30%, transparent 100%); mask-image: radial-gradient(80% 80% at 50% 40%, #000 30%, transparent 100%); }
+  :root { --dglass: color-mix(in srgb, var(--surface) 55%, transparent); --dglass-brd: color-mix(in srgb, var(--text) 12%, transparent); --dglass-hi: color-mix(in srgb, var(--text) 8%, transparent); }
+  .card, .rows, .filters-panel, .ad-card, .ad-form, .myad, .sim, .modal-meta, .myads-toggle { background: var(--dglass) !important; border-color: var(--dglass-brd) !important; -webkit-backdrop-filter: blur(10px) saturate(140%); backdrop-filter: blur(10px) saturate(140%); box-shadow: inset 0 1px 0 var(--dglass-hi) !important; }
+  .modal { background: color-mix(in srgb, var(--surface) 78%, transparent); -webkit-backdrop-filter: blur(18px) saturate(150%); backdrop-filter: blur(18px) saturate(150%); }
+  .search, .fsel, .catseg button, .filters-btn { background: var(--dglass); border-color: var(--dglass-brd); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+  .catseg button.on { background: var(--accent); border-color: var(--accent); }
+  body[data-pane="tenders"] .modal, body[data-pane="fav"] .modal { background: color-mix(in srgb, var(--surface) 50%, transparent); border-color: var(--dglass-brd); -webkit-backdrop-filter: blur(18px) saturate(150%); backdrop-filter: blur(18px) saturate(150%); box-shadow: inset 0 1px 0 var(--dglass-hi); }
+  .modal-ov[style*="none"]::after { border-color: var(--dglass-brd); background: color-mix(in srgb, var(--surface) 25%, transparent); }
+
   @media (min-width: 1024px) {
     :root { --side: 280px; }
     body { font-family: "Golos Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: block; height: auto; min-height: 100dvh; background: var(--app-bg); }
-    /* неподвижный фон как на лендинге: перелив цветов сырья + сетка */
-    body::before { background:
-      radial-gradient(55% 60% at 30% -10%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 60%),
-      radial-gradient(40% 45% at 100% 15%, rgba(217,160,74,.26), transparent 60%),
-      radial-gradient(45% 45% at 75% 110%, rgba(212,116,79,.22), transparent 60%),
-      radial-gradient(35% 40% at 45% 60%, rgba(159,176,192,.12), transparent 60%); }
-    body::after { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .7;
-      background-image: linear-gradient(color-mix(in srgb, var(--text) 8%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--text) 8%, transparent) 1px, transparent 1px);
-      background-size: 72px 72px; -webkit-mask-image: radial-gradient(80% 80% at 50% 40%, #000 30%, transparent 100%); mask-image: radial-gradient(80% 80% at 50% 40%, #000 30%, transparent 100%); }
-    :root { --dglass: color-mix(in srgb, var(--surface) 55%, transparent); --dglass-brd: color-mix(in srgb, var(--text) 12%, transparent); --dglass-hi: color-mix(in srgb, var(--text) 8%, transparent); }
-    .card, .rows, .filters-panel, .ad-card, .ad-form, .myad, .sim, .modal-meta, .myads-toggle { background: var(--dglass) !important; border-color: var(--dglass-brd) !important; -webkit-backdrop-filter: blur(12px) saturate(140%); backdrop-filter: blur(12px) saturate(140%); box-shadow: inset 0 1px 0 var(--dglass-hi) !important; }
-    .search, .fsel, .catseg button, .filters-btn { background: var(--dglass); border-color: var(--dglass-brd); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-    .catseg button.on { background: var(--accent); border-color: var(--accent); }
-    body[data-pane="tenders"] .modal, body[data-pane="fav"] .modal { background: color-mix(in srgb, var(--surface) 50%, transparent); border-color: var(--dglass-brd); -webkit-backdrop-filter: blur(18px) saturate(150%); backdrop-filter: blur(18px) saturate(150%); box-shadow: inset 0 1px 0 var(--dglass-hi); }
-    .modal-ov[style*="none"]::after { border-color: var(--dglass-brd); background: color-mix(in srgb, var(--surface) 25%, transparent); }
     #tenders-list .card:hover, #fav-list .card:hover { background: color-mix(in srgb, var(--surface) 80%, transparent) !important; }
     #tenders-list .card.sel, #fav-list .card.sel { background: color-mix(in srgb, var(--accent) 14%, transparent) !important; }
     /* левая колонка: логотип сверху, навигация под ним */
@@ -663,8 +665,7 @@
     <section class="pane active" id="pane-tenders">
       <div class="pane-head"><h2>Тендеры</h2><span class="count" id="tenders-count"></span></div>
       <div class="catseg" id="catseg">
-        <button data-cat="all" class="on">Все</button>
-        <button data-cat="oil">Нефтепродукты</button>
+        <button data-cat="oil" class="on">Нефтепродукты</button>
         <button data-cat="pipe">Трубы</button>
         <button data-cat="metal">Металлолом</button>
       </div>
@@ -1055,7 +1056,7 @@ function sendDocs(channel, btn, label){
   }).catch(function(err){ btn.style.opacity=''; btn.dataset.busy=''; al((err&&err.message)||'Не удалось. Напишите боту /start.'); });
 }
 document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeTender(); });
-const FILT={q:'',site:'',region:'',city:'',sort:'new',onlyNew:false,showHidden:false,cat:'all'};
+const FILT={q:'',site:'',region:'',city:'',sort:'new',onlyNew:false,showHidden:false,cat:'oil'};
 function catCount(cat){return TENDERS.filter(t=>(t.category||'oil')===cat).length;}
 function isHidden(t){ return statuses[key(t)]==='skip'; }
 function feedItems(){
