@@ -126,8 +126,9 @@
     background:linear-gradient(110deg,#7ff0a6,#2fbf6e); padding:3px 9px;
     border-radius:999px; box-shadow:0 2px 8px rgba(47,191,110,.4); }
   /* избранное: жёлтая метка; за ≤3 дня до конца — ярко-красная */
-  .card.fav-mark, .card.fav-hot { background: color-mix(in srgb, var(--warn) 9%, var(--surface)); }
-  .card.fav-mark::before, .card.fav-hot::before { content:''; position:absolute; left:0; top:10px; bottom:10px; width:4px; border-radius:0 3px 3px 0; background: var(--warn); }
+  :root { --favc: #4a9be8; }
+  .card.fav-mark, .card.fav-hot { background: color-mix(in srgb, var(--favc) 12%, var(--surface)); }
+  .card.fav-mark::before, .card.fav-hot::before { content:''; position:absolute; left:0; top:10px; bottom:10px; width:4px; border-radius:0 3px 3px 0; background: var(--favc); }
   .card.fav-hot { background: color-mix(in srgb, var(--urgent) 12%, var(--surface));
     box-shadow: 0 0 0 1px color-mix(in srgb,var(--urgent) 45%,transparent), 0 6px 18px color-mix(in srgb,var(--urgent) 22%,transparent); }
   .card.fav-hot::before { background: var(--urgent); }
@@ -138,7 +139,7 @@
   .c-top .deadline { margin-left: auto; }
   .fav { flex: none; width: 26px; height: 26px; border-radius: 50%; border: none; background: transparent; cursor: pointer; display: grid; place-items: center; color: var(--text-faint); transition: transform .12s, color .12s; }
   .fav:active { transform: scale(1.15); }
-  .fav.on { color: var(--accent); }
+  .fav.on { color: var(--favc); }
   .fav svg { width: 16px; height: 16px; }
   .card h3 { margin: 0 0 9px; font-size: 13.5px; line-height: 1.3; font-weight: 600; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
   .seller { font-size: 11.5px; color: var(--text-dim); margin: -3px 0 8px; display: flex; align-items: center; gap: 5px; line-height: 1.3; }
@@ -479,6 +480,10 @@
     body { font-family: "Golos Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: block; height: auto; min-height: 100dvh; background: var(--app-bg); }
     #tenders-list .card:hover, #fav-list .card:hover { background: color-mix(in srgb, var(--surface) 80%, transparent) !important; }
     #tenders-list .card.sel, #fav-list .card.sel { background: color-mix(in srgb, var(--accent) 14%, transparent) !important; }
+    /* избранное на десктопе — синяя подложка и полоса поверх стекла */
+    #tenders-list .card.fav-mark, #fav-list .card.fav-mark { background: color-mix(in srgb, var(--favc) 14%, var(--dglass)) !important; box-shadow: inset 3px 0 0 var(--favc), inset 0 1px 0 var(--dglass-hi), 0 0 28px -14px rgba(74,155,232,.7) !important; }
+    #tenders-list .card.fav-mark::before, #fav-list .card.fav-mark::before { display: none; }
+    #tenders-list .card.fav-mark.sel, #fav-list .card.fav-mark.sel { background: color-mix(in srgb, var(--favc) 22%, var(--dglass)) !important; }
     /* новые лоты на десктопе — медная переливающаяся рамка и свечение */
     #tenders-list .card.new, #fav-list .card.new { position: relative; border-color: transparent !important; background: color-mix(in srgb, #b87333 9%, var(--dglass)) !important; box-shadow: inset 0 1px 0 rgba(242,201,160,.25), 0 0 34px -12px rgba(224,160,106,.75) !important; animation: none; }
     #tenders-list .card.new::after, #fav-list .card.new::after { content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; pointer-events: none; z-index: 2;
