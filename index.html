@@ -191,7 +191,8 @@
   /* ——— секции ——— */
   .section { padding: 128px 0; position: relative; }
   .section-head { max-width: 920px; margin-bottom: 56px; }
-  .section-head.wide { max-width: none; }  /* по ширине карточек ниже */
+  .section-head.wide { max-width: none; text-align: center; }  /* по ширине карточек ниже, текст по центру */
+  .section-head.wide .lead { margin-left: auto; margin-right: auto; max-width: 720px; }
   @media (min-width: 961px) { .section-head h2.one { white-space: nowrap; } }
   .section-head > * + * { margin-top: 16px; }
   .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
@@ -545,7 +546,7 @@
 
   <section class="section" id="how">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head wide">
         <span class="eyebrow mono">Как это работает</span>
         <h2 class="display one">Ничего искать руками не нужно</h2>
         <p class="lead">Площадки обходим мы, вам остаётся выбрать лот и подать заявку.</p>
@@ -598,7 +599,7 @@
 
   <section class="section" id="board" style="padding-top:0">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head wide">
         <span class="eyebrow mono">Доска объявлений</span>
         <h2 class="display">Продаёте сами? Разместите объявление</h2>
         <p class="lead">Кроме тендеров, в приложении есть доска частных объявлений. Партия лома, трубы со склада или бочки отработки — объявление бесплатно, проходит модерацию и висит 10 дней, потом можно продлить. <a href="rules.html">Правила размещения</a>.</p>
