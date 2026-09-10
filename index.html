@@ -227,6 +227,29 @@
   .stat .lbl { position: relative; color: var(--dim); font-size: 15px; margin-top: 14px; }
 
 
+  /* ——— блок «Проблема»: вручную против сервиса ——— */
+  .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .vs-col { position: relative; border-radius: 22px; padding: 30px 28px; border: 1px solid var(--glass-brd); background: var(--glass); overflow: hidden;
+    transition: transform .5s cubic-bezier(.16,1,.3,1), box-shadow .5s, border-color .4s; }
+  .vs-col::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .5s;
+    background: radial-gradient(70% 55% at 50% 0%, rgba(127,208,180,.14), transparent 70%); }
+  .vs-col:hover { transform: scale(1.03) translateY(-5px); }
+  .vs-col:hover::after { opacity: 1; }
+  .vs-h { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 18px; }
+  .vs-manual { color: var(--dim); }
+  .vs-manual .vs-h { color: var(--faint); }
+  .vs-manual:hover { border-color: rgba(255,255,255,.22); box-shadow: 0 26px 60px -28px rgba(0,0,0,.8); }
+  .vs-ours { border-color: rgba(127,208,180,.3); box-shadow: 0 0 0 1px rgba(127,208,180,.08), 0 30px 70px -40px rgba(127,208,180,.45); }
+  .vs-ours .vs-h { color: var(--accent); }
+  .vs-ours:hover { border-color: rgba(127,208,180,.55); box-shadow: 0 0 0 1px rgba(127,208,180,.2), 0 30px 70px -22px rgba(127,208,180,.75); }
+  .vs-col ul { list-style: none; display: grid; gap: 12px; font-size: 15.5px; }
+  .vs-col li { position: relative; padding-left: 28px; line-height: 1.45; transition: transform .4s var(--ease-out), color .3s; }
+  .vs-col:hover li { transform: translateX(3px); }
+  .vs-ours:hover li { color: var(--text); }
+  .vs-manual li::before { content: "\00d7"; position: absolute; left: 6px; top: -1px; color: var(--faint); font-size: 18px; }
+  .vs-ours li::before { content: "\2713"; position: absolute; left: 3px; color: var(--accent); font-size: 14px; }
+  @media (max-width: 960px) { .vs { grid-template-columns: 1fr; } .vs-col:hover { transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .vs-col, .vs-col li { transition: none; } .vs-col:hover { transform: none; } }
   /* ——— вход поверх лендинга: затемнение + стеклянный блок из центра ——— */
   .lg-ov { position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; padding: 24px;
     background: radial-gradient(70% 60% at 50% 45%, rgba(7,13,11,.35) 0%, rgba(7,13,11,.78) 100%); animation: lgdim .5s ease both; }
@@ -582,6 +605,40 @@
             </div>
           </div>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="problem">
+    <div class="wrap">
+      <div class="section-head wide">
+        <span class="eyebrow mono">Проблема</span>
+        <h2 class="display">Искать процедуры реализации вручную — отдельная работа</h2>
+        <p class="lead">Закупщик открывает десятки площадок, ищет нужные разделы, отсеивает закупки и проверяет, не появилось ли что-то новое. Каждый день заново.</p>
+      </div>
+      <div class="vs">
+        <div class="vs-col vs-manual" data-i style="--i:0">
+          <div class="vs-h mono">Вручную</div>
+          <ul>
+            <li>открыть множество сайтов</li>
+            <li>повторить поиск на каждом</li>
+            <li>отсеять закупочные процедуры</li>
+            <li>проверить новые публикации</li>
+            <li>сохранить ссылки</li>
+            <li>не забыть вернуться завтра</li>
+          </ul>
+        </div>
+        <div class="vs-col vs-ours" data-i style="--i:1">
+          <div class="vs-h mono">С «Отходами в доходы»</div>
+          <ul>
+            <li>открыть одну ленту</li>
+            <li>выбрать категорию</li>
+            <li>применить фильтры</li>
+            <li>сохранить интересное в избранное</li>
+            <li>настроить уведомление</li>
+            <li>перейти к первоисточнику</li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
