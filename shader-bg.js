@@ -148,8 +148,9 @@
     seed: 1.0, rotate: 0.0, drift: 0.0, oklab: 0.0,
     offsetX: 0.0, offsetY: 0.0,
     timeScale: 0.86,
-    pixelCap: 2000000, // максимум пикселей canvas (2 Мпикс — как в оригинале)
-    maxDpr: 2
+    pixelCap: 800000,  // максимум пикселей canvas: волны мягкие, 0,8 Мпикс на глаз не отличить от 2
+    maxDpr: 1.5,
+    fps: 30            // потолок кадров: экономит GPU, плавность волн не страдает
   };
 
   function hexToRgb(h) {
@@ -247,9 +248,12 @@
       gl.viewport(0, 0, w, h);
     }
 
+    var lastDraw = -1e9, frameMin = cfg.fps > 0 ? 1000 / cfg.fps : 0;
     function render(now) {
       raf = 0;
       if (disposed || !visible || !inView) return;
+      if (animated && now - lastDraw < frameMin - 1) { request(); return; }
+      lastDraw = now;
       resize();
       gl.uniform4f(uScene, canvas.width, canvas.height, ((now - start) / 1000) * cfg.timeScale, src.length);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
