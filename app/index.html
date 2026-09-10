@@ -52,8 +52,12 @@
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; }
+  /* фон и на документе: при сворачивании адресной строки в мобильном браузере
+     под телом страницы иначе видна белая полоса */
+  html { background: var(--app-bg2); }
   body {
     background: linear-gradient(180deg, var(--app-bg), var(--app-bg2)); color: var(--text);
+    min-height: 100dvh;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     display: flex; flex-direction: column; height: 100vh; height: 100dvh; position: relative;
     -webkit-font-smoothing: antialiased;

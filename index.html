@@ -190,6 +190,14 @@
   .lot::before { content: ''; position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 0 3px 3px 0; background: var(--m); box-shadow: 0 0 16px var(--m); }
   .lot::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.12), transparent 60%); opacity: 0; transition: opacity .3s; }
   .lot:hover::after { opacity: 1; }
+  /* витрина сама покачивается, будто по ней водят мышью */
+  @keyframes stacksway {
+    0%   { transform: scale(.86) rotateY(-9deg) rotateX(6deg); }
+    25%  { transform: scale(.86) rotateY(5deg)  rotateX(3deg); }
+    50%  { transform: scale(.86) rotateY(9deg)  rotateX(-2deg); }
+    75%  { transform: scale(.86) rotateY(-3deg) rotateX(4deg); }
+    100% { transform: scale(.86) rotateY(-9deg) rotateX(6deg); }
+  }
   @keyframes cardin { from { opacity: 0; transform: translateZ(-120px) translateY(30px); } }
   .lot-head { display: flex; justify-content: space-between; gap: 10px; color: var(--faint); margin-bottom: 8px; }
   .lot-title { font-weight: 500; font-size: 16px; line-height: 1.35; }
@@ -272,8 +280,13 @@
     #problem .section-head h2 { font-size: clamp(22px, 6.6vw, 30px); }
     .lead { font-size: 15.5px; line-height: 1.55; }
     /* колонку нельзя распирать длинным словом — иначе страница едет вбок */
-    .hero { padding: 34px var(--pad) 46px; gap: 28px;
+    .hero { padding: 22px var(--pad) 30px; gap: 18px;
       grid-template-columns: minmax(0, 1fr); }
+    .hero-copy > * + * { margin-top: 14px; }
+    .cta { gap: 10px; }
+    .cta .btn { padding: 13px 18px; font-size: 15px; }
+    .note-shine { font-size: 14px; }
+    .eyebrow { font-size: 10.5px; }
     .hero h1, .hero h1 .w { overflow-wrap: break-word; word-break: normal; max-width: 100%; }
     .hero-copy, .stage, .stack, .lot { min-width: 0; max-width: 100%; }
     .hero h1 { font-size: clamp(22px, 6.9vw, 34px); line-height: 1.08; }
@@ -394,7 +407,26 @@
   .step { position: relative; padding: 0 8px; text-align: center; }
   .step .dot { margin-left: auto; margin-right: auto; }
   .step .dot { width: 80px; height: 80px; border-radius: 50%; display: grid; place-items: center; background: rgba(7,13,11,.85); border: 1px solid var(--glass-brd); box-shadow: 0 0 40px -10px rgba(127,208,180,.6); margin-bottom: 26px; }
-  .step .dot svg { width: 30px; height: 30px; color: var(--accent); }
+  .step .dot svg { width: 30px; height: 30px; color: var(--accent); transition: color .35s, transform .5s var(--ease-out); }
+  /* иконки шагов: при наведении наливаются цветом и оживают */
+  .step .dot { position: relative; overflow: visible; transition: transform .5s var(--ease-out), border-color .4s, box-shadow .5s; }
+  .step .dot::before { content: ""; position: absolute; inset: -1px; border-radius: 50%; opacity: 0; transition: opacity .45s;
+    background: conic-gradient(from var(--ia, 0deg), transparent 0 55%, var(--accent) 72%, #eafff6 82%, var(--oil) 92%, transparent 100%);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+    animation: iconspin 3.4s linear infinite; animation-play-state: paused; }
+  .step .dot::after { content: ""; position: absolute; inset: 6px; border-radius: 50%; opacity: 0; transition: opacity .45s;
+    background: radial-gradient(circle, rgba(127,208,180,.35), transparent 70%); }
+  @property --ia { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+  @keyframes iconspin { to { --ia: 360deg; } }
+  .step:hover .dot { transform: translateY(-5px) scale(1.08); border-color: rgba(127,208,180,.45);
+    box-shadow: 0 22px 46px -20px rgba(127,208,180,.75); }
+  .step:hover .dot::before, .step:hover .dot::after { opacity: 1; }
+  .step:hover .dot::before { animation-play-state: running; }
+  .step:hover .dot svg { color: #eafff6; transform: scale(1.1) rotate(-4deg); }
+  .step:hover h3 { color: var(--accent); }
+  .step h3 { transition: color .35s; }
+  @media (prefers-reduced-motion: reduce) { .step .dot, .step .dot svg, .step .dot::before { transition: none; animation: none; } }
   .step h3 { font-size: 21px; margin-bottom: 10px; }
   .step p { color: var(--dim); font-size: 16px; }
 
@@ -447,9 +479,14 @@
     :root { --pad: 24px; }
     .hero { grid-template-columns: 1fr; gap: 44px; padding: 56px 0 72px; min-height: 0; }
     /* витрина на телефоне: тот же объём, но мельче и строго внутри экрана */
-    .stage { perspective: 760px; perspective-origin: 50% 40%; overflow: hidden;
-      padding: 6px 0 10px; }
-    .stack { transform: rotateY(-7deg) rotateX(5deg) scale(.94); transform-origin: 50% 50%; }
+    .stage { perspective: 900px; perspective-origin: 50% 45%; overflow: hidden;
+      padding: 2px 0 6px; }
+    .stack { transform-origin: 50% 45%; transform: scale(.86);
+      animation: stacksway 9s ease-in-out infinite; }
+    .stack-label { margin-bottom: 8px; font-size: 10.5px; }
+    .lot { padding: 12px 14px 12px 16px; border-radius: 14px; }
+    .lot-title { font-size: 13.5px; line-height: 1.35; }
+    .lot-head, .lot-meta { font-size: 10.5px; }
     .lot { --z: 0; margin-top: 10px; transform: translateZ(calc(var(--i, 0) * -14px)) translateY(calc(var(--i, 0) * -2px)); }
     .lot:hover, .lot:active { transform: translateZ(calc(var(--i, 0) * -14px + 26px)) scale(1.015); }
     .grid-3, .grid-2, .price { grid-template-columns: 1fr; }
