@@ -408,25 +408,34 @@
   .step .dot { margin-left: auto; margin-right: auto; }
   .step .dot { width: 80px; height: 80px; border-radius: 50%; display: grid; place-items: center; background: rgba(7,13,11,.85); border: 1px solid var(--glass-brd); box-shadow: 0 0 40px -10px rgba(127,208,180,.6); margin-bottom: 26px; }
   .step .dot svg { width: 30px; height: 30px; color: var(--accent); transition: color .35s, transform .5s var(--ease-out); }
-  /* иконки шагов: при наведении наливаются цветом и оживают */
-  .step .dot { position: relative; overflow: visible; transition: transform .5s var(--ease-out), border-color .4s, box-shadow .5s; }
-  .step .dot::before { content: ""; position: absolute; inset: -1px; border-radius: 50%; opacity: 0; transition: opacity .45s;
-    background: conic-gradient(from var(--ia, 0deg), transparent 0 55%, var(--accent) 72%, #eafff6 82%, var(--oil) 92%, transparent 100%);
-    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
-    mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
-    animation: iconspin 3.4s linear infinite; animation-play-state: paused; }
-  .step .dot::after { content: ""; position: absolute; inset: 6px; border-radius: 50%; opacity: 0; transition: opacity .45s;
-    background: radial-gradient(circle, rgba(127,208,180,.35), transparent 70%); }
-  @property --ia { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
-  @keyframes iconspin { to { --ia: 360deg; } }
-  .step:hover .dot { transform: translateY(-5px) scale(1.08); border-color: rgba(127,208,180,.45);
-    box-shadow: 0 22px 46px -20px rgba(127,208,180,.75); }
-  .step:hover .dot::before, .step:hover .dot::after { opacity: 1; }
-  .step:hover .dot::before { animation-play-state: running; }
-  .step:hover .dot svg { color: #eafff6; transform: scale(1.1) rotate(-4deg); }
-  .step:hover h3 { color: var(--accent); }
-  .step h3 { transition: color .35s; }
-  @media (prefers-reduced-motion: reduce) { .step .dot, .step .dot svg, .step .dot::before { transition: none; animation: none; } }
+  /* иконки шагов: при наведении СРАЗУ вспыхивают, по ним проходит блик,
+     текст под ними наливается цветом и становится крупнее */
+  .step .dot { position: relative; overflow: hidden; transition: transform .35s var(--ease-out), border-color .18s, box-shadow .18s, background .18s; }
+  .step .dot::before { content: ""; position: absolute; inset: 0; border-radius: 50%; opacity: 0;
+    background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.55), rgba(127,208,180,.35) 45%, transparent 72%);
+    transition: opacity .16s ease; }
+  /* косой блик, пробегающий один раз */
+  .step .dot::after { content: ""; position: absolute; top: -60%; bottom: -60%; width: 55%; left: -70%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.85), transparent);
+    transform: skewX(-18deg); opacity: 0; }
+  .step:hover .dot, .step:focus-within .dot {
+    transform: translateY(-6px) scale(1.1);
+    background: radial-gradient(circle at 50% 35%, #2f7a63, #0d1a16 70%);
+    border-color: rgba(234,255,246,.75);
+    box-shadow: 0 0 0 1px rgba(234,255,246,.35), 0 0 34px -4px rgba(127,208,180,.95),
+      0 26px 50px -22px rgba(127,208,180,.8); }
+  .step:hover .dot::before, .step:focus-within .dot::before { opacity: 1; }
+  .step:hover .dot::after, .step:focus-within .dot::after { animation: dotflash .7s cubic-bezier(.3,0,.35,1) forwards; }
+  @keyframes dotflash { 0% { left: -70%; opacity: 0; } 12% { opacity: 1; } 100% { left: 125%; opacity: 0; } }
+  .step .dot svg { transition: color .18s, transform .35s var(--ease-out), filter .18s; }
+  .step:hover .dot svg, .step:focus-within .dot svg { color: #ffffff; transform: scale(1.14);
+    filter: drop-shadow(0 0 10px rgba(234,255,246,.9)); }
+  /* текст под иконкой */
+  .step h3 { transition: color .25s, transform .4s var(--ease-out); transform-origin: 50% 100%; }
+  .step p { transition: color .25s, transform .4s var(--ease-out); transform-origin: 50% 0; }
+  .step:hover h3, .step:focus-within h3 { color: #eafff6; transform: scale(1.09); text-shadow: 0 0 22px rgba(127,208,180,.55); }
+  .step:hover p, .step:focus-within p { color: var(--text); transform: scale(1.035); }
+  @media (prefers-reduced-motion: reduce) { .step .dot, .step .dot svg, .step h3, .step p { transition: none; } .step .dot::after { animation: none; } .step:hover .dot, .step:hover h3, .step:hover p { transform: none; } }
   .step h3 { font-size: 21px; margin-bottom: 10px; }
   .step p { color: var(--dim); font-size: 16px; }
 
