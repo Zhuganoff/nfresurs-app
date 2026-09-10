@@ -158,6 +158,14 @@
   @keyframes wordin { to { opacity: 1; transform: none; } }
   .cta { display: flex; flex-wrap: wrap; gap: 14px; }
   .note { color: var(--faint); font-size: 14px; }
+  /* строка про пробный период: жирнее и с медленным переливом */
+  .note-shine { font-size: 16px; font-weight: 700; letter-spacing: -.005em;
+    background: linear-gradient(100deg, #9fe3c9 0%, #eafff6 20%, #ffffff 27%, #d9a04a 42%, #eafff6 58%, #9fe3c9 78%, #9fe3c9 100%);
+    background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+    -webkit-text-fill-color: transparent; animation: noteshine 6s linear infinite; }
+  @keyframes noteshine { to { background-position: -300% 0; } }
+  @media (max-width: 420px) { .note-shine { font-size: 15px; } }
+  @media (prefers-reduced-motion: reduce) { .note-shine { animation: none; } }
 
   /* сцена: стеклянная витрина лотов в 3D */
   .stage { perspective: 1400px; perspective-origin: 50% 45%; }
@@ -248,7 +256,8 @@
   .vs-ours:hover li { color: var(--text); }
   .vs-manual li::before { content: "\00d7"; position: absolute; left: 6px; top: -1px; color: var(--faint); font-size: 18px; }
   .vs-ours li::before { content: "\2713"; position: absolute; left: 3px; color: var(--accent); font-size: 14px; }
-  @media (max-width: 960px) { .vs { grid-template-columns: 1fr; } .vs-col:hover { transform: none; } }
+  @media (max-width: 960px) { .vs { grid-template-columns: 1fr; gap: 14px; } .vs-col:hover { transform: none; } .vs-col:hover li { transform: none; } }
+  @media (max-width: 420px) { .vs-col { padding: 22px 20px; border-radius: 18px; } .vs-col ul { font-size: 14.5px; gap: 10px; } .vs-h { margin-bottom: 14px; } }
   @media (prefers-reduced-motion: reduce) { .vs-col, .vs-col li { transition: none; } .vs-col:hover { transform: none; } }
   /* ——— вход поверх лендинга: затемнение + стеклянный блок из центра ——— */
   .lg-ov { position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; padding: 24px;
@@ -514,7 +523,7 @@
           </a>
           <a class="btn btn-ghost" href="/app/">Открыть в браузере</a>
         </div>
-        <p class="note">Первые 3 дня бесплатно. Дальше — 499 ₽ в месяц, картой или через СБП.</p>
+        <p class="note note-shine">Первые 3 дня бесплатно. Дальше — 499 ₽ в месяц, картой или через СБП.</p>
       </div>
       <div class="stage" id="stage" aria-label="Примеры лотов из ленты">
         <div class="stack" id="stack">
