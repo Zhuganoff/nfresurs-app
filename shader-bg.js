@@ -238,10 +238,13 @@
       var rh = Math.max(1, Math.round(bounds.height * dpr));
       var k = Math.min(1, Math.sqrt(cfg.pixelCap / Math.max(1, rw * rh)));
       var w = Math.max(1, Math.round(rw * k)), h = Math.max(1, Math.round(rh * k));
-      if (canvas.width !== w || canvas.height !== h) {
-        canvas.width = w; canvas.height = h;
-        gl.viewport(0, 0, w, h);
-      }
+      if (canvas.width === w && canvas.height === h) return;
+      // Гистерезис: мелкие изменения высоты (адресная строка телефона при
+      // прокрутке) не пересоздают буфер — canvas просто растягивается CSS.
+      if (canvas.width > 1 && Math.abs(canvas.width - w) / w < 0.02 &&
+          Math.abs(canvas.height - h) / h < 0.15) return;
+      canvas.width = w; canvas.height = h;
+      gl.viewport(0, 0, w, h);
     }
 
     function render(now) {
@@ -256,9 +259,11 @@
       if (!disposed && visible && inView && raf === 0) raf = global.requestAnimationFrame(render);
     }
     function layout() {
+      // Размер меняем только внутри render(): смена canvas.width стирает буфер,
+      // и между ресайзом и следующим кадром экран моргал бы пустым.
       bounds = canvas.getBoundingClientRect();
-      resize();
-      request();
+      if (animated) request();
+      else render((global.performance && performance.now) ? performance.now() : Date.now());
     }
     function onVis() {
       visible = global.document.visibilityState !== 'hidden';
