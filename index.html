@@ -34,6 +34,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Unbounded:wght@600;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<script>
+/* При обновлении страницы открываемся с самого верха, как новая страница:
+   браузер по умолчанию возвращает прежнюю прокрутку — отключаем это. */
+(function(){
+  try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch(_){}
+  var reload = false;
+  try { var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0]; reload = !!nav && nav.type === 'reload'; } catch(_){}
+  if (reload && location.hash) { try { history.replaceState(null, '', location.pathname + location.search); } catch(_){} }
+  function top(){ window.scrollTo(0, 0); }
+  top(); window.addEventListener('pageshow', top); window.addEventListener('load', function(){ if (!location.hash) top(); });
+})();
+</script>
 <style>
   /* ——— токены: тёмная премиальная страница; цвета сырья — как свет ——— */
   :root {
@@ -179,6 +191,7 @@
   /* ——— секции ——— */
   .section { padding: 128px 0; position: relative; }
   .section-head { max-width: 920px; margin-bottom: 56px; }
+  .section-head.wide { max-width: none; }  /* по ширине карточек ниже */
   @media (min-width: 961px) { .section-head h2.one { white-space: nowrap; } }
   .section-head > * + * { margin-top: 16px; }
   .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
@@ -481,7 +494,7 @@
 
   <section class="section" id="inside" style="padding-top:0">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head wide">
         <span class="eyebrow mono">Что внутри</span>
         <h2 class="display">Три вида сырья, которые предприятия списывают и продают</h2>
         <p class="lead">Каждый лот — это чья-то реализация, а не закупка. Наведите на карточку, чтобы увидеть, что именно попадает в ленту.</p>
