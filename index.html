@@ -121,13 +121,15 @@
   body.has-waves .btn-ghost, body.has-waves .stat, body.has-waves .where { background: rgba(14,24,20,.82); }
   body.has-waves .face { background: rgba(11,20,17,.9); }
   body.has-waves .cta-bar { background: rgba(7,13,11,.94); }
+  /* маска сетки поверх живого фона — дорогой слой на каждый кадр; при волнах гасим её */
+  body.has-waves .grid-lines { -webkit-mask-image: none; mask-image: none; opacity: .18; }
   @media (prefers-reduced-motion: reduce) { .brand-name { animation: none; } .nav a span, .nav a::after, .nav a::before { transition: none; } }
   .logo { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; flex: none; filter: drop-shadow(0 0 12px rgba(127,208,180,.35)); }
   .logo svg { width: 36px; height: 36px; display: block; }
 
   /* ——— первый экран: сцена в перспективе ——— */
   /* неподвижный фон за всей страницей: перелив цветов сырья + сетка; прокручивается только контент */
-  .bg { position: fixed; inset: 0; bottom: auto; height: 100vh; height: 100lvh; z-index: 0; pointer-events: none; overflow: hidden; background: var(--bg); }
+  .bg { position: fixed; inset: 0; bottom: auto; height: 100vh; height: 100lvh; z-index: 0; pointer-events: none; overflow: hidden; background: var(--bg); transform: translateZ(0); will-change: transform; contain: strict; }
   /* живой волновой фон (WebGL, shader-bg.js); без WebGL остаются CSS-пятна .glow */
   .bg canvas.waves { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.2s ease; }
   .bg.has-waves canvas.waves { opacity: 1; }

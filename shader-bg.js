@@ -150,7 +150,8 @@
     timeScale: 0.86,
     pixelCap: 800000,  // максимум пикселей canvas: волны мягкие, 0,8 Мпикс на глаз не отличить от 2
     maxDpr: 1.5,
-    fps: 30            // потолок кадров: экономит GPU, плавность волн не страдает
+    fps: 30,           // потолок кадров: экономит GPU, плавность волн не страдает
+    pauseOnScroll: true // на время прокрутки отрисовка стоит — кадр целиком отдан скроллу
   };
 
   function hexToRgb(h) {
@@ -228,7 +229,7 @@
     try { reduced = !!(global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
     var animated = Math.abs(cfg.timeScale) > 0.0001 && !reduced;
 
-    var raf = 0, disposed = false, inView = true;
+    var raf = 0, disposed = false, inView = true, scrolling = false, scrollTimer = 0;
     var visible = !global.document || global.document.visibilityState !== 'hidden';
     var start = (global.performance && performance.now) ? performance.now() : Date.now();
     var bounds = canvas.getBoundingClientRect();
@@ -251,7 +252,7 @@
     var lastDraw = -1e9, frameMin = cfg.fps > 0 ? 1000 / cfg.fps : 0;
     function render(now) {
       raf = 0;
-      if (disposed || !visible || !inView) return;
+      if (disposed || !visible || !inView || scrolling) return;
       if (animated && now - lastDraw < frameMin - 1) { request(); return; }
       lastDraw = now;
       resize();
@@ -260,7 +261,15 @@
       if (animated) request();
     }
     function request() {
-      if (!disposed && visible && inView && raf === 0) raf = global.requestAnimationFrame(render);
+      if (!disposed && visible && inView && !scrolling && raf === 0) raf = global.requestAnimationFrame(render);
+    }
+    function onScroll() {
+      if (!scrolling) {
+        scrolling = true;
+        if (raf) { global.cancelAnimationFrame(raf); raf = 0; }
+      }
+      if (scrollTimer) global.clearTimeout(scrollTimer);
+      scrollTimer = global.setTimeout(function () { scrolling = false; scrollTimer = 0; request(); }, 140);
     }
     function layout() {
       // Размер меняем только внутри render(): смена canvas.width стирает буфер,
@@ -276,6 +285,7 @@
     }
 
     global.addEventListener('resize', layout);
+    if (cfg.pauseOnScroll) global.addEventListener('scroll', onScroll, { passive: true });
     global.document.addEventListener('visibilitychange', onVis);
     var ro = null, io = null;
     if (global.ResizeObserver) { ro = new ResizeObserver(layout); ro.observe(canvas); }
@@ -298,6 +308,8 @@
         if (raf) global.cancelAnimationFrame(raf);
         raf = 0;
         global.removeEventListener('resize', layout);
+        if (cfg.pauseOnScroll) global.removeEventListener('scroll', onScroll);
+        if (scrollTimer) global.clearTimeout(scrollTimer);
         global.document.removeEventListener('visibilitychange', onVis);
         if (ro) ro.disconnect();
         if (io) io.disconnect();
