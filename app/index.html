@@ -15,6 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Отходы в доходы">
 <script src="../telegram-web-app.js"></script>
+<script src="../shader-bg.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" media="(min-width: 1024px)" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Unbounded:wght@700&display=swap">
@@ -73,6 +74,8 @@
     box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 4px 18px var(--shadow-s);
     padding-top: calc(11px + env(safe-area-inset-top)); z-index: 2;
   }
+  .logo.mark, header.app .logo.mark { background: none !important; box-shadow: none !important; padding: 0; filter: drop-shadow(0 4px 12px rgba(40,130,105,.35)); }
+  .logo.mark svg { width: 100%; height: 100%; display: block; }
   .logo {
     width: 38px; height: 38px; border-radius: 12px; flex: none;
     background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 88%, #fff), color-mix(in srgb, var(--accent) 55%, #000));
@@ -351,15 +354,19 @@
     position: fixed; inset: 0; z-index: 1000;
     display: grid; place-items: center;
     background:
-      radial-gradient(120% 90% at 50% 34%, #16324a 0%, #0c1a29 46%, #050c14 100%);
+      radial-gradient(120% 90% at 50% 34%, #163229 0%, #0b1411 46%, #070d0b 100%);
     animation: splashOut .55s ease 2.15s forwards;
     overflow: hidden;
   }
+  /* живой волновой фон бренда (WebGL, ../shader-bg.js); без WebGL — градиент выше */
+  #splash canvas.waves { position:absolute; inset:0; width:100%; height:100%; display:block; opacity:0; transition: opacity .9s ease; }
+  #splash.has-waves canvas.waves { opacity:1; }
+  #splash .veil { position:absolute; inset:0; background: radial-gradient(90% 70% at 50% 42%, rgba(7,13,11,.38) 0%, rgba(7,13,11,.80) 100%); }
   /* тёплое свечение «нефтяного пласта» снизу */
   #splash::after {
     content:""; position:absolute; left:50%; top:34%;
     width:320px; height:320px; transform:translate(-50%,-50%);
-    background: radial-gradient(circle, rgba(88,185,154,.20), transparent 62%);
+    background: radial-gradient(circle, rgba(127,208,180,.22), transparent 62%);
     animation: glow 2.4s ease-in-out infinite; pointer-events:none;
   }
   #splash .flash {
@@ -367,12 +374,12 @@
       radial-gradient(circle at 50% 34%, #fff 0%, rgba(255,240,210,.6) 30%, transparent 60%);
     animation: flash .6s ease .15s forwards; opacity:0;
   }
-  #splash .stage { position: relative; width: 230px; height: 250px;
+  #splash .stage { position: relative; width: 270px; height: 300px;
     opacity: 0; transform: scale(.9) translateY(8px);
     animation: rigIn .8s cubic-bezier(.2,.85,.25,1) .2s forwards; }
   #splash .rig { position:absolute; inset:0; width:100%; height:100%;
-    filter: drop-shadow(0 6px 20px rgba(0,0,0,.5)); }
-  #splash .drop { fill: #58b99a; opacity: 0;
+    filter: drop-shadow(0 10px 26px rgba(0,0,0,.55)) drop-shadow(0 0 18px rgba(127,208,180,.18)); }
+  #splash .drop { fill: #f0c46a; opacity: 0;
     transform-box: fill-box; transform-origin: center;
     animation: gush 1.5s cubic-bezier(.3,.1,.4,1) .55s forwards; }
   #splash .drop:nth-child(2){ animation-delay:.62s }
@@ -380,7 +387,7 @@
   #splash .drop:nth-child(4){ animation-delay:.78s }
   #splash .drop:nth-child(5){ animation-delay:.86s }
   #splash .word {
-    position: absolute; bottom: 26%; width: 100%; text-align: center;
+    position: absolute; bottom: 8%; width: 100%; text-align: center;
     font-size: 12px; letter-spacing: .42em; text-transform: uppercase;
     font-weight: 700;
     background: linear-gradient(100deg,#58b99a,#b8f1df,#58b99a);
@@ -388,8 +395,8 @@
     opacity: 0; animation: rigIn .7s ease .7s forwards;
   }
   #splash .word small { display:block; margin-top:7px; font-size:9px;
-    letter-spacing:.34em; font-weight:600; color: #6b8299;
-    -webkit-text-fill-color:#6b8299; }
+    letter-spacing:.34em; font-weight:600; color: #8fb3a6;
+    -webkit-text-fill-color:#8fb3a6; }
   @keyframes flash { 0%{opacity:0} 18%{opacity:.85} 100%{opacity:0} }
   @keyframes glow { 0%,100%{opacity:.6} 50%{opacity:1} }
   @keyframes rigIn { to { opacity: 1; transform: scale(1) translateY(0); } }
@@ -653,52 +660,113 @@
     </div>
   </div>
   <div id="splash" aria-hidden="true">
+    <canvas class="waves"></canvas>
+    <div class="veil"></div>
     <div class="flash"></div>
     <div class="stage">
-      <svg class="rig" viewBox="0 0 200 240" fill="none"
+      <svg class="rig" viewBox="0 0 240 300" fill="none"
            stroke-linecap="round" stroke-linejoin="round">
         <defs>
-          <linearGradient id="steel" gradientUnits="userSpaceOnUse"
-              x1="100" y1="30" x2="100" y2="210">
-            <stop offset="0" stop-color="#b8f1df"/>
-            <stop offset=".5" stop-color="#58b99a"/>
-            <stop offset="1" stop-color="#1b5a49"/>
+          <linearGradient id="steelF" gradientUnits="userSpaceOnUse" x1="120" y1="50" x2="120" y2="236">
+            <stop offset="0" stop-color="#e6fff4"/><stop offset=".35" stop-color="#8fdcc0"/>
+            <stop offset=".75" stop-color="#3f9c7f"/><stop offset="1" stop-color="#1b5a49"/>
           </linearGradient>
+          <linearGradient id="steelS" gradientUnits="userSpaceOnUse" x1="120" y1="50" x2="120" y2="236">
+            <stop offset="0" stop-color="#8fd6bd"/><stop offset=".6" stop-color="#2f7a63"/><stop offset="1" stop-color="#143f34"/>
+          </linearGradient>
+          <linearGradient id="steelB" gradientUnits="userSpaceOnUse" x1="120" y1="50" x2="120" y2="216">
+            <stop offset="0" stop-color="#5fa68e"/><stop offset="1" stop-color="#112e26"/>
+          </linearGradient>
+          <linearGradient id="slabTop" gradientUnits="userSpaceOnUse" x1="60" y1="216" x2="180" y2="240">
+            <stop offset="0" stop-color="#2b5f50"/><stop offset=".5" stop-color="#1a4237"/><stop offset="1" stop-color="#0e2820"/>
+          </linearGradient>
+          <linearGradient id="slabSide" gradientUnits="userSpaceOnUse" x1="120" y1="240" x2="120" y2="252">
+            <stop offset="0" stop-color="#173b31"/><stop offset="1" stop-color="#07130f"/>
+          </linearGradient>
+          <linearGradient id="pipeBody" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#0b2019"/><stop offset=".3" stop-color="#3f9c7f"/>
+            <stop offset=".45" stop-color="#d7fff0"/><stop offset=".7" stop-color="#2f7a63"/><stop offset="1" stop-color="#08170f"/>
+          </linearGradient>
+          <radialGradient id="pipeEnd" cx=".38" cy=".34" r=".72">
+            <stop offset="0" stop-color="#eafff6"/><stop offset=".45" stop-color="#7fd0b4"/><stop offset="1" stop-color="#173f34"/>
+          </radialGradient>
+          <radialGradient id="pipeHole" cx=".62" cy=".66" r=".7">
+            <stop offset="0" stop-color="#030806"/><stop offset=".75" stop-color="#0d231c"/><stop offset="1" stop-color="#2f7a63"/>
+          </radialGradient>
+          <radialGradient id="floorGlow" cx=".5" cy=".5" r=".5">
+            <stop offset="0" stop-color="#7fd0b4" stop-opacity=".38"/><stop offset="1" stop-color="#7fd0b4" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="lamp" cx=".5" cy=".5" r=".5">
+            <stop offset="0" stop-color="#fff2cc"/><stop offset=".35" stop-color="#f0c46a" stop-opacity=".9"/><stop offset="1" stop-color="#d9a04a" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+          </linearGradient>
+          <mask id="reflMask"><rect x="0" y="244" width="240" height="60" fill="url(#fade)"/></mask>
+          <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2"/></filter>
+          <filter id="blur6" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6"/></filter>
         </defs>
-        <g stroke="url(#steel)" stroke-width="2.6">
-          <!-- ноги вышки -->
-          <path d="M52 206 L86 44"/><path d="M148 206 L114 44"/>
-          <!-- горизонтальные пояса -->
-          <path d="M60 180 H140"/><path d="M66 150 H134"/>
-          <path d="M72 120 H128"/><path d="M77 92 H123"/><path d="M82 66 H118"/>
-          <!-- X-раскосы -->
-          <path d="M52 206 L140 180 M148 206 L60 180"/>
-          <path d="M60 180 L134 150 M140 180 L66 150"/>
-          <path d="M66 150 L128 120 M134 150 L72 120"/>
-          <path d="M72 120 L123 92 M128 120 L77 92"/>
-          <path d="M77 92 L118 66 M123 92 L82 66"/>
-          <!-- корона и кронблок -->
-          <path d="M86 44 H114 L100 26 Z"/>
-          <circle cx="100" cy="38" r="4" fill="none"/>
-          <path d="M100 26 V16"/>
-          <!-- талевый блок с крюком -->
-          <path d="M94 96 H106 V108 H94 Z" fill="rgba(88,185,154,.15)"/>
-          <path d="M100 108 V118 M96 118 q4 6 8 0"/>
-          <!-- основание -->
-          <path d="M40 206 H160" stroke-width="3.4"/>
+
+        <!-- свечение пола и тень -->
+        <ellipse cx="120" cy="246" rx="96" ry="18" fill="url(#floorGlow)"/>
+        <ellipse cx="120" cy="248" rx="70" ry="9" fill="#02090699" filter="url(#blur6)"/>
+
+        <!-- плита основания: верх + передняя кромка -->
+        <path d="M84 216 H156 L184 240 H56 Z" fill="url(#slabTop)"/>
+        <path d="M56 240 H184 V252 H56 Z" fill="url(#slabSide)"/>
+        <path d="M84 216 H156 L184 240" stroke="#9fe3c9" stroke-opacity=".55" stroke-width="1"/>
+        <path d="M56 240 H184" stroke="#bff0dc" stroke-opacity=".7" stroke-width="1.2"/>
+
+        <g id="rigBody">
+          <!-- задняя грань -->
+          <g stroke="url(#steelB)" stroke-width="1.3" opacity=".75">
+            <path d="M84.0 216.0 L113.0 50.0 M156.0 216.0 L127.0 50.0"/><path d="M88.1 192.8 L151.9 192.8 M93.0 164.5 L147.0 164.5 M97.9 136.3 L142.1 136.3 M102.8 108.1 L137.2 108.1 M107.8 79.9 L132.2 79.9"/><path d="M84.0 216.0 L151.9 192.8 M156.0 216.0 L88.1 192.8 M88.1 192.8 L147.0 164.5 M151.9 192.8 L93.0 164.5 M93.0 164.5 L142.1 136.3 M147.0 164.5 L97.9 136.3 M97.9 136.3 L137.2 108.1 M142.1 136.3 L102.8 108.1 M102.8 108.1 L132.2 79.9 M137.2 108.1 L107.8 79.9 M107.8 79.9 L127.0 50.0 M132.2 79.9 L113.0 50.0" stroke-width="1"/>
+          </g>
+          <!-- боковые грани -->
+          <g stroke="url(#steelS)" stroke-width="1.7">
+            <path d="M88.1 192.8 L63.4 211.1 M93.0 164.5 L72.4 180.8 M97.9 136.3 L81.4 150.6 M102.8 108.1 L90.5 120.3 M107.8 79.9 L99.5 90.0"/><path d="M84.0 216.0 L63.4 211.1 M56.0 236.0 L88.1 192.8 M88.1 192.8 L72.4 180.8 M63.4 211.1 L93.0 164.5 M93.0 164.5 L81.4 150.6 M72.4 180.8 L97.9 136.3 M97.9 136.3 L90.5 120.3 M81.4 150.6 L102.8 108.1 M102.8 108.1 L99.5 90.0 M90.5 120.3 L107.8 79.9 M107.8 79.9 L109.0 58.0 M99.5 90.0 L113.0 50.0" stroke-width="1.1"/>
+            <path d="M176.6 211.1 L151.9 192.8 M167.6 180.8 L147.0 164.5 M158.6 150.6 L142.1 136.3 M149.6 120.3 L137.2 108.1 M140.5 90.0 L132.2 79.9"/><path d="M184.0 236.0 L151.9 192.8 M156.0 216.0 L176.6 211.1 M176.6 211.1 L147.0 164.5 M151.9 192.8 L167.6 180.8 M167.6 180.8 L142.1 136.3 M147.0 164.5 L158.6 150.6 M158.6 150.6 L137.2 108.1 M142.1 136.3 L149.6 120.3 M149.6 120.3 L132.2 79.9 M137.2 108.1 L140.5 90.0 M140.5 90.0 L127.0 50.0 M132.2 79.9 L131.0 58.0" stroke-width="1.1"/>
+          </g>
+          <!-- фронт -->
+          <g stroke="url(#steelF)" stroke-width="2.4">
+            <path d="M56.0 236.0 L109.0 58.0 M184.0 236.0 L131.0 58.0"/>
+            <path d="M63.4 211.1 L176.6 211.1 M72.4 180.8 L167.6 180.8 M81.4 150.6 L158.6 150.6 M90.5 120.3 L149.6 120.3 M99.5 90.0 L140.5 90.0"/>
+            <path d="M56.0 236.0 L176.6 211.1 M184.0 236.0 L63.4 211.1 M63.4 211.1 L167.6 180.8 M176.6 211.1 L72.4 180.8 M72.4 180.8 L158.6 150.6 M167.6 180.8 L81.4 150.6 M81.4 150.6 L149.6 120.3 M158.6 150.6 L90.5 120.3 M90.5 120.3 L140.5 90.0 M149.6 120.3 L99.5 90.0 M99.5 90.0 L131.0 58.0 M140.5 90.0 L109.0 58.0" stroke-width="1.5"/>
+          </g>
+          <!-- корона: площадка, кронблок, мачта -->
+          <path d="M113 50 H127 L131 58 H109 Z" fill="#1f5747" stroke="url(#steelF)" stroke-width="1.6"/>
+          <path d="M109 58 H131" stroke="#e6fff4" stroke-opacity=".8" stroke-width="1"/>
+          <path d="M120 50 V30 M113 50 L120 38 L127 50" stroke="url(#steelF)" stroke-width="2"/>
+          <circle cx="120" cy="44" r="3.6" fill="#0c221b" stroke="#bff0dc" stroke-width="1.6"/>
+          <circle cx="120" cy="44" r="1.2" fill="#e6fff4"/>
+          <!-- талевый канат и блок с крюком -->
+          <path d="M120 48 V104" stroke="#cdeee2" stroke-opacity=".8" stroke-width="1"/>
+          <path d="M113 104 H127 V118 H113 Z" fill="#163e33" stroke="url(#steelF)" stroke-width="1.6"/>
+          <path d="M113 104 H127" stroke="#e6fff4" stroke-opacity=".7" stroke-width="1"/>
+          <circle cx="120" cy="111" r="2.6" fill="#08170f" stroke="#9fe3c9" stroke-width="1.2"/>
+          <path d="M120 118 V128 M115 128 q5 8 10 0" stroke="#dbf7ec" stroke-width="2"/>
+          <!-- фонарь на короне -->
+          <circle cx="120" cy="30" r="9" fill="url(#lamp)" filter="url(#soft)"/>
+          <circle cx="120" cy="30" r="2.2" fill="#fff6db"/>
         </g>
-        <!-- штабель труб у основания (трубы · металлолом) -->
-        <g stroke="url(#steel)" stroke-width="2" fill="rgba(88,185,154,.10)">
-          <circle cx="70" cy="226" r="7.5"/><circle cx="85" cy="226" r="7.5"/><circle cx="100" cy="226" r="7.5"/><circle cx="115" cy="226" r="7.5"/><circle cx="130" cy="226" r="7.5"/>
-          <circle cx="77.5" cy="212" r="7.5"/><circle cx="92.5" cy="212" r="7.5"/><circle cx="107.5" cy="212" r="7.5"/><circle cx="122.5" cy="212" r="7.5"/>
+
+        <!-- отражение вышки на плите -->
+        <g mask="url(#reflMask)" transform="translate(0 476) scale(1 -1)" opacity=".8">
+          <g stroke="url(#steelF)" stroke-width="2.4"><path d="M56.0 236.0 L109.0 58.0 M184.0 236.0 L131.0 58.0"/><path d="M63.4 211.1 L176.6 211.1 M72.4 180.8 L167.6 180.8 M81.4 150.6 L158.6 150.6 M90.5 120.3 L149.6 120.3 M99.5 90.0 L140.5 90.0"/></g>
         </g>
-        <!-- нефтяной фонтан из устья -->
+
+        <!-- штабель труб (НКТ): торцы к зрителю, тела уходят вглубь -->
+        <g transform="translate(50 -2) scale(.9)" transform-origin="120 250">
+          <path d="M137.2 213.4 a8.2 8.2 0 0 1 0 16.4 l15 -6 a8.2 8.2 0 0 0 0 -16.4 z" fill="url(#pipeBody)"/><circle cx="137.2" cy="221.6" r="8.2" fill="url(#pipeEnd)"/><circle cx="137.2" cy="221.6" r="5.1" fill="url(#pipeHole)"/><path d="M120.0 213.4 a8.2 8.2 0 0 1 0 16.4 l15 -6 a8.2 8.2 0 0 0 0 -16.4 z" fill="url(#pipeBody)"/><circle cx="120.0" cy="221.6" r="8.2" fill="url(#pipeEnd)"/><circle cx="120.0" cy="221.6" r="5.1" fill="url(#pipeHole)"/><path d="M102.8 213.4 a8.2 8.2 0 0 1 0 16.4 l15 -6 a8.2 8.2 0 0 0 0 -16.4 z" fill="url(#pipeBody)"/><circle cx="102.8" cy="221.6" r="8.2" fill="url(#pipeEnd)"/><circle cx="102.8" cy="221.6" r="5.1" fill="url(#pipeHole)"/><path d="M145.8 227.6 a8.2 8.2 0 0 1 0 16.4 l15 -6 a8.2 8.2 0 0 0 0 -16.4 z" fill="url(#pipeBody)"/><circle cx="145.8" cy="235.8" r="8.2" fill="url(#pipeEnd)"/><circle cx="145.8" cy="235.8" r="5.1" fill="url(#pipeHole)"/><path d="M128.6 227.6 a8.2 8.2 0 0 1 0 16.4 l15 -6 a8.2 8.2 0 0 0 0 -16.4 z" fill="url(#pipeBody)"/><circle cx="128.6" cy="235.8" r="8.2" fill="url(#pipeEnd)"/><circle cx="128.6" cy="235.8" r="5.1" fill="url(#pipeHole)"/><path d="M111.4 227.6 a8.2 8.2 0 0 1 0 16.4 l15 -6 a8.2 8.2 0 0 0 0 -16.4 z" fill="url(#pipeBody)"/><circle cx="111.4" cy="235.8" r="8.2" fill="url(#pipeEnd)"/><circle cx="111.4" cy="235.8" r="5.1" fill="url(#pipeHole)"/><path d="M94.2 227.6 a8.2 8.2 0 0 1 0 16.4 l15 -6 a8.2 8.2 0 0 0 0 -16.4 z" fill="url(#pipeBody)"/><circle cx="94.2" cy="235.8" r="8.2" fill="url(#pipeEnd)"/><circle cx="94.2" cy="235.8" r="5.1" fill="url(#pipeHole)"/><path d="M154.4 241.8 a8.2 8.2 0 0 1 0 16.4 l15 -6 a8.2 8.2 0 0 0 0 -16.4 z" fill="url(#pipeBody)"/><circle cx="154.4" cy="250.0" r="8.2" fill="url(#pipeEnd)"/><circle cx="154.4" cy="250.0" r="5.1" fill="url(#pipeHole)"/><path d="M137.2 241.8 a8.2 8.2 0 0 1 0 16.4 l15 -6 a8.2 8.2 0 0 0 0 -16.4 z" fill="url(#pipeBody)"/><circle cx="137.2" cy="250.0" r="8.2" fill="url(#pipeEnd)"/><circle cx="137.2" cy="250.0" r="5.1" fill="url(#pipeHole)"/><path d="M120.0 241.8 a8.2 8.2 0 0 1 0 16.4 l15 -6 a8.2 8.2 0 0 0 0 -16.4 z" fill="url(#pipeBody)"/><circle cx="120.0" cy="250.0" r="8.2" fill="url(#pipeEnd)"/><circle cx="120.0" cy="250.0" r="5.1" fill="url(#pipeHole)"/><path d="M102.8 241.8 a8.2 8.2 0 0 1 0 16.4 l15 -6 a8.2 8.2 0 0 0 0 -16.4 z" fill="url(#pipeBody)"/><circle cx="102.8" cy="250.0" r="8.2" fill="url(#pipeEnd)"/><circle cx="102.8" cy="250.0" r="5.1" fill="url(#pipeHole)"/><path d="M85.6 241.8 a8.2 8.2 0 0 1 0 16.4 l15 -6 a8.2 8.2 0 0 0 0 -16.4 z" fill="url(#pipeBody)"/><circle cx="85.6" cy="250.0" r="8.2" fill="url(#pipeEnd)"/><circle cx="85.6" cy="250.0" r="5.1" fill="url(#pipeHole)"/>
+        </g>
+
+        <!-- фонтан из устья -->
         <g>
-          <circle class="drop" cx="100" cy="30" r="4" style="--dx:-14px"/>
-          <circle class="drop" cx="100" cy="30" r="3" style="--dx:12px"/>
-          <circle class="drop" cx="100" cy="30" r="3.5" style="--dx:-4px"/>
-          <circle class="drop" cx="100" cy="30" r="2.5" style="--dx:20px"/>
-          <circle class="drop" cx="100" cy="30" r="3" style="--dx:-22px"/>
+          <circle class="drop" cx="120" cy="30" r="4" style="--dx:-14px"/>
+          <circle class="drop" cx="120" cy="30" r="3" style="--dx:12px"/>
+          <circle class="drop" cx="120" cy="30" r="3.5" style="--dx:-4px"/>
+          <circle class="drop" cx="120" cy="30" r="2.5" style="--dx:20px"/>
+          <circle class="drop" cx="120" cy="30" r="3" style="--dx:-22px"/>
         </g>
       </svg>
     </div>
@@ -706,7 +774,7 @@
   </div>
 
   <header class="app">
-    <div class="logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 16.5c0-2.6 2-5.3 5-9.2 3 3.9 5 6.6 5 9.2a5 5 0 0 1-10 0Z"/><path d="M15.7 5.7 18.5 3M17.2 8.3h3.6"/></svg></div>
+    <div class="logo mark"><svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="apbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#93dcc3"/><stop offset="1" stop-color="#255d51"/></linearGradient><linearGradient id="apst" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3fff9"/><stop offset=".45" stop-color="#7fd0b4"/><stop offset="1" stop-color="#1b5a49"/></linearGradient><radialGradient id="apho" cx=".6" cy=".65" r=".7"><stop offset="0" stop-color="#040a08"/><stop offset=".8" stop-color="#0d231c"/><stop offset="1" stop-color="#3f9c7f"/></radialGradient><linearGradient id="apoi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4cf7a"/><stop offset="1" stop-color="#b8782a"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#apbg)"/><circle cx="24" cy="24" r="14.5" fill="url(#apst)"/><circle cx="24" cy="24" r="10" fill="url(#apho)"/><path d="M24 15.5c-3.6 4.6-5.6 7.4-5.6 10.2a5.6 5.6 0 0 0 11.2 0c0-2.8-2-5.6-5.6-10.2z" fill="url(#apoi)"/><path d="M21.6 24.6c0-1.6.9-3.2 2-4.6" stroke="#fff5d6" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".9"/></svg></div>
     <div>
       <div class="app-name">ОТХОДЫ В ДОХОДЫ</div>
       <div class="app-sub">НЕФТЕПРОДУКТЫ · МЕТАЛЛОЛОМ · ТРУБЫ</div>
@@ -900,8 +968,16 @@
 
 <script>window.TENDERS_DATA=/*__DATA_START__*/{"tenders":[]}/*__DATA_END__*/;</script>
 <script>
+// живой фон заставки: WebGL-волны бренда; без WebGL остаётся CSS-градиент
+var splashWaves = null;
+(function(){ try {
+  var s=document.getElementById('splash'), c=s&&s.querySelector('canvas.waves');
+  if(!c||!window.mountShaderBackground) return;
+  splashWaves = mountShaderBackground(c, { colors: ['#070d0b','#0e2019','#1c4a3e','#2f7a63','#5fb596','#b98a3e'], pixelCap: 8e5, maxDpr: 1.5 });
+  if(splashWaves) s.classList.add('has-waves');
+} catch(_){} })();
 // заставку убираем принудительно через 2 c (не полагаемся на CSS-анимацию)
-setTimeout(function(){ var s=document.getElementById('splash'); if(s){ s.style.transition='opacity .4s'; s.style.opacity='0'; setTimeout(function(){ if(s&&s.parentNode) s.parentNode.removeChild(s); },450); } }, 2800);
+setTimeout(function(){ var s=document.getElementById('splash'); if(s){ s.style.transition='opacity .4s'; s.style.opacity='0'; setTimeout(function(){ if(splashWaves){ try{ splashWaves.dispose(); }catch(_){} splashWaves=null; } if(s&&s.parentNode) s.parentNode.removeChild(s); },450); } }, 2800);
 
 // Сигнал Telegram «приложение готово» НАПРЯМУЮ, в обход SDK — чтобы
 // экран загрузки Telegram убирался на ЛЮБОЙ версии клиента (иначе на

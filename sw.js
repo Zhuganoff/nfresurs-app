@@ -3,12 +3,13 @@
    /app/ на корневой sw.js → scope «/»). HTML берём network-first (свежая
    оболочка), статику (иконки, manifest, telegram-web-app.js) — cache-first.
    Офлайн: навигация внутри /app/ → последняя виденная оболочка приложения. */
-const CACHE = 'ovd-v5';
+const CACHE = 'ovd-v6';
 const APP = '/app/';
 const ASSETS = [
   APP,
   './manifest.webmanifest',
   './telegram-web-app.js',
+  './shader-bg.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-180.png',
