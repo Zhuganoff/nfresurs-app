@@ -295,6 +295,11 @@
   .mat:hover .face-back > :nth-child(1), .mat:focus-within .face-back > :nth-child(1), .mat.flip .face-back > :nth-child(1) { transition-delay: .4s; }
   .mat:hover .face-back > :nth-child(2), .mat:focus-within .face-back > :nth-child(2), .mat.flip .face-back > :nth-child(2) { transition-delay: .47s; }
   .mat:hover .face-back > :nth-child(3), .mat:focus-within .face-back > :nth-child(3), .mat.flip .face-back > :nth-child(3) { transition-delay: .54s; }
+  /* filter внутри preserve-3d «сплющивает» слой, и картинка лицевой стороны
+     на миг проступает поверх текста оборота — гасим лицо ровно на середине */
+  .face-front { transition: opacity .01s linear .42s; }
+  .mat:hover .face-front, .mat:focus-within .face-front, .mat.flip .face-front { opacity: 0; }
+  .face-front .pic img { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
   .face { position: absolute; inset: 0; border-radius: 24px; border: 1px solid var(--glass-brd); overflow: hidden; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; background: rgba(11,20,17,.72); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
   .face-front .pic { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 14%; position: relative; overflow: hidden; }
   .face-front .pic::before { content: ''; position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 60%, var(--m-soft), transparent 70%); }
@@ -476,6 +481,7 @@
       <div class="stage" id="stage" aria-label="Примеры лотов из ленты">
         <div class="stack" id="stack">
           <div class="stack-label mono">Так выглядят лоты в ленте</div>
+          <!--SHOWCASE_START-->
           <article class="lot" style="--m: var(--oil); --i: 0; --z: 48">
             <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
             <div class="lot-title">Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Нефтеюганск</div>
@@ -491,6 +497,7 @@
             <div class="lot-title">Труба обсадная 139,7×9,17 P-110 с муфтами, 61 т</div>
             <div class="lot-meta"><span>Ямало-Ненецкий АО</span><span class="lot-price">6 285 866 ₽</span></div>
           </article>
+          <!--SHOWCASE_END-->
         </div>
       </div>
     </section>
@@ -505,7 +512,7 @@
   <section class="section proof" style="padding-top:96px" aria-label="Сервис в цифрах">
     <div class="wrap">
       <div class="grid-4">
-        <div class="stat" data-i style="--i:0"><div class="num display" data-to="16">16</div><div class="lbl">площадок под наблюдением, список растёт</div></div>
+        <div class="stat" data-i style="--i:0"><div class="num display" data-to="16">16</div><div class="lbl">площадок под наблюдением в режиме реального времени</div></div>
         <div class="stat" data-i style="--i:1"><div class="num display" data-to="1000" data-suffix="+">1000<small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
         <div class="stat" data-i style="--i:2"><div class="num display" data-to="24" data-suffix="/7">24<small>/7</small></div><div class="lbl">мониторинг площадок в режиме онлайн, без выходных</div></div>
         <div class="stat" data-i style="--i:3"><div class="num display" data-to="3">3</div><div class="lbl">вида сырья: нефтепродукты, лом, трубы</div></div>
@@ -537,7 +544,7 @@
         <article class="mat mat-scrap" data-i style="--i:1" tabindex="0">
           <div class="mat-in">
             <div class="face face-front">
-              <div class="pic"><img src="img/scrap.svg" alt="Пакет прессованного металлолома" width="240" height="200" loading="lazy"></div>
+              <div class="pic"><img src="img/scrap.svg" alt="Куча лома чёрных металлов" width="240" height="200" loading="lazy"></div>
               <div class="txt"><h3>Металлолом</h3><span class="more">подробнее →</span></div>
             </div>
             <div class="face face-back">

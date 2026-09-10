@@ -1,24 +1,73 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" role="img" aria-label="Пакет прессованного металлолома">
-  <ellipse cx="122" cy="172" rx="90" ry="12" fill="#1c2329" opacity=".55"/>
-  <!-- пресс-пакет, изометрия -->
-  <g transform="translate(40 30)">
-    <polygon points="0,52 80,20 160,52 80,84" fill="#8e9aa5"/>
-    <polygon points="0,52 80,84 80,150 0,118" fill="#5b6873"/>
-    <polygon points="80,84 160,52 160,118 80,150" fill="#465059"/>
-    <!-- фактура: полосы обрези -->
-    <g stroke="#2c343b" stroke-width="3" stroke-linecap="round" fill="none">
-      <path d="M12 66l24-10M20 92l30-12M10 100l40-16M26 118l28-11M8 82l16-6"/>
-      <path d="M96 100l40-16M92 126l52-21M110 140l38-15M128 96l22-9M90 112l14-6"/>
-      <path d="M40 34l30-12M64 52l40-16M100 44l28-11M36 56l50-20M70 66l40-16"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" role="img" aria-label="Куча лома чёрных металлов">
+  <defs>
+    <linearGradient id="sM" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3ecf4"/><stop offset=".45" stop-color="#98a6b2"/><stop offset="1" stop-color="#3d4750"/></linearGradient>
+    <linearGradient id="sD" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7b8894"/><stop offset="1" stop-color="#222a30"/></linearGradient>
+    <linearGradient id="sL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f2f7fb"/><stop offset=".5" stop-color="#aab8c4"/><stop offset="1" stop-color="#525e67"/></linearGradient>
+    <linearGradient id="sR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e08a5e"/><stop offset="1" stop-color="#6b3320"/></linearGradient>
+  </defs>
+
+  <ellipse cx="120" cy="178" rx="98" ry="14" fill="#141a1f" opacity=".7"/>
+
+  <!-- дальний план: балки и листы, образуют силуэт кучи -->
+  <g opacity=".9">
+    <path d="M18 172 L96 58 L112 66 L34 178 Z" fill="url(#sD)"/>
+    <path d="M222 170 L146 54 L130 62 L206 176 Z" fill="url(#sD)"/>
+    <path d="M64 176 L128 44 L146 52 L82 180 Z" fill="url(#sD)" opacity=".85"/>
+    <path d="M96 58 L112 66 L120 96 L104 88 Z" fill="url(#sM)" opacity=".55"/>
+    <path d="M146 54 L130 62 L124 92 L140 84 Z" fill="url(#sM)" opacity=".45"/>
+  </g>
+
+  <!-- смятые листы -->
+  <path d="M12 176 L40 116 L86 128 L110 164 L78 182 L30 182 Z" fill="url(#sD)"/>
+  <path d="M40 116 L86 128 L70 148 L28 138 Z" fill="url(#sM)"/>
+  <path d="M228 176 L204 126 L162 140 L142 170 L172 182 Z" fill="url(#sD)"/>
+  <path d="M204 126 L162 140 L176 158 L212 148 Z" fill="url(#sL)" opacity=".85"/>
+
+  <!-- арматура -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M24 172 C62 146 84 112 126 96 C164 82 188 96 218 82" stroke="url(#sR)" stroke-width="7"/>
+    <path d="M36 180 C78 164 102 134 148 122 C180 114 200 122 222 112" stroke="url(#sR)" stroke-width="5.5" opacity=".85"/>
+    <path d="M52 182 C92 172 122 152 166 144" stroke="url(#sR)" stroke-width="4.5" opacity=".7"/>
+  </g>
+
+  <!-- уголок и полоса поверх -->
+  <path d="M46 172 L162 116 L172 130 L110 158 L116 172 L52 182 Z" fill="url(#sM)"/>
+  <path d="M162 116 L172 130 L172 142 L162 128 Z" fill="#49555e"/>
+  <path d="M84 180 L196 128 L204 140 L92 190 Z" fill="url(#sL)"/>
+
+  <!-- обрезок двутавра -->
+  <g transform="translate(140 142)">
+    <path d="M0 0 L56 -22 L64 -6 L8 16 Z" fill="url(#sM)"/>
+    <path d="M8 16 L64 -6 L64 8 L8 30 Z" fill="url(#sD)"/>
+    <path d="M56 -22 L64 -6 L64 8 L56 -8 Z" fill="#586570"/>
+    <path d="M6 2 L54 -17" stroke="#f5fafe" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- обрезок трубы с торцом -->
+  <g transform="translate(66 156)">
+    <path d="M0 -17 a17 17 0 0 1 0 34 l46 -13 a17 17 0 0 0 0 -26 z" fill="url(#sL)"/>
+    <ellipse cx="0" cy="0" rx="10" ry="17" fill="#c7d3dd"/>
+    <ellipse cx="0" cy="0" rx="5.6" ry="10" fill="#161c21"/>
+    <path d="M-6 -10 A17 17 0 0 1 -6 10" stroke="#ffffff" stroke-opacity=".5" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- шестерня -->
+  <g transform="translate(190 162)">
+    <circle r="19" fill="url(#sM)"/>
+    <circle r="7" fill="#161c21"/>
+    <g fill="url(#sM)">
+      <rect x="-4" y="-25" width="8" height="9"/><rect x="-4" y="16" width="8" height="9"/>
+      <rect x="-25" y="-4" width="9" height="8"/><rect x="16" y="-4" width="9" height="8"/>
+      <rect x="-4" y="-25" width="8" height="9" transform="rotate(45)"/><rect x="-4" y="16" width="8" height="9" transform="rotate(45)"/>
+      <rect x="-25" y="-4" width="9" height="8" transform="rotate(45)"/><rect x="16" y="-4" width="9" height="8" transform="rotate(45)"/>
     </g>
-    <!-- обвязка -->
-    <path d="M40 36v104M120 68v82" stroke="#d6dde3" stroke-width="4" fill="none" opacity=".9"/>
-    <path d="M40 36l80 32" stroke="#d6dde3" stroke-width="4" fill="none" opacity=".9"/>
+    <path d="M-13 -11 A19 19 0 0 1 -2 -18" stroke="#f5fafe" stroke-opacity=".6" stroke-width="2.4" fill="none" stroke-linecap="round"/>
   </g>
-  <!-- россыпь -->
-  <g fill="#6E7B86">
-    <rect x="18" y="146" width="30" height="10" rx="2" transform="rotate(-18 33 151)"/>
-    <rect x="196" y="140" width="26" height="8" rx="2" transform="rotate(14 209 144)"/>
-    <circle cx="206" cy="164" r="6"/>
+
+  <!-- мелочь поверх -->
+  <g fill="url(#sM)">
+    <path d="M112 170 L142 160 L146 168 L116 178 Z"/>
+    <path d="M148 176 L172 168 L175 174 L151 182 Z" opacity=".85"/>
   </g>
+  <path d="M120 148 L156 134" stroke="url(#sR)" stroke-width="4" stroke-linecap="round"/>
 </svg>
