@@ -245,6 +245,8 @@
   .lg-card > :nth-child(1) { animation-delay: .4s; } .lg-card > :nth-child(2) { animation-delay: .45s; } .lg-card > :nth-child(3) { animation-delay: .52s; }
   .lg-card > :nth-child(4) { animation-delay: .59s; } .lg-card > :nth-child(5) { animation-delay: .66s; } .lg-card > :nth-child(6) { animation-delay: .73s; }
   .lg-card > :nth-child(7) { animation-delay: .8s; } .lg-card > :nth-child(8) { animation-delay: .87s; }
+  .lg-card > :nth-child(9) { animation-delay: .92s; } .lg-card > :nth-child(10) { animation-delay: .97s; }
+  .lg-card > :nth-child(n+11) { animation-delay: 1.02s; }
   @keyframes lgrow { to { opacity: 1; transform: none; } }
   .lg-x { position: absolute; top: 10px; right: 12px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); color: var(--dim); font-size: 22px; line-height: 1; cursor: pointer; transition: background .25s, color .25s; }
   .lg-x:hover { background: rgba(255,255,255,.14); color: var(--text); }
@@ -260,6 +262,11 @@
   .lg-card input[hidden] { display: none; }
   .lg-card .lg-btn { width: 100%; }
   .lg-card .lg-btn[disabled] { opacity: .7; cursor: default; }
+  .lg-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; font-size: 13px; }
+  .lg-links a { color: var(--dim); border-bottom: 1px solid transparent; transition: color .2s, border-color .2s; }
+  .lg-links a:hover { color: var(--accent); border-color: rgba(127,208,180,.5); text-decoration: none; }
+  .lg-links a[hidden] { display: none; }
+  .lg-card input[hidden] { display: none; }
   .lg-consent { max-width: 320px; font-size: 11px; line-height: 1.45; color: var(--faint); text-align: center; }
   .lg-consent a { color: var(--accent); }
   body.lg-open { overflow: hidden; }
@@ -441,8 +448,16 @@
     <div class="lg-title" id="lg-title">Отходы в доходы</div>
     <div class="lg-msg" id="lg-msg">Войдите по e-mail, чтобы открыть тендеры</div>
     <input id="lg-email" type="email" inputmode="email" autocomplete="email" placeholder="you@mail.ru">
+    <input id="lg-pass" type="password" autocomplete="current-password" placeholder="пароль">
+    <input id="lg-pass2" type="password" autocomplete="new-password" placeholder="пароль ещё раз" hidden>
     <input id="lg-code" type="text" inputmode="numeric" maxlength="6" placeholder="код из письма" hidden>
-    <button type="button" class="btn btn-primary lg-btn" id="lg-btn">Получить код</button>
+    <button type="button" class="btn btn-primary lg-btn" id="lg-btn">Войти</button>
+    <div class="lg-links">
+      <a href="#" id="lg-to-reset">Забыли пароль?</a>
+      <a href="#" id="lg-to-code">Войти по коду на почту</a>
+      <a href="#" id="lg-to-reg" hidden>Регистрация</a>
+      <a href="#" id="lg-to-login" hidden>Уже есть аккаунт — войти</a>
+    </div>
     <div class="lg-consent">Нажимая «Войти», вы соглашаетесь на обработку персональных данных согласно <a href="privacy.html" target="_blank" rel="noopener">Политике конфиденциальности</a>.</div>
   </div>
 </div>
@@ -483,19 +498,19 @@
           <div class="stack-label mono">Так выглядят лоты в ленте</div>
           <!--SHOWCASE_START-->
           <article class="lot" style="--m: var(--oil); --i: 0; --z: 48">
-            <div class="lot-head mono"><span>Tender.Pro</span><span>реализация</span></div>
-            <div class="lot-title">ООО &quot;КАМАЗ Тормозные системы&quot; г. Набережные Челны реализует в IV квартал 2026 отработанные нефтепродукты (МИО)</div>
-            <div class="lot-meta"><span>Республика Татарстан</span><span>18.09.2026 10:00</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Нефтеюганск</div>
+            <div class="lot-meta"><span>ХМАО — Югра</span><span>приём заявок до 15 сентября</span></div>
           </article>
           <article class="lot" style="--m: var(--scrap); --i: 1; --z: 24">
-            <div class="lot-head mono"><span>ЭТП ГПБ</span><span>реализация</span></div>
-            <div class="lot-title">Реализация лома, черных отходов и цветных металлов, принадлежащих ПАО «НПП «Импульс».</div>
-            <div class="lot-meta"><span>Республика Саха (Якутия)</span><span class="lot-price">0.0 RUB</span></div>
+            <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
+            <div class="lot-title">Лом чёрных металлов, 200 т, Жердевский сахарный завод</div>
+            <div class="lot-meta"><span>Тамбовская область</span><span>самовывоз</span></div>
           </article>
           <article class="lot" style="--m: var(--pipe); --i: 2; --z: 0">
-            <div class="lot-head mono"><span>Tender.Pro</span><span>реализация</span></div>
-            <div class="lot-title">Продажа/реализация Калибратор овальности и торцевых вмятин труб Ж58-А7907_DN720-1420</div>
-            <div class="lot-meta"><span>Россия</span><span>25.09.2026 17:00</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Труба обсадная 139,7×9,17 P-110 с муфтами, 61 т</div>
+            <div class="lot-meta"><span>Ямало-Ненецкий АО</span><span class="lot-price">6 285 866 ₽</span></div>
           </article>
           <!--SHOWCASE_END-->
         </div>
@@ -765,12 +780,50 @@
   }
   var ov=document.getElementById('login-modal'); if(!ov) return;
   var btn=document.getElementById('lg-btn'), em=document.getElementById('lg-email'),
-      cd=document.getElementById('lg-code'), msg=document.getElementById('lg-msg'), title=document.getElementById('lg-title');
-  var stage='email', mode='login';
+      pw=document.getElementById('lg-pass'), pw2=document.getElementById('lg-pass2'),
+      cd=document.getElementById('lg-code'), msg=document.getElementById('lg-msg'),
+      title=document.getElementById('lg-title');
+  var lnkReset=document.getElementById('lg-to-reset'), lnkCode=document.getElementById('lg-to-code'),
+      lnkReg=document.getElementById('lg-to-reg'), lnkLogin=document.getElementById('lg-to-login');
+  // режимы: login | reg | reset | code (старый вход по одноразовому коду)
+  var mode='login', stage='start';
+
+  function show(el, on){ if(el) el.hidden = !on; }
+  function render(){
+    var reg = mode==='reg', reset = mode==='reset', code = mode==='code';
+    title.textContent = reg ? 'Регистрация' : (reset ? 'Новый пароль' : 'Вход');
+    show(pw, !code && !(reset && stage==='start'));
+    show(pw2, reg && stage==='start');
+    show(cd, stage==='confirm');
+    show(lnkReset, mode==='login');
+    show(lnkCode, mode==='login');
+    show(lnkReg, mode!=='reg');
+    show(lnkLogin, mode!=='login');
+    pw.setAttribute('autocomplete', reg||reset ? 'new-password' : 'current-password');
+    pw.placeholder = reset ? 'новый пароль' : 'пароль';
+    if (stage==='confirm') {
+      btn.textContent = reg ? 'Подтвердить и войти'
+        : (code ? 'Войти' : 'Сменить пароль и войти');
+      msg.textContent = 'Код отправлен на ' + (em.value||'').trim();
+    } else if (code) {
+      btn.textContent = 'Получить код';
+      msg.textContent = 'Пришлём одноразовый код на почту';
+    } else if (reg) {
+      btn.textContent = 'Зарегистрироваться';
+      msg.textContent = 'Почта и пароль. Первые 3 дня бесплатно';
+    } else if (reset) {
+      btn.textContent = 'Прислать код';
+      msg.textContent = 'Пришлём код, чтобы задать новый пароль';
+    } else {
+      btn.textContent = 'Войти';
+      msg.textContent = 'Войдите по почте и паролю, чтобы открыть тендеры';
+    }
+    btn.disabled=false;
+  }
+  function setMode(m){ mode=m; stage='start'; cd.value=''; pw2.value=''; render(); }
+
   function open(m){
-    mode=m||'login'; stage='email'; cd.hidden=true; cd.value=''; btn.disabled=false; btn.textContent='Получить код';
-    title.textContent = mode==='reg' ? 'Регистрация' : 'Вход';
-    msg.textContent = mode==='reg' ? 'Введите e-mail — пришлём код. Первые 3 дня бесплатно' : 'Войдите по e-mail, чтобы открыть тендеры';
+    setMode(m==='reg' ? 'reg' : 'login');
     ov.classList.remove('closing'); ov.hidden=false; document.body.classList.add('lg-open');
     setTimeout(function(){ try{ em.focus(); }catch(_){} }, 700);
   }
@@ -781,7 +834,9 @@
   ov.querySelector('.lg-x').addEventListener('click', close);
   ov.addEventListener('click', function(e){ if(e.target===ov) close(); });
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') close(); });
-  // кнопки, ведущие в /app/: есть сессия — в приложение, нет — блок входа поверх страницы
+  function link(el, m){ if(el) el.addEventListener('click', function(e){ e.preventDefault(); setMode(m); }); }
+  link(lnkReset,'reset'); link(lnkCode,'code'); link(lnkReg,'reg'); link(lnkLogin,'login');
+
   Array.prototype.forEach.call(document.querySelectorAll('a.btn[href^="/app/"]'), function(a){
     a.addEventListener('click', function(e){
       var reg = a.getAttribute('href').indexOf('#reg')>=0;
@@ -790,25 +845,50 @@
     });
   });
   if(location.hash==='#login') open('login'); else if(location.hash==='#reg') open('reg');
-  function go(){ location.href='/app/'; }
+
+  function fail(e){ msg.textContent=(e&&e.message)||'Ошибка'; render(); }
+  function done(d){
+    try{ localStorage.setItem('session', d.session); }catch(_){}
+    btn.disabled=true; btn.textContent='Готово';
+    msg.textContent='Вход выполнен, открываем приложение…';
+    setTimeout(function(){ location.href='/app/'; }, 500);
+  }
   btn.addEventListener('click', function(){
-    if(stage==='email'){
-      var email=(em.value||'').trim();
-      if(email.indexOf('@')<0){ msg.textContent='Введите корректный e-mail'; return; }
-      btn.disabled=true; btn.textContent='Отправляем…';
-      api('/api/auth/request',{email:email}).then(function(){
-        stage='code'; cd.hidden=false; btn.textContent='Войти'; msg.textContent='Код отправлен на '+email; btn.disabled=false; cd.focus();
-      }).catch(function(e){ msg.textContent=(e&&e.message)||'Ошибка отправки'; btn.disabled=false; btn.textContent='Получить код'; });
-    } else {
-      var email2=(em.value||'').trim(), code=(cd.value||'').trim();
-      btn.disabled=true; btn.textContent='Проверяем…';
-      api('/api/auth/verify',{email:email2,code:code}).then(function(d){
-        try{ localStorage.setItem('session', d.session); }catch(_){}
-        btn.textContent='Готово'; msg.textContent='Вход выполнен, открываем приложение…'; setTimeout(go, 500);
-      }).catch(function(e){ msg.textContent=(e&&e.message)||'Неверный код'; btn.disabled=false; btn.textContent='Войти'; });
+    var email=(em.value||'').trim(), pass=pw.value||'', code=(cd.value||'').trim();
+    if(email.indexOf('@')<0){ msg.textContent='Введите корректный e-mail'; return; }
+    btn.disabled=true; btn.textContent='Секунду…';
+    if(stage==='confirm'){
+      if(mode==='reg'){
+        api('/api/auth/register/confirm',{email:email,code:code}).then(done).catch(fail);
+      } else if(mode==='code'){
+        api('/api/auth/verify',{email:email,code:code}).then(done).catch(fail);
+      } else {
+        if(pass.length<8){ msg.textContent='Пароль короче 8 символов'; render(); return; }
+        api('/api/auth/reset/confirm',{email:email,code:code,password:pass}).then(done).catch(fail);
+      }
+      return;
+    }
+    if(mode==='login'){
+      api('/api/auth/login',{email:email,password:pass}).then(done).catch(fail);
+    } else if(mode==='reg'){
+      if(pass.length<8){ msg.textContent='Пароль короче 8 символов'; render(); return; }
+      if(pass!==(pw2.value||'')){ msg.textContent='Пароли не совпадают'; render(); return; }
+      api('/api/auth/register/start',{email:email,password:pass,password2:pw2.value})
+        .then(function(){ stage='confirm'; render(); cd.focus(); }).catch(fail);
+    } else if(mode==='reset'){
+      api('/api/auth/reset/start',{email:email})
+        .then(function(){ stage='confirm'; render(); cd.focus(); }).catch(fail);
+    } else {  // старый вход по одноразовому коду
+      api('/api/auth/request',{email:email})
+        .then(function(){ stage='confirm'; render();
+                          btn.textContent='Войти'; msg.textContent='Код отправлен на '+email;
+                          cd.focus(); }).catch(fail);
     }
   });
-  [em,cd].forEach(function(i){ i.addEventListener('keydown', function(e){ if(e.key==='Enter') btn.click(); }); });
+  // отдельная ветка подтверждения для режима «код на почту»
+  cd.addEventListener('keydown', function(e){ if(e.key==='Enter') btn.click(); });
+  [em,pw,pw2].forEach(function(i){ i.addEventListener('keydown', function(e){ if(e.key==='Enter') btn.click(); }); });
+  render();
 })();
 </script>
 </body>
