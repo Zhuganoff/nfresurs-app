@@ -98,7 +98,8 @@
   .btn svg { width: 18px; height: 18px; }
 
   /* ——— шапка: тонкое стекло ——— */
-  .top { position: sticky; top: 0; z-index: 40; background: rgba(7,13,11,.62); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%); border-bottom: 1px solid var(--hair); padding-top: env(safe-area-inset-top); }
+  .top { position: sticky; top: 0; z-index: 40;
+    background: linear-gradient(180deg, rgba(9,17,14,.92) 0%, rgba(13,25,20,.78) 55%, rgba(20,38,31,.42) 100%); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%); border-bottom: 1px solid var(--hair); padding-top: env(safe-area-inset-top); }
   .top-in { display: flex; align-items: center; gap: 16px; height: 68px; }
   .brand { display: flex; align-items: center; gap: 12px; color: var(--text); font-weight: 600; letter-spacing: -.01em; }
   .brand:hover { text-decoration: none; }
@@ -122,7 +123,10 @@
   body.has-waves .top, body.has-waves .btn-ghost, body.has-waves .lot, body.has-waves .ticker,
   body.has-waves .stat, body.has-waves .face, body.has-waves .where, body.has-waves .cta-bar {
     -webkit-backdrop-filter: none; backdrop-filter: none; }
-  body.has-waves .top { background: rgba(7,13,11,.9); }
+  body.has-waves .top { background: linear-gradient(180deg, rgba(9,17,14,.97) 0%, rgba(14,27,22,.9) 50%, rgba(22,42,34,.6) 100%); }
+  /* мягкая растушёвка под шапкой — край не читается как полоса */
+  .top::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 26px; pointer-events: none;
+    background: linear-gradient(180deg, rgba(16,31,25,.5), transparent); }
   body.has-waves .btn-ghost, body.has-waves .stat, body.has-waves .where { background: rgba(14,24,20,.82); }
   body.has-waves .face { background: rgba(11,20,17,.9); }
   body.has-waves .cta-bar { background: rgba(7,13,11,.94); }
@@ -158,6 +162,7 @@
     background-size: 72px 72px; -webkit-mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); }
   .hero { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 96px var(--pad) 120px; min-height: calc(100vh - 68px); }
   .hero-copy > * + * { margin-top: 26px; }
+
   .hero h1 .w { display: inline-block; opacity: 0; transform: translateY(.5em) rotateX(-40deg); transform-origin: 50% 100%; animation: wordin .9s var(--ease-out) forwards; animation-delay: calc(var(--i) * 55ms); }
   .hero h1 { perspective: 600px; }
   .hero h1 em { font-style: normal; color: var(--accent); }
@@ -267,16 +272,26 @@
   .vs-manual:hover { border-color: rgba(217,160,74,.5);
     box-shadow: 0 0 0 1px rgba(217,160,74,.18), 0 30px 70px -22px rgba(217,160,74,.65); }
   .vs-manual:hover .vs-h { color: var(--oil); }
-  .vs-manual:hover li::before { color: var(--oil); }
+  .vs-manual:hover li::before { color: var(--oil); -webkit-text-fill-color: var(--oil); }
   .vs-ours { border-color: rgba(127,208,180,.3); box-shadow: 0 0 0 1px rgba(127,208,180,.08), 0 30px 70px -40px rgba(127,208,180,.45); }
   .vs-ours .vs-h { color: var(--accent); }
   .vs-ours:hover { border-color: rgba(127,208,180,.55); box-shadow: 0 0 0 1px rgba(127,208,180,.2), 0 30px 70px -22px rgba(127,208,180,.75); }
-  .vs-col ul { list-style: none; display: grid; gap: 12px; font-size: 15.5px; }
+  .vs-col ul { list-style: none; display: grid; gap: 13px; font-size: 17.5px; font-weight: 600; letter-spacing: -.005em; }
+  /* стальной перелив по строкам списка */
+  .vs-col li span, .vs-col li { --steel: linear-gradient(100deg, #9fb0bd 0%, #e8f1f7 18%, #ffffff 26%, #b9c7d2 40%, #8d9aa6 58%, #dfe9f1 78%, #9fb0bd 100%); }
+  .vs-col li { background: var(--steel); background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+    animation: steelshine 8s linear infinite; }
+  .vs-ours li { background: linear-gradient(100deg, #8fd6bd 0%, #eafff6 18%, #ffffff 26%, #a6e2ca 40%, #6bbfa2 58%, #e6fff5 78%, #8fd6bd 100%); background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text; }
+  @keyframes steelshine { to { background-position: -300% 0; } }
+  @media (prefers-reduced-motion: reduce) { .vs-col li, .price-big, .price h2, .price-wrap::before, .price-wrap::after, .price .btn-primary { animation: none; } }
   .vs-col li { position: relative; padding-left: 28px; line-height: 1.45; transition: transform .4s var(--ease-out), color .3s; }
   .vs-col:hover li { transform: translateX(3px); }
-  .vs-ours:hover li { color: var(--text); }
-  .vs-manual li::before { content: "\00d7"; position: absolute; left: 6px; top: -1px; color: var(--faint); font-size: 18px; }
-  .vs-ours li::before { content: "\2713"; position: absolute; left: 3px; color: var(--accent); font-size: 14px; }
+  .vs-ours:hover li, .vs-manual:hover li { animation-duration: 3.4s; }
+
+  .vs-manual li::before { content: "\00d7"; position: absolute; left: 6px; top: -1px; color: #8d9aa6; -webkit-text-fill-color: #8d9aa6; font-size: 19px; }
+  .vs-ours li::before { content: "\2713"; position: absolute; left: 3px; color: var(--accent); -webkit-text-fill-color: var(--accent); font-size: 15px; }
   /* ——— телефон: компактнее ——— */
   @media (max-width: 720px) {
     .section { padding: 56px 0; }
@@ -458,13 +473,40 @@
 
   /* цена: карточка-витрина */
   .price-wrap { position: relative; border-radius: 28px; overflow: hidden; isolation: isolate; border: 1px solid var(--glass-brd); background: linear-gradient(135deg, rgba(255,255,255,.07), rgba(255,255,255,.02)); }
+  .price-wrap { border-color: rgba(127,208,180,.32);
+    box-shadow: 0 0 0 1px rgba(127,208,180,.12), 0 40px 90px -40px rgba(127,208,180,.55); }
   .price-wrap::before { content: ''; position: absolute; inset: -40%; z-index: 0; pointer-events: none; background:
-      radial-gradient(35% 45% at 18% 25%, rgba(127,208,180,.35), transparent 70%),
-      radial-gradient(30% 40% at 85% 80%, rgba(217,160,74,.25), transparent 70%); }
+      radial-gradient(35% 45% at 18% 25%, rgba(127,208,180,.5), transparent 70%),
+      radial-gradient(32% 42% at 85% 78%, rgba(127,208,180,.32), transparent 70%),
+      radial-gradient(28% 38% at 60% 10%, rgba(217,160,74,.22), transparent 70%);
+    animation: pricepulse 7s ease-in-out infinite; }
+  @keyframes pricepulse { 0%,100% { opacity: .85; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+  /* бегущий зелёный контур — блок должен звать */
+  .price-wrap::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit; padding: 1.6px;
+    background: conic-gradient(from var(--pa, 0deg), rgba(127,208,180,.12) 0deg, rgba(127,208,180,.95) 70deg, #eafff6 100deg, rgba(217,160,74,.6) 140deg, rgba(127,208,180,.12) 220deg, rgba(127,208,180,.12) 360deg);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
+    animation: pricespin 8s linear infinite; }
+  @property --pa { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+  @keyframes pricespin { to { --pa: 360deg; } }
   .price { position: relative; z-index: 1; display: grid; grid-template-columns: 1.1fr .9fr; gap: 32px; align-items: center; padding: 56px; }
-  .price-big { font-size: clamp(48px, 7vw, 96px); line-height: 1; }
-  .price-big small { font-family: "Golos Text", sans-serif; font-size: 20px; font-weight: 500; color: var(--dim); letter-spacing: 0; margin-left: 8px; }
-  .price p { color: var(--dim); margin-top: 14px; font-size: 17px; }
+  /* цена: стальной перелив, крупно и жирно */
+  .price-big { font-size: clamp(52px, 7.4vw, 104px); line-height: 1; font-weight: 800;
+    background: linear-gradient(100deg, #9fb0bd 0%, #eafff6 16%, #ffffff 24%, #7fd0b4 38%, #b9c7d2 56%, #eafff6 76%, #9fb0bd 100%);
+    background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+    -webkit-text-fill-color: transparent; animation: steelshine 6s linear infinite;
+    filter: drop-shadow(0 0 26px rgba(127,208,180,.35)); }
+  .price h2 { background: linear-gradient(100deg, #cfe0da 0%, #ffffff 20%, #7fd0b4 42%, #eafff6 62%, #cfe0da 100%);
+    background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+    -webkit-text-fill-color: transparent; animation: steelshine 7.5s linear infinite; }
+  .price .btn-primary { font-size: 17px; font-weight: 700; padding: 17px 30px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.14), 0 16px 44px -10px rgba(127,208,180,.95);
+    animation: pricebtn 3.6s ease-in-out infinite; }
+  @keyframes pricebtn { 0%,100% { box-shadow: 0 0 0 1px rgba(255,255,255,.14), 0 16px 44px -14px rgba(127,208,180,.8); }
+    50% { box-shadow: 0 0 0 1px rgba(255,255,255,.22), 0 20px 58px -10px rgba(127,208,180,1); } }
+  .price .btn-primary:hover { transform: translateY(-2px) scale(1.03); }
+  .price-big small { display: block; font-family: "Golos Text", sans-serif; font-size: 19px; font-weight: 600; color: var(--dim); -webkit-text-fill-color: var(--dim); letter-spacing: .02em; margin: 6px 0 0; }
+  .price p { color: var(--text); margin-top: 14px; font-size: 17px; font-weight: 500; }
   .price .btn { margin-top: 26px; }
 
   .foot { padding: 44px var(--pad) 56px; border-top: 1px solid var(--hair); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px 28px; color: var(--faint); font-size: 14px; }
@@ -602,7 +644,7 @@
     <section class="wrap hero">
       <div class="hero-copy">
         <span class="eyebrow mono">Нефтепродукты · Металлолом · Трубы</span>
-        <h1 class="display">Тендеры на продажу<br>нефтепродуктов,<br>лома и труб —<br><em>в одном месте</em></h1>
+        <h1 class="display">Тендеры на реализацию<br>нефтепродуктов, лома<br>и труб — <em>в одном месте</em></h1>
         <p class="lead glassy">Предприятия по всей России продают отработанные нефтепродукты и масла, лом и трубы б/у через десятки торговых площадок. Мы ведём круглосуточный мониторинг: убираем закупки и оставляем только реализацию. Новые лоты — в ленте приложения и уведомлением в Telegram.</p>
         <div class="cta">
           <a class="btn btn-primary" href="https://t.me/nfresursbot">
@@ -618,19 +660,19 @@
           <div class="stack-label mono">Так выглядят лоты в ленте</div>
           <!--SHOWCASE_START-->
           <article class="lot" style="--m: var(--oil); --i: 0; --z: 48">
-            <div class="lot-head mono"><span>Tender.Pro</span><span>реализация</span></div>
-            <div class="lot-title">ООО &quot;КАМАЗ Тормозные системы&quot; г. Набережные Челны реализует в IV квартал 2026 отработанные нефтепродукты (МИО)</div>
-            <div class="lot-meta"><span>Республика Татарстан</span><span>18.09.2026 10:00</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Нефтеюганск</div>
+            <div class="lot-meta"><span>ХМАО — Югра</span><span>приём заявок до 15 сентября</span></div>
           </article>
           <article class="lot" style="--m: var(--scrap); --i: 1; --z: 24">
-            <div class="lot-head mono"><span>Tender.Pro</span><span>реализация</span></div>
-            <div class="lot-title">Реализация в IV квартале 2026 года лома и отходов черных металлов 12А ПАО &quot;КАМАЗ&quot;</div>
-            <div class="lot-meta"><span>Россия</span><span>17.09.2026 13:00</span></div>
+            <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
+            <div class="lot-title">Лом чёрных металлов, 200 т, Жердевский сахарный завод</div>
+            <div class="lot-meta"><span>Тамбовская область</span><span>самовывоз</span></div>
           </article>
           <article class="lot" style="--m: var(--pipe); --i: 2; --z: 0">
-            <div class="lot-head mono"><span>ЭТП ГПБ</span><span>реализация</span></div>
-            <div class="lot-title">Продажа невостребованного имущества (трубной продукции), расположенного на складах ООО &quot;ГСП-1&quot;</div>
-            <div class="lot-meta"><span>Республика Саха (Якутия)</span><span class="lot-price">0.0 RUB</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Труба обсадная 139,7×9,17 P-110 с муфтами, 61 т</div>
+            <div class="lot-meta"><span>Ямало-Ненецкий АО</span><span class="lot-price">6 285 866 ₽</span></div>
           </article>
           <!--SHOWCASE_END-->
         </div>
@@ -648,7 +690,7 @@
     <div class="wrap">
       <div class="grid-4">
         <div class="stat" data-i style="--i:0"><div class="num display" data-to="16">16</div><div class="lbl">площадок под наблюдением в режиме реального времени</div></div>
-        <div class="stat" data-i style="--i:1"><div class="num display" data-to="604" data-suffix="+"><!--LOTS_START-->604<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
+        <div class="stat" data-i style="--i:1"><div class="num display" data-to="1000" data-suffix="+"><!--LOTS_START-->1000<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
         <div class="stat" data-i style="--i:2"><div class="num display" data-to="24" data-suffix="/7">24<small>/7</small></div><div class="lbl">мониторинг площадок в режиме онлайн, без выходных</div></div>
         <div class="stat" data-i style="--i:3"><div class="num display" data-to="3">3</div><div class="lbl">вида сырья: нефтепродукты, лом, трубы</div></div>
       </div>
