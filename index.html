@@ -79,6 +79,11 @@
   h3 { font-size: 20px; }
   p { margin: 0; }
   .lead { font-size: 19px; color: var(--dim); max-width: 60ch; }
+  /* абзац первого экрана: ровный прямоугольник — строки одной длины,
+     кегль чуть меньше, чтобы блок не разъезжался */
+  .hero-copy .lead { font-size: 17.5px; line-height: 1.62; max-width: 38em;
+    text-align: justify; text-justify: inter-word; hyphens: none;
+    -webkit-hyphens: none; word-spacing: -.01em; }
   .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--accent); margin-bottom: 18px; }
   .eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--accent); opacity: .7; }
 
@@ -236,6 +241,8 @@
 
 
   /* ——— блок «Проблема»: вручную против сервиса ——— */
+  /* заголовок держим в одну строку — для этого свой, чуть меньший кегль */
+  #problem .section-head h2 { font-size: clamp(23px, 2.55vw, 33px); }
   .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   .vs-col { position: relative; border-radius: 22px; padding: 30px 28px; border: 1px solid var(--glass-brd); background: var(--glass); overflow: hidden;
     transition: transform .5s cubic-bezier(.16,1,.3,1), box-shadow .5s, border-color .4s; }
@@ -428,6 +435,7 @@
     .nav .btn { padding: 10px 14px; font-size: 14px; }
     .top-in { height: 60px; }
     .lead { font-size: 17px; }
+    .hero-copy .lead { font-size: 15.5px; line-height: 1.58; max-width: none; }
     h1 { font-size: clamp(24px, 6.6vw, 40px); }
     h2 { font-size: clamp(28px, 7vw, 36px); }
     .cta .btn { flex: 1 1 100%; padding: 16px 20px; }
@@ -621,7 +629,7 @@
     <div class="wrap">
       <div class="section-head wide">
         <span class="eyebrow mono">Проблема</span>
-        <h2 class="display">Искать процедуры реализации вручную — отдельная работа</h2>
+        <h2 class="display one">Искать реализацию ТМЦ вручную — отдельная работа</h2>
         <p class="lead">Закупщик открывает десятки площадок, ищет нужные разделы, отсеивает закупки и проверяет, не появилось ли что-то новое. Каждый день заново.</p>
       </div>
       <div class="vs">
