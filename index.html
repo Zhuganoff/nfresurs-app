@@ -264,6 +264,23 @@
   .lg-consent a { color: var(--accent); }
   body.lg-open { overflow: hidden; }
   @media (prefers-reduced-motion: reduce) { .lg-ov, .lg-card, .lg-card > *, .lg-title { animation: none !important; opacity: 1; transform: none; } }
+  /* кнопки шапки: чуть растут и по ним проходит блик */
+  .top-actions .btn { position: relative; overflow: hidden; transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s, background .25s, border-color .25s; }
+  .top-actions .btn::after { content: ""; position: absolute; top: -60%; bottom: -60%; width: 45%; left: -60%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent); transform: skewX(-18deg); pointer-events: none; }
+  .top-actions .btn:hover { transform: scale(1.06) translateY(-1px); }
+  .top-actions .btn:hover::after { animation: btnshine .85s cubic-bezier(.3,0,.4,1); }
+  .top-actions .btn-primary:hover { box-shadow: 0 0 0 1px rgba(255,255,255,.16), 0 18px 46px -12px rgba(127,208,180,.95); }
+  .top-actions .btn-ghost:hover { border-color: rgba(127,208,180,.5); box-shadow: 0 14px 36px -14px rgba(127,208,180,.55); }
+  .top-actions .btn:active { transform: scale(1.02); }
+  @keyframes btnshine { from { left: -60%; } to { left: 115%; } }
+  @media (prefers-reduced-motion: reduce) { .top-actions .btn, .top-actions .btn::after { transition: none; animation: none; } .top-actions .btn:hover { transform: none; } }
+  /* стеклянный текст: холодный отблеск медленно проходит по строкам */
+  .glassy { background: linear-gradient(100deg, var(--dim) 0%, var(--dim) 30%, #eafff6 42%, rgba(255,255,255,.95) 48%, #cfeee0 54%, var(--dim) 66%, var(--dim) 100%);
+    background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+    animation: glassshine 9s linear infinite; }
+  @keyframes glassshine { to { background-position: -300% 0; } }
+  @media (prefers-reduced-motion: reduce) { .glassy { animation: none; } }
   /* карточки сырья: объём и переворот */
   .mat { perspective: 1200px; min-height: 420px; }
   .mat-in { position: relative; width: 100%; height: 100%; min-height: 420px; transform-style: preserve-3d; will-change: transform; transition: transform .95s cubic-bezier(.55,0,.2,1); }
@@ -297,7 +314,8 @@
   /* как работает: линия процесса */
   .steps { position: relative; }
   .steps::before { content: ''; position: absolute; left: 0; right: 0; top: 40px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent) 20%, var(--accent) 80%, transparent); opacity: .35; }
-  .step { position: relative; padding: 0 8px; }
+  .step { position: relative; padding: 0 8px; text-align: center; }
+  .step .dot { margin-left: auto; margin-right: auto; }
   .step .dot { width: 80px; height: 80px; border-radius: 50%; display: grid; place-items: center; background: rgba(7,13,11,.85); border: 1px solid var(--glass-brd); box-shadow: 0 0 40px -10px rgba(127,208,180,.6); margin-bottom: 26px; }
   .step .dot svg { width: 30px; height: 30px; color: var(--accent); }
   .step h3 { font-size: 21px; margin-bottom: 10px; }
@@ -445,7 +463,7 @@
       <div class="hero-copy">
         <span class="eyebrow mono">Нефтепродукты · Металлолом · Трубы</span>
         <h1 class="display">Тендеры на продажу<br>нефтепродуктов,<br>лома и труб —<br><em>в одном месте</em></h1>
-        <p class="lead">Предприятия по всей России продают отработанное масло, лом и трубы б/у через десятки торговых площадок. Мы каждый час обходим эти площадки, убираем закупки и оставляем только продажу. Новые лоты — в ленте приложения и уведомлением в Telegram.</p>
+        <p class="lead glassy">Предприятия по всей России продают отработанные нефтепродукты и масла, лом и трубы б/у через десятки торговых площадок. Мы ведём круглосуточный мониторинг: убираем закупки и оставляем только реализацию. Новые лоты — в ленте приложения и уведомлением в Telegram.</p>
         <div class="cta">
           <a class="btn btn-primary" href="https://t.me/nfresursbot">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.6 15.5l-.4 5.3c.6 0 .8-.2 1.1-.5l2.6-2.5 5.4 4c1 .5 1.7.3 2-.9L23.9 4c.3-1.5-.5-2-1.5-1.7L1.8 10.2c-1.4.5-1.4 1.3-.2 1.7l5.3 1.6L18.9 6c.6-.4 1.1-.2.7.2z"/></svg>
@@ -550,14 +568,14 @@
     <div class="wrap">
       <div class="section-head wide">
         <span class="eyebrow mono">Как это работает</span>
-        <h2 class="display one">Ничего искать руками не нужно</h2>
-        <p class="lead">Площадки обходим мы, вам остаётся выбрать лот и подать заявку.</p>
+        <h2 class="display one">Мониторим площадки за вас</h2>
+        <p class="lead">Мониторинг идёт круглосуточно, вам остаётся выбрать лот и подать заявку. Настройте слова и регион — уведомление о подходящем лоте придёт в Telegram или на почту.</p>
       </div>
       <div class="grid-3 steps">
         <article class="step" data-i style="--i:0">
           <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-          <h3>Раз в час обходим площадки</h3>
-          <p>Парсер заходит на каждую площадку из списка и забирает новые процедуры вместе с документами, ценой и сроком подачи заявок.</p>
+          <h3>Круглосуточный мониторинг</h3>
+          <p>Каждый час проверяем все площадки из списка и забираем новые процедуры вместе с документами, ценой и сроком подачи заявок.</p>
         </article>
         <article class="step" data-i style="--i:1">
           <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-6 8v5l-4 2v-7z"/></svg></div>
@@ -566,8 +584,8 @@
         </article>
         <article class="step" data-i style="--i:2">
           <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 6 2 8 2 8H4s2-2 2-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div>
-          <h3>Сообщаем вам</h3>
-          <p>Лот появляется в ленте. Если он подходит под ваши слова и регион — приходит уведомление в Telegram или на почту.</p>
+          <h3>Уведомляем о новом лоте</h3>
+          <p>Лот появляется в ленте. Задайте свои слова и регион — и уведомление придёт в Telegram или на почту сразу, как появится подходящий лот.</p>
         </article>
       </div>
     </div>
@@ -575,7 +593,7 @@
 
   <section class="section" id="where">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head wide">
         <span class="eyebrow mono">Где пользоваться</span>
         <h2 class="display one">Бот в Telegram или приложение</h2>
         <p class="lead">Установите как удобно: бот прямо в Telegram или приложение на экран телефона и рабочий стол компьютера. Аккаунт общий, избранное и уведомления не теряются.</p>
