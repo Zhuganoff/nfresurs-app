@@ -278,7 +278,6 @@
   .nav-drop a:hover, .nav-drop a:active { background: rgba(255,255,255,.06); color: var(--text); text-decoration: none; }
   /* якорь не должен уезжать под закреплённую шапку */
   section[id], .hero-wrap { scroll-margin-top: 76px; }
-  .mat details.mat-more { display: none; }
   .sources-m { display: none; }
   .sources-m > summary { list-style: none; cursor: pointer; display: flex; align-items: center;
     justify-content: space-between; min-height: 48px; color: var(--accent); font-size: 15px;
@@ -630,17 +629,9 @@
     .mat .face-front .txt .more { display: none; }
     .mat .face-front .txt .ex { display: block; color: var(--dim); font-size: 13.5px; line-height: 1.4; }
     .mat .face-back { display: none; border: none; background: none; padding: 0 14px 14px; gap: 8px; }
-    .mat.open .face-back { display: flex; }
     .mat .face-back h3 { display: none; }
     .mat .face-back p { font-size: 15px; line-height: 1.5; }
     .mat .face-back ul { font-size: 14.5px; }
-    .mat details.mat-more { border-top: 1px solid var(--hair); }
-    .mat details.mat-more > summary { list-style: none; cursor: pointer; display: flex;
-      align-items: center; justify-content: space-between; min-height: 46px; padding: 0 14px;
-      color: var(--accent); font-size: 14px; }
-    .mat details.mat-more > summary::-webkit-details-marker { display: none; }
-    .mat details.mat-more > summary::after { content: "▾"; transition: transform .3s; }
-    .mat details.mat-more[open] > summary::after { transform: rotate(180deg); }
     .face-front .txt { padding: 14px 16px 16px; }
     .face-front .txt h3 { font-size: 17px; }
     .vs-col ul { gap: 10px; font-size: 16px; }
@@ -651,7 +642,6 @@
     .ticker-in { animation: none !important; display: block; }
     .ticker { display: none; }
     .sources-m { display: block; }
-    .mat details.mat-more { display: block; }
 
   }
   @media (max-width: 420px) {
@@ -871,7 +861,7 @@
         <article class="mat mat-oil" data-i style="--i:0" tabindex="0">
           <div class="mat-in">
             <div class="face face-front">
-              <div class="pic"><img src="img/oil.svg" alt="Бочка с нефтепродуктами" width="240" height="200" loading="lazy"></div>
+              <div class="pic"><img src="img/oil.svg?v=2" alt="Бочка с нефтепродуктами" width="240" height="200" loading="lazy"></div>
               <div class="txt"><h3>Нефтепродукты</h3><span class="ex">керосин, дизель, отработанные масла</span><span class="more">подробнее →</span></div>
             </div>
             <div class="face face-back">
@@ -880,12 +870,11 @@
               <ul><li>керосин, дизель, бензин</li><li>отработанные и лежалые масла</li><li>нефтешлам, СНО, льяльные воды</li></ul>
             </div>
           </div>
-          <details class="mat-more"><summary>Что попадает в ленту</summary></details>
         </article>
         <article class="mat mat-scrap" data-i style="--i:1" tabindex="0">
           <div class="mat-in">
             <div class="face face-front">
-              <div class="pic"><img src="img/scrap.svg" alt="Куча лома чёрных металлов" width="240" height="200" loading="lazy"></div>
+              <div class="pic"><img src="img/scrap.svg?v=2" alt="Куча лома чёрных металлов" width="240" height="200" loading="lazy"></div>
               <div class="txt"><h3>Металлолом</h3><span class="ex">лом чёрных и цветных металлов</span><span class="more">подробнее →</span></div>
             </div>
             <div class="face face-back">
@@ -894,12 +883,11 @@
               <ul><li>категории 3А, 5А, 12А</li><li>медь, алюминий, латунь</li><li>лом с демонтажем и самовывозом</li></ul>
             </div>
           </div>
-          <details class="mat-more"><summary>Что попадает в ленту</summary></details>
         </article>
         <article class="mat mat-pipe" data-i style="--i:2" tabindex="0">
           <div class="mat-in">
             <div class="face face-front">
-              <div class="pic"><img src="img/pipes.svg" alt="Пакет стальных труб, вид с торца" width="240" height="200" loading="lazy"></div>
+              <div class="pic"><img src="img/pipes.svg?v=2" alt="Пакет стальных труб, вид с торца" width="240" height="200" loading="lazy"></div>
               <div class="txt"><h3>Трубы</h3><span class="ex">НКТ, обсадные, трубы б/у</span><span class="more">подробнее →</span></div>
             </div>
             <div class="face face-back">
@@ -908,7 +896,6 @@
               <ul><li>НКТ и обсадные</li><li>бесшовные и электросварные</li><li>трубы с покрытием, детали трубопроводов</li></ul>
             </div>
           </div>
-          <details class="mat-more"><summary>Что попадает в ленту</summary></details>
         </article>
       </div>
     </div>
@@ -1134,14 +1121,6 @@
   })();
 
 
-  // 8. карточки сырья на телефоне: раскрытие вместо переворота
-  Array.prototype.forEach.call(document.querySelectorAll('.mat details.mat-more'), function(d){
-    d.addEventListener('toggle', function(){
-      var card = d.closest('.mat');
-      if (card) card.classList.toggle('open', d.open);
-      d.querySelector('summary').textContent = d.open ? 'Свернуть' : 'Что попадает в ленту';
-    });
-  });
 
   // 6. плавающая кнопка на телефоне
   var bar = document.getElementById('cta-bar'),
