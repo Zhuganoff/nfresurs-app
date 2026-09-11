@@ -583,6 +583,70 @@
     .grid-4 { grid-template-columns: 1fr 1fr; }
     .stat .num { font-size: 32px; }
   }
+
+  /* ——— Dark Industrial Glass: графит, оружейная сталь, дымчатое стекло ——— */
+  :root {
+    --bg: #0B0F12; --bg-2: #080C0F;
+    --surface: rgba(21,29,36,.9); --surface-2: rgba(27,37,46,.9);
+    --text: #F1F5F7; --dim: #BAC6CF; --faint: #91A2AF;
+    --hair: #34434F;
+    --accent: #45D6CD; --accent-deep: #2CB9B1; --accent-ink: #071719;
+    --oil: #E4BA72; --scrap: #BAC6CF; --pipe: #647887;
+    --glass: rgba(21,29,36,.9); --glass-brd: #34434F; --glass-hi: rgba(217,230,239,.08);
+  }
+  body, .bg { background: #0B0F12; }
+  .bg .veil { background: linear-gradient(180deg, rgba(11,15,18,.78) 0%, rgba(11,15,18,.5) 40%, rgba(8,12,15,.72) 100%) !important; }
+  .glow .g1 { background: radial-gradient(circle, rgba(40,52,63,.75) 0%, rgba(40,52,63,0) 62%); }
+  .glow .g2 { background: radial-gradient(circle, rgba(58,73,86,.5) 0%, rgba(58,73,86,0) 62%); }
+  .glow .g3 { background: radial-gradient(circle, rgba(69,214,205,.05) 0%, rgba(69,214,205,0) 62%); }
+  .top, body.has-waves .top { background: rgba(11,15,18,.95) !important; border-bottom: 1px solid #34434F; }
+  .top::after { display: none; }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+  .btn-primary:hover { background: #6BE5DD; }
+  .btn-ghost { background: rgba(27,37,46,.9); border-color: #647887; color: #F1F5F7; }
+  .lot { background: linear-gradient(145deg, #28343F 0%, #1B252E 45%, #151D24 100%);
+    border-color: #34434F; box-shadow: 0 12px 32px rgba(0,0,0,.28), inset 0 1px 0 rgba(217,230,239,.08); }
+  .stat, .who-card, .vs-col, .where, .face, .price-wrap {
+    background: linear-gradient(145deg, #28343F 0%, #1B252E 45%, #151D24 100%) !important;
+    border-color: #34434F !important; box-shadow: 0 8px 24px rgba(0,0,0,.2) !important; }
+  .price-wrap::before { background: radial-gradient(35% 45% at 18% 25%, rgba(69,214,205,.1), transparent 70%) !important; animation: none !important; }
+  .price-wrap::after { display: none; }
+  .price-big, .price h2, .vs-col li, .brand-name, .lead.glassy, .note-shine, .lg-title {
+    background: none !important; -webkit-text-fill-color: currentColor !important; color: #F1F5F7 !important; animation: none !important; filter: none !important; }
+  .price-big small, .lead.glassy, .note-shine { color: #BAC6CF !important; -webkit-text-fill-color: #BAC6CF !important; }
+  .vs-ours li { color: #F1F5F7 !important; }
+  .vs-manual li { color: #BAC6CF !important; }
+  .vs-ours { border-color: rgba(69,214,205,.35) !important; }
+  .vs-ours .vs-h, .vs-ours li::before { color: var(--accent) !important; -webkit-text-fill-color: var(--accent) !important; }
+  .vs-manual li::before { color: #647887 !important; -webkit-text-fill-color: #647887 !important; }
+  .vs-manual:hover { border-color: rgba(100,120,135,.75) !important; box-shadow: 0 12px 32px rgba(0,0,0,.42), inset 0 1px 0 rgba(217,230,239,.12) !important; }
+  .vs-manual:hover .vs-h, .vs-manual:hover li::before { color: #BAC6CF !important; -webkit-text-fill-color: #BAC6CF !important; }
+  .vs-ours:hover { border-color: rgba(69,214,205,.6) !important; box-shadow: 0 12px 32px rgba(0,0,0,.42), inset 0 1px 0 rgba(217,230,239,.12) !important; }
+  .step .dot { background: linear-gradient(145deg, #28343F, #151D24); border-color: #34434F; }
+  .step .dot svg { color: var(--accent); }
+  .step:hover .dot { background: radial-gradient(circle at 50% 35%, #2CB9B1, #10161B 72%) !important; border-color: rgba(140,244,236,.7) !important;
+    box-shadow: 0 0 0 1px rgba(140,244,236,.3), 0 0 30px -6px rgba(69,214,205,.85) !important; }
+  .step:hover h3 { color: #F1F5F7; text-shadow: 0 0 20px rgba(69,214,205,.45); }
+  .hero h1 em { color: var(--accent); }
+  .ticker { background: rgba(11,15,18,.7); border-color: #34434F; }
+  .stat:hover { box-shadow: 0 12px 32px rgba(0,0,0,.42), 0 0 0 1px rgba(69,214,205,.22) !important; border-color: rgba(69,214,205,.35) !important; }
+  .stat::before { background: conic-gradient(from var(--sa, 0deg), transparent 0 62%, rgba(69,214,205,.9) 74%, #8CF4EC 80%, rgba(100,120,135,.9) 88%, transparent 100%); }
+  .lot-fresh, .live-note { color: var(--accent); }
+  /* ——— лёгкий туман: медленные полупрозрачные пласты поверх фона ——— */
+  .bg .fog { position: absolute; inset: -20%; pointer-events: none; opacity: .55; }
+  .bg .fog i { position: absolute; display: block; border-radius: 50%; filter: blur(60px); will-change: transform; }
+  .bg .fog .f1 { width: 70vw; height: 38vw; left: -10vw; top: 8vh;
+    background: radial-gradient(closest-side, rgba(58,73,86,.5), transparent 70%); animation: fog1 68s ease-in-out infinite alternate; }
+  .bg .fog .f2 { width: 60vw; height: 32vw; right: -12vw; top: 34vh;
+    background: radial-gradient(closest-side, rgba(40,52,63,.55), transparent 70%); animation: fog2 84s ease-in-out infinite alternate; }
+  .bg .fog .f3 { width: 52vw; height: 26vw; left: 18vw; bottom: 2vh;
+    background: radial-gradient(closest-side, rgba(69,214,205,.07), transparent 70%); animation: fog3 96s ease-in-out infinite alternate; }
+  @keyframes fog1 { to { transform: translate3d(14vw, 6vh, 0) scale(1.18); } }
+  @keyframes fog2 { to { transform: translate3d(-12vw, -5vh, 0) scale(1.12); } }
+  @keyframes fog3 { to { transform: translate3d(9vw, -7vh, 0) scale(1.22); } }
+  @media (max-width: 720px) { .bg .fog { opacity: .4; } .bg .fog i { filter: blur(40px); } }
+  @media (prefers-reduced-motion: reduce) { .bg .fog i { animation: none; } }
+
 </style>
 </head>
 <body>
@@ -590,6 +654,7 @@
 <div class="bg" aria-hidden="true">
   <canvas class="waves"></canvas>
   <div class="veil"></div>
+  <div class="fog"><i class="f1"></i><i class="f2"></i><i class="f3"></i></div>
   <div class="glow"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
   <div class="grid-lines"></div>
 </div>
@@ -600,7 +665,7 @@
   if (!c || !window.mountShaderBackground) return;
   var phone = false; try { phone = matchMedia('(max-width: 768px)').matches; } catch(_) {}
   // Телефон: ниже разрешение и dpr — батарея. Переключить на CSS-фолбэк: if (phone) return;
-  var h = mountShaderBackground(c, { pixelCap: phone ? 3.5e5 : 8e5, maxDpr: phone ? 1.25 : 1.5 });
+  var h = mountShaderBackground(c, { colors: ['#080C0F','#151D24','#28343F','#3A4956'], saturation: 0.5, contrast: 1.02, grain: 0.05, pixelCap: phone ? 3.5e5 : 8e5, maxDpr: phone ? 1.25 : 1.5 });
   if (h) { bg.classList.add('has-waves'); document.body.classList.add('has-waves'); window.__waves = h; }
 })();
 </script>
