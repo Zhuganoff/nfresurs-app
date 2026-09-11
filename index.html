@@ -1076,31 +1076,35 @@
   }
 
 
-  // 1б. разрядка строк заголовка: каждая строка ровно по ширине блока
+  // 1б. разрядка строк заголовка: подбираем интервал так, чтобы ЧЕРНИЛА строки
+  //     заканчивались ровно на правом крае блока (формула ошибается — меряем по факту)
   function fitHeadline(){
     var h = document.querySelector('.hero h1');
     if (!h) return;
     var lines = h.querySelectorAll('.hl');
     if (!lines.length) return;
     var target = h.clientWidth;
-    if (window.innerWidth <= 720 || target < 320) {        // на телефоне строки живут сами
-      Array.prototype.forEach.call(lines, function(l){ l.style.letterSpacing=''; l.style.marginRight=''; });
-      return;
-    }
+    var narrow = window.innerWidth <= 720 || target < 320;
     Array.prototype.forEach.call(lines, function(line){
-      line.style.letterSpacing = '0px'; line.style.marginRight = '0px';
-      var r = document.createRange(); r.selectNodeContents(line);
-      var natural = r.getBoundingClientRect().width;
-      var chars = line.textContent.replace(/\s+$/,'').length;
-      if (chars < 2 || natural <= 0 || natural >= target) return;
-      var add = (target - natural) / (chars - 1);
-      if (add > 14) return;                                 // слишком редко — оставляем как есть
-      line.style.letterSpacing = add.toFixed(2) + 'px';
-      line.style.marginRight = (-add).toFixed(2) + 'px';
+      line.style.marginRight = '0px';
+      if (narrow) { line.style.letterSpacing = ''; return; }
+      function ink(sp){
+        line.style.letterSpacing = sp + 'px';
+        var r = document.createRange(); r.selectNodeContents(line);
+        return r.getBoundingClientRect().width;
+      }
+      // строка может быть и шире блока — тогда слегка поджимаем (отрицательный интервал)
+      var lo = ink(0) > target ? -3 : 0, hi = 24, mid = 0;
+      if (ink(lo) > target) { line.style.letterSpacing = lo + 'px'; return; }
+      for (var k = 0; k < 18; k++) {           // двоичный поиск: 18 шагов хватает до 0.1 px
+        mid = (lo + hi) / 2;
+        if (ink(mid) > target) hi = mid; else lo = mid;
+      }
+      line.style.letterSpacing = lo.toFixed(3) + 'px';
     });
   }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHeadline);
-  setTimeout(fitHeadline, 60); setTimeout(fitHeadline, 600);
+  setTimeout(fitHeadline, 60); setTimeout(fitHeadline, 700);
   window.addEventListener('resize', fitHeadline);
 
   // 2. 3D-витрина: наклон за курсором + блик на карточках
