@@ -200,11 +200,11 @@
   .lot:hover::after { opacity: 1; }
   /* витрина сама покачивается, будто по ней водят мышью */
   @keyframes stacksway {
-    0%   { transform: scale(.86) rotateY(-9deg) rotateX(6deg); }
-    25%  { transform: scale(.86) rotateY(5deg)  rotateX(3deg); }
-    50%  { transform: scale(.86) rotateY(9deg)  rotateX(-2deg); }
-    75%  { transform: scale(.86) rotateY(-3deg) rotateX(4deg); }
-    100% { transform: scale(.86) rotateY(-9deg) rotateX(6deg); }
+    0%   { transform: scale(.9) rotateY(-7deg) rotateX(5deg); }
+    25%  { transform: scale(.9) rotateY(4deg)  rotateX(2deg); }
+    50%  { transform: scale(.9) rotateY(7deg)  rotateX(-2deg); }
+    75%  { transform: scale(.9) rotateY(-2deg) rotateX(3deg); }
+    100% { transform: scale(.9) rotateY(-7deg) rotateX(5deg); }
   }
   @keyframes cardin { from { opacity: 0; transform: translateZ(-120px) translateY(30px); } }
   .lot-head { display: flex; justify-content: space-between; gap: 10px; color: var(--faint); font-size: 10.5px; margin-bottom: 7px; }
@@ -278,6 +278,27 @@
   .nav-drop a:hover, .nav-drop a:active { background: rgba(255,255,255,.06); color: var(--text); text-decoration: none; }
   /* якорь не должен уезжать под закреплённую шапку */
   section[id], .hero-wrap { scroll-margin-top: 76px; }
+  .mat details.mat-more { display: none; }
+  .sources-m { display: none; }
+  .sources-m > summary { list-style: none; cursor: pointer; display: flex; align-items: center;
+    justify-content: space-between; min-height: 48px; color: var(--accent); font-size: 15px;
+    border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); }
+  .sources-m > summary::-webkit-details-marker { display: none; }
+  .sources-m > summary::after { content: "▾"; transition: transform .3s; }
+  .sources-m[open] > summary::after { transform: rotate(180deg); }
+  .sources-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 0 16px; }
+  .sources-list span { padding: 7px 11px; border-radius: 10px; border: 1px solid var(--hair);
+    background: rgba(27,37,46,.7); color: var(--dim); font-size: 13.5px; }
+  /* инструкции установки: на телефоне сворачиваются на своём месте */
+  .install-wrap > summary { list-style: none; cursor: pointer; display: none; align-items: center;
+    justify-content: space-between; min-height: 46px; color: var(--accent); font-size: 14.5px; }
+  .install-wrap > summary::-webkit-details-marker { display: none; }
+  .install-wrap > summary::after { content: "▾"; transition: transform .3s; }
+  .install-wrap[open] > summary::after { transform: rotate(180deg); }
+  @media (max-width: 720px) {
+    .install-wrap > summary { display: flex; }
+    .install-wrap:not([open]) .install { display: none; }
+  }
   /* ——— блок «Проблема»: вручную против сервиса ——— */
   /* заголовок держим в одну строку — для этого свой, чуть меньший кегль */
   #problem .section-head h2 { font-size: clamp(22px, 2.46vw, 31px); }
@@ -530,8 +551,11 @@
     /* витрина на телефоне: тот же объём, но мельче и строго внутри экрана */
     .stage { perspective: 900px; perspective-origin: 50% 45%; overflow: hidden;
       padding: 2px 0 6px; }
-    .stack { transform-origin: 50% 45%; transform: scale(.86);
+    .stack { transform-origin: 50% 45%; transform: scale(.9);
       animation: stacksway 9s ease-in-out infinite; }
+    /* первый лот показываем плоско и читаемо — без наклона и объёма */
+    .stack .lot:first-of-type { transform: none !important; }
+    .stack { padding-bottom: 2px; }
     .stack-label { margin-bottom: 8px; font-size: 10.5px; }
     .lot { padding: 12px 14px 12px 16px; border-radius: 14px; }
     .lot-title { font-size: 13.5px; line-height: 1.35; }
@@ -553,7 +577,7 @@
     .nav .btn { padding: 10px 14px; font-size: 14px; }
     .top-in { height: 60px; }
     .lead { font-size: 17px; }
-    .hero-copy .lead { font-size: 15.5px; line-height: 1.58; max-width: none; text-align: left; }
+    .hero-copy .lead { font-size: 16px; line-height: 1.6; max-width: none; text-align: left; }
     h1 { font-size: clamp(24px, 6.6vw, 40px); }
     h2 { font-size: clamp(28px, 7vw, 36px); }
     .cta .btn { flex: 1 1 100%; padding: 16px 20px; }
@@ -572,7 +596,7 @@
     .section-head { margin-bottom: 26px; }
     .section-head h2, .section-head h2.one { font-size: clamp(21px, 6.6vw, 32px); line-height: 1.14; }
     #problem .section-head h2 { font-size: clamp(22px, 6.6vw, 30px); }
-    .lead { font-size: 15.5px; line-height: 1.55; }
+    .lead { font-size: 16px; line-height: 1.6; }
     /* колонку нельзя распирать длинным словом — иначе страница едет вбок */
     .hero { padding: 22px var(--pad) 30px; gap: 18px;
       grid-template-columns: minmax(0, 1fr); }
@@ -590,12 +614,45 @@
     .stat .num { font-size: 30px; }
     .stat .lbl { font-size: 12.5px; margin-top: 8px; overflow-wrap: break-word; hyphens: none; }
     .mat, .mat-in { min-height: 300px; }
+    /* карточки сырья: на телефоне без 3D-переворота — компактная карточка
+       с раскрывающимся списком (аудит: переворот на тач-экране неудобен) */
+    .mat, .mat-in { min-height: 0; }
+    .mat { perspective: none; }
+    .mat-in { transform: none !important; transition: none; }
+    .mat .face { position: static; backface-visibility: visible; transform: none !important;
+      opacity: 1 !important; border-radius: 20px; }
+    .mat .face-front { display: grid; grid-template-columns: 96px 1fr; align-items: center;
+      gap: 12px; padding: 12px 14px; }
+    .mat .face-front .pic { padding: 0; height: 84px; }
+    .mat .face-front .pic::before { display: none; }
+    .mat .face-front .txt { border-top: none; padding: 0; display: block; }
+    .mat .face-front .txt h3 { font-size: 17px; margin-bottom: 4px; }
+    .mat .face-front .txt .more { display: none; }
+    .mat .face-front .txt .ex { display: block; color: var(--dim); font-size: 13.5px; line-height: 1.4; }
+    .mat .face-back { display: none; border: none; background: none; padding: 0 14px 14px; gap: 8px; }
+    .mat.open .face-back { display: flex; }
+    .mat .face-back h3 { display: none; }
+    .mat .face-back p { font-size: 15px; line-height: 1.5; }
+    .mat .face-back ul { font-size: 14.5px; }
+    .mat details.mat-more { border-top: 1px solid var(--hair); }
+    .mat details.mat-more > summary { list-style: none; cursor: pointer; display: flex;
+      align-items: center; justify-content: space-between; min-height: 46px; padding: 0 14px;
+      color: var(--accent); font-size: 14px; }
+    .mat details.mat-more > summary::-webkit-details-marker { display: none; }
+    .mat details.mat-more > summary::after { content: "▾"; transition: transform .3s; }
+    .mat details.mat-more[open] > summary::after { transform: rotate(180deg); }
     .face-front .txt { padding: 14px 16px 16px; }
     .face-front .txt h3 { font-size: 17px; }
-    .vs-col ul { gap: 9px; font-size: 14px; }
+    .vs-col ul { gap: 10px; font-size: 16px; }
     .lot-title { font-size: 14.5px; }
     .lot-head, .lot-meta { font-size: 11.5px; }
-    .ticker { padding: 12px 0; }
+    /* площадки: вместо бегущей строки — раскрывающийся список */
+    .ticker { overflow: visible; padding: 0; }
+    .ticker-in { animation: none !important; display: block; }
+    .ticker { display: none; }
+    .sources-m { display: block; }
+    .mat details.mat-more { display: block; }
+
   }
   @media (max-width: 420px) {
     :root { --pad: 20px; }
@@ -681,6 +738,11 @@
   <canvas class="waves"></canvas>
   <div class="veil"></div>
   <div class="fog"><i class="f1"></i><i class="f2"></i><i class="f3"></i></div>
+<details class="sources-m wrap">
+  <summary>Торговые площадки под наблюдением</summary>
+  <div class="sources-list"><span>ТЭК-Торг</span><span>B2B-Center</span><span>Сбербанк-АСТ</span><span>ЭТП ГПБ</span><span>OnlineContract</span><span>Bidzaar</span><span>isource Reserve</span><span>Фабрикант</span><span>ЗаказРФ</span><span>Tender.Pro</span><span>lot-online (РАД)</span><span>ЭТП РЭО</span><span>Интер РАО</span><span>Роснефть</span><span>Славнефть</span><span>АЛРОСА</span></div>
+</details>
+
   <div class="glow"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
   <div class="grid-lines"></div>
 </div>
@@ -810,7 +872,7 @@
           <div class="mat-in">
             <div class="face face-front">
               <div class="pic"><img src="img/oil.svg" alt="Бочка с нефтепродуктами" width="240" height="200" loading="lazy"></div>
-              <div class="txt"><h3>Нефтепродукты</h3><span class="more">подробнее →</span></div>
+              <div class="txt"><h3>Нефтепродукты</h3><span class="ex">керосин, дизель, отработанные масла</span><span class="more">подробнее →</span></div>
             </div>
             <div class="face face-back">
               <h3>Нефтепродукты</h3>
@@ -818,12 +880,13 @@
               <ul><li>керосин, дизель, бензин</li><li>отработанные и лежалые масла</li><li>нефтешлам, СНО, льяльные воды</li></ul>
             </div>
           </div>
+          <details class="mat-more"><summary>Что попадает в ленту</summary></details>
         </article>
         <article class="mat mat-scrap" data-i style="--i:1" tabindex="0">
           <div class="mat-in">
             <div class="face face-front">
               <div class="pic"><img src="img/scrap.svg" alt="Куча лома чёрных металлов" width="240" height="200" loading="lazy"></div>
-              <div class="txt"><h3>Металлолом</h3><span class="more">подробнее →</span></div>
+              <div class="txt"><h3>Металлолом</h3><span class="ex">лом чёрных и цветных металлов</span><span class="more">подробнее →</span></div>
             </div>
             <div class="face face-back">
               <h3>Металлолом</h3>
@@ -831,12 +894,13 @@
               <ul><li>категории 3А, 5А, 12А</li><li>медь, алюминий, латунь</li><li>лом с демонтажем и самовывозом</li></ul>
             </div>
           </div>
+          <details class="mat-more"><summary>Что попадает в ленту</summary></details>
         </article>
         <article class="mat mat-pipe" data-i style="--i:2" tabindex="0">
           <div class="mat-in">
             <div class="face face-front">
               <div class="pic"><img src="img/pipes.svg" alt="Пакет стальных труб, вид с торца" width="240" height="200" loading="lazy"></div>
-              <div class="txt"><h3>Трубы</h3><span class="more">подробнее →</span></div>
+              <div class="txt"><h3>Трубы</h3><span class="ex">НКТ, обсадные, трубы б/у</span><span class="more">подробнее →</span></div>
             </div>
             <div class="face face-back">
               <h3>Трубы</h3>
@@ -844,6 +908,7 @@
               <ul><li>НКТ и обсадные</li><li>бесшовные и электросварные</li><li>трубы с покрытием, детали трубопроводов</li></ul>
             </div>
           </div>
+          <details class="mat-more"><summary>Что попадает в ленту</summary></details>
         </article>
       </div>
     </div>
@@ -926,11 +991,13 @@
         <article class="where" data-i style="--i:1">
           <h3>Приложение на телефоне и компьютере</h3>
           <p>Откройте <a href="/app/">отходы-в-доходы.рф/app</a>, вход по коду на почту. Один раз поставьте на экран телефона или рабочий стол — дальше открывается как обычное приложение, со своей иконкой:</p>
+          <details class="install-wrap" ><summary>Как добавить на экран телефона</summary>
           <ul class="install">
             <li><b>iPhone</b><span>Safari → <kbd>Поделиться</kbd> → <kbd>На экран «Домой»</kbd></span></li>
             <li><b>Android</b><span>Chrome → меню <kbd>⋮</kbd> → <kbd>Установить приложение</kbd></span></li>
             <li><b>Компьютер</b><span>Chrome или Edge → значок установки справа в адресной строке</span></li>
           </ul>
+          </details>
         </article>
       </div>
     </div>
@@ -1066,13 +1133,33 @@
     window.addEventListener('resize', function(){ if (window.innerWidth > 960) close(); });
   })();
 
+
+  // 8. карточки сырья на телефоне: раскрытие вместо переворота
+  Array.prototype.forEach.call(document.querySelectorAll('.mat details.mat-more'), function(d){
+    d.addEventListener('toggle', function(){
+      var card = d.closest('.mat');
+      if (card) card.classList.toggle('open', d.open);
+      d.querySelector('summary').textContent = d.open ? 'Свернуть' : 'Что попадает в ленту';
+    });
+  });
+
   // 6. плавающая кнопка на телефоне
-  var bar = document.getElementById('cta-bar'), hero = document.querySelector('.hero .cta');
+  var bar = document.getElementById('cta-bar'),
+      hero = document.querySelector('.hero .cta'),
+      priceCta = document.querySelector('#price .btn-primary');
   if (bar && hero && 'IntersectionObserver' in window) {
+    var heroGone = false, priceSeen = false;
+    function paint(){
+      var show = heroGone && !priceSeen;          // два CTA не конкурируют
+      bar.classList.toggle('show', show);
+      bar.setAttribute('aria-hidden', show ? 'false' : 'true');
+    }
     new IntersectionObserver(function(es){
-      var out = !es[0].isIntersecting && es[0].boundingClientRect.top < 0;
-      bar.classList.toggle('show', out); bar.setAttribute('aria-hidden', out ? 'false' : 'true');
+      heroGone = !es[0].isIntersecting && es[0].boundingClientRect.top < 0; paint();
     }, {threshold: 0}).observe(hero);
+    if (priceCta) new IntersectionObserver(function(es){
+      priceSeen = es[0].isIntersecting; paint();
+    }, {threshold: 0}).observe(priceCta);
   }
 })();
 </script>
