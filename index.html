@@ -355,11 +355,13 @@
   @keyframes lgopen { 0% { opacity: 0; transform: scale(.18); filter: blur(14px); border-radius: 50%; } 55% { opacity: 1; filter: blur(0); } 100% { transform: none; border-radius: 24px; } }
   @keyframes lgclose { to { opacity: 0; transform: scale(.6); filter: blur(10px); } }
   .lg-card > * { opacity: 0; transform: translateY(10px); animation: lgrow .6s cubic-bezier(.16,1,.3,1) forwards; }
-  .lg-card > :nth-child(1) { animation-delay: .4s; } .lg-card > :nth-child(2) { animation-delay: .45s; } .lg-card > :nth-child(3) { animation-delay: .52s; }
-  .lg-card > :nth-child(4) { animation-delay: .59s; } .lg-card > :nth-child(5) { animation-delay: .66s; } .lg-card > :nth-child(6) { animation-delay: .73s; }
-  .lg-card > :nth-child(7) { animation-delay: .8s; } .lg-card > :nth-child(8) { animation-delay: .87s; }
-  .lg-card > :nth-child(9) { animation-delay: .92s; } .lg-card > :nth-child(10) { animation-delay: .97s; }
-  .lg-card > :nth-child(n+11) { animation-delay: 1.02s; }
+  .lg-card > :nth-child(1) { animation-delay: .18s; } .lg-card > :nth-child(2) { animation-delay: .22s; } .lg-card > :nth-child(3) { animation-delay: .26s; }
+  .lg-card > :nth-child(4) { animation-delay: .3s; } .lg-card > :nth-child(5) { animation-delay: .34s; } .lg-card > :nth-child(6) { animation-delay: .38s; }
+  .lg-card > :nth-child(7) { animation-delay: .42s; } .lg-card > :nth-child(8) { animation-delay: .46s; }
+  .lg-card > :nth-child(9) { animation-delay: .5s; } .lg-card > :nth-child(n+10) { animation-delay: .54s; }
+  /* страховка: если анимация не доиграла (фон, экономия энергии, старый движок),
+     содержимое всё равно показываем — пустое окно недопустимо */
+  .lg-card.shown > * { opacity: 1 !important; transform: none !important; }
   @keyframes lgrow { to { opacity: 1; transform: none; } }
   .lg-x { position: absolute; top: 10px; right: 12px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); color: var(--dim); font-size: 22px; line-height: 1; cursor: pointer; transition: background .25s, color .25s; }
   .lg-x:hover { background: rgba(255,255,255,.14); color: var(--text); }
@@ -687,8 +689,10 @@
     border-color: #34434F !important; box-shadow: 0 8px 24px rgba(0,0,0,.2) !important; }
   .price-wrap::before { background: radial-gradient(35% 45% at 18% 25%, rgba(69,214,205,.1), transparent 70%) !important; animation: none !important; }
   .price-wrap::after { display: none; }
-  .price-big, .price h2, .vs-col li, .brand-name, .lead.glassy, .note-shine, .lg-title {
+  .price-big, .price h2, .vs-col li, .brand-name, .lead.glassy, .note-shine {
     background: none !important; -webkit-text-fill-color: currentColor !important; color: #F1F5F7 !important; animation: none !important; filter: none !important; }
+  .lg-title { background: none !important; -webkit-text-fill-color: currentColor !important;
+    color: #F1F5F7 !important; }   /* анимацию появления НЕ трогаем: иначе заголовок не проявится */
   .price-big small, .lead.glassy, .note-shine { color: #BAC6CF !important; -webkit-text-fill-color: #BAC6CF !important; }
   .vs-ours li { color: #F1F5F7 !important; }
   .vs-manual li { color: #BAC6CF !important; }
@@ -1206,6 +1210,8 @@
   function open(m){
     setMode(m==='reg' ? 'reg' : 'login');
     ov.classList.remove('closing'); ov.hidden=false; document.body.classList.add('lg-open');
+    var card = ov.querySelector('.lg-card');
+    if (card) { card.classList.remove('shown'); setTimeout(function(){ card.classList.add('shown'); }, 900); }
     setTimeout(function(){ try{ em.focus(); }catch(_){} }, 700);
   }
   function close(){
