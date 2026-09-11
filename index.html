@@ -165,6 +165,11 @@
   /* заголовок и абзац одной ширины — блок читается ровным прямоугольником */
   .hero-copy { --hero-w: 700px; }
   .hero h1 { font-size: clamp(26px, 2.69vw, 39px); max-width: var(--hero-w); }
+  /* каждая строка заголовка растянута ровно на ширину блока: буквы и слова
+     разводятся, правый край получается строго вертикальным */
+  .hero h1 .hl { display: block; white-space: nowrap; }
+  .hero h1 .hl.accent { color: var(--accent); }
+  @media (max-width: 720px) { .hero h1 .hl { text-align: left; text-align-last: left; } }
   .hero-copy .lead { max-width: var(--hero-w); }
 
   .hero h1 .w { display: inline-block; opacity: 0; transform: translateY(.5em) rotateX(-40deg); transform-origin: 50% 100%; animation: wordin .9s var(--ease-out) forwards; animation-delay: calc(var(--i) * 55ms); }
@@ -812,7 +817,7 @@
     <section class="wrap hero">
       <div class="hero-copy">
         <span class="eyebrow mono">Нефтепродукты · Металлолом · Трубы</span>
-        <h1 class="display">Электронные торги по<br>реализации имущества:<br><em>нефтепродукты, лом, трубы</em></h1>
+        <h1 class="display"><span class="hl">Электронные торги по</span><span class="hl">реализации имущества:</span><span class="hl accent">нефтепродукты, лом, трубы</span></h1>
         <p class="lead glassy">Предприятия по всей России продают отработанные нефтепродукты и масла, лом и трубы б/у через десятки торговых площадок. Мы ведём круглосуточный мониторинг: убираем закупки и оставляем только реализацию. Новые лоты — в ленте приложения и уведомлением в Telegram.</p>
         <div class="cta">
           <a class="btn btn-primary" href="https://t.me/nfresursbot">
@@ -1056,18 +1061,47 @@
   // 1. заголовок — пословно (em сохраняем как акцент)
   var h1 = document.querySelector('h1');
   if (h1 && !reduce) {
-    var i = 0, out = document.createDocumentFragment();
-    Array.prototype.slice.call(h1.childNodes).forEach(function(node){
-      if (node.nodeName === 'BR') { out.appendChild(document.createElement('br')); return; }
-      var accent = node.nodeName === 'EM';
-      node.textContent.split(/\s+/).filter(Boolean).forEach(function(w){
-        var sp = document.createElement('span'); sp.className = 'w'; sp.style.setProperty('--i', i++); sp.textContent = w;
-        if (accent) { var em = document.createElement('em'); em.appendChild(sp); out.appendChild(em); } else out.appendChild(sp);
-        out.appendChild(document.createTextNode(' '));
+    var i = 0;
+    // строки (.hl) сохраняем: выключка по ширине работает построчно
+    Array.prototype.forEach.call(h1.querySelectorAll('.hl'), function(line){
+      var out = document.createDocumentFragment();
+      line.textContent.split(/\s+/).filter(Boolean).forEach(function(w, n, arr){
+        var sp = document.createElement('span'); sp.className = 'w';
+        sp.style.setProperty('--i', i++); sp.textContent = w;
+        out.appendChild(sp);
+        if (n < arr.length - 1) out.appendChild(document.createTextNode(' '));
       });
+      line.textContent = ''; line.appendChild(out);
     });
-    h1.textContent = ''; h1.appendChild(out);
   }
+
+
+  // 1б. разрядка строк заголовка: каждая строка ровно по ширине блока
+  function fitHeadline(){
+    var h = document.querySelector('.hero h1');
+    if (!h) return;
+    var lines = h.querySelectorAll('.hl');
+    if (!lines.length) return;
+    var target = h.clientWidth;
+    if (window.innerWidth <= 720 || target < 320) {        // на телефоне строки живут сами
+      Array.prototype.forEach.call(lines, function(l){ l.style.letterSpacing=''; l.style.marginRight=''; });
+      return;
+    }
+    Array.prototype.forEach.call(lines, function(line){
+      line.style.letterSpacing = '0px'; line.style.marginRight = '0px';
+      var r = document.createRange(); r.selectNodeContents(line);
+      var natural = r.getBoundingClientRect().width;
+      var chars = line.textContent.replace(/\s+$/,'').length;
+      if (chars < 2 || natural <= 0 || natural >= target) return;
+      var add = (target - natural) / (chars - 1);
+      if (add > 14) return;                                 // слишком редко — оставляем как есть
+      line.style.letterSpacing = add.toFixed(2) + 'px';
+      line.style.marginRight = (-add).toFixed(2) + 'px';
+    });
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHeadline);
+  setTimeout(fitHeadline, 60); setTimeout(fitHeadline, 600);
+  window.addEventListener('resize', fitHeadline);
 
   // 2. 3D-витрина: наклон за курсором + блик на карточках
   var stage = document.getElementById('stage'), stack = document.getElementById('stack');
