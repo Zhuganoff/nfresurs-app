@@ -164,7 +164,7 @@
   .hero-copy > * + * { margin-top: 26px; }
   /* заголовок и абзац одной ширины — блок читается ровным прямоугольником */
   .hero-copy { --hero-w: 700px; }
-  .hero h1 { font-size: clamp(30px, 3.05vw, 44px); max-width: var(--hero-w); }
+  .hero h1 { font-size: clamp(26px, 2.69vw, 39px); max-width: var(--hero-w); }
   .hero-copy .lead { max-width: var(--hero-w); }
 
   .hero h1 .w { display: inline-block; opacity: 0; transform: translateY(.5em) rotateX(-40deg); transform-origin: 50% 100%; animation: wordin .9s var(--ease-out) forwards; animation-delay: calc(var(--i) * 55ms); }
@@ -188,7 +188,7 @@
   .stack-label { color: var(--faint); margin-bottom: 14px; transform: translateZ(10px); }
   /* карточки витрины: узкие и вытянутые, мелкий текст — как было до
      подстановки живых лотов с длинными названиями */
-  .stack { max-width: 480px; margin-left: auto; }
+  .stack { max-width: 370px; margin-left: 0; margin-right: auto; }
   .lot {
     position: relative; margin-top: 12px; padding: 14px 17px 14px 19px; border-radius: 16px;
     background: linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
@@ -812,7 +812,7 @@
     <section class="wrap hero">
       <div class="hero-copy">
         <span class="eyebrow mono">Нефтепродукты · Металлолом · Трубы</span>
-        <h1 class="display">Тендеры на реализацию<br>нефтепродуктов, лома<br>и труб — <em>в одном месте</em></h1>
+        <h1 class="display">Электронные торги по<br>реализации имущества:<br><em>нефтепродукты, лом, трубы</em></h1>
         <p class="lead glassy">Предприятия по всей России продают отработанные нефтепродукты и масла, лом и трубы б/у через десятки торговых площадок. Мы ведём круглосуточный мониторинг: убираем закупки и оставляем только реализацию. Новые лоты — в ленте приложения и уведомлением в Telegram.</p>
         <div class="cta">
           <a class="btn btn-primary" href="https://t.me/nfresursbot">
