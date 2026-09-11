@@ -182,8 +182,11 @@
   .stage { perspective: 1400px; perspective-origin: 50% 45%; }
   .stack { position: relative; transform-style: preserve-3d; transform: rotateY(calc(-10deg + var(--ry, 0deg))) rotateX(calc(6deg + var(--rx, 0deg))); transition: transform .6s var(--ease-out); will-change: transform; }
   .stack-label { color: var(--faint); margin-bottom: 14px; transform: translateZ(10px); }
+  /* карточки витрины: узкие и вытянутые, мелкий текст — как было до
+     подстановки живых лотов с длинными названиями */
+  .stack { max-width: 400px; margin-left: auto; }
   .lot {
-    position: relative; margin-top: 14px; padding: 18px 20px 18px 22px; border-radius: 18px;
+    position: relative; margin-top: 12px; padding: 13px 15px 13px 17px; border-radius: 15px;
     background: linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
     border: 1px solid var(--glass-brd); -webkit-backdrop-filter: blur(12px) saturate(140%); backdrop-filter: blur(12px) saturate(140%);
     box-shadow: inset 0 1px 0 var(--glass-hi), 0 30px 60px -30px rgba(0,0,0,.9);
@@ -204,10 +207,10 @@
     100% { transform: scale(.86) rotateY(-9deg) rotateX(6deg); }
   }
   @keyframes cardin { from { opacity: 0; transform: translateZ(-120px) translateY(30px); } }
-  .lot-head { display: flex; justify-content: space-between; gap: 10px; color: var(--faint); margin-bottom: 8px; }
-  .lot-title { font-weight: 500; font-size: 16px; line-height: 1.35; }
-  .lot-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--dim); font-size: 14px; margin-top: 10px; }
-  .lot-price { color: var(--text); font-family: "JetBrains Mono", monospace; font-size: 13.5px; white-space: nowrap; }
+  .lot-head { display: flex; justify-content: space-between; gap: 10px; color: var(--faint); font-size: 10.5px; margin-bottom: 7px; }
+  .lot-title { font-weight: 500; font-size: 14px; line-height: 1.38; }
+  .lot-meta { display: flex; flex-wrap: wrap; gap: 5px 14px; color: var(--dim); font-size: 12px; margin-top: 8px; }
+  .lot-price { color: var(--text); font-family: "JetBrains Mono", monospace; font-size: 11.5px; white-space: nowrap; }
 
   /* ——— бегущая строка площадок ——— */
   .ticker { border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); background: rgba(7,13,11,.35); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
@@ -660,19 +663,19 @@
           <div class="stack-label mono">Так выглядят лоты в ленте</div>
           <!--SHOWCASE_START-->
           <article class="lot" style="--m: var(--oil); --i: 0; --z: 48">
-            <div class="lot-head mono"><span>Tender.Pro</span><span>реализация</span></div>
-            <div class="lot-title">ООО &quot;КАМАЗ Тормозные системы&quot; г. Набережные Челны реализует в IV квартал 2026 отработанные нефтепродукты (МИО)</div>
-            <div class="lot-meta"><span>Республика Татарстан</span><span>18.09.2026 10:00</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Нефтеюганск</div>
+            <div class="lot-meta"><span>ХМАО — Югра</span><span>приём заявок до 15 сентября</span></div>
           </article>
           <article class="lot" style="--m: var(--scrap); --i: 1; --z: 24">
-            <div class="lot-head mono"><span>Tender.Pro</span><span>реализация</span></div>
-            <div class="lot-title">Реализация в IV квартале 2026 года лома и отходов черных металлов 12А ПАО &quot;КАМАЗ&quot;</div>
-            <div class="lot-meta"><span>Россия</span><span>17.09.2026 13:00</span></div>
+            <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
+            <div class="lot-title">Лом чёрных металлов, 200 т, Жердевский сахарный завод</div>
+            <div class="lot-meta"><span>Тамбовская область</span><span>самовывоз</span></div>
           </article>
           <article class="lot" style="--m: var(--pipe); --i: 2; --z: 0">
-            <div class="lot-head mono"><span>ЭТП ГПБ</span><span>реализация</span></div>
-            <div class="lot-title">Продажа невостребованного имущества (трубной продукции), расположенного на складах ООО &quot;ГСП-1&quot;</div>
-            <div class="lot-meta"><span>Республика Саха (Якутия)</span><span class="lot-price">0.0 RUB</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Труба обсадная 139,7×9,17 P-110 с муфтами, 61 т</div>
+            <div class="lot-meta"><span>Ямало-Ненецкий АО</span><span class="lot-price">6 285 866 ₽</span></div>
           </article>
           <!--SHOWCASE_END-->
         </div>
@@ -690,7 +693,7 @@
     <div class="wrap">
       <div class="grid-4">
         <div class="stat" data-i style="--i:0"><div class="num display" data-to="16">16</div><div class="lbl">площадок под наблюдением в режиме реального времени</div></div>
-        <div class="stat" data-i style="--i:1"><div class="num display" data-to="557" data-suffix="+"><!--LOTS_START-->557<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
+        <div class="stat" data-i style="--i:1"><div class="num display" data-to="1000" data-suffix="+"><!--LOTS_START-->1000<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
         <div class="stat" data-i style="--i:2"><div class="num display" data-to="24" data-suffix="/7">24<small>/7</small></div><div class="lbl">мониторинг площадок в режиме онлайн, без выходных</div></div>
         <div class="stat" data-i style="--i:3"><div class="num display" data-to="3">3</div><div class="lbl">вида сырья: нефтепродукты, лом, трубы</div></div>
       </div>
