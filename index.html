@@ -258,6 +258,26 @@
   .stat .lbl { position: relative; color: var(--dim); font-size: 15px; margin-top: 14px; }
 
 
+  /* ——— мобильное меню разделов ——— */
+  .nav-btn { display: none; width: 44px; height: 44px; flex: none; align-items: center; justify-content: center;
+    gap: 5px; flex-direction: column; border-radius: 12px; border: 1px solid var(--glass-brd);
+    background: rgba(27,37,46,.9); cursor: pointer; padding: 0; }
+  .nav-btn span { display: block; width: 18px; height: 2px; border-radius: 2px; background: var(--text);
+    transition: transform .3s var(--ease-out), opacity .2s; }
+  .nav-btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .nav-btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .nav-drop { position: absolute; left: var(--pad); right: var(--pad); top: calc(100% + 8px); z-index: 45;
+    display: flex; flex-direction: column; padding: 6px; border-radius: 16px;
+    background: #0E141A; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border: 1px solid var(--hair);
+    box-shadow: 0 24px 50px -20px rgba(0,0,0,.8); animation: navdrop .28s var(--ease-out) both; }
+  .nav-drop[hidden] { display: none; }
+  @keyframes navdrop { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+  .nav-drop a { display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-radius: 11px;
+    color: var(--dim); font-size: 16px; }
+  .nav-drop a:hover, .nav-drop a:active { background: rgba(255,255,255,.06); color: var(--text); text-decoration: none; }
+  /* якорь не должен уезжать под закреплённую шапку */
+  section[id], .hero-wrap { scroll-margin-top: 76px; }
   /* ——— блок «Проблема»: вручную против сервиса ——— */
   /* заголовок держим в одну строку — для этого свой, чуть меньший кегль */
   #problem .section-head h2 { font-size: clamp(22px, 2.46vw, 31px); }
@@ -522,7 +542,10 @@
     .grid-4 { grid-template-columns: 1fr 1fr; gap: 14px; }
     .stat { padding: 24px 20px; }
     .nav { display: none; }
-    .top-actions .btn-sm { padding: 9px 12px; font-size: 13px; min-height: 38px; }
+    .nav-btn { display: flex; }
+    .top { position: relative; }
+    .top-actions .btn-sm { min-height: 44px; padding: 11px 14px; font-size: 14px; }
+    .top-actions .btn-sm { padding: 10px 12px; font-size: 13.5px; min-height: 44px; }
     .section { padding: 80px 0; }
     .proof { padding-bottom: 80px; }
     .section-head { margin-bottom: 36px; }
@@ -706,7 +729,15 @@
     <div class="top-actions">
       <a class="btn btn-ghost btn-sm" href="/app/">Вход</a>
       <a class="btn btn-primary btn-sm" href="/app/#reg">Регистрация</a>
+      <button class="nav-btn" id="nav-btn" type="button" aria-label="Меню разделов" aria-expanded="false" aria-controls="nav-drop">
+        <span></span><span></span><span></span>
+      </button>
     </div>
+    <nav class="nav-drop" id="nav-drop" hidden aria-label="Разделы">
+      <a href="#inside">Что внутри</a>
+      <a href="#how">Как работает</a>
+      <a href="#price">Стоимость</a>
+    </nav>
   </div>
 </header>
 
@@ -1011,7 +1042,8 @@
   function run(el){
     var to = +el.dataset.to, suf = el.dataset.suffix || '', t0 = null, dur = 1400;
     function fmt(v){ return String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + (suf ? '<small>' + suf + '</small>' : ''); }
-    if (reduce) { el.innerHTML = fmt(to); return; }
+    var narrow = false; try { narrow = matchMedia('(max-width: 720px)').matches; } catch (_) {}
+    if (reduce || narrow) { el.innerHTML = fmt(to); return; }   // на телефоне сразу итог
     function step(ts){ if (!t0) t0 = ts; var k = Math.min(1, (ts - t0) / dur); k = 1 - Math.pow(1 - k, 3); el.innerHTML = fmt(to * k); if (k < 1) requestAnimationFrame(step); }
     requestAnimationFrame(step);
   }
@@ -1019,6 +1051,20 @@
     var io2 = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { run(e.target); io2.unobserve(e.target); } }); }, {threshold: .5});
     document.querySelectorAll('.num[data-to]').forEach(function(n){ io2.observe(n); });
   }
+
+
+  // 7. меню разделов на телефоне
+  (function navMenu(){
+    var btn = document.getElementById('nav-btn'), drop = document.getElementById('nav-drop');
+    if (!btn || !drop) return;
+    function close(){ drop.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
+    function open(){ drop.hidden = false; btn.setAttribute('aria-expanded', 'true'); }
+    btn.addEventListener('click', function(e){ e.stopPropagation(); drop.hidden ? open() : close(); });
+    drop.addEventListener('click', function(e){ if (e.target.tagName === 'A') close(); });
+    document.addEventListener('click', function(e){ if (!drop.hidden && !drop.contains(e.target) && e.target !== btn) close(); });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') close(); });
+    window.addEventListener('resize', function(){ if (window.innerWidth > 960) close(); });
+  })();
 
   // 6. плавающая кнопка на телефоне
   var bar = document.getElementById('cta-bar'), hero = document.querySelector('.hero .cta');
