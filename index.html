@@ -162,6 +162,10 @@
     background-size: 72px 72px; -webkit-mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); }
   .hero { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 96px var(--pad) 120px; min-height: calc(100vh - 68px); }
   .hero-copy > * + * { margin-top: 26px; }
+  /* заголовок и абзац одной ширины — блок читается ровным прямоугольником */
+  .hero-copy { --hero-w: 700px; }
+  .hero h1 { font-size: clamp(30px, 3.05vw, 44px); max-width: var(--hero-w); }
+  .hero-copy .lead { max-width: var(--hero-w); }
 
   .hero h1 .w { display: inline-block; opacity: 0; transform: translateY(.5em) rotateX(-40deg); transform-origin: 50% 100%; animation: wordin .9s var(--ease-out) forwards; animation-delay: calc(var(--i) * 55ms); }
   .hero h1 { perspective: 600px; }
