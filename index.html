@@ -33,7 +33,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Unbounded:wght@600;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Onest:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
 <script>
 /* При обновлении страницы открываемся с самого верха, как новая страница:
    браузер по умолчанию возвращает прежнюю прокрутку — отключаем это. */
@@ -71,7 +71,7 @@
   a:hover { text-decoration: underline; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
   .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; }
-  .display { font-family: "Unbounded", "Golos Text", sans-serif; font-weight: 800; letter-spacing: -.025em; }
+  .display { font-family: "Onest", "Golos Text", sans-serif; font-weight: 800; letter-spacing: -.03em; }
   .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--pad); }
   h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.015em; line-height: 1.15; }
   h1 { font-size: clamp(30px, 3.4vw, 50px); line-height: 1.06; white-space: nowrap; overflow-wrap: normal; word-break: keep-all; hyphens: none; }
@@ -160,7 +160,7 @@
   .grid-lines { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .45;
     background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
     background-size: 72px 72px; -webkit-mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); }
-  .hero { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 96px var(--pad) 120px; min-height: calc(100vh - 68px); }
+  .hero { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 72px var(--pad) 64px; min-height: calc(100vh - 240px); }
   .hero-copy > * + * { margin-top: 26px; }
   /* заголовок и абзац одной ширины — блок читается ровным прямоугольником */
   .hero-copy { --hero-w: 700px; }
@@ -297,7 +297,17 @@
   .sources-m > summary::after { content: "▾"; transition: transform .3s; }
   .sources-m[open] > summary::after { transform: rotate(180deg); }
   .sources-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 0 16px; }
-  .sources-list span { padding: 7px 11px; border-radius: 10px; border: 1px solid var(--hair);
+  /* знаки площадок: по умолчанию стальные, цвет проявляется при наведении */
+  .ticker .src, .sources-list .src { display: inline-flex; align-items: center; gap: 9px; }
+  .ticker img, .sources-list img { width: 22px; height: 22px; object-fit: contain; border-radius: 5px;
+    filter: grayscale(1) brightness(1.35) contrast(.85); opacity: .8;
+    transition: filter .3s, opacity .3s; }
+  .ticker .src:hover img, .sources-list .src:hover img { filter: none; opacity: 1; }
+  .mark { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px;
+    font-style: normal; font-size: 10px; font-weight: 700; letter-spacing: .02em;
+    background: linear-gradient(145deg, #3A4956, #1B252E); color: #BAC6CF;
+    border: 1px solid #34434F; }
+  .sources-list .src { padding: 7px 11px; border-radius: 10px; border: 1px solid var(--hair);
     background: rgba(27,37,46,.7); color: var(--dim); font-size: 13.5px; }
   /* инструкции установки: на телефоне сворачиваются на своём месте */
   .install-wrap > summary { list-style: none; cursor: pointer; display: none; align-items: center;
@@ -376,7 +386,7 @@
   .lg-x { position: absolute; top: 10px; right: 12px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid #34434F; background: #1B252E; color: var(--dim); font-size: 22px; line-height: 1; cursor: pointer; transition: background .25s, color .25s; }
   .lg-x:hover { background: rgba(255,255,255,.14); color: var(--text); }
   .lg-logo { width: 56px; height: 56px; filter: drop-shadow(0 0 18px rgba(69,214,205,.35)); }
-  .lg-title { font-family: "Unbounded", sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -.01em; opacity: 1;
+  .lg-title { font-family: "Onest", sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -.01em; opacity: 1;
     background: linear-gradient(100deg, #7fd0b4 0%, #eafff6 22%, #7fd0b4 44%, #d9a04a 62%, #eafff6 80%, #7fd0b4 100%); background-size: 300% 100%;
     -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
     animation: lgrow .6s cubic-bezier(.16,1,.3,1) .45s forwards, brandshine 7s linear 1s infinite; }
@@ -749,7 +759,7 @@
   <div class="fog"><i class="f1"></i><i class="f2"></i><i class="f3"></i></div>
 <details class="sources-m wrap">
   <summary>Торговые площадки под наблюдением</summary>
-  <div class="sources-list"><span>ТЭК-Торг</span><span>B2B-Center</span><span>Сбербанк-АСТ</span><span>ЭТП ГПБ</span><span>OnlineContract</span><span>Bidzaar</span><span>isource Reserve</span><span>Фабрикант</span><span>ЗаказРФ</span><span>Tender.Pro</span><span>lot-online (РАД)</span><span>ЭТП РЭО</span><span>Интер РАО</span><span>Роснефть</span><span>Славнефть</span><span>АЛРОСА</span></div>
+  <div class="sources-list"><span class="src"><img src="img/sites/tektorg.png?v=1" alt="" width="22" height="22" loading="lazy">ТЭК-Торг</span><span class="src"><img src="img/sites/b2b.png?v=1" alt="" width="22" height="22" loading="lazy">B2B-Center</span><span class="src"><img src="img/sites/sberast.png?v=1" alt="" width="22" height="22" loading="lazy">Сбербанк-АСТ</span><span class="src"><img src="img/sites/etpgpb.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП ГПБ</span><span class="src"><img src="img/sites/onlinecontract.png?v=1" alt="" width="22" height="22" loading="lazy">OnlineContract</span><span class="src"><img src="img/sites/bidzaar.png?v=1" alt="" width="22" height="22" loading="lazy">Bidzaar</span><span class="src"><i class="mark">IR</i>isource Reserve</span><span class="src"><img src="img/sites/fabrikant.png?v=1" alt="" width="22" height="22" loading="lazy">Фабрикант</span><span class="src"><img src="img/sites/zakazrf.png?v=1" alt="" width="22" height="22" loading="lazy">ЗаказРФ</span><span class="src"><img src="img/sites/tenderpro.png?v=1" alt="" width="22" height="22" loading="lazy">Tender.Pro</span><span class="src"><img src="img/sites/lotonline.png?v=1" alt="" width="22" height="22" loading="lazy">lot-online (РАД)</span><span class="src"><img src="img/sites/reo.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП РЭО</span><span class="src"><img src="img/sites/interrao.png?v=1" alt="" width="22" height="22" loading="lazy">Интер РАО</span><span class="src"><i class="mark">РО</i>Роснефть</span><span class="src"><i class="mark">СЛ</i>Славнефть</span><span class="src"><img src="img/sites/alrosa.png?v=1" alt="" width="22" height="22" loading="lazy">АЛРОСА</span></div>
 </details>
 
   <div class="glow"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
@@ -854,9 +864,7 @@
   </div>
 
   <div class="ticker" aria-label="Площадки-источники">
-    <div class="ticker-in" id="ticker">
-      <span>ТЭК-Торг</span><span>B2B-Center</span><span>Сбербанк-АСТ</span><span>ЭТП ГПБ</span><span>OnlineContract</span><span>Bidzaar</span><span>isource Reserve</span><span>Фабрикант</span><span>ЗаказРФ</span><span>Tender.Pro</span><span>lot-online (РАД)</span><span>ЭТП РЭО</span><span>Интер РАО</span><span>Роснефть</span><span>Славнефть</span><span>АЛРОСА</span>
-    </div>
+    <div class="ticker-in" id="ticker"><span class="src"><img src="img/sites/tektorg.png?v=1" alt="" width="22" height="22" loading="lazy">ТЭК-Торг</span><span class="src"><img src="img/sites/b2b.png?v=1" alt="" width="22" height="22" loading="lazy">B2B-Center</span><span class="src"><img src="img/sites/sberast.png?v=1" alt="" width="22" height="22" loading="lazy">Сбербанк-АСТ</span><span class="src"><img src="img/sites/etpgpb.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП ГПБ</span><span class="src"><img src="img/sites/onlinecontract.png?v=1" alt="" width="22" height="22" loading="lazy">OnlineContract</span><span class="src"><img src="img/sites/bidzaar.png?v=1" alt="" width="22" height="22" loading="lazy">Bidzaar</span><span class="src"><i class="mark">IR</i>isource Reserve</span><span class="src"><img src="img/sites/fabrikant.png?v=1" alt="" width="22" height="22" loading="lazy">Фабрикант</span><span class="src"><img src="img/sites/zakazrf.png?v=1" alt="" width="22" height="22" loading="lazy">ЗаказРФ</span><span class="src"><img src="img/sites/tenderpro.png?v=1" alt="" width="22" height="22" loading="lazy">Tender.Pro</span><span class="src"><img src="img/sites/lotonline.png?v=1" alt="" width="22" height="22" loading="lazy">lot-online (РАД)</span><span class="src"><img src="img/sites/reo.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП РЭО</span><span class="src"><img src="img/sites/interrao.png?v=1" alt="" width="22" height="22" loading="lazy">Интер РАО</span><span class="src"><i class="mark">РО</i>Роснефть</span><span class="src"><i class="mark">СЛ</i>Славнефть</span><span class="src"><img src="img/sites/alrosa.png?v=1" alt="" width="22" height="22" loading="lazy">АЛРОСА</span><span class="src"><img src="img/sites/tektorg.png?v=1" alt="" width="22" height="22" loading="lazy">ТЭК-Торг</span><span class="src"><img src="img/sites/b2b.png?v=1" alt="" width="22" height="22" loading="lazy">B2B-Center</span><span class="src"><img src="img/sites/sberast.png?v=1" alt="" width="22" height="22" loading="lazy">Сбербанк-АСТ</span><span class="src"><img src="img/sites/etpgpb.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП ГПБ</span><span class="src"><img src="img/sites/onlinecontract.png?v=1" alt="" width="22" height="22" loading="lazy">OnlineContract</span><span class="src"><img src="img/sites/bidzaar.png?v=1" alt="" width="22" height="22" loading="lazy">Bidzaar</span><span class="src"><i class="mark">IR</i>isource Reserve</span><span class="src"><img src="img/sites/fabrikant.png?v=1" alt="" width="22" height="22" loading="lazy">Фабрикант</span><span class="src"><img src="img/sites/zakazrf.png?v=1" alt="" width="22" height="22" loading="lazy">ЗаказРФ</span><span class="src"><img src="img/sites/tenderpro.png?v=1" alt="" width="22" height="22" loading="lazy">Tender.Pro</span><span class="src"><img src="img/sites/lotonline.png?v=1" alt="" width="22" height="22" loading="lazy">lot-online (РАД)</span><span class="src"><img src="img/sites/reo.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП РЭО</span><span class="src"><img src="img/sites/interrao.png?v=1" alt="" width="22" height="22" loading="lazy">Интер РАО</span><span class="src"><i class="mark">РО</i>Роснефть</span><span class="src"><i class="mark">СЛ</i>Славнефть</span><span class="src"><img src="img/sites/alrosa.png?v=1" alt="" width="22" height="22" loading="lazy">АЛРОСА</span></div>
   </div>
 
   <section class="section proof" style="padding-top:96px" aria-label="Сервис в цифрах">
@@ -1076,31 +1084,39 @@
   }
 
 
-  // 1б. разрядка строк заголовка: подбираем интервал так, чтобы ЧЕРНИЛА строки
-  //     заканчивались ровно на правом крае блока (формула ошибается — меряем по факту)
+  // 1б. разрядка строк заголовка: подбираем интервал так, чтобы ПОСЛЕДНЯЯ БУКВА
+  //     каждой строки заканчивалась на одной вертикали с правым краем абзаца.
+  //     Меряем именно букву: рамка строки включает интервал после неё и врёт.
+  function lastGlyphRight(line){
+    var w = document.createTreeWalker(line, NodeFilter.SHOW_TEXT, null), n, last = null;
+    while ((n = w.nextNode())) { if (n.nodeValue && n.nodeValue.trim()) last = n; }
+    if (!last) return 0;
+    var t = last.nodeValue, k = t.length;
+    while (k > 0 && /\s/.test(t.charAt(k - 1))) k--;
+    if (k < 1) return 0;
+    var r = document.createRange(); r.setStart(last, k - 1); r.setEnd(last, k);
+    return r.getBoundingClientRect().right;
+  }
   function fitHeadline(){
     var h = document.querySelector('.hero h1');
     if (!h) return;
     var lines = h.querySelectorAll('.hl');
     if (!lines.length) return;
-    var target = h.clientWidth;
-    var narrow = window.innerWidth <= 720 || target < 320;
+    var box = h.getBoundingClientRect();
+    var edge = box.left + h.clientWidth;              // правый край блока = край абзаца
+    var narrow = window.innerWidth <= 720 || h.clientWidth < 320;
     Array.prototype.forEach.call(lines, function(line){
       line.style.marginRight = '0px';
       if (narrow) { line.style.letterSpacing = ''; return; }
-      function ink(sp){
-        line.style.letterSpacing = sp + 'px';
-        var r = document.createRange(); r.selectNodeContents(line);
-        return r.getBoundingClientRect().width;
+      function right(sp){ line.style.letterSpacing = sp + 'px'; return lastGlyphRight(line); }
+      var lo = -3, hi = 24;
+      if (right(hi) < edge) { line.style.letterSpacing = hi + 'px'; return; }
+      if (right(lo) > edge) { line.style.letterSpacing = lo + 'px'; return; }
+      for (var k = 0; k < 20; k++) {                  // двоичный поиск до сотых пикселя
+        var mid = (lo + hi) / 2;
+        if (right(mid) > edge) hi = mid; else lo = mid;
       }
-      // строка может быть и шире блока — тогда слегка поджимаем (отрицательный интервал)
-      var lo = ink(0) > target ? -3 : 0, hi = 24, mid = 0;
-      if (ink(lo) > target) { line.style.letterSpacing = lo + 'px'; return; }
-      for (var k = 0; k < 18; k++) {           // двоичный поиск: 18 шагов хватает до 0.1 px
-        mid = (lo + hi) / 2;
-        if (ink(mid) > target) hi = mid; else lo = mid;
-      }
-      line.style.letterSpacing = lo.toFixed(3) + 'px';
+      line.style.letterSpacing = ((lo + hi) / 2).toFixed(3) + 'px';
     });
   }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHeadline);
