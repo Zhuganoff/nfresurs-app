@@ -420,9 +420,9 @@
   .face-back h3 { font-size: 24px; }
   .face-back p { color: var(--dim); font-size: 16px; }
   .face-back ul { margin: 0; padding: 0 0 0 18px; color: var(--dim); font-size: 15px; line-height: 1.7; }
-  .mat-oil { --m: var(--oil); --m-soft: rgba(217,160,74,.22); }
-  .mat-scrap { --m: var(--scrap); --m-soft: rgba(159,176,192,.2); }
-  .mat-pipe { --m: var(--pipe); --m-soft: rgba(212,116,79,.22); }
+  .mat-oil { --m: var(--oil); --m-soft: var(--m-oil-soft); }
+  .mat-scrap { --m: var(--scrap); --m-soft: var(--m-scrap-soft); }
+  .mat-pipe { --m: var(--pipe); --m-soft: var(--m-pipe-soft); }
 
   /* как работает: линия процесса */
   .steps { position: relative; }
@@ -591,7 +591,9 @@
     --text: #F1F5F7; --dim: #BAC6CF; --faint: #91A2AF;
     --hair: #34434F;
     --accent: #45D6CD; --accent-deep: #2CB9B1; --accent-ink: #071719;
-    --oil: #E4BA72; --scrap: #BAC6CF; --pipe: #647887;
+    /* коды категорий по палитре промта: различимы и не спорят с графитом */
+    --oil: #45D6CD; --scrap: #BAC6CF; --pipe: #647887;
+    --m-oil-soft: rgba(69,214,205,.16); --m-scrap-soft: rgba(186,198,207,.14); --m-pipe-soft: rgba(100,120,135,.18);
     --glass: rgba(21,29,36,.9); --glass-brd: #34434F; --glass-hi: rgba(217,230,239,.08);
   }
   body, .bg { background: #0B0F12; }
