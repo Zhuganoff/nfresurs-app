@@ -342,38 +342,41 @@
   @media (prefers-reduced-motion: reduce) { .vs-col, .vs-col li { transition: none; } .vs-col:hover { transform: none; } }
   /* ——— вход поверх лендинга: затемнение + стеклянный блок из центра ——— */
   .lg-ov { position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; padding: 24px;
-    background: radial-gradient(70% 60% at 50% 45%, rgba(7,13,11,.35) 0%, rgba(7,13,11,.78) 100%); animation: lgdim .5s ease both; }
+    background: radial-gradient(70% 60% at 50% 45%, rgba(8,12,15,.55) 0%, rgba(8,12,15,.88) 100%); animation: lgdim .5s ease both; }
   .lg-ov[hidden] { display: none; }
   .lg-ov.closing { animation: lgdim .35s ease reverse both; }
   @keyframes lgdim { from { opacity: 0; } }
   .lg-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 14px; width: min(400px, 100%); padding: 30px 28px 24px; border-radius: 24px;
-    background: rgba(14,24,20,.55); border: 1px solid rgba(255,255,255,.14);
-    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 40px 90px -30px rgba(0,0,0,.85), 0 0 0 1px rgba(127,208,180,.06);
+    background: linear-gradient(145deg, #1B252E 0%, #151D24 55%, #10161B 100%);
+    border: 1px solid #34434F;
+    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+    box-shadow: inset 0 1px 0 rgba(217,230,239,.08), 0 40px 90px -30px rgba(0,0,0,.85);
     transform-origin: 50% 50%; animation: lgopen .95s cubic-bezier(.16,1,.3,1) both; }
   .lg-ov.closing .lg-card { animation: lgclose .35s cubic-bezier(.4,0,.8,.4) both; }
   @keyframes lgopen { 0% { opacity: 0; transform: scale(.18); filter: blur(14px); border-radius: 50%; } 55% { opacity: 1; filter: blur(0); } 100% { transform: none; border-radius: 24px; } }
   @keyframes lgclose { to { opacity: 0; transform: scale(.6); filter: blur(10px); } }
-  .lg-card > * { opacity: 0; transform: translateY(10px); animation: lgrow .6s cubic-bezier(.16,1,.3,1) forwards; }
-  .lg-card > :nth-child(1) { animation-delay: .18s; } .lg-card > :nth-child(2) { animation-delay: .22s; } .lg-card > :nth-child(3) { animation-delay: .26s; }
-  .lg-card > :nth-child(4) { animation-delay: .3s; } .lg-card > :nth-child(5) { animation-delay: .34s; } .lg-card > :nth-child(6) { animation-delay: .38s; }
-  .lg-card > :nth-child(7) { animation-delay: .42s; } .lg-card > :nth-child(8) { animation-delay: .46s; }
-  .lg-card > :nth-child(9) { animation-delay: .5s; } .lg-card > :nth-child(n+10) { animation-delay: .54s; }
+  .lg-card.anim > * { opacity: 0; transform: translateY(10px); animation: lgrow .6s cubic-bezier(.16,1,.3,1) forwards; }
+  .lg-card.anim > :nth-child(1) { animation-delay: .18s; } .lg-card > :nth-child(2) { animation-delay: .22s; } .lg-card > :nth-child(3) { animation-delay: .26s; }
+  .lg-card.anim > :nth-child(4) { animation-delay: .3s; } .lg-card > :nth-child(5) { animation-delay: .34s; } .lg-card > :nth-child(6) { animation-delay: .38s; }
+  .lg-card.anim > :nth-child(7) { animation-delay: .42s; } .lg-card > :nth-child(8) { animation-delay: .46s; }
+  .lg-card.anim > :nth-child(9) { animation-delay: .5s; } .lg-card > :nth-child(n+10) { animation-delay: .54s; }
   /* страховка: если анимация не доиграла (фон, экономия энергии, старый движок),
      содержимое всё равно показываем — пустое окно недопустимо */
-  .lg-card.shown > * { opacity: 1 !important; transform: none !important; }
+  .lg-card.shown > * { opacity: 1 !important; transform: none !important; }   /* страховка */
   @keyframes lgrow { to { opacity: 1; transform: none; } }
-  .lg-x { position: absolute; top: 10px; right: 12px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); color: var(--dim); font-size: 22px; line-height: 1; cursor: pointer; transition: background .25s, color .25s; }
+  .lg-x { position: absolute; top: 10px; right: 12px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid #34434F; background: #1B252E; color: var(--dim); font-size: 22px; line-height: 1; cursor: pointer; transition: background .25s, color .25s; }
   .lg-x:hover { background: rgba(255,255,255,.14); color: var(--text); }
-  .lg-logo { width: 56px; height: 56px; filter: drop-shadow(0 0 18px rgba(127,208,180,.45)); }
-  .lg-title { font-family: "Unbounded", sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -.01em;
+  .lg-logo { width: 56px; height: 56px; filter: drop-shadow(0 0 18px rgba(69,214,205,.35)); }
+  .lg-title { font-family: "Unbounded", sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -.01em; opacity: 1;
     background: linear-gradient(100deg, #7fd0b4 0%, #eafff6 22%, #7fd0b4 44%, #d9a04a 62%, #eafff6 80%, #7fd0b4 100%); background-size: 300% 100%;
     -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
     animation: lgrow .6s cubic-bezier(.16,1,.3,1) .45s forwards, brandshine 7s linear 1s infinite; }
   .lg-msg { color: var(--dim); text-align: center; max-width: 320px; font-size: 15px; line-height: 1.45; }
-  .lg-card input { width: 100%; padding: 13px 14px; border-radius: 12px; font: inherit; font-size: 15px; color: var(--text); background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); outline: none; transition: border-color .25s, box-shadow .25s; }
-  .lg-card input::placeholder { color: rgba(238,243,240,.4); }
-  .lg-card input:focus { border-color: rgba(127,208,180,.7); box-shadow: 0 0 0 3px rgba(127,208,180,.18); }
+  .lg-card input { width: 100%; padding: 13px 14px; border-radius: 12px; font: inherit; font-size: 15px;
+    color: var(--text); background: #151D24; border: 1px solid #34434F; outline: none;
+    transition: border-color .25s, box-shadow .25s; }
+  .lg-card input::placeholder { color: #91A2AF; }
+  .lg-card input:focus { border-color: #45D6CD; box-shadow: 0 0 0 3px rgba(69,214,205,.18); }
   .lg-card input[hidden] { display: none; }
   .lg-card .lg-btn { width: 100%; }
   .lg-card .lg-btn[disabled] { opacity: .7; cursor: default; }
@@ -814,7 +817,7 @@
           </a>
           <a class="btn btn-ghost" href="/app/">Открыть в браузере</a>
         </div>
-        <p class="note note-shine">Первые 3 дня бесплатно. Дальше — 499 ₽ в месяц, картой или через СБП.</p>
+        <p class="note note-shine">Первые 7 дней бесплатно. Дальше — 499 ₽ в месяц, картой или через СБП.</p>
       </div>
       <div class="stage" id="stage" aria-label="Примеры лотов из ленты">
         <div class="stack" id="stack">
@@ -1013,7 +1016,7 @@
         <div>
           <span class="eyebrow mono">Стоимость</span>
           <h2 class="display one">Один тариф. Всё включено</h2>
-          <p>Первые 3 дня — бесплатно, чтобы посмотреть ленту и понять, есть ли в ней ваши лоты. Дальше подписка: все площадки, уведомления и доска объявлений. Оплата картой или через СБП на сайте, либо прямо в Telegram. Условия — в <a href="oferta.html">публичной оферте</a>.</p>
+          <p>Первые 7 дней — бесплатно, чтобы посмотреть ленту и понять, есть ли в ней ваши лоты. Дальше подписка: все площадки, уведомления и доска объявлений. Оплата картой или через СБП на сайте, либо прямо в Telegram. Условия — в <a href="oferta.html">публичной оферте</a>.</p>
         </div>
         <div>
           <div class="price-big display">499 ₽<small>в месяц</small></div>
@@ -1037,7 +1040,7 @@
 <div class="cta-bar" id="cta-bar" aria-hidden="true">
   <a class="btn btn-primary" href="https://t.me/nfresursbot">
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.6 15.5l-.4 5.3c.6 0 .8-.2 1.1-.5l2.6-2.5 5.4 4c1 .5 1.7.3 2-.9L23.9 4c.3-1.5-.5-2-1.5-1.7L1.8 10.2c-1.4.5-1.4 1.3-.2 1.7l5.3 1.6L18.9 6c.6-.4 1.1-.2.7.2z"/></svg>
-    Открыть в Telegram · 3 дня бесплатно
+    Открыть в Telegram · 7 дней бесплатно
   </a>
 </div>
 
@@ -1195,7 +1198,7 @@
       msg.textContent = 'Пришлём одноразовый код на почту';
     } else if (reg) {
       btn.textContent = 'Зарегистрироваться';
-      msg.textContent = 'Почта и пароль. Первые 3 дня бесплатно';
+      msg.textContent = 'Почта и пароль. Первые 7 дней бесплатно';
     } else if (reset) {
       btn.textContent = 'Прислать код';
       msg.textContent = 'Пришлём код, чтобы задать новый пароль';
@@ -1211,7 +1214,11 @@
     setMode(m==='reg' ? 'reg' : 'login');
     ov.classList.remove('closing'); ov.hidden=false; document.body.classList.add('lg-open');
     var card = ov.querySelector('.lg-card');
-    if (card) { card.classList.remove('shown'); setTimeout(function(){ card.classList.add('shown'); }, 900); }
+    if (card) {
+      card.classList.remove('shown');
+      card.classList.add('anim');                       // анимация появления
+      setTimeout(function(){ card.classList.add('shown'); }, 800);   // страховка: поля видны в любом случае
+    }
     setTimeout(function(){ try{ em.focus(); }catch(_){} }, 700);
   }
   function close(){

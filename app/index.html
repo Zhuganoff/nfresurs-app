@@ -990,7 +990,7 @@
         </ul>
         <button class="sub-btn" id="sub-btn">Оформить за 499 ₽ / мес</button>
         <button class="sub-btn sub-btn-alt" id="sub-sbp" style="display:none">Оплатить через СБП или картой на сайте</button>
-        <div class="sub-note">Первые 3 дня — бесплатно. Далее 499 ₽/мес, оплата картой или через СБП. Отписаться можно в любой момент.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:#fff;text-decoration:underline">условия оферты</a>.</div>
+        <div class="sub-note">Первые 7 дней — бесплатно. Далее 499 ₽/мес, оплата картой или через СБП. Отписаться можно в любой момент.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:#fff;text-decoration:underline">условия оферты</a>.</div>
       </div>
       <div class="myads-block">
         <button class="myads-toggle" id="myads-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3z"/><path d="M8 9h8M8 12h5"/></svg>Мои объявления</button>
@@ -1082,7 +1082,7 @@
     <div class="paywall-box">
       <div class="pw-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
       <h2>Пробный период закончился</h2>
-      <p>3 дня бесплатного доступа истекли. Оформите подписку, чтобы продолжить получать тендеры по реализации.</p>
+      <p>7 дней бесплатного доступа истекли. Оформите подписку, чтобы продолжить получать тендеры по реализации.</p>
       <div class="sub-price big">499 ₽<small> / месяц</small></div>
       <button class="sub-btn" id="pw-btn">Оформить подписку</button>
       <button class="sub-btn sub-btn-alt" id="pw-sbp" style="display:none">Оплатить через СБП или картой на сайте</button>
@@ -1977,7 +1977,7 @@ function showLogin(msg){
       btn.textContent = reg?'Подтвердить и войти':(code?'Войти':'Сменить пароль и войти');
       msg.textContent = 'Код отправлен на '+(em.value||'').trim();
     } else if(code){ btn.textContent='Получить код'; msg.textContent='Пришлём одноразовый код на почту'; }
-    else if(reg){ btn.textContent='Зарегистрироваться'; msg.textContent='Почта и пароль. Первые 3 дня бесплатно'; }
+    else if(reg){ btn.textContent='Зарегистрироваться'; msg.textContent='Почта и пароль. Первые 7 дней бесплатно'; }
     else if(reset){ btn.textContent='Прислать код'; msg.textContent='Пришлём код, чтобы задать новый пароль'; }
     else { btn.textContent='Войти'; msg.textContent='Войдите по почте и паролю, чтобы открыть тендеры'; }
     btn.disabled=false;
