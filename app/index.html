@@ -23,7 +23,7 @@
   :root {
     --app-bg: #eef1f5; --app-bg2: #e6eaf0; --surface: #ffffff; --surface-2: #eef1f4;
     --text: #14181d; --text-dim: #5a636d; --text-faint: #8b949e;
-    --hair: #d9e2e0; --accent: #255d51; --accent-soft: #e5f1ed;
+    --hair: #d5dde4; --accent: #17847E; --accent-soft: #E3F5F3;
     --urgent: #c1443b; --fresh: #2f8065; --warn: #c78a24; --nav-bg: rgba(247,251,250,.5);
     --glass: #ffffff; --glass-2: #f6f9f8;
     --glass-brd: rgba(255,255,255,.85); --glass-hair: rgba(120,130,145,.16);
@@ -31,24 +31,24 @@
     --glow-a: rgba(65,151,126,.10); --glow-b: rgba(37,93,81,.08);
   }
   :root:not([data-theme="light"]) { @media (prefers-color-scheme: dark) {
-    --app-bg:#070d0b; --app-bg2:#0b1411; --surface:#0f1a16; --surface-2:#142320;
-    --text:#eef3f0; --text-dim:#aebbb5; --text-faint:#8a9a93;
-    --hair:#1f2e29; --accent:#7fd0b4; --accent-soft:#163229;
-    --urgent:#ff8178; --fresh:#7fd0b4; --warn:#e2ad58; --nav-bg:rgba(7,13,11,.55);
-    --glass:#0f1a16; --glass-2:#142320;
+    --app-bg:#0B0F12; --app-bg2:#080C0F; --surface:#151D24; --surface-2:#1B252E;
+    --text:#F1F5F7; --text-dim:#BAC6CF; --text-faint:#91A2AF;
+    --hair:#34434F; --accent:#45D6CD; --accent-soft:#12333A;
+    --urgent:#F08C92; --fresh:#76D6AE; --warn:#E4BA72; --nav-bg:rgba(11,15,18,.62);
+    --glass:#151D24; --glass-2:#1B252E;
     --glass-brd: rgba(255,255,255,.10); --glass-hair: rgba(255,255,255,.07);
     --shadow: rgba(0,0,0,.45); --shadow-s: rgba(0,0,0,.3);
-    --glow-a: rgba(75,156,130,.12); --glow-b: rgba(54,121,104,.08);
+    --glow-a: rgba(69,214,205,.10); --glow-b: rgba(58,73,86,.14);
   }}
   :root[data-theme="dark"] {
-    --app-bg:#070d0b; --app-bg2:#0b1411; --surface:#0f1a16; --surface-2:#142320;
-    --text:#eef3f0; --text-dim:#aebbb5; --text-faint:#8a9a93;
-    --hair:#1f2e29; --accent:#7fd0b4; --accent-soft:#163229;
-    --urgent:#ff8178; --fresh:#7fd0b4; --warn:#e2ad58; --nav-bg:rgba(7,13,11,.55);
-    --glass:#0f1a16; --glass-2:#142320;
+    --app-bg:#0B0F12; --app-bg2:#080C0F; --surface:#151D24; --surface-2:#1B252E;
+    --text:#F1F5F7; --text-dim:#BAC6CF; --text-faint:#91A2AF;
+    --hair:#34434F; --accent:#45D6CD; --accent-soft:#12333A;
+    --urgent:#F08C92; --fresh:#76D6AE; --warn:#E4BA72; --nav-bg:rgba(11,15,18,.62);
+    --glass:#151D24; --glass-2:#1B252E;
     --glass-brd: rgba(255,255,255,.10); --glass-hair: rgba(255,255,255,.07);
     --shadow: rgba(0,0,0,.45); --shadow-s: rgba(0,0,0,.3);
-    --glow-a: rgba(75,156,130,.12); --glow-b: rgba(54,121,104,.08);
+    --glow-a: rgba(69,214,205,.10); --glow-b: rgba(58,73,86,.14);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; }
@@ -133,7 +133,7 @@
     background:linear-gradient(110deg,#7ff0a6,#2fbf6e); padding:3px 9px;
     border-radius:999px; box-shadow:0 2px 8px rgba(47,191,110,.4); }
   /* избранное: жёлтая метка; за ≤3 дня до конца — ярко-красная */
-  :root { --favc: #d9a04a; --newc: #4a9be8; }
+  :root { --favc: #2CB9B1; --newc: #4a9be8; }
   .card.fav-mark, .card.fav-hot { background: color-mix(in srgb, var(--favc) 12%, var(--surface)); }
   .card.fav-mark::before, .card.fav-hot::before { content:''; position:absolute; left:0; top:10px; bottom:10px; width:4px; border-radius:0 3px 3px 0; background: var(--favc); }
   .card.fav-hot { background: color-mix(in srgb, var(--urgent) 12%, var(--surface));
@@ -276,7 +276,7 @@
   .modal-fav.on { color: #e5484d; }
   .modal-hide { width: 100%; margin-top: 10px; padding: 9px; border: none; background: transparent; color: var(--text-faint); font-size: 13px; cursor: pointer; }
   .toast { position: fixed; left: 50%; bottom: calc(74px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 300; display: flex; align-items: center; gap: 14px; background: #1e2a24; color: #fff; padding: 10px 16px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.35); font-size: 13px; max-width: 90vw; }
-  .toast button { background: none; border: none; color: #7fd0b4; font-weight: 700; font-size: 13px; cursor: pointer; }
+  .toast button { background: none; border: none; color: #9FB0BD; font-weight: 700; font-size: 13px; cursor: pointer; }
   .modal-chips { display: flex; gap: 7px; flex-wrap: wrap; margin: 2px 96px 12px 0; }
   .modal-title { margin: 0 0 14px; font-size: 16px; font-weight: 700; line-height: 1.32; }
   .modal-meta { display: flex; flex-direction: column; gap: 9px; margin: 0 0 18px; }
@@ -394,19 +394,19 @@
     position: fixed; inset: 0; z-index: 1000;
     display: grid; place-items: center;
     background:
-      radial-gradient(120% 90% at 50% 34%, #163229 0%, #0b1411 46%, #070d0b 100%);
+      radial-gradient(120% 90% at 50% 34%, #28343F 0%, #151D24 46%, #0B0F12 100%);
     animation: splashOut .6s ease 3.9s forwards;
     overflow: hidden;
   }
   /* живой волновой фон бренда (WebGL, ../shader-bg.js); без WebGL — градиент выше */
   #splash canvas.waves { position:absolute; inset:0; width:100%; height:100%; display:block; opacity:0; transition: opacity .9s ease; }
   #splash.has-waves canvas.waves { opacity:1; }
-  #splash .veil { position:absolute; inset:0; background: radial-gradient(90% 70% at 50% 42%, rgba(7,13,11,.38) 0%, rgba(7,13,11,.80) 100%); }
+  #splash .veil { position:absolute; inset:0; background: radial-gradient(90% 70% at 50% 42%, rgba(11,15,18,.40) 0%, rgba(8,12,15,.82) 100%); }
   /* тёплое свечение «нефтяного пласта» снизу */
   #splash::after {
     content:""; position:absolute; left:50%; top:34%;
     width:320px; height:320px; transform:translate(-50%,-50%);
-    background: radial-gradient(circle, rgba(127,208,180,.22), transparent 62%);
+    background: radial-gradient(circle, rgba(69,214,205,.22), transparent 62%);
     animation: glow 2.4s ease-in-out infinite; pointer-events:none;
   }
   #splash .flash {
@@ -418,8 +418,8 @@
     opacity: 0; transform: scale(.9) translateY(8px);
     animation: rigIn .8s cubic-bezier(.2,.85,.25,1) .2s forwards; }
   #splash .rig { position:absolute; inset:0; width:100%; height:100%;
-    filter: drop-shadow(0 10px 26px rgba(0,0,0,.55)) drop-shadow(0 0 18px rgba(127,208,180,.18)); }
-  #splash .drop { fill: #f0c46a; opacity: 0;
+    filter: drop-shadow(0 10px 26px rgba(0,0,0,.6)) drop-shadow(0 0 18px rgba(69,214,205,.16)); }
+  #splash .drop { fill: #45D6CD; opacity: 0;
     transform-box: fill-box; transform-origin: center;
     animation: gush 1.5s cubic-bezier(.3,.1,.4,1) .55s forwards; }
   #splash .drop:nth-child(2){ animation-delay:.62s }
@@ -430,13 +430,13 @@
     position: absolute; bottom: 8%; width: 100%; text-align: center;
     font-size: 12px; letter-spacing: .42em; text-transform: uppercase;
     font-weight: 700;
-    background: linear-gradient(100deg,#58b99a,#b8f1df,#58b99a);
+    background: linear-gradient(100deg,#45D6CD,#DCEBF2,#45D6CD);
     -webkit-background-clip: text; background-clip: text; color: transparent;
     opacity: 0; animation: rigIn .7s ease .7s forwards;
   }
   #splash .word small { display:block; margin-top:7px; font-size:9px;
-    letter-spacing:.34em; font-weight:600; color: #8fb3a6;
-    -webkit-text-fill-color:#8fb3a6; }
+    letter-spacing:.34em; font-weight:600; color: #91A2AF;
+    -webkit-text-fill-color:#91A2AF; }
   @keyframes flash { 0%{opacity:0} 18%{opacity:.85} 100%{opacity:0} }
   @keyframes glow { 0%,100%{opacity:.6} 50%{opacity:1} }
   @keyframes rigIn { to { opacity: 1; transform: scale(1) translateY(0); } }
@@ -455,7 +455,7 @@
 
   /* Dense Ledger — компактная рабочая лента */
   header.app { padding: 8px 13px; padding-top: calc(8px + env(safe-area-inset-top)); gap: 10px; }
-  .logo { width: 36px; height: 36px; border-radius: 11px; background: linear-gradient(145deg,#58b99a,#1b5a49); box-shadow: 0 5px 15px rgba(40,130,105,.22); }
+  .logo { width: 36px; height: 36px; border-radius: 11px; background: linear-gradient(145deg,#58b99a,#28343F); box-shadow: 0 5px 15px rgba(40,130,105,.22); }
   .logo svg { width: 21px; height: 21px; fill: none; stroke: #effff9; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .app-name { font-size: 14px; }
   .app-sub { font-size: 9px; letter-spacing: .11em; margin-top: 3px; }
@@ -535,21 +535,21 @@
   @keyframes lgrow { to { opacity: 1; transform: none; } }
   .lg-logo { width: 56px; height: 56px; filter: drop-shadow(0 0 18px rgba(127,208,180,.45)); }
   .lg-title { font-family: "Unbounded", "Golos Text", sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -.01em;
-    background: linear-gradient(100deg, #7fd0b4 0%, #eafff6 22%, #7fd0b4 44%, #d9a04a 62%, #eafff6 80%, #7fd0b4 100%); background-size: 300% 100%;
+    background: linear-gradient(100deg, #9FB0BD 0%, #E8F1F7 22%, #9FB0BD 44%, #2CB9B1 62%, #E8F1F7 80%, #9FB0BD 100%); background-size: 300% 100%;
     -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; animation: lgrow .6s cubic-bezier(.16,1,.3,1) .52s forwards, lgshine 7s linear 1s infinite; }
   @keyframes lgshine { to { background-position: -300% 0; } }
   .lg-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; font-size: 13px; }
   .lg-links a { color: rgba(238,243,240,.7); border-bottom: 1px solid transparent; transition: color .2s, border-color .2s; }
-  .lg-links a:hover { color: #7fd0b4; border-color: rgba(127,208,180,.5); text-decoration: none; }
+  .lg-links a:hover { color: #9FB0BD; border-color: rgba(127,208,180,.5); text-decoration: none; }
   .lg-links a[hidden], .lg-card input[hidden] { display: none; }
   .lg-card #lg-msg { color: rgba(238,243,240,.72) !important; }
   .lg-card input { width: 100% !important; background: rgba(255,255,255,.06) !important; color: #eef3f0 !important; border: 1px solid rgba(255,255,255,.14) !important; font-size: 15px !important; outline: none; transition: border-color .25s, box-shadow .25s; }
   .lg-card input::placeholder { color: rgba(238,243,240,.4); }
   .lg-card input:focus { border-color: rgba(127,208,180,.7) !important; box-shadow: 0 0 0 3px rgba(127,208,180,.18); }
-  .lg-card button { width: 100% !important; background: #7fd0b4 !important; color: #070d0b !important; box-shadow: 0 14px 40px -12px rgba(127,208,180,.7); transition: transform .3s cubic-bezier(.16,1,.3,1), background .25s; }
+  .lg-card button { width: 100% !important; background: #9FB0BD !important; color: #070d0b !important; box-shadow: 0 14px 40px -12px rgba(127,208,180,.7); transition: transform .3s cubic-bezier(.16,1,.3,1), background .25s; }
   .lg-card button:hover { background: #96dfc6 !important; transform: translateY(-1px); }
   .lg-card > div:last-child { color: rgba(238,243,240,.5) !important; }
-  .lg-card a { color: #7fd0b4; }
+  .lg-card a { color: #9FB0BD; }
   @media (prefers-reduced-motion: reduce) { .lg-card, .lg-card > *, .lg-title { animation: none; opacity: 1; transform: none; } }
   /* ═══════════ Личный кабинет — десктоп (≥1024px): боковая панель, сетка, две колонки ═══════════ */
   /* неподвижный фон как на лендинге (все экраны): перелив цветов сырья + сетка; блоки — стекло */
@@ -721,36 +721,36 @@
            stroke-linecap="round" stroke-linejoin="round">
         <defs>
           <linearGradient id="steelF" gradientUnits="userSpaceOnUse" x1="120" y1="50" x2="120" y2="236">
-            <stop offset="0" stop-color="#e6fff4"/><stop offset=".35" stop-color="#8fdcc0"/>
-            <stop offset=".75" stop-color="#3f9c7f"/><stop offset="1" stop-color="#1b5a49"/>
+            <stop offset="0" stop-color="#EAF3F8"/><stop offset=".35" stop-color="#A9B8C4"/>
+            <stop offset=".75" stop-color="#5C6A75"/><stop offset="1" stop-color="#28343F"/>
           </linearGradient>
           <linearGradient id="steelS" gradientUnits="userSpaceOnUse" x1="120" y1="50" x2="120" y2="236">
-            <stop offset="0" stop-color="#8fd6bd"/><stop offset=".6" stop-color="#2f7a63"/><stop offset="1" stop-color="#143f34"/>
+            <stop offset="0" stop-color="#BAC6CF"/><stop offset=".6" stop-color="#45525E"/><stop offset="1" stop-color="#1B252E"/>
           </linearGradient>
           <linearGradient id="steelB" gradientUnits="userSpaceOnUse" x1="120" y1="50" x2="120" y2="216">
-            <stop offset="0" stop-color="#5fa68e"/><stop offset="1" stop-color="#112e26"/>
+            <stop offset="0" stop-color="#7A8896"/><stop offset="1" stop-color="#141C22"/>
           </linearGradient>
           <linearGradient id="slabTop" gradientUnits="userSpaceOnUse" x1="60" y1="216" x2="180" y2="240">
-            <stop offset="0" stop-color="#2b5f50"/><stop offset=".5" stop-color="#1a4237"/><stop offset="1" stop-color="#0e2820"/>
+            <stop offset="0" stop-color="#2C3A45"/><stop offset=".5" stop-color="#1F2A33"/><stop offset="1" stop-color="#141C22"/>
           </linearGradient>
           <linearGradient id="slabSide" gradientUnits="userSpaceOnUse" x1="120" y1="240" x2="120" y2="252">
-            <stop offset="0" stop-color="#173b31"/><stop offset="1" stop-color="#07130f"/>
+            <stop offset="0" stop-color="#1B252E"/><stop offset="1" stop-color="#0B0F12"/>
           </linearGradient>
           <linearGradient id="pipeBody" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#0b2019"/><stop offset=".3" stop-color="#3f9c7f"/>
-            <stop offset=".45" stop-color="#d7fff0"/><stop offset=".7" stop-color="#2f7a63"/><stop offset="1" stop-color="#08170f"/>
+            <stop offset="0" stop-color="#0E1419"/><stop offset=".3" stop-color="#5C6A75"/>
+            <stop offset=".45" stop-color="#E8F1F7"/><stop offset=".7" stop-color="#45525E"/><stop offset="1" stop-color="#0B0F12"/>
           </linearGradient>
           <radialGradient id="pipeEnd" cx=".38" cy=".34" r=".72">
-            <stop offset="0" stop-color="#eafff6"/><stop offset=".45" stop-color="#7fd0b4"/><stop offset="1" stop-color="#173f34"/>
+            <stop offset="0" stop-color="#E8F1F7"/><stop offset=".45" stop-color="#9FB0BD"/><stop offset="1" stop-color="#1B252E"/>
           </radialGradient>
           <radialGradient id="pipeHole" cx=".62" cy=".66" r=".7">
-            <stop offset="0" stop-color="#030806"/><stop offset=".75" stop-color="#0d231c"/><stop offset="1" stop-color="#2f7a63"/>
+            <stop offset="0" stop-color="#05080A"/><stop offset=".75" stop-color="#101820"/><stop offset="1" stop-color="#45525E"/>
           </radialGradient>
           <radialGradient id="floorGlow" cx=".5" cy=".5" r=".5">
-            <stop offset="0" stop-color="#7fd0b4" stop-opacity=".38"/><stop offset="1" stop-color="#7fd0b4" stop-opacity="0"/>
+            <stop offset="0" stop-color="#9FB0BD" stop-opacity=".38"/><stop offset="1" stop-color="#9FB0BD" stop-opacity="0"/>
           </radialGradient>
           <radialGradient id="lamp" cx=".5" cy=".5" r=".5">
-            <stop offset="0" stop-color="#fff2cc"/><stop offset=".35" stop-color="#f0c46a" stop-opacity=".9"/><stop offset="1" stop-color="#d9a04a" stop-opacity="0"/>
+            <stop offset="0" stop-color="#E9F7F6"/><stop offset=".35" stop-color="#45D6CD" stop-opacity=".9"/><stop offset="1" stop-color="#2CB9B1" stop-opacity="0"/>
           </radialGradient>
           <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
@@ -774,8 +774,8 @@
         <!-- плита основания: верх + передняя кромка -->
         <path d="M84 216 H156 L184 240 H56 Z" fill="url(#slabTop)"/>
         <path d="M56 240 H184 V252 H56 Z" fill="url(#slabSide)"/>
-        <path d="M84 216 H156 L184 240" stroke="#9fe3c9" stroke-opacity=".55" stroke-width="1"/>
-        <path d="M56 240 H184" stroke="#bff0dc" stroke-opacity=".7" stroke-width="1.2"/>
+        <path d="M84 216 H156 L184 240" stroke="#BAC6CF" stroke-opacity=".55" stroke-width="1"/>
+        <path d="M56 240 H184" stroke="#D3DFE8" stroke-opacity=".7" stroke-width="1.2"/>
 
 
 
@@ -818,20 +818,20 @@
             <path d="M56.0 236.0 L176.6 211.1 M184.0 236.0 L63.4 211.1 M63.4 211.1 L167.6 180.8 M176.6 211.1 L72.4 180.8 M72.4 180.8 L158.6 150.6 M167.6 180.8 L81.4 150.6 M81.4 150.6 L149.6 120.3 M158.6 150.6 L90.5 120.3 M90.5 120.3 L140.5 90.0 M149.6 120.3 L99.5 90.0 M99.5 90.0 L131.0 58.0 M140.5 90.0 L109.0 58.0" stroke-width="1.5"/>
           </g>
           <!-- корона: площадка, кронблок, мачта -->
-          <path d="M113 50 H127 L131 58 H109 Z" fill="#1f5747" stroke="url(#steelF)" stroke-width="1.6"/>
-          <path d="M109 58 H131" stroke="#e6fff4" stroke-opacity=".8" stroke-width="1"/>
+          <path d="M113 50 H127 L131 58 H109 Z" fill="#243039" stroke="url(#steelF)" stroke-width="1.6"/>
+          <path d="M109 58 H131" stroke="#EAF3F8" stroke-opacity=".8" stroke-width="1"/>
           <path d="M120 50 V30 M113 50 L120 38 L127 50" stroke="url(#steelF)" stroke-width="2"/>
-          <circle cx="120" cy="44" r="3.6" fill="#0c221b" stroke="#bff0dc" stroke-width="1.6"/>
-          <circle cx="120" cy="44" r="1.2" fill="#e6fff4"/>
+          <circle cx="120" cy="44" r="3.6" fill="#101820" stroke="#D3DFE8" stroke-width="1.6"/>
+          <circle cx="120" cy="44" r="1.2" fill="#EAF3F8"/>
           <!-- талевый канат и блок с крюком -->
           <path d="M120 48 V104" stroke="#cdeee2" stroke-opacity=".8" stroke-width="1"/>
-          <path d="M113 104 H127 V118 H113 Z" fill="#163e33" stroke="url(#steelF)" stroke-width="1.6"/>
-          <path d="M113 104 H127" stroke="#e6fff4" stroke-opacity=".7" stroke-width="1"/>
-          <circle cx="120" cy="111" r="2.6" fill="#08170f" stroke="#9fe3c9" stroke-width="1.2"/>
-          <path d="M120 118 V128 M115 128 q5 8 10 0" stroke="#dbf7ec" stroke-width="2"/>
+          <path d="M113 104 H127 V118 H113 Z" fill="#1B252E" stroke="url(#steelF)" stroke-width="1.6"/>
+          <path d="M113 104 H127" stroke="#EAF3F8" stroke-opacity=".7" stroke-width="1"/>
+          <circle cx="120" cy="111" r="2.6" fill="#0B0F12" stroke="#BAC6CF" stroke-width="1.2"/>
+          <path d="M120 118 V128 M115 128 q5 8 10 0" stroke="#E3ECF3" stroke-width="2"/>
           <!-- фонарь на короне -->
           <circle cx="120" cy="30" r="9" fill="url(#lamp)" filter="url(#soft)"/>
-          <circle cx="120" cy="30" r="2.2" fill="#fff6db"/>
+          <circle cx="120" cy="30" r="2.2" fill="#DFF6F4"/>
         </g>
 
         <!-- отражение вышки на плите -->
@@ -875,7 +875,7 @@
     try {
       var sp=document.getElementById('splash'), c=sp&&sp.querySelector('canvas.waves');
       if(c&&window.mountShaderBackground){
-        window.splashWaves = mountShaderBackground(c, { colors: ['#070d0b','#0e2019','#1c4a3e','#2f7a63','#5fb596','#b98a3e'], pixelCap: 4e5, maxDpr: 1.25 });
+        window.splashWaves = mountShaderBackground(c, { colors: ['#080C0F','#151D24','#28343F','#3A4956'], pixelCap: 4e5, maxDpr: 1.25 });
         if(window.splashWaves) sp.classList.add('has-waves');
       }
     } catch(_){}
@@ -884,7 +884,7 @@
   <div id="login-gate" style="display:none;position:fixed;inset:0;z-index:10000;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;font-family:system-ui,-apple-system,sans-serif">
     <canvas class="waves" aria-hidden="true"></canvas><div class="lg-veil" aria-hidden="true"></div>
     <div class="lg-card">
-      <svg class="lg-logo" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#93dcc3"/><stop offset="1" stop-color="#255d51"/></linearGradient><linearGradient id="lgst" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3fff9"/><stop offset=".45" stop-color="#7fd0b4"/><stop offset="1" stop-color="#1b5a49"/></linearGradient><radialGradient id="lgho" cx=".6" cy=".65" r=".7"><stop offset="0" stop-color="#040a08"/><stop offset=".8" stop-color="#0d231c"/><stop offset="1" stop-color="#3f9c7f"/></radialGradient><linearGradient id="lgoi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4cf7a"/><stop offset="1" stop-color="#b8782a"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#lgbg)"/><circle cx="24" cy="24" r="14.5" fill="url(#lgst)"/><circle cx="24" cy="24" r="10" fill="url(#lgho)"/><path d="M24 15.5c-3.6 4.6-5.6 7.4-5.6 10.2a5.6 5.6 0 0 0 11.2 0c0-2.8-2-5.6-5.6-10.2z" fill="url(#lgoi)"/><path d="M21.6 24.6c0-1.6.9-3.2 2-4.6" stroke="#fff5d6" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".9"/></svg>
+      <svg class="lg-logo" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#93dcc3"/><stop offset="1" stop-color="#255d51"/></linearGradient><linearGradient id="lgst" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3fff9"/><stop offset=".45" stop-color="#9FB0BD"/><stop offset="1" stop-color="#28343F"/></linearGradient><radialGradient id="lgho" cx=".6" cy=".65" r=".7"><stop offset="0" stop-color="#040a08"/><stop offset=".8" stop-color="#101820"/><stop offset="1" stop-color="#5C6A75"/></radialGradient><linearGradient id="lgoi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4cf7a"/><stop offset="1" stop-color="#b8782a"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#lgbg)"/><circle cx="24" cy="24" r="14.5" fill="url(#lgst)"/><circle cx="24" cy="24" r="10" fill="url(#lgho)"/><path d="M24 15.5c-3.6 4.6-5.6 7.4-5.6 10.2a5.6 5.6 0 0 0 11.2 0c0-2.8-2-5.6-5.6-10.2z" fill="url(#lgoi)"/><path d="M21.6 24.6c0-1.6.9-3.2 2-4.6" stroke="#fff5d6" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".9"/></svg>
       <div class="lg-title">Отходы в доходы</div>
       <div id="lg-msg" style="color:var(--text-dim,#5a636d);text-align:center;max-width:320px">Войдите по e-mail, чтобы открыть тендеры</div>
       <input id="lg-email" type="email" inputmode="email" autocomplete="email" placeholder="you@mail.ru" style="width:min(320px,90vw);padding:12px;border-radius:12px;border:1px solid var(--hair,#d9e2e0)">
@@ -902,7 +902,7 @@
     </div>
   </div>
   <header class="app">
-    <div class="logo mark"><svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="apbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#93dcc3"/><stop offset="1" stop-color="#255d51"/></linearGradient><linearGradient id="apst" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3fff9"/><stop offset=".45" stop-color="#7fd0b4"/><stop offset="1" stop-color="#1b5a49"/></linearGradient><radialGradient id="apho" cx=".6" cy=".65" r=".7"><stop offset="0" stop-color="#040a08"/><stop offset=".8" stop-color="#0d231c"/><stop offset="1" stop-color="#3f9c7f"/></radialGradient><linearGradient id="apoi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4cf7a"/><stop offset="1" stop-color="#b8782a"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#apbg)"/><circle cx="24" cy="24" r="14.5" fill="url(#apst)"/><circle cx="24" cy="24" r="10" fill="url(#apho)"/><path d="M24 15.5c-3.6 4.6-5.6 7.4-5.6 10.2a5.6 5.6 0 0 0 11.2 0c0-2.8-2-5.6-5.6-10.2z" fill="url(#apoi)"/><path d="M21.6 24.6c0-1.6.9-3.2 2-4.6" stroke="#fff5d6" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".9"/></svg></div>
+    <div class="logo mark"><svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="apbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#93dcc3"/><stop offset="1" stop-color="#255d51"/></linearGradient><linearGradient id="apst" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3fff9"/><stop offset=".45" stop-color="#9FB0BD"/><stop offset="1" stop-color="#28343F"/></linearGradient><radialGradient id="apho" cx=".6" cy=".65" r=".7"><stop offset="0" stop-color="#040a08"/><stop offset=".8" stop-color="#101820"/><stop offset="1" stop-color="#5C6A75"/></radialGradient><linearGradient id="apoi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4cf7a"/><stop offset="1" stop-color="#b8782a"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#apbg)"/><circle cx="24" cy="24" r="14.5" fill="url(#apst)"/><circle cx="24" cy="24" r="10" fill="url(#apho)"/><path d="M24 15.5c-3.6 4.6-5.6 7.4-5.6 10.2a5.6 5.6 0 0 0 11.2 0c0-2.8-2-5.6-5.6-10.2z" fill="url(#apoi)"/><path d="M21.6 24.6c0-1.6.9-3.2 2-4.6" stroke="#fff5d6" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".9"/></svg></div>
     <div>
       <div class="app-name">ОТХОДЫ В ДОХОДЫ</div>
       <div class="app-sub">НЕФТЕПРОДУКТЫ · МЕТАЛЛОЛОМ · ТРУБЫ</div>

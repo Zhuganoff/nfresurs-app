@@ -179,12 +179,12 @@
   .cta { display: flex; flex-wrap: wrap; gap: 14px; }
   .note { color: var(--faint); font-size: 14px; }
   /* строка про пробный период: жирнее и с медленным переливом */
-  .note-shine { font-size: 16px; font-weight: 700; letter-spacing: -.005em;
+  .note-shine { font-size: 16px; font-weight: 700; letter-spacing: -.01em; white-space: nowrap;
     background: linear-gradient(100deg, #9fe3c9 0%, #eafff6 20%, #ffffff 27%, #d9a04a 42%, #eafff6 58%, #9fe3c9 78%, #9fe3c9 100%);
     background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
     -webkit-text-fill-color: transparent; animation: noteshine 6s linear infinite; }
   @keyframes noteshine { to { background-position: -300% 0; } }
-  @media (max-width: 420px) { .note-shine { font-size: 15px; } }
+
   @media (prefers-reduced-motion: reduce) { .note-shine { animation: none; } }
 
   /* сцена: стеклянная витрина лотов в 3D */
@@ -226,7 +226,7 @@
   /* ——— бегущая строка площадок ——— */
   .ticker { border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); background: rgba(7,13,11,.35); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
   .ticker-in { display: flex; gap: 0; width: max-content; animation: ticker 60s linear infinite; }
-  .ticker:hover .ticker-in { animation-play-state: paused; }
+  /* лента идёт всегда: остановка при наведении сбивала ритм */
   .ticker span { padding: 22px 34px; color: var(--dim); font-size: 15px; white-space: nowrap; display: inline-flex; align-items: center; gap: 34px; }
   .ticker span::after { content: '◆'; color: var(--accent); font-size: 8px; opacity: .8; }
   @keyframes ticker { to { transform: translateX(-50%); } }
@@ -299,10 +299,7 @@
   .sources-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 0 16px; }
   /* знаки площадок: по умолчанию стальные, цвет проявляется при наведении */
   .ticker .src, .sources-list .src { display: inline-flex; align-items: center; gap: 9px; }
-  .ticker img, .sources-list img { width: 22px; height: 22px; object-fit: contain; border-radius: 5px;
-    filter: grayscale(1) brightness(1.35) contrast(.85); opacity: .8;
-    transition: filter .3s, opacity .3s; }
-  .ticker .src:hover img, .sources-list .src:hover img { filter: none; opacity: 1; }
+  .ticker img, .sources-list img { width: 22px; height: 22px; object-fit: contain; border-radius: 5px; }
   .mark { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px;
     font-style: normal; font-size: 10px; font-weight: 700; letter-spacing: .02em;
     background: linear-gradient(145deg, #3A4956, #1B252E); color: #BAC6CF;
@@ -603,7 +600,8 @@
     .nav .btn { padding: 10px 14px; font-size: 14px; }
     .top-in { height: 60px; }
     .lead { font-size: 17px; }
-    .hero-copy .lead { font-size: 16px; line-height: 1.6; max-width: none; text-align: left; }
+    .hero-copy .lead { font-size: 16px; line-height: 1.6; max-width: none;
+      text-align: justify; text-justify: inter-word; hyphens: none; }
     h1 { font-size: clamp(24px, 6.6vw, 40px); }
     h2 { font-size: clamp(28px, 7vw, 36px); }
     .cta .btn { flex: 1 1 100%; padding: 16px 20px; }
@@ -629,7 +627,7 @@
     .hero-copy > * + * { margin-top: 14px; }
     .cta { gap: 10px; }
     .cta .btn { padding: 13px 18px; font-size: 15px; }
-    .note-shine { font-size: 14px; }
+    .note-shine { font-size: clamp(11px, 3.35vw, 14px); white-space: nowrap; }
     .eyebrow { font-size: 10.5px; }
     /* страховка: на узком экране заголовок переносится, а не обрезается */
     .hero h1, .hero h1 .w { white-space: normal; overflow-wrap: break-word; word-break: normal; max-width: 100%; }
@@ -843,19 +841,19 @@
           <div class="stack-label mono">Так выглядят лоты в ленте</div>
           <!--SHOWCASE_START-->
           <article class="lot" style="--m: var(--oil); --i: 0; --z: 48">
-            <div class="lot-head mono"><span>Tender.Pro</span><span>реализация</span></div>
-            <div class="lot-title">ООО &quot;КАМАЗ Тормозные системы&quot; г. Набережные Челны реализует в IV квартал 2026 отработанные нефтепродукты (МИО)</div>
-            <div class="lot-meta"><span>Республика Татарстан</span><span>18.09.2026 10:00</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Нефтеюганск</div>
+            <div class="lot-meta"><span>ХМАО — Югра</span><span>приём заявок до 15 сентября</span></div>
           </article>
           <article class="lot" style="--m: var(--scrap); --i: 1; --z: 24">
-            <div class="lot-head mono"><span>Сбербанк-АСТ</span><span>реализация</span></div>
-            <div class="lot-title">Лом черных и цветных металлов (Продажа на аукционе в электронной форме продуктов утилизации вооружения и военной…</div>
-            <div class="lot-meta"><span>Россия</span><span class="lot-price">1687753.75 RUB</span></div>
+            <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
+            <div class="lot-title">Лом чёрных металлов, 200 т, Жердевский сахарный завод</div>
+            <div class="lot-meta"><span>Тамбовская область</span><span>самовывоз</span></div>
           </article>
           <article class="lot" style="--m: var(--pipe); --i: 2; --z: 0">
-            <div class="lot-head mono"><span>ЭТП РЭО</span><span>реализация</span></div>
-            <div class="lot-title">ПВХ СТРУЖКА ПРОФИЛЯ И ТРУБЫ</div>
-            <div class="lot-meta"><span>Россия</span><span class="lot-price">8000.0 ₽</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Труба обсадная 139,7×9,17 P-110 с муфтами, 61 т</div>
+            <div class="lot-meta"><span>Ямало-Ненецкий АО</span><span class="lot-price">6 285 866 ₽</span></div>
           </article>
           <!--SHOWCASE_END-->
         </div>
@@ -871,7 +869,7 @@
     <div class="wrap">
       <div class="grid-4">
         <div class="stat" data-i style="--i:0"><div class="num display" data-to="16">16</div><div class="lbl">площадок под наблюдением в режиме реального времени</div></div>
-        <div class="stat" data-i style="--i:1"><div class="num display" data-to="577" data-suffix="+"><!--LOTS_START-->577<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
+        <div class="stat" data-i style="--i:1"><div class="num display" data-to="1000" data-suffix="+"><!--LOTS_START-->1000<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
         <div class="stat" data-i style="--i:2"><div class="num display" data-to="24" data-suffix="/7">24<small>/7</small></div><div class="lbl">мониторинг площадок в режиме онлайн, без выходных</div></div>
         <div class="stat" data-i style="--i:3"><div class="num display" data-to="3">3</div><div class="lbl">вида сырья: нефтепродукты, лом, трубы</div></div>
       </div>
