@@ -466,7 +466,9 @@
   /* подача объявления — окном поверх страницы, как вход и регистрация:
      формой во всю ширину ленты пользоваться неудобно */
   .ad-ov { position: fixed; inset: 0; z-index: 95; display: flex;
-    align-items: flex-start; justify-content: center; padding: 32px 16px;
+    align-items: flex-start; justify-content: center;
+    /* сверху отступ по уровню первой карточки объявлений, а не под шапкой */
+    padding: 96px 16px 32px;
     overflow-y: auto;
     background: radial-gradient(70% 60% at 50% 30%, rgba(8,12,15,.6) 0%, rgba(8,12,15,.9) 100%);
     animation: lgdim .3s ease both; }
@@ -474,6 +476,9 @@
   .ad-ov .ad-form { width: min(520px, 100%); margin: 0 auto; display: flex;
     border-radius: 20px; padding: 18px 20px 22px; animation: docin .4s cubic-bezier(.16,1,.3,1) both; }
   .ad-head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .dd-wide .dd-btn { max-width: none; width: 100%; justify-content: space-between;
+    padding: 10px 12px; font-size: 14px; border-radius: 11px; }
+  .dd-wide .dd-list { left: 0; right: auto; width: 100%; }
   .ad-head h3 { flex: 1; margin: 0; font-size: 17px; font-weight: 700; }
   body.ad-open { overflow: hidden; }
   /* свой выпадающий список: системный select на телефоне открывается
@@ -887,6 +892,7 @@
   }
   @media (min-width: 1024px) {
     :root { --list: 380px; --list-pad: 28px; }
+    .ad-ov { padding-top: 177px; }      /* вровень с первой карточкой */
     /* «Профиль» — в самый низ панели; лишнее на десктопе прячем */
     nav.tabbar button[data-tab="profile"] { margin-top: auto; }
     /* подпункт метки: сдвиг вправо относительно «Меток» (правило кнопок
@@ -1245,21 +1251,17 @@
           <div class="ad-head"><h3 id="ad-ov-title">Новое объявление</h3>
             <button type="button" class="doc-x" id="ad-x" aria-label="Закрыть">×</button></div>
 
-        <select id="ad-cat">
-          <option value="oil">Нефтепродукты</option>
-          <option value="metal">Металлолом</option>
-          <option value="pipe">Трубы</option>
-          <option value="other">Другое</option>
-        </select>
+        <div class="lb-field">
+          <label for="ad-cat-btn">Раздел</label>
+          <div class="dd dd-wide" id="ad-cat-dd"></div>
+          <input type="hidden" id="ad-cat" value="oil">
+        </div>
         <input id="ad-title" maxlength="120" placeholder="Заголовок — что продаёте">
         <textarea id="ad-desc" maxlength="2000" rows="3" placeholder="Описание: объём, состояние, условия вывоза"></textarea>
         <div class="ad-row">
           <input id="ad-price" maxlength="40" placeholder="Цена, ₽">
-          <select id="ad-vat">
-            <option value="">НДС не указан</option>
-            <option value="with">с НДС</option>
-            <option value="without">без НДС</option>
-          </select>
+          <div class="dd" id="ad-vat-dd"></div>
+          <input type="hidden" id="ad-vat" value="">
           <label class="ad-neg"><input type="checkbox" id="ad-neg"> Договорная</label>
         </div>
         <input id="ad-region" maxlength="80" placeholder="Регион / город вывоза">
@@ -2664,6 +2666,26 @@ function loadAds(){
 }
 
 /* ——— Подача объявления: открыть форму, свернуть её после отправки ——— */
+
+/* Списки в форме объявления — свои, как в фильтрах: системный select на
+   телефоне разворачивается во весь экран и выглядит чужим. Значение держим
+   в скрытом поле, чтобы отправка формы не менялась. */
+var AD_CATS = [{v: 'oil', label: 'Нефтепродукты'}, {v: 'metal', label: 'Металлолом'},
+               {v: 'pipe', label: 'Трубы'}, {v: 'other', label: 'Другое'}];
+var AD_VATS = [{v: '', label: 'НДС не указан'}, {v: 'with', label: 'с НДС'},
+               {v: 'without', label: 'без НДС'}];
+
+function adSelects(){
+  var cat = document.getElementById('ad-cat'), vat = document.getElementById('ad-vat');
+  if(!cat || !vat) return;
+  ddSet('ad-cat-dd', {items: AD_CATS, value: cat.value || 'oil',
+    empty: 'Нефтепродукты',
+    onPick: function(v){ cat.value = v; adSelects(); }});
+  ddSet('ad-vat-dd', {items: AD_VATS, value: vat.value || '',
+    empty: 'НДС не указан',
+    onPick: function(v){ vat.value = v; adSelects(); }});
+}
+
 function adFormOpen(правка){
   var ov=document.getElementById('ad-ov'), f=document.getElementById('ad-form');
   if(!ov || !f) return;
@@ -2678,6 +2700,7 @@ function adFormOpen(правка){
   }
   document.getElementById('ad-submit').disabled=false;
   document.getElementById('ad-hint').textContent='';
+  adSelects();
   try{ document.getElementById('ad-title').focus({preventScroll:true}); }catch(_){}
 }
 
