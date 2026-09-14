@@ -321,6 +321,8 @@
   .plan-sum small { display: block; font-size: 12.5px; font-weight: 600;
     color: var(--dim); letter-spacing: 0; margin-top: 2px; }
   .plan-total { font-size: 13px; color: var(--dim); }
+  .plan-sum s { color: var(--faint); font-weight: 600; font-size: 17px;
+    margin-right: 6px; }
   .plan-cta { justify-content: center; margin-top: 4px; }
   .ref-note { color: var(--dim); }
   @media (min-width: 961px) { .plans { grid-template-columns: repeat(3, 1fr); }
@@ -940,19 +942,19 @@
           <div class="stack-label mono">Так выглядят лоты в ленте</div>
           <!--SHOWCASE_START-->
           <article class="lot" style="--m: var(--oil); --i: 0; --z: 48">
-            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
-            <div class="lot-title">Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Нефтеюганск</div>
-            <div class="lot-meta"><span>ХМАО — Югра</span><span>приём заявок до 15 сентября</span></div>
+            <div class="lot-head mono"><span>ГИС Торги</span><span>реализация</span></div>
+            <div class="lot-title">Мазут флотский</div>
+            <div class="lot-meta"><span>Россия</span><span class="lot-price">89 151 066 ₽</span></div>
           </article>
           <article class="lot" style="--m: var(--scrap); --i: 1; --z: 24">
-            <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
-            <div class="lot-title">Лом чёрных металлов, 200 т, Жердевский сахарный завод</div>
-            <div class="lot-meta"><span>Тамбовская область</span><span>самовывоз</span></div>
+            <div class="lot-head mono"><span>ГИС Торги</span><span>реализация</span></div>
+            <div class="lot-title">Лом черных и цветных металлов</div>
+            <div class="lot-meta"><span>Россия</span><span class="lot-price">946 143 ₽</span></div>
           </article>
           <article class="lot" style="--m: var(--pipe); --i: 2; --z: 0">
-            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
-            <div class="lot-title">Труба обсадная 139,7×9,17 P-110 с муфтами, 61 т</div>
-            <div class="lot-meta"><span>Ямало-Ненецкий АО</span><span class="lot-price">6 285 866 ₽</span></div>
+            <div class="lot-head mono"><span>ГИС Торги</span><span>реализация</span></div>
+            <div class="lot-title">Линия производства ПЭ труб ЛТ 20/40 2008 года изготовления</div>
+            <div class="lot-meta"><span>Россия</span><span class="lot-price">250 000 ₽</span></div>
           </article>
           <!--SHOWCASE_END-->
         </div>
@@ -967,8 +969,8 @@
   <section class="section proof" style="padding-top:96px" aria-label="Сервис в цифрах">
     <div class="wrap">
       <div class="grid-4">
-        <div class="stat" data-i style="--i:0"><div class="num display" data-to="18">18</div><div class="lbl">площадок под наблюдением, проверка каждый час</div></div>
-        <div class="stat" data-i style="--i:1"><div class="num display" data-to="1000" data-suffix="+"><!--LOTS_START-->1000<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
+        <div class="stat" data-i style="--i:0"><div class="num display" data-to="18">18</div><!--SITES_COUNT--><div class="lbl">площадок под наблюдением, проверка каждый час</div></div>
+        <div class="stat" data-i style="--i:1"><div class="num display" data-to="508" data-suffix="+"><!--LOTS_START-->508<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
         <div class="stat" data-i style="--i:2"><div class="num display" data-to="24" data-suffix="/7">24<small>/7</small></div><div class="lbl">мониторинг площадок в режиме онлайн, без выходных</div></div>
         <div class="stat" data-i style="--i:3"><div class="num display" data-to="3">3</div><div class="lbl">вида сырья: нефтепродукты, лом, трубы</div></div>
       </div>
@@ -1137,18 +1139,18 @@
           <div class="plan">
             <div class="plan-term mono">1 месяц</div>
             <div class="plan-sum display">1 299 ₽<small>в месяц</small></div>
-            <div class="plan-total">помесячно, без обязательств</div>
+            <div class="plan-total">итого 1 299 ₽ · без обязательств</div>
           </div>
           <div class="plan">
             <div class="plan-term mono">3 месяца</div>
-            <div class="plan-sum display">999 ₽<small>в месяц</small></div>
-            <div class="plan-total">всего 2 997 ₽ · экономия 900 ₽</div>
+            <div class="plan-sum display"><s>1 299 ₽</s> 999 ₽<small>в месяц</small></div>
+            <div class="plan-total">итого 2 997 ₽ · экономия 900 ₽</div>
           </div>
           <div class="plan plan-best">
             <span class="plan-flag">выгоднее всего</span>
             <div class="plan-term mono">6 месяцев</div>
-            <div class="plan-sum display">699 ₽<small>в месяц</small></div>
-            <div class="plan-total">всего 4 194 ₽ · экономия 3 600 ₽</div>
+            <div class="plan-sum display"><s>1 299 ₽</s> 699 ₽<small>в месяц</small></div>
+            <div class="plan-total">итого 4 194 ₽ · экономия 3 600 ₽</div>
           </div>
           <a class="btn btn-primary plan-cta" href="/app/">Попробовать бесплатно</a>
         </div>

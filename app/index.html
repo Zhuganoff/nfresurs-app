@@ -436,7 +436,7 @@
 
   /* три тарифа — прямоугольные блоки рядом */
   .tariffs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px; margin: 0 0 14px; }
+    gap: 8px; margin: 8px 0 14px; }
   .tariff { position: relative; padding: 12px 10px; border-radius: 12px; cursor: pointer;
     border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.12);
     color: #fff; text-align: center; transition: background .16s, border-color .16s, transform .16s; }
@@ -453,6 +453,13 @@
     border-radius: 999px; font-size: 10.5px; font-weight: 700;
     background: rgba(255,255,255,.28); }
   .tariff.on .t-save { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+  .tariff .t-month s { opacity: .55; font-weight: 600; font-size: 13px; }
+  .tariff.best { border-color: #fff; }
+  .t-flag { position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+    padding: 1px 8px; border-radius: 999px; background: #fff; color: var(--accent);
+    font-size: 9.5px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .04em; white-space: nowrap; }
+  .tariff.on .t-flag { background: var(--accent); color: #fff; }
   .wal-top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .wal-sum { font-size: 26px; font-weight: 800; letter-spacing: -.02em;
     font-variant-numeric: tabular-nums; }
@@ -1456,7 +1463,7 @@
         <div class="ehint">На эту почту приходят тендеры по кнопке «Отправить на почту». Подтверждается кодом.<br>Регистрируя почту, вы соглашаетесь на обработку персональных данных согласно <a href="#" onclick="openDoc('../privacy.html');return false" style="color:var(--accent);text-decoration:underline">Политике конфиденциальности</a>.</div>
       </div>
       <div class="group">
-        <div class="label">Площадки · <span id="plat-on"></span> из 19</div>
+        <div class="label">Площадки · <span id="plat-on"></span> из <span id="plat-all">—</span></div>
         <div class="efield">
           <input id="suggest-url" class="search" type="url" placeholder="Ссылка на площадку — предложить" autocomplete="off" style="font-size:13px">
           <button class="ebtn" id="suggest-btn">Предложить</button>
@@ -1705,6 +1712,7 @@ function renderDetails(t){
     .catch(function(){ if(_modalT===t) box.innerHTML='<div class="det-note">Подробности с площадки сейчас недоступны.</div>'; });
 }
 function openTender(t){
+  try{ track('lot_opened', {site: t && t.site}); }catch(_){}
   _modalT=t;
   // открыли предпросмотр — снимаем метку NEW (во всех вкладках)
   var kk=key(t);
@@ -2181,6 +2189,7 @@ document.addEventListener('click',e=>{
     var wb=e.target.closest('#sub-wallet'); wb.disabled=true;
     api('/api/billing/pay',{plan:BILL.plan}).then(function(d){
       wb.disabled=false;
+      track('ref_wallet_used', {plan: BILL.plan});
       showToast('Тариф оплачен кошельком');
       var pw=document.getElementById('paywall'); if(pw) pw.style.display='none';
       loadBilling(); loadSubscription();
@@ -2860,6 +2869,7 @@ loadAlerts();
 // сверить недавно завершённую оплату (вебхук мог опоздать), затем показать статус
 api('/api/pay/status',{}).catch(function(){}).then(function(){ loadSubscription(); });
 loadBilling().then(billRefFromLink);
+loadPlatforms();
 // метки грузим при старте: подпункты в боковом меню нужны сразу
 lbLoadRegions().then(function(){ return lbLoad(); });
 
@@ -2882,21 +2892,32 @@ function billPaint(){
     BILL.plans.forEach(function(p){
       var b = document.createElement('button');
       b.type = 'button';
-      b.className = 'tariff' + (p.code === BILL.plan ? ' on' : '');
+      b.className = 'tariff' + (p.code === BILL.plan ? ' on' : '')
+        + (p.code === 'm6' ? ' best' : '');
+      if(p.code === 'm6'){
+        var флаг = document.createElement('span');
+        флаг.className = 't-flag'; флаг.textContent = 'выгоднее всего';
+        b.appendChild(флаг);
+      }
       b.dataset.plan = p.code;
       var срок = document.createElement('div');
       срок.className = 't-term'; срок.textContent = p.title;
       var мес = document.createElement('div');
       мес.className = 't-month';
-      мес.innerHTML = p.per_month.toLocaleString('ru-RU') + ' ₽<small> / мес</small>';
+      var база = (BILL.plans[0] || {}).per_month || 0;
+      // зачёркнутая помесячная цена показывает, от чего считается скидка
+      мес.innerHTML = (p.save > 0 && база
+          ? '<s>' + база.toLocaleString('ru-RU') + '</s> ' : '')
+        + p.per_month.toLocaleString('ru-RU') + ' ₽<small> / мес</small>';
       var итого = document.createElement('div');
       итого.className = 't-total';
-      итого.textContent = p.months > 1 ? ('всего ' + p.price.toLocaleString('ru-RU') + ' ₽')
-                                       : 'помесячно';
+      итого.textContent = p.months > 1 ? ('итого ' + p.price.toLocaleString('ru-RU') + ' ₽')
+                                       : 'итого ' + p.price.toLocaleString('ru-RU') + ' ₽';
       b.appendChild(срок); b.appendChild(мес); b.appendChild(итого);
       if(p.save > 0){
         var в = document.createElement('span');
-        в.className = 't-save'; в.textContent = 'выгода ' + p.save.toLocaleString('ru-RU') + ' ₽';
+        в.className = 't-save';
+        в.textContent = 'экономия ' + p.save.toLocaleString('ru-RU') + ' ₽';
         b.appendChild(в);
       }
       b.addEventListener('click', function(){ BILL.plan = p.code; billPaint(); });
@@ -2949,6 +2970,34 @@ function billHistory(список){
   });
 }
 
+
+/* Площадки берём с сервера: список включённых живёт в config.toml, и число
+   не должно быть вписано руками ни здесь, ни на лендинге. */
+
+/* Событие воронки. Отправляем тихо: аналитика не должна мешать работе,
+   поэтому ошибки глотаем и ничего не ждём. */
+function track(имя, свойства, источник){
+  try {
+    api('/api/event', {name: имя, props: свойства || null,
+                       source: источник || ''}).catch(function(){});
+  } catch(_){}
+}
+
+function loadPlatforms(){
+  return api('/api/platforms').then(function(d){
+    var список = (d && d.platforms) || [];
+    if(!список.length) return;
+    список.forEach(function(p){ PLATFORMS[p.code] = p.title; PSTATE[p.code] = 'on'; });
+    ((d && d.disabled) || []).forEach(function(p){
+      PLATFORMS[p.code] = p.title; PSTATE[p.code] = 'wait'; });
+    var всего = document.getElementById('plat-all');
+    if(всего) всего.textContent = d.count;
+    var вкл = document.getElementById('plat-on');
+    if(вкл) вкл.textContent = d.count;
+    try { render(); } catch(_){}
+  }).catch(function(){});
+}
+
 function loadBilling(){
   return api('/api/billing/status').then(function(d){
     BILL.plans = (d && d.plans) || [];
@@ -2989,6 +3038,7 @@ function refTake(){
 
 function billRefFromLink(){
   var код = refTake();
+  if(код) track('ref_link_open', {code: код.slice(0, 12)}, 'referral');
   if(!код) return Promise.resolve();
   return api('/api/billing/referral', {code: код}).then(function(d){
     // код отработал (засчитан или отвергнут) — второй раз не шлём
