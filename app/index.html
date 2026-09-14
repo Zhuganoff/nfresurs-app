@@ -433,6 +433,36 @@
     .ac-ph { flex-basis: 96px; width: 96px; min-height: 88px; }
   }
 
+
+  /* три тарифа — прямоугольные блоки рядом */
+  .tariffs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px; margin: 0 0 14px; }
+  .tariff { position: relative; padding: 12px 10px; border-radius: 12px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.12);
+    color: #fff; text-align: center; transition: background .16s, border-color .16s, transform .16s; }
+  .tariff:hover { background: rgba(255,255,255,.2); }
+  .tariff.on { background: #fff; color: var(--accent); border-color: #fff;
+    transform: translateY(-2px); box-shadow: 0 8px 20px -10px rgba(0,0,0,.55); }
+  .tariff .t-term { font-size: 11.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .05em; opacity: .85; }
+  .tariff .t-month { font-size: 19px; font-weight: 800; margin: 4px 0 2px;
+    font-variant-numeric: tabular-nums; }
+  .tariff .t-month small { font-size: 11px; font-weight: 600; opacity: .8; }
+  .tariff .t-total { font-size: 11.5px; opacity: .8; font-variant-numeric: tabular-nums; }
+  .tariff .t-save { display: inline-block; margin-top: 6px; padding: 1px 7px;
+    border-radius: 999px; font-size: 10.5px; font-weight: 700;
+    background: rgba(255,255,255,.28); }
+  .tariff.on .t-save { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+  .wal-top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .wal-sum { font-size: 26px; font-weight: 800; letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums; }
+  .wal-hint { font-size: 12.5px; color: var(--text-faint); }
+  .wal-hist { display: flex; flex-direction: column; gap: 4px; margin-top: 10px;
+    font-size: 12.5px; color: var(--text-dim); }
+  .wal-hist .wal-op { display: flex; justify-content: space-between; gap: 12px; }
+  .wal-hist .wal-op b { font-variant-numeric: tabular-nums; }
+  .wal-op.plus b { color: var(--accent); }
+  @media (max-width: 380px) { .tariffs { grid-template-columns: 1fr; } }
   /* подача объявления — окном поверх страницы, как вход и регистрация:
      формой во всю ширину ленты пользоваться неудобно */
   .ad-ov { position: fixed; inset: 0; z-index: 95; display: flex;
@@ -1329,16 +1359,32 @@
       </div>
       <div class="sub-card">
         <div class="sub-head"><span class="sub-plan">Подписка</span><span class="sub-status" id="sub-status">пробный период</span></div>
-        <div class="sub-price">499 ₽<small> / месяц</small></div>
+        <div class="tariffs" id="tariffs"></div>
         <ul class="sub-benefits">
-          <li>Мгновенные алерты о новых тендерах</li>
+          <li>Мгновенные алерты о новых лотах по вашим меткам</li>
           <li>Полная лента: нефтепродукты, металлолом, трубы</li>
           <li>Отправка документов лота в Телеграм и на почту</li>
           <li>Все площадки реализации, поиск и избранное</li>
         </ul>
-        <button class="sub-btn" id="sub-btn">Оформить за 499 ₽ / мес</button>
+        <button class="sub-btn" id="sub-btn">Оформить</button>
+        <button class="sub-btn sub-btn-alt" id="sub-wallet" style="display:none">Оплатить кошельком</button>
         <button class="sub-btn sub-btn-alt" id="sub-sbp" style="display:none">Оплатить через СБП или картой на сайте</button>
-        <div class="sub-note">Первые 7 дней — бесплатно. Далее 499 ₽/мес, оплата картой или через СБП. Отписаться можно в любой момент.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:#fff;text-decoration:underline">условия оферты</a>.</div>
+        <div class="sub-note">Первые 7 дней — бесплатно. Дальше выбранный тариф, оплата картой или через СБП.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:#fff;text-decoration:underline">условия оферты</a>.</div>
+      </div>
+      <div class="group" id="wallet-group">
+        <div class="label">💰 Кошелёк</div>
+        <div class="wal-top"><span class="wal-sum" id="wal-sum">0 ₽</span><span class="wal-hint" id="wal-hint">хватит на тариф — оплатите кошельком</span></div>
+        <div class="ehint">Сюда падает процент с оплат тех, кого вы пригласили. Деньги внутренние: ими оплачивают тариф, вывести нельзя.</div>
+        <div class="wal-hist" id="wal-hist"></div>
+      </div>
+      <div class="group" id="ref-group">
+        <div class="label">🤝 Приглашайте — получайте <span id="ref-percent">10</span>%</div>
+        <div class="ehint" style="margin-bottom:8px">Отправьте ссылку: когда приглашённый оплатит тариф, вам на кошелёк придёт процент с каждой его оплаты.</div>
+        <div class="efield">
+          <input id="ref-link" class="search" type="text" readonly style="font-size:13px">
+          <button class="ebtn" id="ref-copy" type="button">Копировать</button>
+        </div>
+        <div class="ehint" id="ref-stats">Приглашено: 0 · заработано: 0 ₽</div>
       </div>
       <div class="myads-block">
         <button class="myads-toggle" id="myads-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3z"/><path d="M8 9h8M8 12h5"/></svg>Мои объявления</button>
@@ -2108,7 +2154,7 @@ document.addEventListener('click',e=>{
     var inTg=false; try{ inTg=!!(tg&&tg.initData); }catch(_){}
     if(inTg){
       // Telegram — инвойс через createInvoiceLink
-      api('/api/subscription/pay',{}).then(function(d){
+      api('/api/subscription/pay',{plan: BILL.plan}).then(function(d){
         if(!d || d.not_ready || !d.link){ if(tg&&tg.showAlert) tg.showAlert('Оплата временно недоступна.'); return; }
         if(tg&&tg.openInvoice){
           tg.openInvoice(d.link, function(status){
@@ -2122,11 +2168,31 @@ document.addEventListener('click',e=>{
       // Браузер — веб-касса ЮKassa: редирект на страницу оплаты
       var b=e.target.closest('#sub-btn')||e.target.closest('#pw-btn'); var old=b?b.textContent:'';
       if(b){ b.disabled=true; b.textContent='Открываем оплату…'; }
-      api('/api/pay/create',{}).then(function(d){
+      api('/api/pay/create',{plan: BILL.plan}).then(function(d){
         if(d && d.confirmation_url){ window.location.href=d.confirmation_url; }
         else { if(b){ b.disabled=false; b.textContent=old; } alert('Не удалось начать оплату.'); }
       }).catch(function(err){ if(b){ b.disabled=false; b.textContent=old; } alert((err&&err.message)||'Оплата недоступна'); });
     }
+    return;
+  }
+  if(e.target.closest('#sub-wallet')){
+    var wb=e.target.closest('#sub-wallet'); wb.disabled=true;
+    api('/api/billing/pay',{plan:BILL.plan}).then(function(d){
+      wb.disabled=false;
+      showToast('Тариф оплачен кошельком');
+      var pw=document.getElementById('paywall'); if(pw) pw.style.display='none';
+      loadBilling(); loadSubscription();
+    }).catch(function(err){
+      wb.disabled=false;
+      showToast((err&&err.message)||'Не удалось оплатить кошельком');
+    });
+    return;
+  }
+  if(e.target.closest('#ref-copy')){
+    var поле=document.getElementById('ref-link');
+    try{ поле.select(); document.execCommand('copy'); }catch(_){}
+    try{ if(navigator.clipboard) navigator.clipboard.writeText(поле.value); }catch(_){}
+    showToast('Ссылка скопирована');
     return;
   }
   if(e.target.closest('#ad-new')){ adFormOpen(); return; }
@@ -2770,8 +2836,125 @@ function loadAlerts(){
 loadAlerts();
 // сверить недавно завершённую оплату (вебхук мог опоздать), затем показать статус
 api('/api/pay/status',{}).catch(function(){}).then(function(){ loadSubscription(); });
+loadBilling().then(billRefFromLink);
 // метки грузим при старте: подпункты в боковом меню нужны сразу
 lbLoadRegions().then(function(){ return lbLoad(); });
+
+/* ——— Тарифы, кошелёк и рефералы ———
+   Три тарифа: чем длиннее срок, тем дешевле месяц. Кошелёк — внутренние
+   деньги с приглашений, ими оплачивают тариф целиком (частичной оплаты нет:
+   так проще и честнее, человек видит, сколько ещё не хватает). */
+var BILL = { plans: [], plan: 'm3', wallet: 0, ref: null };
+
+function рубли(коп){
+  var r = (коп || 0) / 100;
+  return (Math.round(r * 100) / 100).toLocaleString('ru-RU',
+    {minimumFractionDigits: r % 1 ? 2 : 0, maximumFractionDigits: 2}) + ' ₽';
+}
+
+function billPaint(){
+  var box = document.getElementById('tariffs');
+  if(box){
+    box.innerHTML = '';
+    BILL.plans.forEach(function(p){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'tariff' + (p.code === BILL.plan ? ' on' : '');
+      b.dataset.plan = p.code;
+      var срок = document.createElement('div');
+      срок.className = 't-term'; срок.textContent = p.title;
+      var мес = document.createElement('div');
+      мес.className = 't-month';
+      мес.innerHTML = p.per_month.toLocaleString('ru-RU') + ' ₽<small> / мес</small>';
+      var итого = document.createElement('div');
+      итого.className = 't-total';
+      итого.textContent = p.months > 1 ? ('всего ' + p.price.toLocaleString('ru-RU') + ' ₽')
+                                       : 'помесячно';
+      b.appendChild(срок); b.appendChild(мес); b.appendChild(итого);
+      if(p.save > 0){
+        var в = document.createElement('span');
+        в.className = 't-save'; в.textContent = 'выгода ' + p.save.toLocaleString('ru-RU') + ' ₽';
+        b.appendChild(в);
+      }
+      b.addEventListener('click', function(){ BILL.plan = p.code; billPaint(); });
+      box.appendChild(b);
+    });
+  }
+  var выбран = BILL.plans.filter(function(p){ return p.code === BILL.plan; })[0];
+  var кнопка = document.getElementById('sub-btn');
+  if(кнопка && !кнопка.disabled && выбран)
+    кнопка.textContent = 'Оформить за ' + выбран.price.toLocaleString('ru-RU') + ' ₽';
+  // кошелёк
+  var сум = document.getElementById('wal-sum');
+  if(сум) сум.textContent = рубли(BILL.wallet);
+  var хватает = выбран && BILL.wallet >= выбран.price * 100;
+  var подсказка = document.getElementById('wal-hint');
+  if(подсказка){
+    подсказка.textContent = !BILL.wallet ? 'пока пусто — пригласите первого'
+      : (хватает ? 'хватает на выбранный тариф' :
+         'не хватает ' + рубли(выбран.price * 100 - BILL.wallet));
+  }
+  var кош = document.getElementById('sub-wallet');
+  if(кош){
+    кош.style.display = хватает ? 'block' : 'none';
+    if(выбран) кош.textContent = 'Оплатить кошельком — ' + выбран.price.toLocaleString('ru-RU') + ' ₽';
+  }
+  // рефералы
+  if(BILL.ref){
+    var поле = document.getElementById('ref-link');
+    if(поле) поле.value = BILL.ref.link;
+    var проц = document.getElementById('ref-percent');
+    if(проц) проц.textContent = BILL.ref.percent;
+    var ст = document.getElementById('ref-stats');
+    if(ст) ст.textContent = 'Приглашено: ' + BILL.ref.invited
+      + ' · заработано: ' + рубли(BILL.ref.earned_kop);
+  }
+}
+
+function billHistory(список){
+  var box = document.getElementById('wal-hist'); if(!box) return;
+  box.innerHTML = '';
+  (список || []).forEach(function(о){
+    var row = document.createElement('div');
+    row.className = 'wal-op' + (о.amount_kop > 0 ? ' plus' : '');
+    var имя = document.createElement('span');
+    имя.textContent = о.note || (о.amount_kop > 0 ? 'начисление' : 'списание');
+    var сум = document.createElement('b');
+    сум.textContent = (о.amount_kop > 0 ? '+' : '−') + рубли(Math.abs(о.amount_kop));
+    row.appendChild(имя); row.appendChild(сум);
+    box.appendChild(row);
+  });
+}
+
+function loadBilling(){
+  return api('/api/billing/status').then(function(d){
+    BILL.plans = (d && d.plans) || [];
+    BILL.wallet = (d && d.wallet_kop) || 0;
+    BILL.ref = d && d.referral;
+    if(!BILL.plans.some(function(p){ return p.code === BILL.plan; }) && BILL.plans.length)
+      BILL.plan = BILL.plans[0].code;
+    billPaint();
+    billHistory(d && d.history);
+  }).catch(function(){});
+}
+
+/* Код приглашения приходит ссылкой ?ref= или параметром запуска бота.
+   Отправляем его один раз: сервер сам решит, засчитывать или нет. */
+function billRefFromLink(){
+  var код = '';
+  try {
+    код = new URLSearchParams(location.search).get('ref') || '';
+    if(!код && location.hash) {
+      var m = location.hash.match(/ref=([A-Za-z0-9]+)/); if(m) код = m[1];
+    }
+  } catch(_){}
+  try { if(!код && tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param)
+    код = String(tg.initDataUnsafe.start_param).replace(/^ref[_-]?/i, ''); } catch(_){}
+  if(!код) return;
+  api('/api/billing/referral', {code: код}).then(function(){ loadBilling(); })
+    .catch(function(){});
+}
+
 function loadSubscription(){
   api('/api/subscription/status').then(function(d){
     var st=document.getElementById('sub-status');

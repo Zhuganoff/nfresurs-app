@@ -301,6 +301,30 @@
   .sources-m > summary::after { content: "▾"; transition: transform .3s; }
   .sources-m[open] > summary::after { transform: rotate(180deg); }
   .sources-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 0 16px; }
+
+  /* три тарифа: прямоугольные блоки, средний выделен */
+  .plans { display: grid; gap: 10px; }
+  .plan { position: relative; padding: 14px 16px; border-radius: 14px;
+    border: 1px solid var(--hair); background: rgba(27,37,46,.55);
+    transition: border-color .2s, background .2s, transform .2s; }
+  .plan:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--hair));
+    transform: translateY(-2px); }
+  .plan-best { border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+    background: color-mix(in srgb, var(--accent) 10%, rgba(27,37,46,.6));
+    box-shadow: 0 0 34px -16px var(--accent); }
+  .plan-flag { position: absolute; top: -9px; right: 14px; padding: 2px 9px;
+    border-radius: 999px; background: var(--accent); color: #06211d;
+    font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+  .plan-term { font-size: 11.5px; color: var(--faint); letter-spacing: .08em; }
+  .plan-sum { font-size: 27px; line-height: 1.1; margin: 4px 0 3px; }
+  /* «в месяц» отдельной строкой: рядом с ценой оно рвалось посередине */
+  .plan-sum small { display: block; font-size: 12.5px; font-weight: 600;
+    color: var(--dim); letter-spacing: 0; margin-top: 2px; }
+  .plan-total { font-size: 13px; color: var(--dim); }
+  .plan-cta { justify-content: center; margin-top: 4px; }
+  .ref-note { color: var(--dim); }
+  @media (min-width: 961px) { .plans { grid-template-columns: repeat(3, 1fr); }
+    .plan-cta { grid-column: 1 / -1; justify-self: start; } }
   /* эмблемы площадок — всегда цветные; у кого картинки нет, цветная плашка */
   .ticker .src, .sources-list .src { display: inline-flex; align-items: center; gap: 9px; }
   .ticker img, .sources-list img { width: 22px; height: 22px; object-fit: contain; border-radius: 5px; }
@@ -1105,12 +1129,28 @@
       <div class="price-wrap"><div class="price">
         <div>
           <span class="eyebrow mono">Стоимость</span>
-          <h2 class="display one">Один тариф. Всё включено</h2>
-          <p>Первые 7 дней — бесплатно, чтобы посмотреть ленту и понять, есть ли в ней ваши лоты. Дальше подписка: все площадки, уведомления и доска объявлений. Оплата картой или через СБП на сайте, либо прямо в Telegram. Условия — в <a href="oferta.html">публичной оферте</a>.</p>
+          <h2 class="display one">Три тарифа. Всё включено</h2>
+          <p>Первые 7 дней — бесплатно, чтобы посмотреть ленту и понять, есть ли в ней ваши лоты. Дальше подписка: все площадки, уведомления по меткам и доска объявлений. Чем длиннее срок, тем дешевле месяц. Оплата картой или через СБП, либо прямо в Telegram. Условия — в <a href="oferta.html">публичной оферте</a>.</p>
+          <p class="ref-note">Приводите коллег: с каждой их оплаты 10% возвращается вам на внутренний кошелёк — им можно оплатить свой тариф.</p>
         </div>
-        <div>
-          <div class="price-big display">499 ₽<small>в месяц</small></div>
-          <a class="btn btn-primary" href="/app/">Попробовать бесплатно</a>
+        <div class="plans">
+          <div class="plan">
+            <div class="plan-term mono">1 месяц</div>
+            <div class="plan-sum display">1 299 ₽<small>в месяц</small></div>
+            <div class="plan-total">помесячно, без обязательств</div>
+          </div>
+          <div class="plan plan-best">
+            <span class="plan-flag">выгодно</span>
+            <div class="plan-term mono">3 месяца</div>
+            <div class="plan-sum display">999 ₽<small>в месяц</small></div>
+            <div class="plan-total">всего 2 997 ₽ · экономия 900 ₽</div>
+          </div>
+          <div class="plan">
+            <div class="plan-term mono">6 месяцев</div>
+            <div class="plan-sum display">799 ₽<small>в месяц</small></div>
+            <div class="plan-total">всего 4 794 ₽ · экономия 3 000 ₽</div>
+          </div>
+          <a class="btn btn-primary plan-cta" href="/app/">Попробовать бесплатно</a>
         </div>
       </div></div>
     </div>
