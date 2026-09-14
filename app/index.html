@@ -1389,7 +1389,7 @@
         <div class="ehint">На эту почту приходят тендеры по кнопке «Отправить на почту». Подтверждается кодом.<br>Регистрируя почту, вы соглашаетесь на обработку персональных данных согласно <a href="#" onclick="openDoc('../privacy.html');return false" style="color:var(--accent);text-decoration:underline">Политике конфиденциальности</a>.</div>
       </div>
       <div class="group">
-        <div class="label">Площадки · <span id="plat-on"></span> из 18</div>
+        <div class="label">Площадки · <span id="plat-on"></span> из 19</div>
         <div class="efield">
           <input id="suggest-url" class="search" type="url" placeholder="Ссылка на площадку — предложить" autocomplete="off" style="font-size:13px">
           <button class="ebtn" id="suggest-btn">Предложить</button>
@@ -1500,8 +1500,9 @@ try {
   }
 } catch(_) { tg = null; }
 
-const PLATFORMS = {tektorg:'ТЭК-Торг',rosneft:'Роснефть',etpgpb:'ЭТП ГПБ',b2b_center:'B2B-Center',onlinecontract:'OnlineContract',sberbank_ast:'Сбербанк-АСТ',interrao:'Интер РАО',nelikvidi:'Неликвиды',slavneft:'Славнефть',isource:'isource Reserve',bidzaar:'Bidzaar',alrosa:'АЛРОСА',reo:'ЭТП РЭО',enplus:'Эн+'};
-const PSTATE = {tektorg:'on',rosneft:'on',etpgpb:'on',b2b_center:'on',onlinecontract:'on',sberbank_ast:'on',interrao:'on',nelikvidi:'wait',slavneft:'on',isource:'on',bidzaar:'on',alrosa:'on',reo:'on',enplus:'on'};
+const PLATFORMS = {
+  torgi:'ГИС Торги',tektorg:'ТЭК-Торг',rosneft:'Роснефть',etpgpb:'ЭТП ГПБ',b2b_center:'B2B-Center',onlinecontract:'OnlineContract',sberbank_ast:'Сбербанк-АСТ',interrao:'Интер РАО',nelikvidi:'Неликвиды',slavneft:'Славнефть',isource:'isource Reserve',bidzaar:'Bidzaar',alrosa:'АЛРОСА',reo:'ЭТП РЭО',enplus:'Эн+'};
+const PSTATE = {torgi:'on',tektorg:'on',rosneft:'on',etpgpb:'on',b2b_center:'on',onlinecontract:'on',sberbank_ast:'on',interrao:'on',nelikvidi:'wait',slavneft:'on',isource:'on',bidzaar:'on',alrosa:'on',reo:'on',enplus:'on'};
 const REF = new Date();
 let TENDERS = [], favs = new Set(), seen = new Set(), statuses = {};
 
