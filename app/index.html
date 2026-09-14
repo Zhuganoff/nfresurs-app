@@ -432,6 +432,20 @@
   @media (max-width: 420px) {
     .ac-ph { flex-basis: 96px; width: 96px; min-height: 88px; }
   }
+
+  /* подача объявления — окном поверх страницы, как вход и регистрация:
+     формой во всю ширину ленты пользоваться неудобно */
+  .ad-ov { position: fixed; inset: 0; z-index: 95; display: flex;
+    align-items: flex-start; justify-content: center; padding: 32px 16px;
+    overflow-y: auto;
+    background: radial-gradient(70% 60% at 50% 30%, rgba(8,12,15,.6) 0%, rgba(8,12,15,.9) 100%);
+    animation: lgdim .3s ease both; }
+  .ad-ov[hidden] { display: none; }
+  .ad-ov .ad-form { width: min(520px, 100%); margin: 0 auto; display: flex;
+    border-radius: 20px; padding: 18px 20px 22px; animation: docin .4s cubic-bezier(.16,1,.3,1) both; }
+  .ad-head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .ad-head h3 { flex: 1; margin: 0; font-size: 17px; font-weight: 700; }
+  body.ad-open { overflow: hidden; }
   /* свой выпадающий список: системный select на телефоне открывается
      во весь экран и не попадает в оформление приложения */
   .dd { position: relative; flex: 0 1 auto; }
@@ -1196,7 +1210,11 @@
     <section class="pane" id="pane-ads">
       <div class="pane-head"><h2>Объявления</h2><button class="ad-new-btn" id="ad-new">＋ Подать</button></div>
       <div class="ad-intro">Частные объявления о продаже сырья напрямую. Проходят модерацию перед публикацией.</div>
-      <div id="ad-form" class="ad-form" style="display:none">
+      <div class="ad-ov" id="ad-ov" hidden role="dialog" aria-modal="true" aria-labelledby="ad-ov-title">
+        <div class="ad-form" id="ad-form">
+          <div class="ad-head"><h3 id="ad-ov-title">Новое объявление</h3>
+            <button type="button" class="doc-x" id="ad-x" aria-label="Закрыть">×</button></div>
+
         <select id="ad-cat">
           <option value="oil">Нефтепродукты</option>
           <option value="metal">Металлолом</option>
@@ -1221,6 +1239,7 @@
         <div class="ad-rules-note">Публикуя объявление, вы принимаете <a href="#" onclick="openDoc('../rules.html');return false">правила размещения</a>.</div>
         <button class="ad-submit" id="ad-submit">Отправить на модерацию</button>
         <div id="ad-hint" class="ad-hint"></div>
+        </div>
       </div>
       <div class="ad-done" id="ad-done">
         <span class="ad-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
@@ -2112,6 +2131,8 @@ document.addEventListener('click',e=>{
   }
   if(e.target.closest('#ad-new')){ adFormOpen(); return; }
   if(e.target.closest('#ad-done-ok')){ adDoneHide(); return; }
+  if(e.target.closest('#ad-x')){ adFormClose(); return; }
+  if(e.target.id==='ad-ov'){ adFormClose(); return; }   // клик мимо окна
   if(e.target.closest('.ad-photo-add')){ if(adPhotos.length>=3){ document.getElementById('ad-hint').textContent='Максимум 3 фото'; return; } document.getElementById('ad-files').click(); return; }
   if(e.target.closest('.ad-rm')){ var i=+e.target.closest('.ad-rm').dataset.i; adPhotos.splice(i,1); adThumbs(); return; }
   if(e.target.closest('#ad-submit')){ submitAd(); return; }
@@ -2577,19 +2598,27 @@ function loadAds(){
 }
 
 /* ——— Подача объявления: открыть форму, свернуть её после отправки ——— */
-function adFormOpen(){
-  var f=document.getElementById('ad-form'); if(!f) return;
+function adFormOpen(правка){
+  var ov=document.getElementById('ad-ov'), f=document.getElementById('ad-form');
+  if(!ov || !f) return;
   adDoneHide();
-  var открыта = f.style.display && f.style.display!=='none' && !f.classList.contains('shrink');
+  if(!ov.hidden && !правка){ adFormClose(); return; }   // повторное нажатие закрывает
   f.classList.remove('shrink');
-  if(открыта){ f.style.display='none'; return; }
-  f.style.display='flex';
-  _editAd=null;
-  document.getElementById('ad-submit').textContent='Отправить на модерацию';
+  ov.hidden=false; document.body.classList.add('ad-open');
+  if(!правка){
+    _editAd=null;
+    document.getElementById('ad-ov-title').textContent='Новое объявление';
+    document.getElementById('ad-submit').textContent='Отправить на модерацию';
+  }
   document.getElementById('ad-submit').disabled=false;
   document.getElementById('ad-hint').textContent='';
   try{ document.getElementById('ad-title').focus({preventScroll:true}); }catch(_){}
-  try{ f.scrollIntoView({behavior:'smooth', block:'nearest'}); }catch(_){}
+}
+
+function adFormClose(){
+  var ov=document.getElementById('ad-ov'); if(!ov) return;
+  ov.hidden=true; document.body.classList.remove('ad-open');
+  var f=document.getElementById('ad-form'); if(f) f.classList.remove('shrink');
 }
 
 function adDoneHide(){
@@ -2612,7 +2641,7 @@ function adDoneShow(правка){
   }
   if(f){
     f.classList.add('shrink');
-    setTimeout(function(){ f.style.display='none'; f.classList.remove('shrink'); }, 560);
+    setTimeout(adFormClose, 560);
   }
   setTimeout(function(){
     d.style.display='flex'; d.classList.add('on');
@@ -2666,14 +2695,16 @@ function startEditAd(id){ var a=MYADS.find(function(x){return x.id===id;}); if(!
   document.getElementById('ad-contact').value=a.contact||'';
   adPhotos=[]; adThumbs();
   document.getElementById('ad-submit').textContent='Сохранить изменения';
+  document.getElementById('ad-ov-title').textContent='Правка объявления';
   document.getElementById('ad-vat').value=a.vat||'';
+  adFormOpen(true);
   document.getElementById('ad-hint').textContent=a.nphotos?'Фото сохранятся прежние. Добавите новые — заменят их.':'';
   // переключаемся на вкладку Доска и открываем форму
   document.querySelectorAll('nav.tabbar button').forEach(function(b){b.classList.remove('active');});
   document.querySelector('nav.tabbar button[data-tab="ads"]').classList.add('active');
   document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('active');});
   document.getElementById('pane-ads').classList.add('active');
-  document.getElementById('ad-form').style.display='flex';
+  adFormOpen();                       // форма живёт в окне поверх страницы
   document.querySelector('main').scrollTop=0;
 }
 function deleteAd(id){ var go=function(){ api('/api/ad/delete',{id:id}).then(function(){ if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success'); loadMyAds(); loadAds(); }).catch(function(err){ try{ if(tg&&tg.showAlert) tg.showAlert((err&&err.message)||'Не удалось удалить'); }catch(_){} }); };
