@@ -393,6 +393,13 @@
   nav.tabbar .badge { position: absolute; top: 0; left: 50%; margin-left: 6px; min-width: 16px; height: 16px; padding: 0 4px; background: var(--accent); color: #fff; border-radius: 999px; font-size: 10px; font-weight: 700; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
 
 
+  .ad-card.ad-mine { border-color: color-mix(in srgb, var(--accent) 45%, var(--hair)); }
+  .ac-mine { margin-left: 8px; padding: 1px 8px; border-radius: 999px; font-size: 10.5px;
+    font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  .ac-pending { background: color-mix(in srgb, #e0a06a 22%, transparent); color: #e0a06a; }
+  .ac-approved { background: color-mix(in srgb, var(--accent) 20%, transparent); color: var(--accent); }
+  .ac-rejected { background: color-mix(in srgb, #e5484d 20%, transparent); color: #e5484d; }
+  .ac-expired { background: color-mix(in srgb, #8b949e 20%, transparent); color: var(--text-faint); }
   .ac-vat { font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 999px;
     border: 1px solid var(--hair); color: var(--text-dim); margin-left: 6px;
     vertical-align: middle; }
@@ -1327,7 +1334,7 @@
   <nav class="tabbar">
     <button data-tab="tenders" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Реализация</button>
     <button data-tab="fav"><span class="badge" id="fav-badge" style="display:none">0</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.5-9.3-9A5 5 0 0 1 12 5.5 5 5 0 0 1 21.3 11C19 15.5 12 20 12 20Z"/></svg>Избранное</button>
-    <button data-tab="ads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 6h18l-2 7H7L5 4H2"/><circle cx="9" cy="19" r="1.6"/><circle cx="17" cy="19" r="1.6"/></svg>Продать</button>
+    <button data-tab="ads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 6h18l-2 7H7L5 4H2"/><circle cx="9" cy="19" r="1.6"/><circle cx="17" cy="19" r="1.6"/></svg>Объявления</button>
     <div class="tab-row">
       <button data-tab="labels"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 12V5a2 2 0 0 1 2-2h7l9 9-9 9z"/><circle cx="8" cy="8" r="1.4"/></svg>Метки</button>
       <button class="tab-plus" id="label-new" type="button" title="Новая метка" aria-label="Новая метка">＋</button>
@@ -2234,14 +2241,16 @@ function adThumbs(){ var box=document.getElementById('ad-thumbs'); if(!box)retur
 function adDownscale(file, cb){ var img=new Image(), url=URL.createObjectURL(file); img.onload=function(){ var max=1280,w=img.width,h=img.height; if(w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;} } var c=document.createElement('canvas'); c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); URL.revokeObjectURL(url); try{cb(c.toDataURL('image/jpeg',0.8));}catch(_){cb(null);} }; img.onerror=function(){ URL.revokeObjectURL(url); cb(null); }; img.src=url; }
 function adFilesChosen(files){ var arr=[].slice.call(files||[]); arr.forEach(function(f){ if(adPhotos.length>=3||!/^image\//.test(f.type))return; adDownscale(f,function(dataUrl){ if(dataUrl&&adPhotos.length<3){ adPhotos.push(dataUrl); adThumbs(); } }); }); }
 function openTg(u){ u=String(u).replace(/^@/,''); var url='https://t.me/'+encodeURIComponent(u); try{ if(tg&&tg.openTelegramLink){ tg.openTelegramLink(url); return; } }catch(_){} try{ if(tg&&tg.openLink){ tg.openLink(url); return; } }catch(_){} window.open(url,'_blank'); }
+var AD_STATUS={pending:'на модерации',rejected:'отклонено',expired:'срок истёк',approved:'опубликовано'};
 function adCard(a){ var cat={oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом',other:'Другое'}[a.category]||'Другое';
+  var свой=a.mine?'<span class="ac-mine ac-'+a.status+'">'+(AD_STATUS[a.status]||a.status)+'</span>':'';
   var price=a.price?(escH(a.price)+(/\d/.test(a.price)?' ₽':'')):(a.price_type==='negotiable'?'Договорная':'—');
   if(a.vat) price+=' <span class="ac-vat">'+(a.vat==='with'?'с НДС':'без НДС')+'</span>';
   var photos=''; for(var i=0;i<(a.nphotos||0);i++){ photos+='<img src="'+API_BASE+'/api/ad/photo?id='+a.id+'&n='+i+'" loading="lazy">'; }
   var go=''; var uname=(a.username||'').replace(/^@/,'');
   if(uname){ go='<a class="ac-go" href="#" onclick="openTg(\''+escH(uname)+'\');return false">Написать в Telegram</a>'; }
   else if(a.contact){ go='<div class="ac-meta">📞 '+escH(a.contact)+'</div>'; }
-  return '<div class="ad-card">'+(isAdNew(a)?'<span class="ac-new">Новое</span>':'')+'<div class="ac-cat">'+cat+' · частное</div><h3>'+escH(a.title)+'</h3>'+
+  return '<div class="ad-card'+(a.mine?' ad-mine':'')+'">'+(isAdNew(a)&&!a.mine?'<span class="ac-new">Новое</span>':'')+'<div class="ac-cat">'+cat+' · частное'+свой+'</div><h3>'+escH(a.title)+'</h3>'+
     (a.description?'<div class="ac-desc">'+escH(a.description)+'</div>':'')+
     (photos?'<div class="ac-photos">'+photos+'</div>':'')+
     '<div class="ac-meta"><span class="ac-price">'+price+'</span>'+(a.region?'<span>📍 '+escH(a.region)+'</span>':'')+'</div>'+go+'</div>';
@@ -2266,9 +2275,30 @@ function renderAds(){
   if(ADFILT.onlyNew) a=a.filter(isAdNew);
   box.innerHTML=a.length?a.map(adCard).join(''):'<div class="ads-empty">'+(ADS.length?'Ничего не найдено по фильтру.':'Пока нет объявлений. Будьте первым — нажмите «Подать».')+'</div>';
 }
-function loadAds(){ var box=document.getElementById('ads-list'); if(!box)return; box.innerHTML='<div class="spinner"></div>';
-  api('/api/ads').then(function(d){ ADS=(d&&d.ads)||[]; renderAds(); })
-    .catch(function(){ box.innerHTML='<div class="ads-empty">Не удалось загрузить объявления.</div>'; }); }
+/* Лента объявлений = чужие одобренные + ВСЕ свои, включая те, что ещё на
+   модерации: человек только что подал объявление и должен видеть его здесь,
+   а не гадать, дошло ли оно. Чужие видят его после одобрения. */
+function loadAds(){
+  var box=document.getElementById('ads-list'); if(!box) return;
+  box.innerHTML='<div class="spinner"></div>';
+  var общие=api('/api/ads').then(function(d){ return (d&&d.ads)||[]; })
+                           .catch(function(){ return null; });
+  var свои=api('/api/ad/mine').then(function(d){ return (d&&d.ads)||[]; })
+                              .catch(function(){ return []; });
+  Promise.all([общие, свои]).then(function(пара){
+    if(пара[0]===null){
+      box.innerHTML='<div class="ads-empty">Не удалось загрузить объявления.</div>';
+      return;
+    }
+    var есть={}, список=[];
+    (пара[1]||[]).forEach(function(a){
+      if(a.status==='banned') return;
+      a.mine=true; есть[a.id]=true; список.push(a);
+    });
+    (пара[0]||[]).forEach(function(a){ if(!есть[a.id]) список.push(a); });
+    ADS=список; renderAds();
+  });
+}
 
 /* ——— Подача объявления: открыть форму, свернуть её после отправки ——— */
 function adFormOpen(){
