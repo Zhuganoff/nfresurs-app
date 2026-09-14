@@ -258,6 +258,15 @@
   .ad-card .ac-meta { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: var(--text-dim); margin: 0 0 10px; }
   .ad-card .ac-price { color: var(--text); font-weight: 700; }
   .ad-card .ac-go { display: block; text-align: center; text-decoration: none; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); font-weight: 700; font-size: 14px; padding: 10px; border-radius: 10px; }
+
+  .ad-card .ac-noprice { font-weight: 500; color: var(--text-faint); }
+  .ad-card .ac-tel { display: inline-flex; align-items: center; gap: 8px; margin-top: auto;
+    padding: 6px 0; font-size: 17px; font-weight: 700; letter-spacing: -.01em;
+    color: var(--text); text-decoration: none; font-variant-numeric: tabular-nums; }
+  .ad-card .ac-tel svg { width: 18px; height: 18px; color: var(--accent); flex: none; }
+  .ad-card .ac-tel:hover { color: var(--accent); }
+  .ad-card .ac-go { display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .ad-card .ac-go svg { width: 16px; height: 16px; flex: none; }
   .ads-empty { text-align: center; color: var(--text-faint); font-size: 13px; padding: 30px 0; }
   .myads-block { margin: 0 0 16px; }
   .myads-toggle { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border: 1px solid var(--hair); border-radius: 12px; background: var(--surface); color: var(--text); font-weight: 700; font-size: 14px; cursor: pointer; }
@@ -2392,6 +2401,34 @@ function adDownscale(file, cb){ var img=new Image(), url=URL.createObjectURL(fil
 function adFilesChosen(files){ var arr=[].slice.call(files||[]); arr.forEach(function(f){ if(adPhotos.length>=3||!/^image\//.test(f.type))return; adDownscale(f,function(dataUrl){ if(dataUrl&&adPhotos.length<3){ adPhotos.push(dataUrl); adThumbs(); } }); }); }
 function openTg(u){ u=String(u).replace(/^@/,''); var url='https://t.me/'+encodeURIComponent(u); try{ if(tg&&tg.openTelegramLink){ tg.openTelegramLink(url); return; } }catch(_){} try{ if(tg&&tg.openLink){ tg.openLink(url); return; } }catch(_){} window.open(url,'_blank'); }
 
+
+/* Контакт объявления. Ник (@name, t.me/name) — кнопка в Telegram, потому что
+   переписаться проще, чем звонить. Телефон — крупная жирная строка и ссылка
+   tel:, чтобы с телефона звонок шёл в одно касание. */
+function adContact(a){
+  var ник = (a.username || '').replace(/^@/, '');
+  var текст = (a.contact || '').trim();
+  if(!ник && текст){
+    var m = текст.match(/(?:@|t\.me\/)([a-zA-Z0-9_]{4,32})/);
+    if(m) ник = m[1];
+  }
+  if(ник){
+    return '<a class="ac-go" href="https://t.me/' + encodeURIComponent(ник)
+      + '" onclick="openTg(\'' + escH(ник) + '\');return false">'
+      + '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.6 15.5l-.4 5.3c.6 0 .8-.2 1.1-.5l2.6-2.5 5.4 4c1 .5 1.7.3 2-.9L23.9 4c.3-1.5-.5-2-1.5-1.7L1.8 10.2c-1.4.5-1.4 1.3-.2 1.7l5.3 1.6L18.9 6c.6-.4 1.1-.2.7.2z"/></svg>'
+      + 'Написать в Telegram</a>';
+  }
+  if(!текст) return '';
+  var цифры = текст.replace(/\D/g, '');
+  if(цифры.length >= 7){
+    var номер = текст.replace(/[^\d+]/g, '');
+    return '<a class="ac-tel" href="tel:' + escH(номер) + '">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 4h3.5l1.5 4-2 1.5a12 12 0 0 0 5.5 5.5L15 13l4 1.5V18a2 2 0 0 1-2.2 2A15.5 15.5 0 0 1 4 7.2 2 2 0 0 1 6 5z"/></svg>'
+      + escH(текст) + '</a>';
+  }
+  return '<div class="ac-meta">' + escH(текст) + '</div>';
+}
+
 /* Значок категории для объявления без фото: пустой серый прямоугольник
    выглядит как сломанная картинка, а лента должна оставаться ровной. */
 var AD_ICON = {
@@ -2417,11 +2454,10 @@ function adPhoto(a){
 var AD_STATUS={pending:'на модерации',rejected:'отклонено',expired:'срок истёк',approved:'опубликовано'};
 function adCard(a){ var cat={oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом',other:'Другое'}[a.category]||'Другое';
   var свой=a.mine?'<span class="ac-mine ac-'+a.status+'">'+(AD_STATUS[a.status]||a.status)+'</span>':'';
-  var price=a.price?(escH(a.price)+(/\d/.test(a.price)?' ₽':'')):(a.price_type==='negotiable'?'Договорная':'—');
+  var price=a.price?(escH(a.price)+(/\d/.test(a.price)?' ₽':''))
+    :(a.price_type==='negotiable'?'Договорная':'<span class="ac-noprice">Цена не указана</span>');
   if(a.vat) price+=' <span class="ac-vat">'+(a.vat==='with'?'с НДС':'без НДС')+'</span>';
-  var go=''; var uname=(a.username||'').replace(/^@/,'');
-  if(uname){ go='<a class="ac-go" href="#" onclick="openTg(\''+escH(uname)+'\');return false">Написать в Telegram</a>'; }
-  else if(a.contact){ go='<div class="ac-meta">📞 '+escH(a.contact)+'</div>'; }
+  var go=adContact(a);
   return '<div class="ad-card'+(a.mine?' ad-mine':'')+'">'
     + adPhoto(a)
     + '<div class="ac-body">'
