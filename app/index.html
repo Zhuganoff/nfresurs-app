@@ -1081,7 +1081,7 @@
         <div class="ehint">На эту почту приходят тендеры по кнопке «Отправить на почту». Подтверждается кодом.<br>Регистрируя почту, вы соглашаетесь на обработку персональных данных согласно <a href="#" onclick="openDoc('../privacy.html');return false" style="color:var(--accent);text-decoration:underline">Политике конфиденциальности</a>.</div>
       </div>
       <div class="group">
-        <div class="label">Площадки · <span id="plat-on"></span> из 13</div>
+        <div class="label">Площадки · <span id="plat-on"></span> из 18</div>
         <div class="efield">
           <input id="suggest-url" class="search" type="url" placeholder="Ссылка на площадку — предложить" autocomplete="off" style="font-size:13px">
           <button class="ebtn" id="suggest-btn">Предложить</button>
@@ -1187,8 +1187,8 @@ try {
   }
 } catch(_) { tg = null; }
 
-const PLATFORMS = {tektorg:'ТЭК-Торг',rosneft:'Роснефть',etpgpb:'ЭТП ГПБ',b2b_center:'B2B-Center',onlinecontract:'OnlineContract',sberbank_ast:'Сбербанк-АСТ',interrao:'Интер РАО',nelikvidi:'Неликвиды',slavneft:'Славнефть',isource:'isource Reserve',bidzaar:'Bidzaar',alrosa:'АЛРОСА',reo:'ЭТП РЭО'};
-const PSTATE = {tektorg:'on',rosneft:'on',etpgpb:'on',b2b_center:'on',onlinecontract:'on',sberbank_ast:'on',interrao:'on',nelikvidi:'wait',slavneft:'on',isource:'on',bidzaar:'on',alrosa:'on',reo:'on'};
+const PLATFORMS = {tektorg:'ТЭК-Торг',rosneft:'Роснефть',etpgpb:'ЭТП ГПБ',b2b_center:'B2B-Center',onlinecontract:'OnlineContract',sberbank_ast:'Сбербанк-АСТ',interrao:'Интер РАО',nelikvidi:'Неликвиды',slavneft:'Славнефть',isource:'isource Reserve',bidzaar:'Bidzaar',alrosa:'АЛРОСА',reo:'ЭТП РЭО',enplus:'Эн+'};
+const PSTATE = {tektorg:'on',rosneft:'on',etpgpb:'on',b2b_center:'on',onlinecontract:'on',sberbank_ast:'on',interrao:'on',nelikvidi:'wait',slavneft:'on',isource:'on',bidzaar:'on',alrosa:'on',reo:'on',enplus:'on'};
 const REF = new Date();
 let TENDERS = [], favs = new Set(), seen = new Set(), statuses = {};
 
@@ -2140,7 +2140,7 @@ try{ if(tg&&tg.initData){ ['pw-sbp','sub-sbp'].forEach(function(id){ var b=docum
 
 <div class="cc" id="cookie-note" role="dialog" aria-live="polite" aria-label="Использование cookie">
   <div class="cc-in">
-    <div class="cc-txt">Сайт использует cookie и память браузера: чтобы вы оставались в аккаунте и сохранялись настройки ленты. Подробнее — в <a href="../privacy.html">политике конфиденциальности</a>.</div>
+    <div class="cc-txt">Сайт использует cookie и память браузера: чтобы вы оставались в аккаунте и сохранялись настройки ленты. Рекламных трекеров и счётчиков нет. Подробнее — в <a href="../privacy.html">политике конфиденциальности</a>.</div>
     <div class="cc-btns">
       <button type="button" class="cc-btn cc-more" id="cc-more">Настройки</button>
       <button type="button" class="cc-btn cc-ok" id="cc-ok">Хорошо</button>
