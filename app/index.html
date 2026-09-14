@@ -1162,7 +1162,7 @@
       <div class="ad-done" id="ad-done">
         <span class="ad-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
         <h4>Объявление отправлено на модерацию</h4>
-        <p id="ad-done-text">Мы проверим его вручную — обычно это занимает несколько часов. Как только объявление одобрят, оно появится в ленте и будет видно покупателям 10 дней. О решении сообщим в приложении, в разделе «Мои объявления».</p>
+        <p id="ad-done-text">Мы проверим его вручную — обычно это занимает несколько часов. Объявление уже в списке ниже с пометкой «на модерации»: как только его одобрят, пометка сменится сама, и объявление увидят покупатели. Оно будет висеть 10 дней.</p>
         <button type="button" id="ad-done-ok">Хорошо</button>
       </div>
       <div id="ads-filters" class="ads-filters" style="display:none">
@@ -1962,7 +1962,7 @@ document.addEventListener('click',e=>{
   // только настоящие вкладки: «плюс» и подпункты меток тоже кнопки
   // внутри панели, и без data-tab обработчик гасил все панели
   const tab=e.target.closest('nav.tabbar button[data-tab]');
-  if(tab){document.body.dataset.pane=tab.dataset.tab;document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds(); if(tab.dataset.tab==='labels'){ lbLoadRegions().then(lbLoad); }}
+  if(tab){document.body.dataset.pane=tab.dataset.tab;document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds(); else adWatchStop(); if(tab.dataset.tab==='labels'){ lbLoadRegions().then(lbLoad); }}
 });
 
 
@@ -2266,6 +2266,55 @@ function fillAdRegions(){
   if(regs.indexOf(cur)>=0) sel.value=cur; else ADFILT.region='';
   sel.dataset.sig=sig;
 }
+
+/* ——— Ожидание модерации ———
+   Пока в разделе есть своё объявление на модерации, тихо переспрашиваем
+   статус. Решение приходит через секунды-часы, а человек стоит на странице
+   и ждёт: опубликованное объявление должно появиться само, без перезахода. */
+var AD_WATCH = null, AD_SEEN = {};
+
+function adPending(){
+  return ADS.some(function(a){ return a.mine && a.status === 'pending'; });
+}
+
+function adWatchStop(){
+  if(AD_WATCH){ clearInterval(AD_WATCH); AD_WATCH = null; }
+}
+
+function adWatchStart(){
+  adWatchStop();
+  if(!adPending()) return;
+  ADS.forEach(function(a){ if(a.mine) AD_SEEN[a.id] = a.status; });
+  var тиков = 0;
+  AD_WATCH = setInterval(function(){
+    // полчаса ожидания хватает: дальше человек всё равно уйдёт со страницы,
+    // а решение он увидит при следующем заходе
+    if(++тиков > 150){ adWatchStop(); return; }
+    if(document.hidden || document.body.dataset.pane !== 'ads'){ return; }
+    api('/api/ad/mine').then(function(d){
+      var мои = (d && d.ads) || [];
+      var изменилось = мои.some(function(a){
+        return AD_SEEN[a.id] && AD_SEEN[a.id] !== a.status;
+      });
+      if(!изменилось) return;
+      мои.forEach(function(a){
+        if(AD_SEEN[a.id] === 'pending' && a.status === 'approved')
+          showToast('Объявление «' + (a.title || '').slice(0, 30) + '» опубликовано');
+        else if(AD_SEEN[a.id] === 'pending' && a.status === 'rejected')
+          showToast('Объявление отклонено модератором');
+        AD_SEEN[a.id] = a.status;
+      });
+      loadAds();
+    }).catch(function(){});
+  }, 12000);
+}
+
+// вернулись на вкладку браузера — сразу сверяем, не решилась ли модерация
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden && document.body.dataset.pane === 'ads' && adPending())
+    loadAds();
+});
+
 function renderAds(){
   var box=document.getElementById('ads-list'); if(!box) return;
   var fp=document.getElementById('ads-filters'); if(fp) fp.style.display=ADS.length?'flex':'none';
@@ -2296,7 +2345,7 @@ function loadAds(){
       a.mine=true; есть[a.id]=true; список.push(a);
     });
     (пара[0]||[]).forEach(function(a){ if(!есть[a.id]) список.push(a); });
-    ADS=список; renderAds();
+    ADS=список; renderAds(); adWatchStart();
   });
 }
 
@@ -2332,7 +2381,7 @@ function adDoneShow(правка){
     txt.textContent='Объявление вернулось на проверку — пока она идёт, в ленте показывается прежняя версия. Как только изменения одобрят, они появятся у покупателей. Решение будет видно в разделе «Мои объявления».';
   } else {
     head.textContent='Объявление отправлено на модерацию';
-    txt.textContent='Мы проверим его вручную — обычно это занимает несколько часов. Как только объявление одобрят, оно появится в ленте и будет видно покупателям 10 дней. О решении сообщим в разделе «Мои объявления».';
+    txt.textContent='Мы проверим его вручную — обычно это занимает несколько часов. Как только объявление одобрят, оно появится в ленте и будет видно покупателям 10 дней. Объявление уже в списке с пометкой «на модерации» и обновится здесь само, как только его одобрят.';
   }
   if(f){
     f.classList.add('shrink');
