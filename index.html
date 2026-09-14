@@ -933,7 +933,7 @@
           </a>
           <a class="btn btn-ghost" href="/app/">Открыть в браузере</a>
         </div>
-        <p class="note note-shine">Первые 7 дней бесплатно. Дальше — 499 ₽ в месяц, картой или через СБП.</p>
+        <p class="note note-shine">Первые 7 дней бесплатно. Дальше — от 699 ₽ в месяц, картой или через СБП.</p>
       </div>
       <div class="stage" id="stage" aria-label="Примеры лотов из ленты">
         <div class="stack" id="stack">
@@ -1139,16 +1139,16 @@
             <div class="plan-sum display">1 299 ₽<small>в месяц</small></div>
             <div class="plan-total">помесячно, без обязательств</div>
           </div>
-          <div class="plan plan-best">
-            <span class="plan-flag">выгодно</span>
+          <div class="plan">
             <div class="plan-term mono">3 месяца</div>
             <div class="plan-sum display">999 ₽<small>в месяц</small></div>
             <div class="plan-total">всего 2 997 ₽ · экономия 900 ₽</div>
           </div>
-          <div class="plan">
+          <div class="plan plan-best">
+            <span class="plan-flag">выгоднее всего</span>
             <div class="plan-term mono">6 месяцев</div>
-            <div class="plan-sum display">799 ₽<small>в месяц</small></div>
-            <div class="plan-total">всего 4 794 ₽ · экономия 3 000 ₽</div>
+            <div class="plan-sum display">699 ₽<small>в месяц</small></div>
+            <div class="plan-total">всего 4 194 ₽ · экономия 3 600 ₽</div>
           </div>
           <a class="btn btn-primary plan-cta" href="/app/">Попробовать бесплатно</a>
         </div>
@@ -1611,5 +1611,23 @@
 })();
 </script>
 
+
+<script>
+/* Приглашение: человек приходит по ссылке на ЛЕНДИНГ, а регистрируется уже
+   в приложении. Код кладём в то же хранилище, откуда его читает приложение
+   (общий домен), и подставляем в ссылки на /app/. */
+(function(){
+  var код = '';
+  try { код = new URLSearchParams(location.search).get('ref') || ''; } catch(_){}
+  if(код){ try { localStorage.setItem('ovd_ref', код); } catch(_){} }
+  if(!код){ try { код = localStorage.getItem('ovd_ref') || ''; } catch(_){} }
+  if(!код) return;
+  Array.prototype.forEach.call(
+    document.querySelectorAll('a[href^="/app/"], a[href^="/app"]'), function(a){
+      if(a.href.indexOf('ref=') >= 0) return;
+      a.href += (a.href.indexOf('?') >= 0 ? '&' : '?') + 'ref=' + encodeURIComponent(код);
+    });
+})();
+</script>
 </body>
 </html>

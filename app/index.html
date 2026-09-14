@@ -1489,8 +1489,8 @@
     <div class="paywall-box">
       <div class="pw-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
       <h2>Пробный период закончился</h2>
-      <p>7 дней бесплатного доступа истекли. Оформите подписку, чтобы продолжить получать тендеры по реализации.</p>
-      <div class="sub-price big">499 ₽<small> / месяц</small></div>
+      <p>7 дней бесплатного доступа истекли. Оформите подписку, чтобы продолжить получать лоты на реализацию. Тариф выбирается в профиле: месяц, три или полгода.</p>
+      <div class="sub-price big">от 699 ₽<small> / месяц</small></div>
       <button class="sub-btn" id="pw-btn">Оформить подписку</button>
       <button class="sub-btn sub-btn-alt" id="pw-sbp" style="display:none">Оплатить через СБП или картой на сайте</button>
       <div class="sub-note">Оплата картой или через СБП (ЮKassa). Отписаться можно в любой момент.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:var(--accent);text-decoration:underline">условия оферты</a>.</div>
@@ -2938,21 +2938,40 @@ function loadBilling(){
   }).catch(function(){});
 }
 
-/* Код приглашения приходит ссылкой ?ref= или параметром запуска бота.
-   Отправляем его один раз: сервер сам решит, засчитывать или нет. */
-function billRefFromLink(){
+/* Код приглашения приходит ссылкой ?ref=, параметром запуска бота или
+   лендингом (он кладёт код в то же хранилище). Человек чаще всего приходит
+   по ссылке ДО входа, поэтому код запоминаем и отправляем после входа —
+   иначе приглашение терялось на экране логина. */
+var REF_KEY = 'ovd_ref';
+
+function refSave(код){
+  if(!код) return;
+  try { localStorage.setItem(REF_KEY, код); } catch(_){}
+}
+
+function refTake(){
   var код = '';
   try {
     код = new URLSearchParams(location.search).get('ref') || '';
-    if(!код && location.hash) {
+    if(!код && location.hash){
       var m = location.hash.match(/ref=([A-Za-z0-9]+)/); if(m) код = m[1];
     }
   } catch(_){}
   try { if(!код && tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param)
     код = String(tg.initDataUnsafe.start_param).replace(/^ref[_-]?/i, ''); } catch(_){}
-  if(!код) return;
-  api('/api/billing/referral', {code: код}).then(function(){ loadBilling(); })
-    .catch(function(){});
+  if(код) refSave(код);
+  if(!код){ try { код = localStorage.getItem(REF_KEY) || ''; } catch(_){} }
+  return код;
+}
+
+function billRefFromLink(){
+  var код = refTake();
+  if(!код) return Promise.resolve();
+  return api('/api/billing/referral', {code: код}).then(function(d){
+    // код отработал (засчитан или отвергнут) — второй раз не шлём
+    try { localStorage.removeItem(REF_KEY); } catch(_){}
+    loadBilling();
+  }).catch(function(){});          // не вошёл — попробуем после входа
 }
 
 function loadSubscription(){
@@ -2989,6 +3008,7 @@ function bootFeed(tries){
     try { loadStatuses(function(){ loadSeen(function(){ loadLastVisit(function(){ loadFavs(render); }); }); }); }
     catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
     var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); }
+    try { loadBilling().then(billRefFromLink); } catch(_){}   // код из ссылки ждал входа
   }).catch(function(e){
     if(e && e.status===402){                                  // триал истёк — пейвол
       TENDERS=[]; try{ render(); }catch(_){}
