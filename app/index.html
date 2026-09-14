@@ -105,7 +105,9 @@
   .filters-btn.has::after { content: ''; position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 0 2px var(--app-bg); }
   .empty-filters { font-size: 13px; color: var(--text-dim); margin: 10px 0 12px; }
   .empty .ebtn { padding: 10px 16px; }
-  .filters-panel { display: flex; flex-direction: column; gap: 10px; background: var(--glass); border: 1px solid var(--glass-hair); border-radius: 12px; padding: 12px 14px; margin: 0 0 12px; }
+  /* position+z-index: иначе выпадающий список регионов уходит под карточки,
+     которые лежат ниже по документу */
+  .filters-panel { display: flex; flex-direction: column; gap: 10px; background: var(--glass); border: 1px solid var(--glass-hair); border-radius: 12px; padding: 12px 14px; margin: 0 0 12px; position: relative; z-index: 20; }
   .fp-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--text-dim); }
   .fp-row select { flex: 0 1 auto; max-width: 60%; }
   .fp-toggle input { width: 20px; height: 20px; accent-color: var(--accent); }
@@ -393,6 +395,31 @@
   nav.tabbar .badge { position: absolute; top: 0; left: 50%; margin-left: 6px; min-width: 16px; height: 16px; padding: 0 4px; background: var(--accent); color: #fff; border-radius: 999px; font-size: 10px; font-weight: 700; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
 
 
+
+  /* свой выпадающий список: системный select на телефоне открывается
+     во весь экран и не попадает в оформление приложения */
+  .dd { position: relative; flex: 0 1 auto; }
+  .dd-btn { display: inline-flex; align-items: center; gap: 8px; max-width: 220px;
+    padding: 8px 12px; border-radius: 10px; border: 1px solid var(--glass-hair);
+    background: var(--glass); color: var(--text); font: inherit; font-size: 12.5px;
+    cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dd-btn::after { content: ''; flex: none; width: 7px; height: 7px; margin-left: 2px;
+    border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor;
+    transform: rotate(45deg) translate(-2px, -2px); opacity: .6; }
+  .dd-btn.on { border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+    color: var(--accent); }
+  .dd-list { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30;
+    width: 240px; max-height: 280px; overflow-y: auto; padding: 6px;
+    border-radius: 12px; border: 1px solid var(--hair); background: var(--surface);
+    box-shadow: 0 18px 44px -18px rgba(0,0,0,.75); }
+  .dd-list[hidden] { display: none; }
+  .dd-item { display: block; width: 100%; text-align: left; padding: 8px 10px;
+    border: none; background: none; color: var(--text); font: inherit; font-size: 13px;
+    border-radius: 8px; cursor: pointer; white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis; }
+  .dd-item:hover { background: var(--surface-2); }
+  .dd-item.on { color: var(--accent); font-weight: 600; }
+  .dd-item .dd-n { float: right; color: var(--text-faint); font-size: 11.5px; font-weight: 400; }
   .ad-card.ad-mine { border-color: color-mix(in srgb, var(--accent) 45%, var(--hair)); }
   .ac-mine { margin-left: 8px; padding: 1px 8px; border-radius: 999px; font-size: 10.5px;
     font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
@@ -1165,9 +1192,26 @@
         <p id="ad-done-text">Мы проверим его вручную — обычно это занимает несколько часов. Объявление уже в списке ниже с пометкой «на модерации»: как только его одобрят, пометка сменится сама, и объявление увидят покупатели. Оно будет висеть 10 дней.</p>
         <button type="button" id="ad-done-ok">Хорошо</button>
       </div>
-      <div id="ads-filters" class="ads-filters" style="display:none">
-        <select id="adf-region" class="fsel"><option value="">Все области</option></select>
-        <label class="adf-toggle"><input type="checkbox" id="adf-new"> Только новые</label>
+      <div class="toolbar" id="ads-filters" style="display:none">
+        <button id="adf-btn" class="filters-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>Фильтры</button>
+      </div>
+      <div id="adf-panel" class="filters-panel" style="display:none">
+        <div class="fp-row"><span>Вид объявления</span></div>
+        <div class="fchips" id="adf-cats">
+          <button class="fchip on" type="button" data-adcat="">Все</button>
+          <button class="fchip" type="button" data-adcat="oil">Нефтепродукты</button>
+          <button class="fchip" type="button" data-adcat="metal">Металлолом</button>
+          <button class="fchip" type="button" data-adcat="pipe">Трубы</button>
+          <button class="fchip" type="button" data-adcat="other">Другое</button>
+        </div>
+        <div class="fp-row"><span>Регион</span>
+          <div class="dd" id="adf-dd">
+            <button class="dd-btn" type="button" id="adf-region-btn" aria-haspopup="listbox" aria-expanded="false">Любой регион</button>
+            <div class="dd-list" id="adf-region-list" role="listbox" hidden></div>
+          </div>
+        </div>
+        <label class="fp-row fp-toggle"><span>Только новые</span><input type="checkbox" id="adf-new"></label>
+        <div class="fp-row"><button class="lb-cancel" type="button" id="adf-reset">Сбросить фильтры</button></div>
       </div>
       <div id="ads-list"><div class="spinner"></div></div>
     </section>
@@ -1691,8 +1735,7 @@ document.addEventListener('input',e=>{ if(e.target.id==='search'){ FILT.q=e.targ
 document.addEventListener('change',e=>{
   if(e.target.id==='f-site'){ FILT.site=e.target.value; render(); }
   else if(e.target.id==='f-region'){ FILT.region=e.target.value; render(); }
-  else if(e.target.id==='adf-region'){ ADFILT.region=e.target.value; renderAds(); }
-  else if(e.target.id==='adf-new'){ ADFILT.onlyNew=e.target.checked; renderAds(); }
+  else if(e.target.id==='adf-new'){ ADFILT.onlyNew=e.target.checked; renderAds(); adfMark(); }
   else if(e.target.id==='f-sort'){ FILT.sort=e.target.value; render(); }
   else if(e.target.id==='f-new-cb'){ FILT.onlyNew=e.target.checked; render(); }
   else if(e.target.id==='f-hidden-cb'){ FILT.showHidden=e.target.checked; render(); }
@@ -1854,6 +1897,35 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#f-reset')){ resetFilters(); return; }
   var cseg=e.target.closest('#catseg button');
   if(cseg){ FILT.cat=cseg.dataset.cat; document.querySelectorAll('#catseg button').forEach(function(b){b.classList.toggle('on',b===cseg);}); document.querySelector('main').scrollTop=0; render(); return; }
+  if(e.target.closest('#adf-btn')){
+    var ap=document.getElementById('adf-panel');
+    var открыть=ap.style.display==='none';
+    ap.style.display=открыть?'flex':'none';
+    e.target.closest('#adf-btn').classList.toggle('on',открыть);
+    if(!открыть) adRegionClose();
+    return;
+  }
+  var _adcat=e.target.closest('[data-adcat]');
+  if(_adcat){
+    ADFILT.cat=_adcat.getAttribute('data-adcat');
+    document.querySelectorAll('#adf-cats .fchip').forEach(function(b){
+      b.classList.toggle('on', b===_adcat); });
+    renderAds(); adfMark(); return;
+  }
+  if(e.target.closest('#adf-region-btn')){
+    var dl=document.getElementById('adf-region-list');
+    dl.hidden=!dl.hidden;
+    document.getElementById('adf-region-btn').setAttribute('aria-expanded', String(!dl.hidden));
+    return;
+  }
+  if(e.target.closest('#adf-reset')){
+    ADFILT.region=''; ADFILT.cat=''; ADFILT.onlyNew=false;
+    var nb=document.getElementById('adf-new'); if(nb) nb.checked=false;
+    document.querySelectorAll('#adf-cats .fchip').forEach(function(b){
+      b.classList.toggle('on', b.getAttribute('data-adcat')===''); });
+    fillAdRegions(); renderAds(); adfMark(); return;
+  }
+  if(!e.target.closest('#adf-dd')) adRegionClose();
   if(e.target.closest('#filters-btn')){ var fp=document.getElementById('filters-panel'); var open=fp.style.display==='none'; fp.style.display=open?'flex':'none'; e.target.closest('#filters-btn').classList.toggle('on',open); return; }
   if(e.target.closest('#modal-hide')){ var _t=_modalT; closeTender(); hideTender(_t); return; }
   if(e.target.closest('#toast-undo')){ var el=document.getElementById('toast'); if(el&&el._undo){ el._undo(); } if(el){ el.style.display='none'; el._undo=null; } return; }
@@ -2255,16 +2327,49 @@ function adCard(a){ var cat={oil:'Нефтепродукты',pipe:'Трубы',
     (photos?'<div class="ac-photos">'+photos+'</div>':'')+
     '<div class="ac-meta"><span class="ac-price">'+price+'</span>'+(a.region?'<span>📍 '+escH(a.region)+'</span>':'')+'</div>'+go+'</div>';
 }
-var ADS=[]; var ADFILT={region:'',onlyNew:false};
+var ADS=[]; var ADFILT={region:'',onlyNew:false,cat:''};
 function isAdNew(a){ if(!a.created) return false; var ts=Date.parse(a.created); return !isNaN(ts) && (Date.now()-ts) < 3*864e5; }
+/* Регионы для фильтра — только те, что реально есть в объявлениях, с числом
+   объявлений. Список свой, а не системный select: тот на телефоне
+   разворачивается во весь экран и выпадает из оформления приложения. */
 function fillAdRegions(){
-  var sel=document.getElementById('adf-region'); if(!sel) return;
-  var regs=[...new Set(ADS.map(function(a){return (a.region||'').trim();}).filter(Boolean))].sort(function(a,b){return a.localeCompare(b,'ru');});
-  var sig=regs.join('|'); if(sel.dataset.sig===sig) return;
-  var cur=sel.value;
-  sel.innerHTML='<option value="">Все области</option>'+regs.map(function(r){return '<option value="'+escH(r)+'">'+escH(r)+'</option>';}).join('');
-  if(regs.indexOf(cur)>=0) sel.value=cur; else ADFILT.region='';
-  sel.dataset.sig=sig;
+  var list=document.getElementById('adf-region-list'),
+      btn=document.getElementById('adf-region-btn');
+  if(!list || !btn) return;
+  var счёт={};
+  ADS.forEach(function(a){ var r=(a.region||'').trim(); if(r) счёт[r]=(счёт[r]||0)+1; });
+  var regs=Object.keys(счёт).sort(function(a,b){ return a.localeCompare(b,'ru'); });
+  if(ADFILT.region && regs.indexOf(ADFILT.region)<0) ADFILT.region='';
+  list.innerHTML='';
+  function пункт(значение, подпись, число){
+    var b=document.createElement('button');
+    b.type='button'; b.className='dd-item'+(ADFILT.region===значение?' on':'');
+    b.setAttribute('role','option');
+    b.textContent=подпись;
+    if(число){ var n=document.createElement('span'); n.className='dd-n'; n.textContent=число; b.appendChild(n); }
+    b.addEventListener('click', function(){
+      ADFILT.region=значение; adRegionClose(); fillAdRegions(); renderAds(); adfMark();
+    });
+    list.appendChild(b);
+  }
+  пункт('', 'Любой регион', ADS.length);
+  regs.forEach(function(r){ пункт(r, r, счёт[r]); });
+  btn.textContent=ADFILT.region || 'Любой регион';
+  btn.classList.toggle('on', !!ADFILT.region);
+}
+
+function adRegionClose(){
+  var list=document.getElementById('adf-region-list'),
+      btn=document.getElementById('adf-region-btn');
+  if(list) list.hidden=true;
+  if(btn) btn.setAttribute('aria-expanded','false');
+}
+
+/* Кнопка «Фильтры» помечается точкой, когда что-то выбрано. */
+function adfMark(){
+  var b=document.getElementById('adf-btn'); if(!b) return;
+  var есть=!!(ADFILT.region || ADFILT.cat || ADFILT.onlyNew);
+  b.classList.toggle('has', есть);
 }
 
 /* ——— Ожидание модерации ———
@@ -2320,6 +2425,7 @@ function renderAds(){
   var fp=document.getElementById('ads-filters'); if(fp) fp.style.display=ADS.length?'flex':'none';
   fillAdRegions();
   var a=ADS.slice();
+  if(ADFILT.cat) a=a.filter(function(x){return (x.category||'other')===ADFILT.cat;});
   if(ADFILT.region) a=a.filter(function(x){return (x.region||'').trim()===ADFILT.region;});
   if(ADFILT.onlyNew) a=a.filter(isAdNew);
   box.innerHTML=a.length?a.map(adCard).join(''):'<div class="ads-empty">'+(ADS.length?'Ничего не найдено по фильтру.':'Пока нет объявлений. Будьте первым — нажмите «Подать».')+'</div>';
