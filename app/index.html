@@ -396,6 +396,33 @@
 
 
 
+
+  /* карточка объявления — прямоугольный блок: слева фото, справа текст */
+  .ad-card { display: flex; gap: 14px; align-items: stretch; }
+  .ac-ph { position: relative; flex: 0 0 132px; width: 132px; min-height: 108px;
+    border-radius: 10px; overflow: hidden; background: var(--surface-2);
+    display: grid; place-items: center; }
+  .ac-ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ac-more { position: absolute; right: 6px; bottom: 6px; padding: 2px 7px;
+    border-radius: 999px; background: rgba(8,14,20,.72); color: #fff;
+    font-size: 10.5px; font-weight: 700; }
+  /* фото нет: диагональная штриховка и знак категории — чтобы блок не
+     выглядел сломанным и лента оставалась ровной */
+  .ac-noph { width: 100%; height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 6px; color: var(--text-faint);
+    background:
+      repeating-linear-gradient(135deg, transparent 0 7px,
+        color-mix(in srgb, var(--text-faint) 9%, transparent) 7px 8px),
+      var(--surface-2); }
+  .ac-noph svg { width: 30px; height: 30px; opacity: .55; }
+  .ac-noph span { font-size: 9.5px; text-transform: uppercase; letter-spacing: .06em; }
+  .ac-body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+  .ad-card .ac-desc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; white-space: normal; }
+  .ad-card .ac-go { margin-top: auto; }
+  @media (max-width: 420px) {
+    .ac-ph { flex-basis: 96px; width: 96px; min-height: 88px; }
+  }
   /* свой выпадающий список: системный select на телефоне открывается
      во весь экран и не попадает в оформление приложения */
   .dd { position: relative; flex: 0 1 auto; }
@@ -1148,10 +1175,10 @@
         <button id="filters-btn" class="filters-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>Фильтры</button>
       </div>
       <div id="filters-panel" class="filters-panel" style="display:none">
-        <label class="fp-row"><span>Площадка</span><select id="f-site" class="fsel"><option value="">Все площадки</option></select></label>
-        <label class="fp-row"><span>Область</span><select id="f-region" class="fsel"><option value="">Все области</option></select></label>
+        <div class="fp-row"><span>Площадка</span><div class="dd" id="dd-site"></div></div>
+        <div class="fp-row"><span>Область</span><div class="dd" id="dd-region"></div></div>
         <label class="fp-row"><span>Город</span><input id="f-city" class="fsel" type="text" placeholder="Любой город" autocomplete="off"></label>
-        <label class="fp-row"><span>Сортировка</span><select id="f-sort" class="fsel"><option value="new">Сначала новые</option><option value="deadline">Скоро дедлайн</option><option value="price">Дороже</option></select></label>
+        <div class="fp-row"><span>Сортировка</span><div class="dd" id="dd-sort"></div></div>
         <label class="fp-row fp-toggle"><span>Только новые</span><input type="checkbox" id="f-new-cb"></label>
         <label class="fp-row fp-toggle"><span>Показать скрытые</span><input type="checkbox" id="f-hidden-cb"></label>
       </div>
@@ -1205,10 +1232,7 @@
           <button class="fchip" type="button" data-adcat="other">Другое</button>
         </div>
         <div class="fp-row"><span>Регион</span>
-          <div class="dd" id="adf-dd">
-            <button class="dd-btn" type="button" id="adf-region-btn" aria-haspopup="listbox" aria-expanded="false">Любой регион</button>
-            <div class="dd-list" id="adf-region-list" role="listbox" hidden></div>
-          </div>
+          <div class="dd" id="adf-dd"></div>
         </div>
         <label class="fp-row fp-toggle"><span>Только новые</span><input type="checkbox" id="adf-new"></label>
         <div class="fp-row"><button class="lb-cancel" type="button" id="adf-reset">Сбросить фильтры</button></div>
@@ -1670,7 +1694,7 @@ function activeFilters(){
 }
 function resetFilters(){
   FILT.q=''; FILT.site=''; FILT.region=''; FILT.city=''; FILT.onlyNew=false; FILT.showHidden=false; lbFilter(0);
-  var ids={'search':'', 'f-site':'', 'f-region':'', 'f-city':''}; Object.keys(ids).forEach(function(id){ var el=document.getElementById(id); if(el) el.value=ids[id]; });
+  ['search','f-city'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
   ['f-new-cb','f-hidden-cb'].forEach(function(id){ var el=document.getElementById(id); if(el) el.checked=false; });
   render();
 }
@@ -1693,23 +1717,87 @@ function feedItems(){
   else a.sort((x,y)=>(Date.parse(y.first_seen)||0)-(Date.parse(x.first_seen)||0));
   return a;
 }
+
+/* ——— Свой выпадающий список ———
+   Системный <select> на телефоне разворачивается во весь экран и выпадает
+   из оформления приложения, поэтому списки фильтров рисуем сами.
+   ddSet(id, {items:[{v,label,n}], value, onPick, empty}) — перерисовать. */
+function ddClose(кроме){
+  document.querySelectorAll('.dd-list').forEach(function(l){
+    if(l !== кроме) l.hidden = true;
+  });
+  document.querySelectorAll('.dd-btn').forEach(function(b){
+    b.setAttribute('aria-expanded', 'false');
+  });
+}
+
+function ddSet(id, opts){
+  var box=document.getElementById(id); if(!box) return;
+  var btn=box.querySelector('.dd-btn'), list=box.querySelector('.dd-list');
+  if(!btn){
+    btn=document.createElement('button');
+    btn.type='button'; btn.className='dd-btn';
+    btn.setAttribute('aria-haspopup','listbox');
+    btn.setAttribute('aria-expanded','false');
+    list=document.createElement('div');
+    list.className='dd-list'; list.hidden=true; list.setAttribute('role','listbox');
+    box.appendChild(btn); box.appendChild(list);
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var открыть=list.hidden; ddClose(открыть?list:null);
+      list.hidden=!открыть;
+      btn.setAttribute('aria-expanded', String(открыть));
+    });
+  }
+  var items=opts.items||[], value=opts.value||'';
+  var текущий=items.filter(function(i){ return i.v===value; })[0];
+  btn.textContent=(текущий && текущий.label) || opts.empty || 'Все';
+  btn.classList.toggle('on', !!value);
+  list.innerHTML='';
+  items.forEach(function(i){
+    var b=document.createElement('button');
+    b.type='button'; b.className='dd-item'+(i.v===value?' on':'');
+    b.setAttribute('role','option');
+    b.textContent=i.label;
+    if(i.n){ var n=document.createElement('span'); n.className='dd-n'; n.textContent=i.n; b.appendChild(n); }
+    b.addEventListener('click', function(e){
+      e.stopPropagation(); ddClose(null); opts.onPick(i.v);
+    });
+    list.appendChild(b);
+  });
+}
+document.addEventListener('click', function(){ ddClose(null); });
+
 function fillSiteFilter(){
-  const sel=document.getElementById('f-site'); if(!sel||sel.dataset.filled) return;
-  const sites=[...new Set(TENDERS.map(t=>t.site))];
-  sel.insertAdjacentHTML('beforeend', sites.map(s=>`<option value="${s}">${PLATFORMS[s]||s}</option>`).join(''));
-  sel.dataset.filled='1';
+  var счёт={};
+  TENDERS.forEach(function(t){ счёт[t.site]=(счёт[t.site]||0)+1; });
+  var items=[{v:'', label:'Все площадки', n:TENDERS.length}];
+  Object.keys(счёт).sort(function(a,b){
+    return (PLATFORMS[a]||a).localeCompare(PLATFORMS[b]||b,'ru');
+  }).forEach(function(s){ items.push({v:s, label:PLATFORMS[s]||s, n:счёт[s]}); });
+  ddSet('dd-site', {items:items, value:FILT.site, empty:'Все площадки',
+    onPick:function(v){ FILT.site=v; render(); }});
+  ddSet('dd-sort', {items:[{v:'new',label:'Сначала новые'},
+                           {v:'deadline',label:'Скоро дедлайн'},
+                           {v:'price',label:'Дороже'}],
+    value:FILT.sort, empty:'Сначала новые',
+    onPick:function(v){ FILT.sort=v; render(); }});
 }
 function fillRegionFilter(){
-  const sel=document.getElementById('f-region'); if(!sel) return;
   // регионы, реально встречающиеся в ленте (у обогащённых лотов)
-  const regs=[...new Set(TENDERS.map(regionOf).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ru'));
-  const hasNone=TENDERS.some(t=>!regionOf(t));
-  const sig=regs.join('|')+'#'+hasNone; if(sel.dataset.sig===sig) return;
-  const cur=sel.value;
-  const noneOpt=hasNone?'<option value="__none__">Регион не указан</option>':'';
-  sel.innerHTML='<option value="">Все области</option>'+regs.map(r=>`<option value="${r}">${r}</option>`).join('')+noneOpt;
-  if(cur==='__none__'||regs.indexOf(cur)>=0) sel.value=cur; else FILT.region='';
-  sel.dataset.sig=sig;
+  var счёт={}, без=0;
+  TENDERS.forEach(function(t){
+    var r=regionOf(t);
+    if(r) счёт[r]=(счёт[r]||0)+1; else без++;
+  });
+  var regs=Object.keys(счёт).sort(function(a,b){ return a.localeCompare(b,'ru'); });
+  if(FILT.region && FILT.region!=='__none__' && regs.indexOf(FILT.region)<0)
+    FILT.region='';
+  var items=[{v:'', label:'Все области', n:TENDERS.length}];
+  regs.forEach(function(r){ items.push({v:r, label:r, n:счёт[r]}); });
+  if(без) items.push({v:'__none__', label:'Регион не указан', n:без});
+  ddSet('dd-region', {items:items, value:FILT.region, empty:'Все области',
+    onPick:function(v){ FILT.region=v; render(); }});
 }
 function observeNew(){ /* метка NEW снимается при открытии предпросмотра, не по прокрутке */ }
 function render(){
@@ -1733,10 +1821,7 @@ function render(){
 document.addEventListener('input',e=>{ if(e.target.id==='search'){ FILT.q=e.target.value.trim(); render(); }
   else if(e.target.id==='f-city'){ FILT.city=e.target.value.trim(); render(); } });
 document.addEventListener('change',e=>{
-  if(e.target.id==='f-site'){ FILT.site=e.target.value; render(); }
-  else if(e.target.id==='f-region'){ FILT.region=e.target.value; render(); }
-  else if(e.target.id==='adf-new'){ ADFILT.onlyNew=e.target.checked; renderAds(); adfMark(); }
-  else if(e.target.id==='f-sort'){ FILT.sort=e.target.value; render(); }
+  if(e.target.id==='adf-new'){ ADFILT.onlyNew=e.target.checked; renderAds(); adfMark(); }
   else if(e.target.id==='f-new-cb'){ FILT.onlyNew=e.target.checked; render(); }
   else if(e.target.id==='f-hidden-cb'){ FILT.showHidden=e.target.checked; render(); }
   else if(e.target.id==='theme-sel'){ setTheme(e.target.value); if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged(); }
@@ -1912,12 +1997,6 @@ document.addEventListener('click',e=>{
       b.classList.toggle('on', b===_adcat); });
     renderAds(); adfMark(); return;
   }
-  if(e.target.closest('#adf-region-btn')){
-    var dl=document.getElementById('adf-region-list');
-    dl.hidden=!dl.hidden;
-    document.getElementById('adf-region-btn').setAttribute('aria-expanded', String(!dl.hidden));
-    return;
-  }
   if(e.target.closest('#adf-reset')){
     ADFILT.region=''; ADFILT.cat=''; ADFILT.onlyNew=false;
     var nb=document.getElementById('adf-new'); if(nb) nb.checked=false;
@@ -1925,7 +2004,6 @@ document.addEventListener('click',e=>{
       b.classList.toggle('on', b.getAttribute('data-adcat')===''); });
     fillAdRegions(); renderAds(); adfMark(); return;
   }
-  if(!e.target.closest('#adf-dd')) adRegionClose();
   if(e.target.closest('#filters-btn')){ var fp=document.getElementById('filters-panel'); var open=fp.style.display==='none'; fp.style.display=open?'flex':'none'; e.target.closest('#filters-btn').classList.toggle('on',open); return; }
   if(e.target.closest('#modal-hide')){ var _t=_modalT; closeTender(); hideTender(_t); return; }
   if(e.target.closest('#toast-undo')){ var el=document.getElementById('toast'); if(el&&el._undo){ el._undo(); } if(el){ el.style.display='none'; el._undo=null; } return; }
@@ -2313,19 +2391,45 @@ function adThumbs(){ var box=document.getElementById('ad-thumbs'); if(!box)retur
 function adDownscale(file, cb){ var img=new Image(), url=URL.createObjectURL(file); img.onload=function(){ var max=1280,w=img.width,h=img.height; if(w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;} } var c=document.createElement('canvas'); c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); URL.revokeObjectURL(url); try{cb(c.toDataURL('image/jpeg',0.8));}catch(_){cb(null);} }; img.onerror=function(){ URL.revokeObjectURL(url); cb(null); }; img.src=url; }
 function adFilesChosen(files){ var arr=[].slice.call(files||[]); arr.forEach(function(f){ if(adPhotos.length>=3||!/^image\//.test(f.type))return; adDownscale(f,function(dataUrl){ if(dataUrl&&adPhotos.length<3){ adPhotos.push(dataUrl); adThumbs(); } }); }); }
 function openTg(u){ u=String(u).replace(/^@/,''); var url='https://t.me/'+encodeURIComponent(u); try{ if(tg&&tg.openTelegramLink){ tg.openTelegramLink(url); return; } }catch(_){} try{ if(tg&&tg.openLink){ tg.openLink(url); return; } }catch(_){} window.open(url,'_blank'); }
+
+/* Значок категории для объявления без фото: пустой серый прямоугольник
+   выглядит как сломанная картинка, а лента должна оставаться ровной. */
+var AD_ICON = {
+  oil: '<path d="M12 3c-4 5.2-6.2 8.3-6.2 11.3a6.2 6.2 0 0 0 12.4 0C18.2 11.3 16 8.2 12 3z"/>',
+  metal: '<path d="M4 17l6-10 4 6 2-3 4 7z"/><circle cx="8" cy="6" r="2"/>',
+  pipe: '<rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 8v8M17 8v8"/>',
+  other: '<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 15l4-4 3 3 3-4 6 6"/>'
+};
+
+function adPhoto(a){
+  var n = a.nphotos || 0;
+  if(n > 0){
+    var src = API_BASE + '/api/ad/photo?id=' + a.id + '&n=0';
+    return '<div class="ac-ph"><img src="' + src + '" loading="lazy" alt="">'
+      + (n > 1 ? '<span class="ac-more">+' + (n - 1) + '</span>' : '') + '</div>';
+  }
+  var icon = AD_ICON[a.category] || AD_ICON.other;
+  return '<div class="ac-ph"><div class="ac-noph">'
+    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"'
+    + ' stroke-linejoin="round">' + icon + '</svg><span>фото нет</span></div></div>';
+}
+
 var AD_STATUS={pending:'на модерации',rejected:'отклонено',expired:'срок истёк',approved:'опубликовано'};
 function adCard(a){ var cat={oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом',other:'Другое'}[a.category]||'Другое';
   var свой=a.mine?'<span class="ac-mine ac-'+a.status+'">'+(AD_STATUS[a.status]||a.status)+'</span>':'';
   var price=a.price?(escH(a.price)+(/\d/.test(a.price)?' ₽':'')):(a.price_type==='negotiable'?'Договорная':'—');
   if(a.vat) price+=' <span class="ac-vat">'+(a.vat==='with'?'с НДС':'без НДС')+'</span>';
-  var photos=''; for(var i=0;i<(a.nphotos||0);i++){ photos+='<img src="'+API_BASE+'/api/ad/photo?id='+a.id+'&n='+i+'" loading="lazy">'; }
   var go=''; var uname=(a.username||'').replace(/^@/,'');
   if(uname){ go='<a class="ac-go" href="#" onclick="openTg(\''+escH(uname)+'\');return false">Написать в Telegram</a>'; }
   else if(a.contact){ go='<div class="ac-meta">📞 '+escH(a.contact)+'</div>'; }
-  return '<div class="ad-card'+(a.mine?' ad-mine':'')+'">'+(isAdNew(a)&&!a.mine?'<span class="ac-new">Новое</span>':'')+'<div class="ac-cat">'+cat+' · частное'+свой+'</div><h3>'+escH(a.title)+'</h3>'+
-    (a.description?'<div class="ac-desc">'+escH(a.description)+'</div>':'')+
-    (photos?'<div class="ac-photos">'+photos+'</div>':'')+
-    '<div class="ac-meta"><span class="ac-price">'+price+'</span>'+(a.region?'<span>📍 '+escH(a.region)+'</span>':'')+'</div>'+go+'</div>';
+  return '<div class="ad-card'+(a.mine?' ad-mine':'')+'">'
+    + adPhoto(a)
+    + '<div class="ac-body">'
+    + (isAdNew(a)&&!a.mine?'<span class="ac-new">Новое</span>':'')
+    + '<div class="ac-cat">'+cat+' · частное'+свой+'</div><h3>'+escH(a.title)+'</h3>'
+    + (a.description?'<div class="ac-desc">'+escH(a.description)+'</div>':'')
+    + '<div class="ac-meta"><span class="ac-price">'+price+'</span>'+(a.region?'<span>📍 '+escH(a.region)+'</span>':'')+'</div>'
+    + go + '</div></div>';
 }
 var ADS=[]; var ADFILT={region:'',onlyNew:false,cat:''};
 function isAdNew(a){ if(!a.created) return false; var ts=Date.parse(a.created); return !isNaN(ts) && (Date.now()-ts) < 3*864e5; }
@@ -2333,37 +2437,17 @@ function isAdNew(a){ if(!a.created) return false; var ts=Date.parse(a.created); 
    объявлений. Список свой, а не системный select: тот на телефоне
    разворачивается во весь экран и выпадает из оформления приложения. */
 function fillAdRegions(){
-  var list=document.getElementById('adf-region-list'),
-      btn=document.getElementById('adf-region-btn');
-  if(!list || !btn) return;
   var счёт={};
   ADS.forEach(function(a){ var r=(a.region||'').trim(); if(r) счёт[r]=(счёт[r]||0)+1; });
   var regs=Object.keys(счёт).sort(function(a,b){ return a.localeCompare(b,'ru'); });
   if(ADFILT.region && regs.indexOf(ADFILT.region)<0) ADFILT.region='';
-  list.innerHTML='';
-  function пункт(значение, подпись, число){
-    var b=document.createElement('button');
-    b.type='button'; b.className='dd-item'+(ADFILT.region===значение?' on':'');
-    b.setAttribute('role','option');
-    b.textContent=подпись;
-    if(число){ var n=document.createElement('span'); n.className='dd-n'; n.textContent=число; b.appendChild(n); }
-    b.addEventListener('click', function(){
-      ADFILT.region=значение; adRegionClose(); fillAdRegions(); renderAds(); adfMark();
-    });
-    list.appendChild(b);
-  }
-  пункт('', 'Любой регион', ADS.length);
-  regs.forEach(function(r){ пункт(r, r, счёт[r]); });
-  btn.textContent=ADFILT.region || 'Любой регион';
-  btn.classList.toggle('on', !!ADFILT.region);
+  var items=[{v:'', label:'Любой регион', n:ADS.length}];
+  regs.forEach(function(r){ items.push({v:r, label:r, n:счёт[r]}); });
+  ddSet('adf-dd', {items:items, value:ADFILT.region, empty:'Любой регион',
+    onPick:function(v){ ADFILT.region=v; fillAdRegions(); renderAds(); adfMark(); }});
 }
 
-function adRegionClose(){
-  var list=document.getElementById('adf-region-list'),
-      btn=document.getElementById('adf-region-btn');
-  if(list) list.hidden=true;
-  if(btn) btn.setAttribute('aria-expanded','false');
-}
+function adRegionClose(){ ddClose(null); }
 
 /* Кнопка «Фильтры» помечается точкой, когда что-то выбрано. */
 function adfMark(){
