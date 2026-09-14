@@ -841,19 +841,19 @@
           <div class="stack-label mono">Так выглядят лоты в ленте</div>
           <!--SHOWCASE_START-->
           <article class="lot" style="--m: var(--oil); --i: 0; --z: 48">
-            <div class="lot-head mono"><span>Tender.Pro</span><span>реализация</span></div>
-            <div class="lot-title">ООО &quot;КАМАЗ Тормозные системы&quot; г. Набережные Челны реализует в IV квартал 2026 отработанные нефтепродукты (МИО)</div>
-            <div class="lot-meta"><span>Республика Татарстан</span><span>18.09.2026 10:00</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Нефтеюганск</div>
+            <div class="lot-meta"><span>ХМАО — Югра</span><span>приём заявок до 15 сентября</span></div>
           </article>
           <article class="lot" style="--m: var(--scrap); --i: 1; --z: 24">
-            <div class="lot-head mono"><span>Сбербанк-АСТ</span><span>реализация</span></div>
-            <div class="lot-title">Лом черных и цветных металлов (Продажа на аукционе в электронной форме продуктов утилизации вооружения и военной…</div>
-            <div class="lot-meta"><span>Россия</span><span class="lot-price">1687753.75 RUB</span></div>
+            <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
+            <div class="lot-title">Лом чёрных металлов, 200 т, Жердевский сахарный завод</div>
+            <div class="lot-meta"><span>Тамбовская область</span><span>самовывоз</span></div>
           </article>
           <article class="lot" style="--m: var(--pipe); --i: 2; --z: 0">
-            <div class="lot-head mono"><span>ЭТП РЭО</span><span>реализация</span></div>
-            <div class="lot-title">ПВХ СТРУЖКА ПРОФИЛЯ И ТРУБЫ</div>
-            <div class="lot-meta"><span>Россия</span><span class="lot-price">8000.0 ₽</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Труба обсадная 139,7×9,17 P-110 с муфтами, 61 т</div>
+            <div class="lot-meta"><span>Ямало-Ненецкий АО</span><span class="lot-price">6 285 866 ₽</span></div>
           </article>
           <!--SHOWCASE_END-->
         </div>
@@ -869,7 +869,7 @@
     <div class="wrap">
       <div class="grid-4">
         <div class="stat" data-i style="--i:0"><div class="num display" data-to="16">16</div><div class="lbl">площадок под наблюдением в режиме реального времени</div></div>
-        <div class="stat" data-i style="--i:1"><div class="num display" data-to="561" data-suffix="+"><!--LOTS_START-->561<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
+        <div class="stat" data-i style="--i:1"><div class="num display" data-to="1000" data-suffix="+"><!--LOTS_START-->1000<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
         <div class="stat" data-i style="--i:2"><div class="num display" data-to="24" data-suffix="/7">24<small>/7</small></div><div class="lbl">мониторинг площадок в режиме онлайн, без выходных</div></div>
         <div class="stat" data-i style="--i:3"><div class="num display" data-to="3">3</div><div class="lbl">вида сырья: нефтепродукты, лом, трубы</div></div>
       </div>
@@ -1214,7 +1214,23 @@
    (тот же origin, что и /app/) → переход в приложение. */
 (function(){
   var API_BASE = (location.hostname==='127.0.0.1'||location.hostname==='localhost'||location.hostname.indexOf('nip.io')>=0) ? '' : 'https://soft-snowflake-37cc.zhuganoff.workers.dev';
-  function SESS(){ try{ return localStorage.getItem('session')||''; }catch(_){ return ''; } }
+  function SESS_COOKIE(){
+    try {
+      var m = document.cookie.match(/(?:^|; )ovd_sid=([^;]+)/);
+      return m ? decodeURIComponent(m[1]) : '';
+    } catch (_) { return ''; }
+  }
+  function SESS_SAVE(t){
+    if (!t) return;
+    try { localStorage.setItem('session', t); } catch (_) {}
+    // запасной путь: в части браузеров (встроенные, приватный режим) хранилище
+    // закрыто — тогда сессия жила бы только до перехода и вход «зависал»
+    try { document.cookie = 'ovd_sid=' + encodeURIComponent(t) + '; path=/; max-age=2592000; SameSite=Lax'; } catch (_) {}
+  }
+  function SESS(){
+    try { var v = localStorage.getItem('session'); if (v) return v; } catch (_) {}
+    return SESS_COOKIE();
+  }
   function api(path, body){
     var ctrl=window.AbortController?new AbortController():null;
     var to=ctrl?setTimeout(function(){ try{ctrl.abort();}catch(_){} },12000):null;
@@ -1298,10 +1314,11 @@
 
   function fail(e){ msg.textContent=(e&&e.message)||'Ошибка'; render(); }
   function done(d){
-    try{ localStorage.setItem('session', d.session); }catch(_){}
+    SESS_SAVE(d.session);
     btn.disabled=true; btn.textContent='Готово';
     msg.textContent='Вход выполнен, открываем приложение…';
-    setTimeout(function(){ location.href='/app/'; }, 500);
+    // без задержки: часть браузеров теряет переход, если ждать таймер
+    try { location.assign('/app/'); } catch (_) { location.href = '/app/'; }
   }
   btn.addEventListener('click', function(){
     var email=(em.value||'').trim(), pass=pw.value||'', code=(cd.value||'').trim();

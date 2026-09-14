@@ -1499,7 +1499,23 @@ function saveStatuses(){
 
 // ——— почта и отправка тендеров через бэкенд ———
 const initData = (tg && tg.initData) || '';
-function SESS(){ try{ return localStorage.getItem('session')||''; }catch(_){ return ''; } }
+function SESS_COOKIE(){
+  try {
+    var m = document.cookie.match(/(?:^|; )ovd_sid=([^;]+)/);
+    return m ? decodeURIComponent(m[1]) : '';
+  } catch (_) { return ''; }
+}
+function SESS_SAVE(t){
+  if (!t) return;
+  try { localStorage.setItem('session', t); } catch (_) {}
+  // запасной путь: в части браузеров (встроенные, приватный режим) хранилище
+  // закрыто — тогда сессия жила бы только до перехода и вход «зависал»
+  try { document.cookie = 'ovd_sid=' + encodeURIComponent(t) + '; path=/; max-age=2592000; SameSite=Lax'; } catch (_) {}
+}
+function SESS(){
+  try { var v = localStorage.getItem('session'); if (v) return v; } catch (_) {}
+  return SESS_COOKIE();
+}
 // бэкенд живёт на сервере (nip.io); приложение на github.io — зовём по
 // абсолютному адресу (CORS разрешён на сервере). На самом сервере — относительно.
 const API_BASE = (location.hostname.indexOf('nip.io')>=0 || location.hostname==='127.0.0.1' || location.hostname==='localhost') ? '' : 'https://soft-snowflake-37cc.zhuganoff.workers.dev';
@@ -1944,7 +1960,7 @@ function showLogin(msg){
     if(np.length<8){ hint.textContent='Пароль короче 8 символов'; return; }
     save.disabled=true; save.textContent='Сохраняем…';
     api('/api/auth/password',{old_password:oldI.value||'', password:np}).then(function(d){
-      try{ if(d&&d.session) localStorage.setItem('session', d.session); }catch(_){}
+      if (d && d.session) SESS_SAVE(d.session);
       hasPw=true; box.style.display='none'; oldI.value=''; newI.value='';
       hint.textContent='Пароль сохранён.'; save.disabled=false; save.textContent='Сохранить'; paint();
     }).catch(function(e){
@@ -1987,7 +2003,7 @@ function showLogin(msg){
   link(lnkReset,'reset'); link(lnkCode,'code'); link(lnkReg,'reg'); link(lnkLogin,'login');
   function fail(e){ msg.textContent=(e&&e.message)||'Ошибка'; render(); }
   function done(d){
-    try{ localStorage.setItem('session', d.session); }catch(_){}
+    SESS_SAVE(d.session);
     btn.textContent='Готово';
     bootFeed().then(function(){ var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); } })
       .catch(function(){ msg.textContent='Вход выполнен, но лента не загрузилась — обновите страницу.'; render(); });
