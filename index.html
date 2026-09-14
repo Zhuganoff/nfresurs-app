@@ -1371,8 +1371,9 @@
       msg.textContent = 'Войдите по почте и паролю, чтобы открыть тендеры';
     }
     btn.disabled=false;
+    if (errText) showErr();
   }
-  function setMode(m){ mode=m; stage='start'; cd.value=''; pw2.value=''; render(); }
+  function setMode(m){ mode=m; stage='start'; cd.value=''; pw2.value=''; errText=''; render(); }
 
   function open(m){
     setMode(m==='reg' ? 'reg' : 'login');
@@ -1404,7 +1405,26 @@
   });
   if(location.hash==='#login') open('login'); else if(location.hash==='#reg') open('reg');
 
-  function fail(e){ msg.textContent=(e&&e.message)||'Ошибка'; render(); }
+  /* Ошибку показываем ПОСЛЕ перерисовки: render() пишет в то же поле
+     подсказку режима и раньше затирал сообщение сервера — пользователь
+     жал «Войти» и видел прежний текст, будто ничего не произошло. */
+  var errText = '';
+  function showErr(){
+    msg.textContent = errText;
+    // аккаунты, заведённые до паролей, входят по коду; сервер намеренно
+    // отвечает одинаково на неверный пароль и на незнакомую почту, поэтому
+    // второй путь подсказываем прямо здесь
+    if (mode==='login' && stage==='start' && /парол/i.test(errText)) {
+      msg.appendChild(document.createElement('br'));
+      var a = document.createElement('a');
+      a.href = '#';
+      a.textContent = 'Пароль ещё не задан? Войти по коду на почту';
+      a.style.cssText = 'color:var(--accent);font-size:13px';
+      a.addEventListener('click', function(ev){ ev.preventDefault(); setMode('code'); });
+      msg.appendChild(a);
+    }
+  }
+  function fail(e){ errText = (e && e.message) || 'Ошибка'; render(); }
   function done(d){
     SESS_SAVE(d.session);
     btn.disabled=true; btn.textContent='Готово';
@@ -1414,7 +1434,7 @@
   }
   btn.addEventListener('click', function(){
     var email=(em.value||'').trim(), pass=pw.value||'', code=(cd.value||'').trim();
-    if(email.indexOf('@')<0){ msg.textContent='Введите корректный e-mail'; return; }
+    errText=''; if(email.indexOf('@')<0){ errText='Введите корректный e-mail'; showErr(); return; }
     btn.disabled=true; btn.textContent='Секунду…';
     if(stage==='confirm'){
       if(mode==='reg'){
@@ -1422,7 +1442,7 @@
       } else if(mode==='code'){
         api('/api/auth/verify',{email:email,code:code}).then(done).catch(fail);
       } else {
-        if(pass.length<8){ msg.textContent='Пароль короче 8 символов'; render(); return; }
+        if(pass.length<8){ errText='Пароль короче 8 символов'; render(); return; }
         api('/api/auth/reset/confirm',{email:email,code:code,password:pass}).then(done).catch(fail);
       }
       return;
@@ -1430,8 +1450,8 @@
     if(mode==='login'){
       api('/api/auth/login',{email:email,password:pass}).then(done).catch(fail);
     } else if(mode==='reg'){
-      if(pass.length<8){ msg.textContent='Пароль короче 8 символов'; render(); return; }
-      if(pass!==(pw2.value||'')){ msg.textContent='Пароли не совпадают'; render(); return; }
+      if(pass.length<8){ errText='Пароль короче 8 символов'; render(); return; }
+      if(pass!==(pw2.value||'')){ errText='Пароли не совпадают'; render(); return; }
       api('/api/auth/register/start',{email:email,password:pass,password2:pw2.value})
         .then(function(){ stage='confirm'; render(); cd.focus(); }).catch(fail);
     } else if(mode==='reset'){
