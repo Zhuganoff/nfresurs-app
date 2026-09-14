@@ -356,6 +356,35 @@
   @media (max-width: 960px) { .vs { grid-template-columns: 1fr; gap: 14px; } .vs-col:hover { transform: none; } .vs-col:hover li { transform: none; } }
   @media (max-width: 420px) { .vs-col { padding: 22px 20px; border-radius: 18px; } .vs-col ul { font-size: 14.5px; gap: 10px; } .vs-h { margin-bottom: 14px; } }
   @media (prefers-reduced-motion: reduce) { .vs-col, .vs-col li { transition: none; } .vs-col:hover { transform: none; } }
+
+  /* ——— уведомление о cookie: стеклянная пилюля в стиле сайта ——— */
+  .cc { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%) translateY(14px);
+    z-index: 70; width: min(680px, calc(100% - 32px)); opacity: 0; pointer-events: none;
+    transition: opacity .45s var(--ease-out), transform .45s var(--ease-out); }
+  .cc.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+  .cc-in { position: relative; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    padding: 13px 16px; border-radius: 18px; border: 1px solid #34434F;
+    background: linear-gradient(145deg, rgba(27,37,46,.96), rgba(16,22,27,.96));
+    -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    box-shadow: 0 24px 60px -26px rgba(0,0,0,.85), inset 0 1px 0 rgba(217,230,239,.08); }
+  .cc-txt { flex: 1 1 260px; font-size: 14px; line-height: 1.45; color: var(--dim); }
+  .cc-txt a { color: var(--accent); }
+  .cc-btns { display: flex; gap: 8px; flex: none; }
+  .cc-btn { min-height: 40px; padding: 0 16px; border-radius: 11px; font: inherit; font-size: 14px;
+    font-weight: 600; cursor: pointer; border: 1px solid transparent; white-space: nowrap; }
+  .cc-ok { background: var(--accent); color: var(--accent-ink); }
+  .cc-ok:hover { background: #6BE5DD; }
+  .cc-more { background: rgba(255,255,255,.06); color: var(--text); border-color: #34434F; }
+  .cc-more:hover { background: rgba(255,255,255,.12); }
+  .cc-panel { display: none; flex-basis: 100%; margin-top: 4px; padding-top: 12px;
+    border-top: 1px solid #34434F; }
+  .cc.open .cc-panel { display: block; }
+  .cc-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; font-size: 13.5px; color: var(--dim); }
+  .cc-row b { display: block; color: var(--text); font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .cc-row input { margin-top: 3px; width: 17px; height: 17px; accent-color: var(--accent); }
+  .cc-always { color: var(--faint); font-size: 12px; margin-top: 3px; display: block; }
+  @media (max-width: 560px) { .cc-btns { flex: 1 1 100%; } .cc-btn { flex: 1; } }
+  @media (prefers-reduced-motion: reduce) { .cc { transition: none; } }
   /* ——— вход поверх лендинга: затемнение + стеклянный блок из центра ——— */
   .lg-ov { position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; padding: 24px;
     background: radial-gradient(70% 60% at 50% 45%, rgba(8,12,15,.55) 0%, rgba(8,12,15,.88) 100%); animation: lgdim .5s ease both; }
@@ -1049,8 +1078,29 @@
     <a href="privacy.html">Политика конфиденциальности</a>
     <a href="rules.html">Правила объявлений</a>
     <a href="https://t.me/nfresursbot">@nfresursbot</a>
+    <a href="#" data-cookie-settings>Настройки cookie</a>
   </nav>
 </footer>
+
+
+<div class="cc" id="cookie-note" role="dialog" aria-live="polite" aria-label="Использование cookie">
+  <div class="cc-in">
+    <div class="cc-txt">Сайт использует cookie и память браузера: чтобы вы оставались в аккаунте и сохранялись настройки ленты. Подробнее — в <a href="privacy.html">политике конфиденциальности</a>.</div>
+    <div class="cc-btns">
+      <button type="button" class="cc-btn cc-more" id="cc-more">Настройки</button>
+      <button type="button" class="cc-btn cc-ok" id="cc-ok">Хорошо</button>
+    </div>
+    <div class="cc-panel">
+      <label class="cc-row"><input type="checkbox" checked disabled>
+        <span><b>Строго необходимые</b>Вход в аккаунт, выбранная тема и фильтры ленты. Без них сервис не работает.<span class="cc-always">всегда включены</span></span></label>
+      <label class="cc-row"><input type="checkbox" id="cc-analytics">
+        <span><b>Статистика посещений</b>Обезличенный счёт визитов, чтобы понимать, какими разделами пользуются. Сейчас не подключена — галочка сработает, когда счётчик появится.</span></label>
+      <div class="cc-btns" style="margin-top:10px">
+        <button type="button" class="cc-btn cc-ok" id="cc-save">Сохранить выбор</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="cta-bar" id="cta-bar" aria-hidden="true">
   <a class="btn btn-primary" href="https://t.me/nfresursbot">
@@ -1356,6 +1406,51 @@
   cd.addEventListener('keydown', function(e){ if(e.key==='Enter') btn.click(); });
   [em,pw,pw2].forEach(function(i){ i.addEventListener('keydown', function(e){ if(e.key==='Enter') btn.click(); }); });
   render();
+})();
+</script>
+<script>
+/* Уведомление о cookie. Выбор хранится в памяти браузера и дублируется в cookie
+   (в части браузеров хранилище закрыто). Счётчик посещений не подключён — когда
+   появится, запускать его нужно только по событию ovd-consent, см. ниже. */
+(function(){
+  var KEY = 'ovd-cookie-consent', PREFS = 'ovd-cookie-prefs', VERSION = 1;
+  function read(k){
+    try { var v = localStorage.getItem(k); if (v) return v; } catch (_) {}
+    try {
+      var m = document.cookie.match(new RegExp('(?:^|; )' + k.replace(/-/g, '\\-') + '=([^;]*)'));
+      return m ? decodeURIComponent(m[1]) : '';
+    } catch (_) { return ''; }
+  }
+  function write(k, v){
+    try { localStorage.setItem(k, v); } catch (_) {}
+    try { document.cookie = k + '=' + encodeURIComponent(v) + '; path=/; max-age=31536000; SameSite=Lax'; } catch (_) {}
+  }
+  var box = document.getElementById('cookie-note');
+  if (!box) return;
+  var analytics = document.getElementById('cc-analytics');
+  function prefs(){
+    try { return JSON.parse(read(PREFS) || '{}'); } catch (_) { return {}; }
+  }
+  function save(on){
+    write(KEY, 'accepted');
+    write(PREFS, JSON.stringify({ analytics: !!on, version: VERSION, ts: new Date().toISOString() }));
+    window.ovdConsent = { analytics: !!on };
+    try { document.dispatchEvent(new CustomEvent('ovd-consent', { detail: { analytics: !!on } })); } catch (_) {}
+    box.classList.remove('show', 'open');
+  }
+  window.ovdConsent = { analytics: !!prefs().analytics };
+  if (!read(KEY)) setTimeout(function(){ box.classList.add('show'); }, 1200);
+  document.getElementById('cc-ok').addEventListener('click', function(){ save(false); });
+  document.getElementById('cc-save').addEventListener('click', function(){ save(analytics.checked); });
+  document.getElementById('cc-more').addEventListener('click', function(){ box.classList.toggle('open'); });
+  // повторное открытие из подвала
+  document.addEventListener('click', function(e){
+    var t = e.target.closest && e.target.closest('[data-cookie-settings]');
+    if (!t) return;
+    e.preventDefault();
+    analytics.checked = !!prefs().analytics;
+    box.classList.add('show', 'open');
+  });
 })();
 </script>
 </body>
