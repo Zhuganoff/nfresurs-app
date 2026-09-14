@@ -225,7 +225,13 @@
   .ad-form { background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; padding: 14px; margin: 0 0 16px; display: flex; flex-direction: column; gap: 9px; }
   .ad-form input, .ad-form textarea, .ad-form select { width: 100%; padding: 10px 12px; border: 1px solid var(--hair); border-radius: 10px; background: var(--app-bg); color: var(--text); font: inherit; font-size: 14px; box-sizing: border-box; }
   .ad-form textarea { resize: vertical; }
-  .ad-row { display: flex; gap: 10px; align-items: center; }
+  .ad-row #ad-vat { flex: 0 0 auto; }
+  .ad-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  /* цена, НДС и «договорная» — одной строкой; width:100% из общего правила
+     полей формы иначе разносит их по три строки */
+  .ad-row #ad-price { flex: 1 1 150px; width: auto; min-width: 0; }
+  .ad-row #ad-vat { flex: 0 0 auto; width: auto; }
+  .ad-row .ad-neg { flex: 0 0 auto; white-space: nowrap; }
   .ad-row input { flex: 1; }
   .ad-neg { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-dim); white-space: nowrap; }
   .ad-photo-add { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--accent); cursor: pointer; }
@@ -386,6 +392,40 @@
   nav.tabbar button.active { opacity: 1; transform: translateY(-1px); }
   nav.tabbar .badge { position: absolute; top: 0; left: 50%; margin-left: 6px; min-width: 16px; height: 16px; padding: 0 4px; background: var(--accent); color: #fff; border-radius: 999px; font-size: 10px; font-weight: 700; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
 
+
+  .ac-vat { font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 999px;
+    border: 1px solid var(--hair); color: var(--text-dim); margin-left: 6px;
+    vertical-align: middle; }
+  /* подача объявления: форма сворачивается в точку, на её месте — галочка */
+  .ad-form { transform-origin: 50% 0; }
+  .ad-form.shrink { animation: adshrink .55s cubic-bezier(.55,0,.9,.3) forwards; }
+  @keyframes adshrink {
+    to { transform: scale(.02) translateY(-10px); opacity: 0; }
+  }
+  .ad-done { display: none; flex-direction: column; align-items: center; gap: 14px;
+    padding: 26px 20px 30px; margin-bottom: 16px; border-radius: 18px;
+    border: 1px solid color-mix(in srgb, var(--ok, #2ea043) 45%, var(--hair));
+    background: color-mix(in srgb, var(--ok, #2ea043) 8%, var(--surface));
+    text-align: center; }
+  .ad-done.on { display: flex; animation: adpop .45s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes adpop { from { transform: scale(.85); opacity: 0; } }
+  .ad-check { width: 62px; height: 62px; border-radius: 50%; flex: none;
+    display: grid; place-items: center; color: #fff;
+    background: linear-gradient(145deg, #3fd47f, #1f9d55);
+    box-shadow: 0 10px 26px -10px rgba(31,157,85,.9); }
+  .ad-check svg { width: 34px; height: 34px; stroke-dasharray: 34;
+    stroke-dashoffset: 34; animation: adtick .5s .18s ease forwards; }
+  @keyframes adtick { to { stroke-dashoffset: 0; } }
+  .ad-done h4 { margin: 0; font-size: 17px; font-weight: 700; }
+  .ad-done p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--text-dim);
+    max-width: 380px; }
+  .ad-done button { border: 1px solid var(--hair); background: var(--surface);
+    color: var(--text); border-radius: 11px; padding: 9px 16px; font-size: 13.5px;
+    cursor: pointer; }
+  @media (prefers-reduced-motion: reduce) {
+    .ad-form.shrink { animation: none; opacity: 0; }
+    .ad-done.on, .ad-check svg { animation: none; stroke-dashoffset: 0; }
+  }
   /* ——— метки: сохранённый фильтр, который красит ленту ——— */
   .tab-row { flex: 1; display: flex; align-items: stretch; gap: 2px; }
   .tab-row > button[data-tab] { flex: 1; }
@@ -1062,7 +1102,7 @@
 
   <main>
     <section class="pane active" id="pane-tenders">
-      <div class="pane-head"><h2>Тендеры</h2><span class="count" id="tenders-count"></span></div>
+      <div class="pane-head"><h2>Реализация</h2><span class="count" id="tenders-count"></span></div>
       <div class="lbfilter" id="lbfilter" style="display:none"></div>
       <div class="catseg" id="catseg">
         <button data-cat="oil" class="on">Нефтепродукты</button>
@@ -1097,6 +1137,11 @@
         <textarea id="ad-desc" maxlength="2000" rows="3" placeholder="Описание: объём, состояние, условия вывоза"></textarea>
         <div class="ad-row">
           <input id="ad-price" maxlength="40" placeholder="Цена, ₽">
+          <select id="ad-vat">
+            <option value="">НДС не указан</option>
+            <option value="with">с НДС</option>
+            <option value="without">без НДС</option>
+          </select>
           <label class="ad-neg"><input type="checkbox" id="ad-neg"> Договорная</label>
         </div>
         <input id="ad-region" maxlength="80" placeholder="Регион / город вывоза">
@@ -1106,6 +1151,12 @@
         <div class="ad-rules-note">Публикуя объявление, вы принимаете <a href="#" onclick="openDoc('../rules.html');return false">правила размещения</a>.</div>
         <button class="ad-submit" id="ad-submit">Отправить на модерацию</button>
         <div id="ad-hint" class="ad-hint"></div>
+      </div>
+      <div class="ad-done" id="ad-done">
+        <span class="ad-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+        <h4>Объявление отправлено на модерацию</h4>
+        <p id="ad-done-text">Мы проверим его вручную — обычно это занимает несколько часов. Как только объявление одобрят, оно появится в ленте и будет видно покупателям 10 дней. О решении сообщим в приложении, в разделе «Мои объявления».</p>
+        <button type="button" id="ad-done-ok">Хорошо</button>
       </div>
       <div id="ads-filters" class="ads-filters" style="display:none">
         <select id="adf-region" class="fsel"><option value="">Все области</option></select>
@@ -1274,7 +1325,7 @@
   </main>
 
   <nav class="tabbar">
-    <button data-tab="tenders" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Тендеры</button>
+    <button data-tab="tenders" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Реализация</button>
     <button data-tab="fav"><span class="badge" id="fav-badge" style="display:none">0</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.5-9.3-9A5 5 0 0 1 12 5.5 5 5 0 0 1 21.3 11C19 15.5 12 20 12 20Z"/></svg>Избранное</button>
     <button data-tab="ads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 6h18l-2 7H7L5 4H2"/><circle cx="9" cy="19" r="1.6"/><circle cx="17" cy="19" r="1.6"/></svg>Продать</button>
     <div class="tab-row">
@@ -1615,9 +1666,9 @@ function render(){
   fillRegionFilter();
   const items=feedItems();
   var af=activeFilters();
-  document.getElementById('tenders-list').innerHTML = items.length?items.map(card).join(''):`<div class="empty">${FILT.showHidden?'Скрытых тендеров нет.':'Ничего не найдено.'}${af.length?'<div class="empty-filters">Включены фильтры: <b>'+escH(af.join(', '))+'</b></div><button class="ebtn" id="f-reset" type="button">Сбросить фильтры</button>':''}</div>`;
+  document.getElementById('tenders-list').innerHTML = items.length?items.map(card).join(''):`<div class="empty">${FILT.showHidden?'Скрытых лотов нет.':'Ничего не найдено.'}${af.length?'<div class="empty-filters">Включены фильтры: <b>'+escH(af.join(', '))+'</b></div><button class="ebtn" id="f-reset" type="button">Сбросить фильтры</button>':''}</div>`;
   var fb=document.getElementById('filters-btn'); if(fb){ fb.classList.toggle('has', af.length>0); fb.title=af.length?('Включены фильтры: '+af.join(', ')):''; }
-  document.getElementById('tenders-count').textContent = items.length+' '+plural(items.length,'тендер','тендера','тендеров');
+  document.getElementById('tenders-count').textContent = items.length+' '+plural(items.length,'лот','лота','лотов');
   const fv=TENDERS.filter(t=>favs.has(key(t)));
   document.getElementById('fav-list').innerHTML = fv.length?fv.map(card).join(''):`<div class="empty">${heart(false)}<div>Отмечайте тендеры ♥ — они появятся здесь.</div></div>`;
   document.getElementById('fav-count').textContent = fv.length+' сохранено';
@@ -1892,7 +1943,8 @@ document.addEventListener('click',e=>{
     }
     return;
   }
-  if(e.target.closest('#ad-new')){ var adf=document.getElementById('ad-form'); var opening=adf.style.display==='none'; adf.style.display=opening?'flex':'none'; if(opening){ _editAd=null; document.getElementById('ad-submit').textContent='Отправить на модерацию'; document.getElementById('ad-hint').textContent=''; } return; }
+  if(e.target.closest('#ad-new')){ adFormOpen(); return; }
+  if(e.target.closest('#ad-done-ok')){ adDoneHide(); return; }
   if(e.target.closest('.ad-photo-add')){ if(adPhotos.length>=3){ document.getElementById('ad-hint').textContent='Максимум 3 фото'; return; } document.getElementById('ad-files').click(); return; }
   if(e.target.closest('.ad-rm')){ var i=+e.target.closest('.ad-rm').dataset.i; adPhotos.splice(i,1); adThumbs(); return; }
   if(e.target.closest('#ad-submit')){ submitAd(); return; }
@@ -2184,6 +2236,7 @@ function adFilesChosen(files){ var arr=[].slice.call(files||[]); arr.forEach(fun
 function openTg(u){ u=String(u).replace(/^@/,''); var url='https://t.me/'+encodeURIComponent(u); try{ if(tg&&tg.openTelegramLink){ tg.openTelegramLink(url); return; } }catch(_){} try{ if(tg&&tg.openLink){ tg.openLink(url); return; } }catch(_){} window.open(url,'_blank'); }
 function adCard(a){ var cat={oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом',other:'Другое'}[a.category]||'Другое';
   var price=a.price?(escH(a.price)+(/\d/.test(a.price)?' ₽':'')):(a.price_type==='negotiable'?'Договорная':'—');
+  if(a.vat) price+=' <span class="ac-vat">'+(a.vat==='with'?'с НДС':'без НДС')+'</span>';
   var photos=''; for(var i=0;i<(a.nphotos||0);i++){ photos+='<img src="'+API_BASE+'/api/ad/photo?id='+a.id+'&n='+i+'" loading="lazy">'; }
   var go=''; var uname=(a.username||'').replace(/^@/,'');
   if(uname){ go='<a class="ac-go" href="#" onclick="openTg(\''+escH(uname)+'\');return false">Написать в Telegram</a>'; }
@@ -2216,6 +2269,51 @@ function renderAds(){
 function loadAds(){ var box=document.getElementById('ads-list'); if(!box)return; box.innerHTML='<div class="spinner"></div>';
   api('/api/ads').then(function(d){ ADS=(d&&d.ads)||[]; renderAds(); })
     .catch(function(){ box.innerHTML='<div class="ads-empty">Не удалось загрузить объявления.</div>'; }); }
+
+/* ——— Подача объявления: открыть форму, свернуть её после отправки ——— */
+function adFormOpen(){
+  var f=document.getElementById('ad-form'); if(!f) return;
+  adDoneHide();
+  var открыта = f.style.display && f.style.display!=='none' && !f.classList.contains('shrink');
+  f.classList.remove('shrink');
+  if(открыта){ f.style.display='none'; return; }
+  f.style.display='flex';
+  _editAd=null;
+  document.getElementById('ad-submit').textContent='Отправить на модерацию';
+  document.getElementById('ad-submit').disabled=false;
+  document.getElementById('ad-hint').textContent='';
+  try{ document.getElementById('ad-title').focus({preventScroll:true}); }catch(_){}
+  try{ f.scrollIntoView({behavior:'smooth', block:'nearest'}); }catch(_){}
+}
+
+function adDoneHide(){
+  var d=document.getElementById('ad-done');
+  if(d){ d.classList.remove('on'); d.style.display='none'; }
+}
+
+/* Форма улетает в точку, на её месте распускается зелёная галочка. */
+function adDoneShow(правка){
+  var f=document.getElementById('ad-form'), d=document.getElementById('ad-done');
+  if(!d) return;
+  var txt=document.getElementById('ad-done-text'),
+      head=d.querySelector('h4');
+  if(правка){
+    head.textContent='Изменения отправлены на модерацию';
+    txt.textContent='Объявление вернулось на проверку — пока она идёт, в ленте показывается прежняя версия. Как только изменения одобрят, они появятся у покупателей. Решение будет видно в разделе «Мои объявления».';
+  } else {
+    head.textContent='Объявление отправлено на модерацию';
+    txt.textContent='Мы проверим его вручную — обычно это занимает несколько часов. Как только объявление одобрят, оно появится в ленте и будет видно покупателям 10 дней. О решении сообщим в разделе «Мои объявления».';
+  }
+  if(f){
+    f.classList.add('shrink');
+    setTimeout(function(){ f.style.display='none'; f.classList.remove('shrink'); }, 560);
+  }
+  setTimeout(function(){
+    d.style.display='flex'; d.classList.add('on');
+    try{ d.scrollIntoView({behavior:'smooth', block:'nearest'}); }catch(_){}
+  }, 420);
+}
+
 function submitAd(){ var btn=document.getElementById('ad-submit'), hint=document.getElementById('ad-hint');
   var title=(document.getElementById('ad-title').value||'').trim();
   if(title.length<5){ hint.textContent='Заголовок — минимум 5 символов'; return; }
@@ -2225,18 +2323,23 @@ function submitAd(){ var btn=document.getElementById('ad-submit'), hint=document
     description:(document.getElementById('ad-desc').value||'').trim(),
     price:(document.getElementById('ad-price').value||'').trim(),
     price_type:document.getElementById('ad-neg').checked?'negotiable':'fixed',
+    vat:document.getElementById('ad-vat').value,
     region:(document.getElementById('ad-region').value||'').trim(), contact:contact };
   btn.disabled=true; hint.textContent='Отправляю…';
   var body=_editAd?{id:_editAd, ad:ad, images:adPhotos}:{ad:ad, images:adPhotos};
   var url=_editAd?'/api/ad/update':'/api/ad/create';
   api(url,body).then(function(){
-    btn.disabled=false;
-    hint.textContent=_editAd?'✅ Изменения отправлены на модерацию.':'✅ Отправлено на модерацию. После проверки объявление появится в ленте.';
+    var правка=!!_editAd;
+    btn.disabled=false; hint.textContent='';
     if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success');
     ['ad-title','ad-desc','ad-price','ad-region','ad-contact'].forEach(function(id){document.getElementById(id).value='';});
-    adPhotos=[]; adThumbs(); document.getElementById('ad-neg').checked=false;
+    adPhotos=[]; adThumbs();
+    document.getElementById('ad-neg').checked=false;
+    document.getElementById('ad-vat').value='';
     _editAd=null; btn.textContent='Отправить на модерацию';
-    setTimeout(function(){ var f=document.getElementById('ad-form'); if(f)f.style.display='none'; hint.textContent=''; loadAds(); if(document.getElementById('myads-list').style.display!=='none') loadMyAds(); },1600);
+    adDoneShow(правка);
+    loadAds();
+    if(document.getElementById('myads-list').style.display!=='none') loadMyAds();
   }).catch(function(err){ btn.disabled=false; hint.textContent=(err&&err.message)||'Не удалось отправить'; }); }
 var _editAd=null, MYADS=[];
 function myAdBadge(s){ var m={pending:'на модерации',approved:'опубликовано',rejected:'отклонено',expired:'истекло',banned:'заблокировано'}; return m[s]||s; }
@@ -2244,7 +2347,7 @@ function myDaysLeft(a){ if(a.status!=='approved'||!a.expires_at) return ''; var 
 function loadMyAds(){ var box=document.getElementById('myads-list'); if(!box) return; box.innerHTML='<div class="spinner"></div>';
   api('/api/ad/mine').then(function(d){ MYADS=(d&&d.ads)||[]; if(!MYADS.length){ box.innerHTML='<div class="ads-empty">У вас пока нет объявлений.</div>'; return; }
     box.innerHTML=MYADS.map(function(a){ return '<div class="myad"><div class="myad-top"><h4>'+escH(a.title)+'</h4><span class="myad-badge '+a.status+'">'+myAdBadge(a.status)+'</span></div>'+
-      '<div class="myad-meta">'+escH({oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом',other:'Другое'}[a.category]||'')+(a.price?' · '+escH(a.price):'')+myDaysLeft(a)+'</div>'+
+      '<div class="myad-meta">'+escH({oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом',other:'Другое'}[a.category]||'')+(a.price?' · '+escH(a.price):'')+(a.vat?' ('+(a.vat==='with'?'с НДС':'без НДС')+')':'')+myDaysLeft(a)+'</div>'+
       '<div class="myad-acts">'+((a.status==='approved'||a.status==='expired')?'<button class="myad-renew" data-id="'+a.id+'">Продлить</button>':'')+'<button class="myad-edit" data-id="'+a.id+'">Редактировать</button><button class="myad-del del" data-id="'+a.id+'">Удалить</button></div></div>'; }).join('');
   }).catch(function(){ box.innerHTML='<div class="ads-empty">Не удалось загрузить.</div>'; }); }
 function startEditAd(id){ var a=MYADS.find(function(x){return x.id===id;}); if(!a) return; _editAd=id;
@@ -2257,6 +2360,7 @@ function startEditAd(id){ var a=MYADS.find(function(x){return x.id===id;}); if(!
   document.getElementById('ad-contact').value=a.contact||'';
   adPhotos=[]; adThumbs();
   document.getElementById('ad-submit').textContent='Сохранить изменения';
+  document.getElementById('ad-vat').value=a.vat||'';
   document.getElementById('ad-hint').textContent=a.nphotos?'Фото сохранятся прежние. Добавите новые — заменят их.':'';
   // переключаемся на вкладку Доска и открываем форму
   document.querySelectorAll('nav.tabbar button').forEach(function(b){b.classList.remove('active');});
