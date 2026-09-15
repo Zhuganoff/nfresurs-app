@@ -302,6 +302,13 @@
   .sources-m[open] > summary::after { transform: rotate(180deg); }
   .sources-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 0 16px; }
 
+
+  /* финальный призыв: крупная кнопка ярче любого декора вокруг */
+  .final { text-align: center; padding: 46px 28px 52px; border-radius: 22px;
+    border: 1px solid var(--hair); background: rgba(27,37,46,.5); }
+  .final h2 { margin: 0 0 12px; }
+  .final .lead { max-width: 640px; margin: 0 auto 22px; }
+  .final .btn { font-size: 16px; padding: 15px 30px; }
   /* три тарифа: прямоугольные блоки, средний выделен */
   .plans { display: grid; gap: 10px; }
   .plan { position: relative; padding: 14px 16px; border-radius: 14px;
@@ -925,9 +932,9 @@
   <div class="hero-wrap">
     <section class="wrap hero">
       <div class="hero-copy">
-        <span class="eyebrow mono">Нефтепродукты · Металлолом · Трубы</span>
-        <h1 class="display"><span class="hl">Электронные торги по</span><span class="hl">реализации имущества:</span><span class="hl accent">нефтепродукты, лом, трубы</span></h1>
-        <p class="lead glassy">Предприятия по всей России продают отработанные нефтепродукты и масла, лом и трубы б/у через десятки торговых площадок. Мы ведём круглосуточный мониторинг: убираем закупки и оставляем только реализацию. Новые лоты — в ленте приложения и уведомлением в Telegram.</p>
+        <span class="eyebrow mono">Мониторинг торгов · Металлолом · Нефтепродукты · Трубы</span>
+        <h1 class="display"><span class="hl">Не проверяйте 18 площадок</span><span class="hl">вручную: лоты на продажу</span><span class="hl accent">в одной ленте</span></h1>
+        <p class="lead glassy">«Отходы в доходы» собирает процедуры реализации металлолома, нефтепродуктов и труб с <!--SITES_INLINE-->18<!--SITES_INLINE_END--> торговых площадок в одну ленту и сообщает о новых лотах. Закупки, поставки и услуги отфильтрованы — остаётся только то, что продают.</p>
         <div class="cta">
           <a class="btn btn-primary" href="https://t.me/nfresursbot">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.6 15.5l-.4 5.3c.6 0 .8-.2 1.1-.5l2.6-2.5 5.4 4c1 .5 1.7.3 2-.9L23.9 4c.3-1.5-.5-2-1.5-1.7L1.8 10.2c-1.4.5-1.4 1.3-.2 1.7l5.3 1.6L18.9 6c.6-.4 1.1-.2.7.2z"/></svg>
@@ -935,7 +942,7 @@
           </a>
           <a class="btn btn-ghost" href="/app/">Открыть в браузере</a>
         </div>
-        <p class="note note-shine">Первые 7 дней бесплатно. Дальше — от 699 ₽ в месяц, картой или через СБП.</p>
+        <p class="note note-shine">Первые 3 дня бесплатно, по приглашению — 7. Дальше от 699 ₽ в месяц.</p>
       </div>
       <div class="stage" id="stage" aria-label="Примеры лотов из ленты">
         <div class="stack" id="stack">
@@ -953,7 +960,7 @@
           </article>
           <article class="lot" style="--m: var(--pipe); --i: 2; --z: 0">
             <div class="lot-head mono"><span>ГИС Торги</span><span>реализация</span></div>
-            <div class="lot-title">Линия производства ПЭ труб ЛТ 20/40 2008 года изготовления</div>
+            <div class="lot-title">Линия производства ПЭ труб ЛТ 20/40 2008 года…</div>
             <div class="lot-meta"><span>Россия</span><span class="lot-price">250 000 ₽</span></div>
           </article>
           <!--SHOWCASE_END-->
@@ -972,7 +979,7 @@
         <div class="stat" data-i style="--i:0"><div class="num display" data-to="18">18</div><!--SITES_COUNT--><div class="lbl">площадок под наблюдением, проверка каждый час</div></div>
         <div class="stat" data-i style="--i:1"><div class="num display" data-to="457" data-suffix="+"><!--LOTS_START-->457<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
         <div class="stat" data-i style="--i:2"><div class="num display" data-to="24" data-suffix="/7">24<small>/7</small></div><div class="lbl">мониторинг площадок в режиме онлайн, без выходных</div></div>
-        <div class="stat" data-i style="--i:3"><div class="num display" data-to="3">3</div><div class="lbl">вида сырья: нефтепродукты, лом, трубы</div></div>
+        <div class="stat" data-i style="--i:3"><div class="num display" data-to="104" data-suffix="+"><!--NEW24_START-->104<!--NEW24_END--><small>+</small></div><div class="lbl">новых лотов за сутки: нефтепродукты, лом, трубы</div></div>
       </div>
     </div>
   </section>
@@ -1155,6 +1162,16 @@
           <a class="btn btn-primary plan-cta" href="/app/">Попробовать бесплатно</a>
         </div>
       </div></div>
+    </div>
+  </section>
+
+  <section class="section" id="final">
+    <div class="wrap">
+      <div class="final">
+        <h2 class="display">Перестаньте проверять площадки вручную</h2>
+        <p class="lead"><!--SITES_INLINE-->18<!--SITES_INLINE_END--> торговых площадок, три направления и автоматический мониторинг в одном сервисе.</p>
+        <a class="btn btn-primary" href="/app/">Попробовать бесплатно</a>
+      </div>
     </div>
   </section>
 </main>
