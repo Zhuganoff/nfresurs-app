@@ -683,8 +683,14 @@
     color: var(--text-faint); font-size: 12.5px; }
   .lbfilter button:hover { color: var(--text); }
   @media (max-width: 1023px) {
-    /* на телефоне пятая вкладка не влезает: метки живут в профиле */
-    .tab-row, .tab-subs { display: none; }
+    /* на телефоне «Метки» — такая же вкладка нижней панели, как остальные:
+       в Telegram кабинет открывается именно в этом виде. Плюс и список
+       меток в панель не помещаются — они живут внутри самой вкладки. */
+    .tab-row { flex: 1; }
+    /* «nav.tabbar button» специфичнее «.tab-plus», поэтому плюс прячем
+       тем же весом — иначе он остаётся в панели и делит вкладку пополам */
+    .tab-subs { display: none; }
+    nav.tabbar button.tab-plus { display: none; }
   }
   .spinner { width: 26px; height: 26px; border: 3px solid var(--hair); border-top-color: var(--accent); border-radius: 50%; margin: 60px auto; animation: spin .8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
