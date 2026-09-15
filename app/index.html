@@ -1487,7 +1487,7 @@
         <button class="sub-btn" id="sub-btn">Оформить</button>
         <button class="sub-btn sub-btn-alt" id="sub-wallet" style="display:none">Оплатить кошельком</button>
         <button class="sub-btn sub-btn-alt" id="sub-sbp" style="display:none">Оплатить через СБП или картой на сайте</button>
-        <div class="sub-note">Первые 7 дней — бесплатно. Дальше выбранный тариф, оплата картой или через СБП.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:#fff;text-decoration:underline">условия оферты</a>.</div>
+        <div class="sub-note" id="sub-note-trial"><span id="sub-trial-days">Первые 3 дня</span> — бесплатно. Дальше выбранный тариф, оплата картой или через СБП.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:#fff;text-decoration:underline">условия оферты</a>.</div>
       </div>
       <div class="group recent" id="recent" style="display:none"></div>
       <div class="group" id="wallet-group">
@@ -3492,6 +3492,14 @@ function loadBilling(){
     BILL.ref = d && d.referral;
     if(!BILL.plans.some(function(p){ return p.code === BILL.plan; }) && BILL.plans.length)
       BILL.plan = BILL.plans[0].code;
+    // срок пробного периода берём с сервера: у приглашённого он длиннее,
+    // и подпись под кнопкой не должна обещать чужие цифры
+    var дней = d && d.trial_days;
+    var подпись = document.getElementById('sub-trial-days');
+    if(подпись && дней){
+      подпись.textContent = 'Первые ' + дней + (дней === 1 ? ' день' :
+        (дней < 5 ? ' дня' : ' дней'));
+    }
     billPaint();
     billHistory(d && d.history);
     invPaint(d && d.invited_list);
