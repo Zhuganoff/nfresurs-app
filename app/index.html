@@ -434,6 +434,54 @@
   }
 
 
+
+
+
+  /* «новое с прошлого входа»: короткая сводка вместо ручного пролистывания */
+  .since { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 10px; }
+  .since-btn { display: inline-flex; align-items: baseline; gap: 7px;
+    padding: 8px 12px; border-radius: 12px; border: 1px solid var(--hair);
+    background: var(--surface); color: var(--text-dim); font: inherit;
+    font-size: 12.5px; cursor: pointer; }
+  .since-btn b { font-size: 15px; font-weight: 800; color: var(--text);
+    font-variant-numeric: tabular-nums; }
+  .since-btn:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--hair)); }
+  .since-btn.on { border-color: var(--accent); color: var(--accent); }
+  .since-btn.on b { color: var(--accent); }
+  .recent { margin-top: 18px; }
+  .recent h4 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--text-faint); font-weight: 700; }
+  .recent-row { display: flex; justify-content: space-between; gap: 10px;
+    padding: 7px 0; border-bottom: 1px solid var(--hair); font-size: 13px;
+    cursor: pointer; }
+  .recent-row:hover { color: var(--accent); }
+  .recent-row span:last-child { color: var(--text-faint); font-size: 11.5px;
+    white-space: nowrap; }
+  /* заметка к лоту: личная, видна только владельцу аккаунта */
+  .note-box { margin: 0 0 12px; padding: 12px 14px; border-radius: 14px;
+    border: 1px solid var(--hair); background: var(--surface); }
+  .note-head { display: flex; justify-content: space-between; align-items: center;
+    font-size: 12.5px; color: var(--text-dim); margin-bottom: 6px; }
+  .note-state { font-size: 11.5px; color: var(--text-faint); }
+  .note-box textarea { width: 100%; box-sizing: border-box; resize: vertical;
+    border: none; background: none; color: var(--text); font: inherit;
+    font-size: 14px; line-height: 1.45; outline: none; }
+  .note-box textarea::placeholder { color: var(--text-faint); }
+  .share-row { display: flex; gap: 8px; margin: 8px 0 6px; flex-wrap: wrap; }
+  .share-btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 13px;
+    border-radius: 11px; border: 1px solid var(--hair); background: var(--surface);
+    color: var(--text); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .share-btn svg { width: 15px; height: 15px; color: var(--accent); }
+  .share-btn:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--hair)); }
+  .inv-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px;
+    font-size: 12.5px; color: var(--text-dim); }
+  .inv-row { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+  .inv-row b { font-variant-numeric: tabular-nums; color: var(--accent); }
+  .inv-row .inv-when { color: var(--text-faint); font-size: 11.5px; }
+  .inv-row .inv-state { font-size: 11px; padding: 1px 7px; border-radius: 999px;
+    border: 1px solid var(--hair); }
+  .inv-row .inv-state.paid { color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--hair)); }
   /* три тарифа — прямоугольные блоки рядом */
   .tariffs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px; margin: 8px 0 14px; }
@@ -1230,6 +1278,7 @@
   <main>
     <section class="pane active" id="pane-tenders">
       <div class="pane-head"><h2>Реализация</h2><span class="count" id="tenders-count"></span></div>
+      <div class="since" id="since" style="display:none"></div>
       <div class="lbfilter" id="lbfilter" style="display:none"></div>
       <div class="catseg" id="catseg">
         <button data-cat="oil" class="on">Нефтепродукты</button>
@@ -1380,6 +1429,7 @@
         <button class="sub-btn sub-btn-alt" id="sub-sbp" style="display:none">Оплатить через СБП или картой на сайте</button>
         <div class="sub-note">Первые 7 дней — бесплатно. Дальше выбранный тариф, оплата картой или через СБП.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:#fff;text-decoration:underline">условия оферты</a>.</div>
       </div>
+      <div class="group recent" id="recent" style="display:none"></div>
       <div class="group" id="wallet-group">
         <div class="label">💰 Кошелёк</div>
         <div class="wal-top"><span class="wal-sum" id="wal-sum">0 ₽</span><span class="wal-hint" id="wal-hint">хватит на тариф — оплатите кошельком</span></div>
@@ -1393,7 +1443,12 @@
           <input id="ref-link" class="search" type="text" readonly style="font-size:13px">
           <button class="ebtn" id="ref-copy" type="button">Копировать</button>
         </div>
+        <div class="share-row">
+          <button class="share-btn" id="ref-tg" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.6 15.5l-.4 5.3c.6 0 .8-.2 1.1-.5l2.6-2.5 5.4 4c1 .5 1.7.3 2-.9L23.9 4c.3-1.5-.5-2-1.5-1.7L1.8 10.2c-1.4.5-1.4 1.3-.2 1.7l5.3 1.6L18.9 6c.6-.4 1.1-.2.7.2z"/></svg>Telegram</button>
+          <button class="share-btn" id="ref-wa" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.6 4.8-1.3A10 10 0 1 0 12 2zm5.6 14.2c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.8-4.4-4-.1-.2-1-1.4-1-2.6 0-1.3.6-1.9.9-2.1.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.3.4-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1.9 2 1.2 2.3 1.4.3.1.4.1.6-.1l.8-1c.2-.2.4-.2.6-.1l1.8.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>WhatsApp</button>
+        </div>
         <div class="ehint" id="ref-stats">Приглашено: 0 · заработано: 0 ₽</div>
+        <div class="inv-list" id="inv-list"></div>
       </div>
       <div class="myads-block">
         <button class="myads-toggle" id="myads-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3z"/><path d="M8 9h8M8 12h5"/></svg>Мои объявления</button>
@@ -1515,8 +1570,13 @@
       <div class="modal-meta" id="modal-meta"></div>
       <div class="modal-details" id="modal-details"></div>
       <div class="modal-docs" id="modal-docs"></div>
+      <div class="note-box" id="note-box">
+        <div class="note-head"><span>📝 Моя заметка</span><span class="note-state" id="note-state"></span></div>
+        <textarea id="note-text" rows="2" maxlength="2000" placeholder="Например: звонил, ждут КП до пятницы"></textarea>
+      </div>
       <div class="modal-acts">
-        <a class="mbtn mbtn-go" id="modal-go" target="_blank" rel="noopener">Открыть тендер</a>
+        <a class="mbtn mbtn-go" id="modal-go" target="_blank" rel="noopener">Открыть лот</a>
+        <button class="mbtn-ic" id="modal-share" title="Поделиться лотом"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
         <button class="mbtn-ic" id="modal-send" title="Отправить карточку в Телеграм"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M22 3 2 10.5l6.5 2.2M22 3l-3 18-8-6.3M22 3 8.5 14.7M8.5 14.7V20l3-3.9"/></svg></button>
         <button class="mbtn-ic mail" id="modal-mail" title="Отправить карточку на почту"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button>
       </div>
@@ -1711,6 +1771,102 @@ function renderDetails(t){
   api('/api/tender/details',{site:t.site, number:t.number}).then(function(d){ if(!d.error) _detCache[k]=d; if(_modalT===t) draw(d); })
     .catch(function(){ if(_modalT===t) box.innerHTML='<div class="det-note">Подробности с площадки сейчас недоступны.</div>'; });
 }
+
+/* ——— Заметки к лоту ———
+   Личные и хранятся на сервере: человек смотрит ленту и с телефона, и с
+   компьютера, а заметка «звонил, ждут КП» нужна в обоих местах. */
+var NOTES = {}, _noteT = null;
+
+function notesLoad(){
+  return api('/api/note/list').then(function(d){
+    NOTES = {};
+    ((d && d.notes) || []).forEach(function(n){ NOTES[n.lot_key] = n.note; });
+  }).catch(function(){});
+}
+
+function notePaint(t){
+  var поле = document.getElementById('note-text'),
+      метка = document.getElementById('note-state');
+  if(!поле) return;
+  поле.value = NOTES[key(t)] || '';
+  if(метка) метка.textContent = поле.value ? 'сохранено' : '';
+}
+
+function noteSave(){
+  if(!_modalT) return;
+  var поле = document.getElementById('note-text'),
+      метка = document.getElementById('note-state');
+  var ключ = key(_modalT), текст = (поле.value || '').trim();
+  if(метка) метка.textContent = 'сохраняем…';
+  api('/api/note/save', {lot_key: ключ, note: текст}).then(function(){
+    if(текст) NOTES[ключ] = текст; else delete NOTES[ключ];
+    if(метка) метка.textContent = текст ? 'сохранено' : 'удалено';
+  }).catch(function(){ if(метка) метка.textContent = 'не сохранилось'; });
+}
+
+document.addEventListener('input', function(e){
+  if(e.target && e.target.id === 'note-text'){
+    if(_noteT) clearTimeout(_noteT);
+    _noteT = setTimeout(noteSave, 900);       // сохраняем, когда человек замолчал
+  }
+});
+
+/* ——— История просмотров ———
+   Что открывал и когда. Хранится в браузере: это подсказка, а не данные. */
+var SEEN_LOG_KEY = 'ovd_seen_log';
+
+function seenLog(t){
+  try {
+    var лог = JSON.parse(localStorage.getItem(SEEN_LOG_KEY) || '[]');
+    var k = key(t);
+    лог = лог.filter(function(x){ return x.k !== k; });
+    лог.unshift({k: k, t: Date.now(), title: cleanTitle(t.title).slice(0, 80),
+                 site: t.site_title || PLATFORMS[t.site] || t.site});
+    localStorage.setItem(SEEN_LOG_KEY, JSON.stringify(лог.slice(0, 30)));
+  } catch(_){}
+}
+
+function seenList(){
+  try { return JSON.parse(localStorage.getItem(SEEN_LOG_KEY) || '[]'); }
+  catch(_){ return []; }
+}
+
+/* ——— Поделиться лотом ———
+   Ссылка открывает карточку, несёт источник и реферальный код отправителя:
+   пришедший по ней получает удлинённый пробный период. */
+function lotShareLink(t){
+  var база = location.origin + location.pathname;
+  var url = база + '?lot=' + encodeURIComponent(key(t)) + '&src=share';
+  if(BILL.ref && BILL.ref.code) url += '&ref=' + encodeURIComponent(BILL.ref.code);
+  return url;
+}
+
+function lotShare(){
+  if(!_modalT) return;
+  var ссылка = lotShareLink(_modalT);
+  var текст = cleanTitle(_modalT.title).slice(0, 120) + ' — ' + ссылка;
+  track('lot_shared', {site: _modalT.site});
+  try { if(tg && tg.openTelegramLink){
+    tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(ссылка)
+      + '&text=' + encodeURIComponent(cleanTitle(_modalT.title).slice(0, 120)));
+    return; } } catch(_){}
+  try {
+    if(navigator.share){ navigator.share({text: текст, url: ссылка}); return; }
+    if(navigator.clipboard){ navigator.clipboard.writeText(ссылка);
+      showToast('Ссылка на лот скопирована'); return; }
+  } catch(_){}
+  window.prompt('Ссылка на лот', ссылка);
+}
+
+/* Лот из ссылки: открываем карточку, как только лента загрузилась. */
+function openLotFromLink(){
+  var ключ = '';
+  try { ключ = new URLSearchParams(location.search).get('lot') || ''; } catch(_){}
+  if(!ключ) return;
+  var лот = TENDERS.filter(function(t){ return key(t) === ключ; })[0];
+  if(лот) { openTender(лот); track('lot_opened', {source: 'share'}, 'referral'); }
+}
+
 function openTender(t){
   try{ track('lot_opened', {site: t && t.site}); }catch(_){}
   _modalT=t;
@@ -1741,6 +1897,7 @@ function openTender(t){
   renderSimilar(t);
   document.querySelectorAll('.card.sel').forEach(function(c){ c.classList.remove('sel'); });
   document.querySelectorAll('.card[data-key="'+encodeURIComponent(kk)+'"]').forEach(function(c){ c.classList.add('sel'); });
+  notePaint(t); seenLog(t); recentPaint();   // список недавних обновляем сразу
   ['modal-send','modal-mail'].forEach(function(id){ var b=document.getElementById(id); if(b){ b.classList.remove('sent'); b.style.opacity=''; b.dataset.busy=''; } });
   document.getElementById('modal').style.display='flex';
   try{ if(tg&&tg.HapticFeedback&&tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light'); }catch(_){}
@@ -1770,6 +1927,7 @@ function sendDocs(channel, btn, label){
 }
 document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeTender(); });
 const FILT={q:'',site:'',region:'',city:'',sort:'new',onlyNew:false,showHidden:false,cat:'oil',label:0};
+var SINCE='';   // сводка «новое с прошлого входа»: new | labels | today
 function catCount(cat){return TENDERS.filter(t=>(t.category||'oil')===cat).length;}
 function isHidden(t){ return statuses[key(t)]==='skip'; }
 function activeFilters(){
@@ -1783,8 +1941,71 @@ function resetFilters(){
   ['f-new-cb','f-hidden-cb'].forEach(function(id){ var el=document.getElementById(id); if(el) el.checked=false; });
   render();
 }
+
+/* ——— Новое с прошлого входа ———
+   Человек заходит раз в день и не должен листать всю ленту: показываем
+   счётчики и одним нажатием сужаем ленту до нужного. */
+function sinceCounts(){
+  var новые = TENDERS.filter(isNew).length;
+  var поМеткам = TENDERS.filter(function(t){ return (t.labels || []).length; }).length;
+  var сегодня = TENDERS.filter(function(t){
+    var d = daysLeft(t.deadline); return d !== null && d === 0; }).length;
+  var избранные = TENDERS.filter(function(t){ return favs.has(key(t)); }).length;
+  return {новые: новые, метки: поМеткам, сегодня: сегодня, избранные: избранные};
+}
+
+function sincePaint(){
+  var box = document.getElementById('since'); if(!box) return;
+  var c = sinceCounts();
+  var кнопки = [
+    {id: 'new', n: c.новые, подпись: 'новых с прошлого входа'},
+    {id: 'labels', n: c.метки, подпись: 'по вашим меткам'},
+    {id: 'today', n: c.сегодня, подпись: 'заканчиваются сегодня'}
+  ].filter(function(x){ return x.n > 0; });
+  if(!кнопки.length || FILT.label){ box.style.display = 'none'; return; }
+  box.style.display = 'flex';
+  box.innerHTML = '';
+  кнопки.forEach(function(к){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'since-btn' + (SINCE === к.id ? ' on' : '');
+    b.innerHTML = '<b>' + к.n + '</b>' + к.подпись;
+    b.addEventListener('click', function(){
+      SINCE = (SINCE === к.id) ? '' : к.id;
+      render();
+    });
+    box.appendChild(b);
+  });
+}
+
+/* Недавно смотрели — быстрый возврат к лоту, который уже открывал. */
+function recentPaint(){
+  var box = document.getElementById('recent'); if(!box) return;
+  var лог = seenList();
+  if(!лог.length){ box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  box.innerHTML = '<h4>Недавно смотрели</h4>';
+  лог.slice(0, 8).forEach(function(з){
+    var row = document.createElement('div'); row.className = 'recent-row';
+    var имя = document.createElement('span'); имя.textContent = з.title;
+    var когда = document.createElement('span');
+    var дней = Math.floor((Date.now() - з.t) / 864e5);
+    когда.textContent = дней <= 0 ? 'сегодня' : (дней === 1 ? 'вчера' : дней + ' дн. назад');
+    row.appendChild(имя); row.appendChild(когда);
+    row.addEventListener('click', function(){
+      var лот = TENDERS.filter(function(t){ return key(t) === з.k; })[0];
+      if(лот) openTender(лот); else showToast('Лот больше не в ленте');
+    });
+    box.appendChild(row);
+  });
+}
+
 function feedItems(){
   let a=TENDERS.slice();
+  // сводка сверху: одним нажатием сужаем ленту
+  if(SINCE==='new') a=a.filter(isNew);
+  else if(SINCE==='labels') a=a.filter(t=>(t.labels||[]).length);
+  else if(SINCE==='today') a=a.filter(t=>{var d=daysLeft(t.deadline); return d!==null && d===0;});
   // выбрана метка — показываем ровно её лоты, поверх переключателя категорий
   if(FILT.label) a=a.filter(t=>(t.labels||[]).some(l=>l.id===FILT.label));
   else if(FILT.cat!=='all') a=a.filter(t=>(t.category||'oil')===FILT.cat);
@@ -1900,6 +2121,7 @@ function render(){
   document.getElementById('plat-on').textContent = Object.values(PSTATE).filter(s=>s==='on').length;
   const st={on:'работает',off:'выкл',wait:'скоро'};
   document.getElementById('plat-rows').innerHTML = Object.keys(PLATFORMS).map(k=>`<div class="row"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg></span><span class="rl">${PLATFORMS[k]}</span><span class="rv"><span class="status-dot ${PSTATE[k]}"></span>${st[PSTATE[k]]}</span></div>`).join('');
+  sincePaint(); recentPaint();
   requestAnimationFrame(observeNew);
 }
 // фильтры ленты
@@ -2199,10 +2421,14 @@ document.addEventListener('click',e=>{
     });
     return;
   }
+  if(e.target.closest('#modal-share')){ lotShare(); return; }
+  if(e.target.closest('#ref-tg')){ refShare('tg'); return; }
+  if(e.target.closest('#ref-wa')){ refShare('wa'); return; }
   if(e.target.closest('#ref-copy')){
     var поле=document.getElementById('ref-link');
     try{ поле.select(); document.execCommand('copy'); }catch(_){}
     try{ if(navigator.clipboard) navigator.clipboard.writeText(поле.value); }catch(_){}
+    track('lot_shared', {where:'copy', kind:'referral'});
     showToast('Ссылка скопирована');
     return;
   }
@@ -2870,6 +3096,7 @@ loadAlerts();
 api('/api/pay/status',{}).catch(function(){}).then(function(){ loadSubscription(); });
 loadBilling().then(billRefFromLink);
 loadPlatforms();
+notesLoad();
 // метки грузим при старте: подпункты в боковом меню нужны сразу
 lbLoadRegions().then(function(){ return lbLoad(); });
 
@@ -2955,6 +3182,50 @@ function billPaint(){
   }
 }
 
+
+/* Готовый текст приглашения: человеку проще переслать, чем сочинять. */
+var REF_TEXT = 'Я пользуюсь сервисом «Отходы в доходы»: он собирает процедуры '
+  + 'реализации металлолома, труб и нефтепродуктов с торговых площадок в одной '
+  + 'ленте. По моей ссылке доступен расширенный пробный период.';
+
+function refShare(куда){
+  var ссылка = (BILL.ref && BILL.ref.link) || '';
+  if(!ссылка) return;
+  var текст = REF_TEXT + ' ' + ссылка;
+  var url = куда === 'tg'
+    ? 'https://t.me/share/url?url=' + encodeURIComponent(ссылка)
+      + '&text=' + encodeURIComponent(REF_TEXT)
+    : 'https://wa.me/?text=' + encodeURIComponent(текст);
+  track('lot_shared', {where: куда, kind: 'referral'});
+  try { if(tg && tg.openTelegramLink && куда === 'tg'){ tg.openTelegramLink(url); return; } } catch(_){}
+  try { if(tg && tg.openLink){ tg.openLink(url); return; } } catch(_){}
+  window.open(url, '_blank');
+}
+
+/* Кого пригласил: маска, дата, платил ли. Полных адресов сервер не отдаёт. */
+function invPaint(список){
+  var box = document.getElementById('inv-list'); if(!box) return;
+  box.innerHTML = '';
+  if(!(список || []).length){
+    box.textContent = 'Пока никого — отправьте ссылку коллеге.';
+    return;
+  }
+  список.forEach(function(и){
+    var row = document.createElement('div'); row.className = 'inv-row';
+    var кто = document.createElement('span'); кто.textContent = и.contact;
+    var когда = document.createElement('span');
+    когда.className = 'inv-when'; когда.textContent = (и.joined || '').split('-').reverse().join('.');
+    var статус = document.createElement('span');
+    статус.className = 'inv-state' + (и.paid ? ' paid' : '');
+    статус.textContent = и.paid ? 'оплатил' : 'без оплаты';
+    var сумма = document.createElement('b');
+    сумма.textContent = и.earned_kop ? '+' + рубли(и.earned_kop) : '';
+    row.appendChild(кто); row.appendChild(когда);
+    row.appendChild(статус); row.appendChild(сумма);
+    box.appendChild(row);
+  });
+}
+
 function billHistory(список){
   var box = document.getElementById('wal-hist'); if(!box) return;
   box.innerHTML = '';
@@ -3007,6 +3278,7 @@ function loadBilling(){
       BILL.plan = BILL.plans[0].code;
     billPaint();
     billHistory(d && d.history);
+    invPaint(d && d.invited_list);
   }).catch(function(){});
 }
 
@@ -3082,6 +3354,7 @@ function bootFeed(tries){
     catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
     var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); }
     try { loadBilling().then(billRefFromLink); } catch(_){}   // код из ссылки ждал входа
+    try { notesLoad(); setTimeout(openLotFromLink, 400); } catch(_){}
   }).catch(function(e){
     if(e && e.status===402){                                  // триал истёк — пейвол
       TENDERS=[]; try{ render(); }catch(_){}
