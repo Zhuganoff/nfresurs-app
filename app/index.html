@@ -2367,13 +2367,35 @@ function tabPill(плавно){
   var icon=btn.querySelector('svg')||btn;
   var nr=nav.getBoundingClientRect(), r=icon.getBoundingClientRect();
   if(!r.width){ pill.classList.remove('on'); return; }
-  // овал только вокруг значка: по бокам 8px, сверху и снизу 2px —
-  // подпись идёт через 3px после иконки, её не задеваем
-  var padX=8, padY=2;
+  // овал вокруг значка. По просьбе владельца: уже на 3 мм и ниже на 2 мм
+  // (1 мм = 3.78 css-px, поэтому по бокам снимаем по 1.5 мм = 5.67px,
+  // а вертикальные отступы сдвигаем на 7.56px вниз)
+  var мм = 3.7795;
+  var padX = 12 - 1.5 * мм, padВерх = 8 - 2 * мм, padНиз = 2 * мм;
+  var ш=r.width+padX*2, в=r.height+padВерх+padНиз;
+  var x=r.left-nr.left-padX, y=r.top-nr.top-padВерх;
+  var конец='translate('+x+'px,'+y+'px)';
+  var было=pill._поз;
   if(!плавно) pill.style.transition='none';
-  pill.style.width=(r.width+padX*2)+'px';
-  pill.style.height=(r.height+padY*2)+'px';
-  pill.style.transform='translate('+(r.left-nr.left-padX)+'px,'+(r.top-nr.top-padY)+'px)';
+  pill.style.width=ш+'px';
+  pill.style.height=в+'px';
+  // переезд «каплей»: по дороге овал вытягивается в сторону движения
+  // и слегка сплющивается, у цели — короткий отскок
+  var тихо=false;
+  try { тихо=matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(_){}
+  if(плавно && было && pill.animate && !тихо && Math.abs(x-было.x)>1){
+    var dx=x-было.x, k=Math.min(1.5, 1+Math.abs(dx)/260);
+    pill.animate([
+      {transform:'translate('+было.x+'px,'+было.y+'px) scale(1,1)'},
+      {transform:'translate('+(было.x+dx*0.45)+'px,'+y+'px) scale('+k+','+(0.82+0.18/k)+')',
+       offset:0.42},
+      {transform:'translate('+(x+dx*0.05)+'px,'+y+'px) scale('+(1+(k-1)*0.16)+',0.97)',
+       offset:0.76},
+      {transform:конец}
+    ], {duration:520, easing:'cubic-bezier(.3,.92,.28,1)'});
+  }
+  pill.style.transform=конец;
+  pill._поз={x:x, y:y};
   var c=getComputedStyle(btn).getPropertyValue('--tab-c');
   if(c) pill.style.setProperty('--pill-c', c.trim());
   pill.classList.add('on');
