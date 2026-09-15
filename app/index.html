@@ -467,6 +467,18 @@
     border: none; background: none; color: var(--text); font: inherit;
     font-size: 14px; line-height: 1.45; outline: none; }
   .note-box textarea::placeholder { color: var(--text-faint); }
+
+  .lb-sites { display: flex; flex-wrap: wrap; gap: 6px; max-height: 132px;
+    overflow-y: auto; padding: 2px; }
+  .lb-site { padding: 5px 10px; border-radius: 999px; border: 1px solid var(--hair);
+    background: var(--surface-2); color: var(--text-dim); font-size: 12px;
+    cursor: pointer; }
+  .lb-site.on { background: color-mix(in srgb, var(--accent) 18%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+    color: var(--accent); font-weight: 600; }
+  .lb-sites-act { display: flex; gap: 8px; margin-top: 6px; }
+  .lb-mini { border: none; background: none; color: var(--accent); font-size: 12.5px;
+    cursor: pointer; padding: 0; }
   .share-row { display: flex; gap: 8px; margin: 8px 0 6px; flex-wrap: wrap; }
   .share-btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 13px;
     border-radius: 11px; border: 1px solid var(--hair); background: var(--surface);
@@ -1386,7 +1398,20 @@
           <label for="lb-ex">Исключения</label>
           <input type="text" id="lb-ex" maxlength="200" placeholder="через запятую: бочка, растительное">
         </div>
-        <label class="lb-check"><input type="checkbox" id="lb-tg" checked> Присылать уведомление в Telegram</label>
+        <div class="lb-field">
+          <label>Площадки</label>
+          <div class="lb-sites" id="lb-sites"></div>
+          <div class="lb-sites-act">
+            <button type="button" class="lb-mini" id="lb-sites-all">Выбрать все</button>
+            <button type="button" class="lb-mini" id="lb-sites-none">Снять все</button>
+          </div>
+          <div class="ehint" id="lb-sites-hint"></div>
+        </div>
+        <div class="lb-field">
+          <label>Как уведомлять</label>
+          <div class="fchips" id="lb-modes"></div>
+        </div>
+        <label class="lb-check"><input type="checkbox" id="lb-tg" checked> Присылать в Telegram</label>
         <label class="lb-check"><input type="checkbox" id="lb-em"> Присылать на электронную почту</label>
         <label class="lb-check soon"><input type="checkbox" id="lb-max" disabled> Уведомление в MAX <span class="lb-soon">скоро</span></label>
         <div class="lb-buttons">
@@ -1506,6 +1531,10 @@
             <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.6 15.5l-.4 5.3c.6 0 .8-.2 1.1-.5l2.6-2.5 5.4 4c1 .5 1.7.3 2-.9L23.9 4c.3-1.5-.5-2-1.5-1.7L1.8 10.2c-1.4.5-1.4 1.3-.2 1.7l5.3 1.6L18.9 6c.6-.4 1.1-.2.7.2z"/></svg></span>
             <span class="rl">Telegram</span>
             <span class="rv" id="tg-state">—</span>
+            <div id="tg-link-box" style="flex-basis:100%; display:none; flex-direction:column; gap:8px">
+              <button class="ebtn" id="tg-connect" type="button">Подключить Telegram</button>
+              <div class="ehint" id="tg-link-hint">Откроется бот: нажмите «Старт», и уведомления по меткам пойдут в чат. Ссылка одноразовая и живёт 30 минут.</div>
+            </div>
             <div id="tg-box" style="flex-basis:100%; display:none; flex-direction:column; gap:8px">
               <div class="efield">
                 <input id="tg-in" class="search" type="text" maxlength="40" placeholder="@username" autocomplete="off" style="font-size:13px">
@@ -2165,9 +2194,24 @@ function loadFavs(cb){
 function saveFavs(){
   const arr=JSON.stringify([...favs]);
   try{
-    if(cloudOK()){ tg.CloudStorage.setItem('favs',arr); return; }
+    if(cloudOK()){ tg.CloudStorage.setItem('favs',arr); }
   }catch(_){}
   try{ localStorage.setItem('favs',arr); }catch(_){}
+}
+
+/* Избранное живёт на сервере: отметил в Telegram — видно на сайте и
+   наоборот. Локальная копия остаётся как кэш и для офлайна. */
+function favSync(){
+  var местные = [...favs];
+  return api('/api/fav/merge', {keys: местные}).then(function(d){
+    favs = new Set((d && d.keys) || местные);
+    saveFavs();
+    try { render(); } catch(_){}
+  }).catch(function(){});
+}
+
+function favToggleServer(ключ, включить){
+  api('/api/fav/toggle', {lot_key: ключ, on: !!включить}).catch(function(){});
 }
 // «Новые» = появившиеся недавно (до 7 дней) и ещё НЕ открытые. Метка
 // снимается, когда открыл предпросмотр (openTender). seen хранится в
@@ -2285,7 +2329,9 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#modal-go')){ if(_modalT && tg && tg.openLink){ e.preventDefault(); tg.openLink(_modalT.url); } return; }
   if(e.target.closest('#modal-send')){ sendDocs('tg', document.getElementById('modal-send'), 'В Телеграм'); return; }
   if(e.target.closest('#modal-mail')){ sendDocs('email', document.getElementById('modal-mail'), 'На почту'); return; }
-  if(e.target.closest('#modal-fav')){ if(!_modalT)return; var k=key(_modalT); favs.has(k)?favs.delete(k):favs.add(k); saveFavs(); if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged(); var mf=document.getElementById('modal-fav'),isf=favs.has(k); mf.innerHTML=heart(isf); mf.classList.toggle('on',isf); render(); return; }
+  if(e.target.closest('#modal-fav')){ if(!_modalT)return; var k=key(_modalT);
+    var включаем=!favs.has(k); включаем?favs.add(k):favs.delete(k);
+    saveFavs(); favToggleServer(k, включаем); if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged(); var mf=document.getElementById('modal-fav'),isf=favs.has(k); mf.innerHTML=heart(isf); mf.classList.toggle('on',isf); render(); return; }
   if(e.target.closest('#f-reset')){ resetFilters(); return; }
   var cseg=e.target.closest('#catseg button');
   if(cseg){ FILT.cat=cseg.dataset.cat; document.querySelectorAll('#catseg button').forEach(function(b){b.classList.toggle('on',b===cseg);}); document.querySelector('main').scrollTop=0; render(); return; }
@@ -2315,7 +2361,9 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#modal-hide')){ var _t=_modalT; closeTender(); hideTender(_t); return; }
   if(e.target.closest('#toast-undo')){ var el=document.getElementById('toast'); if(el&&el._undo){ el._undo(); } if(el){ el.style.display='none'; el._undo=null; } return; }
   const f=e.target.closest('.fav');
-  if(f){const k=decodeURIComponent(f.dataset.k);favs.has(k)?favs.delete(k):favs.add(k);saveFavs();if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged();render();return;}
+  if(f){const k=decodeURIComponent(f.dataset.k);
+    const вкл=!favs.has(k); вкл?favs.add(k):favs.delete(k);
+    saveFavs(); favToggleServer(k, вкл);if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged();render();return;}
   const s=e.target.closest('.send-btn');
   if(s){
     const k=decodeURIComponent(s.dataset.send); const t=TENDERS.find(x=>key(x)===k);
@@ -2421,6 +2469,27 @@ document.addEventListener('click',e=>{
     });
     return;
   }
+  if(e.target.closest('#lb-sites-all')){
+    LB.sitesAll = true; LB.sites = []; lbPaintSites(); return;
+  }
+  if(e.target.closest('#lb-sites-none')){
+    LB.sitesAll = false; LB.sites = []; lbPaintSites(); return;
+  }
+  if(e.target.closest('#tg-connect')){
+    var кн = e.target.closest('#tg-connect'); кн.disabled = true;
+    api('/api/telegram/link', {}).then(function(d){
+      кн.disabled = false;
+      if(!d || !d.deep_link) return;
+      try { if(tg && tg.openTelegramLink){ tg.openTelegramLink(d.deep_link); } 
+            else { window.open(d.deep_link, '_blank'); } } catch(_){ window.open(d.deep_link, '_blank'); }
+      document.getElementById('tg-link-hint').textContent =
+        'Ссылка открыта. Нажмите в боте «Старт» — и вернитесь сюда.';
+      setTimeout(tgState, 6000);
+    }).catch(function(e2){ кн.disabled = false;
+      document.getElementById('tg-link-hint').textContent =
+        (e2 && e2.message) || 'Не удалось создать ссылку'; });
+    return;
+  }
   if(e.target.closest('#modal-share')){ lotShare(); return; }
   if(e.target.closest('#ref-tg')){ refShare('tg'); return; }
   if(e.target.closest('#ref-wa')){ refShare('wa'); return; }
@@ -2499,11 +2568,30 @@ document.addEventListener('click',e=>{
   input.addEventListener('keydown', function(e){ if(e.key==='Enter') save.click(); });
 })();
 
+
+/* Состояние канала Telegram в профиле: подключён или нет. */
+function tgState(){
+  return api('/api/telegram/status', {}).then(function(d){
+    var строка = document.getElementById('tg-state'),
+        связь = document.getElementById('tg-link-box'),
+        ручной = document.getElementById('tg-box');
+    if(!строка) return;
+    if(d && d.linked){
+      строка.textContent = d.username ? ('@' + d.username + ' · подключён') : 'подключён';
+      if(связь) связь.style.display = 'none';
+      if(ручной) ручной.style.display = 'none';
+    } else {
+      строка.textContent = 'не подключён';
+      if(связь) связь.style.display = 'flex';
+    }
+  }).catch(function(){});
+}
+
 /* ——— Метки: сохранённый фильтр, красит ленту и шлёт уведомления ———
    Хранятся в user_alerts (те же персональные подписки), поэтому метка,
    заведённая здесь, сразу работает и как уведомление. */
 var LB = { list: [], regions: [], regionsReq: null, colors: [], sel: [],
-           color: '', edit: 0 };
+           color: '', edit: 0, sites: [], sitesAll: true, mode: 'instant' };
 
 function lbEl(id){ return document.getElementById(id); }
 function lbMsg(text, cls){ var m=lbEl('lb-msg'); if(m){ m.className='lb-msg '+(cls||''); m.textContent=text||''; } }
@@ -2549,6 +2637,58 @@ function lbLoadRegions(){
   return LB.regionsReq;
 }
 
+
+/* Площадки и режим уведомлений в метке. Список площадок — с сервера, поэтому
+   новая площадка появляется в метках сама, без правки кода и миграций. */
+var LB_MODES = [
+  {v: 'instant', label: '🔴 Сразу'},
+  {v: 'morning', label: '🌅 Утром'},
+  {v: 'morning_evening', label: '📋 Утро и вечер'},
+  {v: 'off', label: '🔕 Не уведомлять'}
+];
+
+function lbPaintSites(){
+  var box = document.getElementById('lb-sites'); if(!box) return;
+  box.innerHTML = '';
+  var коды = Object.keys(PLATFORMS).filter(function(k){ return PSTATE[k] !== 'wait'; });
+  if(!коды.length){ box.textContent = 'Список площадок загружается…'; return; }
+  коды.forEach(function(код){
+    var b = document.createElement('button');
+    b.type = 'button';
+    // «все» — это пустой список в базе: новая площадка попадёт в метку сама,
+    // без миграции существующих меток
+    var выбрана = LB.sitesAll || LB.sites.indexOf(код) >= 0;
+    b.className = 'lb-site' + (выбрана ? ' on' : '');
+    b.textContent = PLATFORMS[код] || код;
+    b.addEventListener('click', function(){
+      if(LB.sitesAll){ LB.sitesAll = false; LB.sites = коды.slice(); }
+      var i = LB.sites.indexOf(код);
+      if(i >= 0) LB.sites.splice(i, 1); else LB.sites.push(код);
+      if(LB.sites.length === коды.length){ LB.sitesAll = true; LB.sites = []; }
+      lbPaintSites();
+    });
+    box.appendChild(b);
+  });
+  var подпись = document.getElementById('lb-sites-hint');
+  if(подпись) подпись.textContent = LB.sitesAll
+    ? 'Все площадки, включая те, что подключим позже'
+    : (LB.sites.length ? 'Выбрано: ' + LB.sites.length
+                       : 'Ни одной не выбрано — сохраним как «все»');
+}
+
+function lbPaintModes(){
+  var box = document.getElementById('lb-modes'); if(!box) return;
+  box.innerHTML = '';
+  LB_MODES.forEach(function(м){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'fchip' + (LB.mode === м.v ? ' on' : '');
+    b.textContent = м.label;
+    b.addEventListener('click', function(){ LB.mode = м.v; lbPaintModes(); });
+    box.appendChild(b);
+  });
+}
+
 function lbOpen(item){
   LB.edit = item ? item.id : 0;
   LB.color = (item && item.color) || (LB.colors[0] || '#45D6CD');
@@ -2559,6 +2699,11 @@ function lbOpen(item){
   lbEl('lb-cat').value = item ? (item.category||'') : '';
   lbEl('lb-tg').checked = item ? !!item.notify_tg : true;
   lbEl('lb-em').checked = item ? !!item.notify_email : false;
+  LB.sites = item && item.sites
+    ? item.sites.split(',').map(function(s){ return s.trim(); }).filter(Boolean) : [];
+  LB.sitesAll = !LB.sites.length;
+  LB.mode = (item && item.mode) || 'instant';
+  lbPaintSites(); lbPaintModes();
   lbEl('lb-save').textContent = item ? 'Сохранить изменения' : 'Сохранить метку';
   lbMsg('');
   lbEl('lb-form').classList.add('on');
@@ -2595,7 +2740,11 @@ function lbPaint(){
     if(a.excludes) parts.push('кроме: '+a.excludes);
     var каналы=[]; if(a.notify_tg) каналы.push('Telegram');
     if(a.notify_email) каналы.push('почта');
-    parts.push(каналы.length ? 'уведомления: '+каналы.join(' и ') : 'без уведомлений');
+    var режим = (LB_MODES.filter(function(m){ return m.v === (a.mode||'instant'); })[0]
+                 || LB_MODES[0]).label;
+    parts.push(режим);
+    if(a.sites) parts.push('площадки: ' + a.sites.split(',').length);
+    parts.push(каналы.length ? 'уведомления: '+каналы.join(' и ') : 'только лента');
     var sub=document.createElement('div'); sub.className='lb-sub'; sub.textContent=parts.join(' · ');
     mid.appendChild(sub); row.appendChild(mid);
     [['изменить', function(){ lbOpen(a); }],
@@ -2680,7 +2829,9 @@ function lbSave(){
     regions: LB.sel.join(', '),
     category: lbEl('lb-cat').value,
     notify_tg: lbEl('lb-tg').checked,
-    notify_email: lbEl('lb-em').checked
+    notify_email: lbEl('lb-em').checked,
+    sites: LB.sitesAll ? '' : LB.sites.join(', '),
+    mode: LB.mode
   };
   if(!body.keywords){ lbMsg('Укажите хотя бы одно ключевое слово', 'err'); return; }
   var url = LB.edit ? '/api/alerts/update' : '/api/alerts/create';
@@ -3095,8 +3246,9 @@ loadAlerts();
 // сверить недавно завершённую оплату (вебхук мог опоздать), затем показать статус
 api('/api/pay/status',{}).catch(function(){}).then(function(){ loadSubscription(); });
 loadBilling().then(billRefFromLink);
-loadPlatforms();
+loadPlatforms().then(function(){ try{ lbPaintSites(); }catch(_){} });
 notesLoad();
+tgState();
 // метки грузим при старте: подпункты в боковом меню нужны сразу
 lbLoadRegions().then(function(){ return lbLoad(); });
 
@@ -3354,7 +3506,7 @@ function bootFeed(tries){
     catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
     var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); }
     try { loadBilling().then(billRefFromLink); } catch(_){}   // код из ссылки ждал входа
-    try { notesLoad(); setTimeout(openLotFromLink, 400); } catch(_){}
+    try { notesLoad(); favSync(); setTimeout(openLotFromLink, 400); } catch(_){}
   }).catch(function(e){
     if(e && e.status===402){                                  // триал истёк — пейвол
       TENDERS=[]; try{ render(); }catch(_){}
