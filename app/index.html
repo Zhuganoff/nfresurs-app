@@ -401,6 +401,35 @@
   nav.tabbar button[data-tab="ads"]     { --tab-c: #e08a2f; }
   nav.tabbar button[data-tab="profile"] { --tab-c: #2f7fd9; }
   nav.tabbar button.active { opacity: 1; transform: translateY(-1px); }
+  /* стеклянная капсула под активной вкладкой: одна на всю панель и при
+     переходе плавно переезжает к новой иконке (на десктопе строка меню
+     подсвечивается по-своему, там капсула не нужна) */
+  nav.tabbar .tabpill { position: absolute; left: 0; top: 0; z-index: -1;
+    width: 0; height: 0; border-radius: 999px; opacity: 0; pointer-events: none;
+    overflow: hidden;
+    background: linear-gradient(160deg, rgba(255,255,255,.14), rgba(255,255,255,.035));
+    border: 1px solid color-mix(in srgb, var(--pill-c, var(--accent)) 30%, transparent);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
+    backdrop-filter: blur(10px) saturate(150%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18),
+      0 4px 14px color-mix(in srgb, var(--pill-c, var(--accent)) 20%, transparent);
+    transition: transform .42s cubic-bezier(.22,.92,.26,1),
+      width .42s cubic-bezier(.22,.92,.26,1), height .3s ease,
+      opacity .25s ease, border-color .3s ease, box-shadow .3s ease;
+    will-change: transform; }
+  /* по стеклу медленно бежит блик — еле заметный, чтобы овал жил */
+  nav.tabbar .tabpill::after { content: ''; position: absolute; left: 50%; top: 50%;
+    width: 165%; aspect-ratio: 1; translate: -50% -50%; pointer-events: none;
+    background: conic-gradient(from 0deg, transparent 0 55%,
+      rgba(255,255,255,.07) 66%, rgba(255,255,255,.2) 74%,
+      rgba(255,255,255,.06) 82%, transparent 90% 100%);
+    animation: pillsheen 7s linear infinite; }
+  @keyframes pillsheen { to { rotate: 360deg; } }
+  nav.tabbar .tabpill.on { opacity: 1; }
+  @media (min-width: 1024px) { nav.tabbar .tabpill { display: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    nav.tabbar .tabpill { transition: opacity .2s ease; }
+    nav.tabbar .tabpill::after { animation: none; } }
   nav.tabbar .badge { position: absolute; top: 0; left: 50%; margin-left: 6px; min-width: 16px; height: 16px; padding: 0 4px; background: var(--accent); color: #fff; border-radius: 999px; font-size: 10px; font-weight: 700; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
 
 
@@ -1573,6 +1602,7 @@
   </main>
 
   <nav class="tabbar">
+    <span class="tabpill" id="tabpill" aria-hidden="true"></span>
     <button data-tab="tenders" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Реализация</button>
     <button data-tab="fav"><span class="badge" id="fav-badge" style="display:none">0</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.5-9.3-9A5 5 0 0 1 12 5.5 5 5 0 0 1 21.3 11C19 15.5 12 20 12 20Z"/></svg>Избранное</button>
     <button data-tab="ads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 6h18l-2 7H7L5 4H2"/><circle cx="9" cy="19" r="1.6"/><circle cx="17" cy="19" r="1.6"/></svg>Объявления</button>
@@ -1588,7 +1618,7 @@
     <div class="paywall-box">
       <div class="pw-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
       <h2>Пробный период закончился</h2>
-      <p>7 дней бесплатного доступа истекли. Оформите подписку, чтобы продолжить получать лоты на реализацию. Тариф выбирается в профиле: месяц, три или полгода.</p>
+      <p>Бесплатный доступ закончился. Оформите подписку, чтобы продолжить получать лоты на реализацию. Тариф выбирается в профиле: месяц, три или полгода.</p>
       <div class="sub-price big">от 699 ₽<small> / месяц</small></div>
       <button class="sub-btn" id="pw-btn">Оформить подписку</button>
       <button class="sub-btn sub-btn-alt" id="pw-sbp" style="display:none">Оплатить через СБП или картой на сайте</button>
@@ -2327,6 +2357,34 @@ function renderEmail(){
 }
 function loadEmail(){ renderEmail(); api('/api/email/status').then(d=>{ EMAIL=d; var cr=document.getElementById('e-code-row'); if(cr && cr.style.display!=='none') return; /* не стираем открытый ввод кода */ renderEmail(); }).catch(()=>{}); }
 
+// стеклянная капсула переезжает к активной вкладке: считаем место
+// по самой иконке, а не по кнопке — тогда овал сидит вокруг значка
+function tabPill(плавно){
+  var nav=document.querySelector('nav.tabbar'); if(!nav) return;
+  var pill=document.getElementById('tabpill'); if(!pill) return;
+  if(getComputedStyle(pill).display==='none'){ pill.classList.remove('on'); return; }
+  var btn=nav.querySelector('button[data-tab].active'); if(!btn) return;
+  var icon=btn.querySelector('svg')||btn;
+  var nr=nav.getBoundingClientRect(), r=icon.getBoundingClientRect();
+  if(!r.width){ pill.classList.remove('on'); return; }
+  // овал только вокруг значка: по бокам 8px, сверху и снизу 2px —
+  // подпись идёт через 3px после иконки, её не задеваем
+  var padX=8, padY=2;
+  if(!плавно) pill.style.transition='none';
+  pill.style.width=(r.width+padX*2)+'px';
+  pill.style.height=(r.height+padY*2)+'px';
+  pill.style.transform='translate('+(r.left-nr.left-padX)+'px,'+(r.top-nr.top-padY)+'px)';
+  var c=getComputedStyle(btn).getPropertyValue('--tab-c');
+  if(c) pill.style.setProperty('--pill-c', c.trim());
+  pill.classList.add('on');
+  if(!плавно){ void pill.offsetWidth; pill.style.transition=''; }
+}
+window.addEventListener('resize', function(){ tabPill(false); });
+window.addEventListener('orientationchange', function(){ setTimeout(function(){ tabPill(false); }, 220); });
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ tabPill(false); });
+else tabPill(false);
+window.addEventListener('load', function(){ tabPill(false); });
+
 document.addEventListener('click',e=>{
   // модалка тендера
   var sm=e.target.closest('.sim'); if(sm){ var st=TENDERS.find(function(x){ return key(x)===decodeURIComponent(sm.dataset.key); }); if(st){ openTender(st); var m=document.querySelector('.modal'); if(m) m.scrollTop=0; } return; }
@@ -2521,7 +2579,7 @@ document.addEventListener('click',e=>{
   // только настоящие вкладки: «плюс» и подпункты меток тоже кнопки
   // внутри панели, и без data-tab обработчик гасил все панели
   const tab=e.target.closest('nav.tabbar button[data-tab]');
-  if(tab){document.body.dataset.pane=tab.dataset.tab;document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds(); else adWatchStop(); if(tab.dataset.tab==='labels'){ lbLoadRegions().then(lbLoad); }}
+  if(tab){document.body.dataset.pane=tab.dataset.tab;document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds(); else adWatchStop(); if(tab.dataset.tab==='labels'){ lbLoadRegions().then(lbLoad); } tabPill(true);}
 });
 
 
@@ -3466,6 +3524,24 @@ function refTake(){
   return код;
 }
 
+// сколько дней пробного периода обещаем в окне регистрации. По умолчанию
+// 3 — столько даёт сервер обычному новичку; 7 показываем ТОЛЬКО когда
+// сервер подтвердил, что код приглашения настоящий
+var TRIAL_DAYS = 3, TRIAL_REF = false;
+
+function trialCheck(перерисовать){
+  var код = '';
+  try { код = refTake(); } catch(_){}
+  if(!код) return;
+  api('/api/referral/check', {code: код}).then(function(d){
+    if(d && d.valid){
+      TRIAL_REF = true;
+      TRIAL_DAYS = d.trial_days || 7;
+      if(typeof перерисовать === 'function') перерисовать();
+    }
+  }).catch(function(){});           // сервер молчит — остаёмся на 3 днях
+}
+
 function billRefFromLink(){
   var код = refTake();
   if(код) track('ref_link_open', {code: код.slice(0, 12)}, 'referral');
@@ -3510,14 +3586,14 @@ function bootFeed(tries){
     TENDERS = (d && d.tenders) || [];
     try { loadStatuses(function(){ loadSeen(function(){ loadLastVisit(function(){ loadFavs(render); }); }); }); }
     catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
-    var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); }
+    var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); tabPill(false); }
     try { loadBilling().then(billRefFromLink); } catch(_){}   // код из ссылки ждал входа
     try { notesLoad(); favSync(); setTimeout(openLotFromLink, 400); } catch(_){}
   }).catch(function(e){
     if(e && e.status===402){                                  // триал истёк — пейвол
       TENDERS=[]; try{ render(); }catch(_){}
       var pw=document.getElementById('paywall'); if(pw) pw.style.display='flex';
-      var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); }
+      var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); tabPill(false); }
       return;                                                 // обработано, вход не показываем
     }
     if(e && e.status===401) throw e;                          // сессия невалидна — наверх
@@ -3615,6 +3691,9 @@ function showLogin(msg){
       lnkReg=document.getElementById('lg-to-reg'), lnkLogin=document.getElementById('lg-to-login');
   var mode='login', stage='start';
   function show(el,on){ if(el) el.hidden=!on; }
+  // спрашиваем сервер про код приглашения один раз при открытии окна:
+  // подтвердит — перерисуем надпись на «7 дней»
+  try { trialCheck(function(){ render(); }); } catch(_){}
   function render(){
     var reg=mode==='reg', reset=mode==='reset', code=mode==='code';
     if(title) title.textContent = reg?'Регистрация':(reset?'Новый пароль':'Отходы в доходы');
@@ -3629,7 +3708,9 @@ function showLogin(msg){
       btn.textContent = reg?'Подтвердить и войти':(code?'Войти':'Сменить пароль и войти');
       msg.textContent = 'Код отправлен на '+(em.value||'').trim();
     } else if(code){ btn.textContent='Получить код'; msg.textContent='Пришлём одноразовый код на почту'; }
-    else if(reg){ btn.textContent='Зарегистрироваться'; msg.textContent='Почта и пароль. Первые 7 дней бесплатно'; }
+    else if(reg){ btn.textContent='Зарегистрироваться';
+      msg.textContent = TRIAL_REF ? 'Почта и пароль. По приглашению — 7 дней бесплатно'
+        : 'Почта и пароль. Первые ' + TRIAL_DAYS + ' дня бесплатно'; }
     else if(reset){ btn.textContent='Прислать код'; msg.textContent='Пришлём код, чтобы задать новый пароль'; }
     else { btn.textContent='Войти'; msg.textContent='Войдите по почте и паролю, чтобы открыть тендеры'; }
     btn.disabled=false;
@@ -3661,7 +3742,7 @@ function showLogin(msg){
   function done(d){
     SESS_SAVE(d.session);
     btn.textContent='Готово';
-    bootFeed().then(function(){ var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); } })
+    bootFeed().then(function(){ var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); tabPill(false); } })
       .catch(function(){ msg.textContent='Вход выполнен, но лента не загрузилась — обновите страницу.'; render(); });
   }
   btn.addEventListener('click', function(){

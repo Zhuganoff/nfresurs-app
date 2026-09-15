@@ -694,6 +694,32 @@
     /* колонку нельзя распирать длинным словом — иначе страница едет вбок */
     .hero { padding: 22px var(--pad) 30px; gap: 18px;
       grid-template-columns: minmax(0, 1fr); }
+    /* мобильный первый экран, вариант 2: верх — чистый графит, нижняя
+       полоса первого экрана — промышленная сцена (бочки слева, лом в
+       центре, трубы справа, ковш грейфера сверху справа). Верхний край
+       растворяется маской, линии обреза нет. Затемнение ~28 % и
+       приглушённая на 25 % насыщенность записаны в сам файл, поэтому
+       металл остаётся различимым. Правило только в мобильной ветке —
+       десктоп этот файл не грузит.
+       61px — высота шапки: низ полосы ложится ровно на кромку экрана. */
+    .hero::before {
+      content: ''; position: absolute; left: 0; right: 0; z-index: -1;
+      pointer-events: none;
+      height: min(40vh, 340px); height: min(40svh, 340px);
+      top: calc(100vh - 61px - min(40vh, 340px));
+      top: calc(100svh - 61px - min(40svh, 340px));
+      background-image: image-set(url(img/hero-mobile.webp) type("image/webp"),
+        url(img/hero-mobile.jpg) type("image/jpeg"));
+      background-size: 118% auto;
+      background-position: center bottom;
+      background-repeat: no-repeat;
+      -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0) 0%,
+        rgba(0,0,0,.35) 26%, rgba(0,0,0,.8) 44%, #000 60%, #000 100%);
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0) 0%,
+        rgba(0,0,0,.35) 26%, rgba(0,0,0,.8) 44%, #000 60%, #000 100%);
+    }
+    /* низкий экран (альбом): сцена налезала бы на заголовок — убираем */
+    @media (max-height: 560px) { .hero::before { display: none; } }
     .hero-copy > * + * { margin-top: 14px; }
     .cta { gap: 10px; }
     .cta .btn { padding: 13px 18px; font-size: 15px; }
@@ -952,19 +978,19 @@
           <div class="stack-label mono">Так выглядят лоты в ленте</div>
           <!--SHOWCASE_START-->
           <article class="lot" style="--m: var(--oil); --i: 0; --z: 48">
-            <div class="lot-head mono"><span>Tender.Pro</span><span>реализация</span></div>
-            <div class="lot-title">ПАО &quot;ТЗА&quot; реализует отходы масел на II…</div>
-            <div class="lot-meta"><span>Россия</span><span>21.09.2026 10:00</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Нефтеюганск</div>
+            <div class="lot-meta"><span>ХМАО — Югра</span><span>приём заявок до 15 сентября</span></div>
           </article>
           <article class="lot" style="--m: var(--scrap); --i: 1; --z: 24">
-            <div class="lot-head mono"><span>ГИС Торги</span><span>реализация</span></div>
-            <div class="lot-title">Высвобождаемое движимое военное имущество…</div>
-            <div class="lot-meta"><span>Россия</span><span class="lot-price">1 024 ₽</span></div>
+            <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
+            <div class="lot-title">Лом чёрных металлов, 200 т, Жердевский сахарный завод</div>
+            <div class="lot-meta"><span>Тамбовская область</span><span>самовывоз</span></div>
           </article>
           <article class="lot" style="--m: var(--pipe); --i: 2; --z: 0">
-            <div class="lot-head mono"><span>Роснефть</span><span>реализация</span></div>
-            <div class="lot-title">Труба обсадная ОТТГ-178х9,2-Д ис.А с муфтами…</div>
-            <div class="lot-meta"><span>Россия</span><span>13.10.2026</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Труба обсадная 139,7×9,17 P-110 с муфтами, 61 т</div>
+            <div class="lot-meta"><span>Ямало-Ненецкий АО</span><span class="lot-price">6 285 866 ₽</span></div>
           </article>
           <!--SHOWCASE_END-->
         </div>
@@ -1213,7 +1239,7 @@
 <div class="cta-bar" id="cta-bar" aria-hidden="true">
   <a class="btn btn-primary" href="https://t.me/nfresursbot">
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.6 15.5l-.4 5.3c.6 0 .8-.2 1.1-.5l2.6-2.5 5.4 4c1 .5 1.7.3 2-.9L23.9 4c.3-1.5-.5-2-1.5-1.7L1.8 10.2c-1.4.5-1.4 1.3-.2 1.7l5.3 1.6L18.9 6c.6-.4 1.1-.2.7.2z"/></svg>
-    Открыть в Telegram · 7 дней бесплатно
+    Открыть в Telegram · 3 дня бесплатно
   </a>
 </div>
 
@@ -1396,6 +1422,18 @@
       .then(function(r){ if(to)clearTimeout(to); return r.json().catch(function(){return {};}).then(function(d){ if(!r.ok){ var e=new Error(d.error||('ошибка '+r.status)); e.status=r.status; throw e; } return d; }); },
             function(){ if(to)clearTimeout(to); var e=new Error('Сервер недоступен — возможно, VPN блокирует. Отключите VPN и повторите.'); e.status=0; throw e; });
   }
+  // код приглашения лежит в общем с приложением хранилище; спрашиваем
+  // сервер, настоящий ли он, и только тогда обещаем 7 дней вместо 3
+  var TRIAL_REF = false;
+  function trialCheck(после){
+    var код = '';
+    try { код = new URLSearchParams(location.search).get('ref') ||
+                localStorage.getItem('ovd_ref') || ''; } catch(_){}
+    if(!код) return;
+    api('/api/referral/check', {code: код}).then(function(d){
+      if(d && d.valid){ TRIAL_REF = true; if(typeof после==='function') после(); }
+    }).catch(function(){});
+  }
   var ov=document.getElementById('login-modal'); if(!ov) return;
   var btn=document.getElementById('lg-btn'), em=document.getElementById('lg-email'),
       pw=document.getElementById('lg-pass'), pw2=document.getElementById('lg-pass2'),
@@ -1428,7 +1466,9 @@
       msg.textContent = 'Пришлём одноразовый код на почту';
     } else if (reg) {
       btn.textContent = 'Зарегистрироваться';
-      msg.textContent = 'Почта и пароль. Первые 7 дней бесплатно';
+      // 7 дней обещаем только если сервер подтвердил приглашение
+      msg.textContent = TRIAL_REF ? 'Почта и пароль. По приглашению — 7 дней бесплатно'
+        : 'Почта и пароль. Первые 3 дня бесплатно';
     } else if (reset) {
       btn.textContent = 'Прислать код';
       msg.textContent = 'Пришлём код, чтобы задать новый пароль';
@@ -1440,6 +1480,7 @@
     if (errText) showErr();
   }
   function setMode(m){ mode=m; stage='start'; cd.value=''; pw2.value=''; errText=''; render(); }
+  trialCheck(function(){ render(); });
 
   function open(m){
     setMode(m==='reg' ? 'reg' : 'login');
