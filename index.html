@@ -921,44 +921,26 @@
        экране есть основная кнопка, второй призыв владелец снял */
     .cta-bar, .cta-bar.show { display: none !important; }
 
-    /* Шапка закреплена на всю длину страницы: не уезжает и не прыгает.
-       Собственный фон у неё есть ВСЕГДА и покрывает всю высоту вместе с
-       безопасной областью — за часами и камерой iPhone не должно
-       просвечивать содержимое страницы. Ниже выреза фон плавно сходит
-       на нет, чтобы шапка продолжала картинку первого экрана. */
-    .top, body.has-waves .top { position: fixed; top: 0; left: 0; right: 0;
+    /* Шапка: sticky, а не fixed. Она остаётся частью потока, поэтому не
+       нужен компенсирующий отступ страницы, шапку нельзя «оторвать» вбок,
+       и её собственный непрозрачный фон закрывает всю высоту вместе с
+       безопасной областью — за часами и камерой iPhone контент не
+       просвечивает ни в начале страницы, ни при прокрутке. */
+    .top, body.has-waves .top { position: sticky; top: 0; left: auto; right: auto;
       z-index: 60; padding-top: env(safe-area-inset-top);
       border: 0; box-shadow: none;
-      background: linear-gradient(180deg,
-        #05151C 0%,
-        #05151C calc(env(safe-area-inset-top) + 8px),
-        rgba(5,21,28,.72) calc(env(safe-area-inset-top) + 34px),
-        rgba(5,21,28,0) 100%) !important; }
-    /* содержимое шапки над её слоями: в Safari отрицательный z-index у
-       ::before прятал бы стекло за собственный фон блока */
+      background: #05151C !important; }
     .top-in { position: relative; z-index: 2; }
-    /* Отдельная плотная «крышка» ровно на высоту выреза, поверх всего:
-       полоса гарантированно доходит до самого верхнего края экрана,
-       даже если шапка почему-то не прокрасит эту зону (в Safari бывает,
-       что слой шапки перекрывается прокручиваемым содержимым).
-       На телефонах без выреза высота нулевая — полосы не видно. */
-    body::before { content: ''; position: fixed; top: 0; left: 0; right: 0;
-      height: env(safe-area-inset-top); background: #05151C;
-      z-index: 61; pointer-events: none; }
-    /* матовое стекло — отдельный слой, включается при прокрутке; размывается
-       только фон, текст и значки остаются чёткими */
-    .top::before { content: ''; position: absolute; inset: 0; z-index: 1;
-      opacity: 0; transition: opacity .22s ease; pointer-events: none;
-      background: linear-gradient(180deg, rgba(5,21,28,.94), rgba(5,21,28,.78));
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
-      backdrop-filter: blur(14px) saturate(140%); }
-    body.scrolled .top::before { opacity: 1; }
-    /* мягкое соединение с картинкой первого экрана вместо жёсткой границы */
+    /* мягкое соединение с картинкой первого экрана вместо жёсткой линии;
+       слой декоративный, нажатия не перехватывает */
     .top::after { content: ''; position: absolute; left: 0; right: 0; top: 100%;
       height: 16px; z-index: 1; pointer-events: none;
-      background: linear-gradient(180deg, rgba(5,21,28,.55), rgba(5,21,28,0)); }
-    body.scrolled .top::after { background: linear-gradient(180deg, rgba(5,21,28,.75), rgba(5,21,28,0)); }
-    @media (prefers-reduced-motion: reduce) { .top::before { transition: none; } }
+      background: linear-gradient(180deg, rgba(5,21,28,.85), rgba(5,21,28,0)); }
+    /* при прокрутке нижняя граница становится заметнее — видно, что шапка
+       лежит поверх содержимого */
+    body.scrolled .top { box-shadow: 0 10px 24px -18px rgba(0,0,0,.9) !important; }
+    body.scrolled .top::after { background: linear-gradient(180deg, rgba(5,21,28,.95), rgba(5,21,28,0)); }
+    @media (prefers-reduced-motion: reduce) { .top { transition: none; } }
     .top-in { height: 78px; gap: 10px; }
     .brand { min-width: 0; gap: 9px; }
     .brand .logo { display: none; }
@@ -982,11 +964,11 @@
     .hero { min-height: 0; align-content: start; padding: 0 var(--pad); gap: 0; }
     .hero::before, .hero::after { content: none; }
     .hero-copy { position: relative; z-index: 1; isolation: isolate;
-      /* 90px — под закреплённую шапку; на телефонах с вырезом добавляем
-         безопасную область, иначе текст уходит под шапку */
-      padding: calc(90px + env(safe-area-inset-top)) 0 30px; min-height: 100svh; }
+      /* шапка стоит в потоке над первым экраном, компенсировать её высоту
+         отступом не нужно — иначе получился бы двойной зазор */
+      padding: 18px 0 30px; min-height: calc(100svh - 78px); }
     .hero-copy::before, .hero-copy::after { content: ''; position: absolute;
-      top: calc(78px + env(safe-area-inset-top)); bottom: 0;
+      top: 0; bottom: 0;
       left: calc(-1 * var(--pad)); right: calc(-1 * var(--pad));
       z-index: -2; pointer-events: none;
       background: linear-gradient(90deg, rgba(1,16,22,.2), transparent 75%),
@@ -1192,10 +1174,9 @@
   @media (min-width: 721px) and (max-width: 1024px), (min-width: 1025px) and (max-width: 1366px) and (hover: none) and (pointer: coarse) {
     :root { --pad: clamp(36px, 5.2vw, 64px); --wrap: 1200px; }
     .top-in { height: 96px; gap: 24px; }
-    /* шапка планшета выше: тот же расчёт, но от 96px */
+    /* шапка планшета выше: якоря учитывают её высоту вместе с вырезом */
     html { scroll-padding-top: calc(96px + env(safe-area-inset-top)); }
-    .hero-copy { padding-top: calc(108px + env(safe-area-inset-top)); }
-    .hero-copy::before, .hero-copy::after { top: calc(96px + env(safe-area-inset-top)); }
+    .hero-copy { padding-top: 22px; min-height: calc(100svh - 96px); }
     .brand { gap: 12px; }
     .mobile-brand-symbol { width: 48px; height: 52px; }
     .brand .brand-name { max-width: 136px; font-size: 19px; }

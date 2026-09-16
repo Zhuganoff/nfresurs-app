@@ -7,21 +7,18 @@
   :root { color-scheme: dark; }
   html, body { margin: 0; background: #05151C; color: #F1F5F7;
     font: 15px/1.45 -apple-system, system-ui, sans-serif; }
-  /* та же крышка, что на сайте: сплошная полоса на высоту выреза */
-  body::before { content: ''; position: fixed; top: 0; left: 0; right: 0;
-    height: env(safe-area-inset-top); background: #E5484D; z-index: 61;
-    pointer-events: none; }
-  /* контрольная зелёная полоса: рисуется шапкой, как на сайте */
-  header { position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+  /* шапка устроена как на сайте: sticky, в потоке, непрозрачный фон,
+     внутренний отступ под вырез. Зелёная — верхняя часть под вырезом,
+     красная — та же шапка ниже выреза; если сверху просвечивает
+     страница, значит фон шапки не закрывает безопасную область */
+  header { position: sticky; top: 0; z-index: 60;
     padding-top: env(safe-area-inset-top);
-    background: linear-gradient(180deg,
-      #1C8A4B 0%,
-      #1C8A4B calc(env(safe-area-inset-top) + 8px),
-      rgba(28,138,75,.6) calc(env(safe-area-inset-top) + 34px),
-      rgba(28,138,75,0) 100%); }
+    background: linear-gradient(180deg, #1C8A4B 0%,
+      #1C8A4B calc(env(safe-area-inset-top)),
+      #E5484D calc(env(safe-area-inset-top)), #E5484D 100%); }
   header div { height: 64px; display: flex; align-items: center; padding: 0 16px;
     font-weight: 700; }
-  main { padding: calc(90px + env(safe-area-inset-top)) 16px 40px; }
+  main { padding: 16px 16px 40px; }
   .полоски { display: grid; gap: 6px; margin: 0 0 18px; }
   .полоска { padding: 8px 10px; border-radius: 8px; background: #0B2C37; }
   b { color: #00E7ED; }
@@ -32,9 +29,9 @@
 <header><div>Зелёная полоса — фон шапки</div></header>
 <main>
   <h1>Что видно сверху</h1>
-  <p class="подсказка">Красная полоса — отдельная «крышка» на высоту выреза.
-    Зелёная — фон самой шапки. Если сверху видно фото или белый фон — не
-    работает ни то, ни другое.</p>
+  <p class="подсказка">Зелёная полоса сверху — это высота выреза, красная —
+    сама шапка. Если над зелёной видно тёмный фон страницы или содержимое,
+    значит фон шапки не доходит до края экрана.</p>
   <div class="полоски" id="данные"></div>
   <p class="подсказка">Сделай снимок этой страницы целиком и пришли.</p>
 </main>
