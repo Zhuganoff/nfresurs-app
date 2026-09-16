@@ -295,48 +295,46 @@
   section[id], .hero-wrap { scroll-margin-top: 76px; }
   .sources-m { display: none; }
 
-  /* Площадки: постоянная сетка эмблем вместо раскрывающегося списка.
-     На компьютере блок не показываем — там свой раздел «где мы смотрим». */
-  /* карточки тарифов теперь ссылки: вид прежний, добавлена подпись выбора */
-  a.plan { text-decoration: none; color: inherit; display: block; cursor: pointer; }
-  a.plan:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  .plan-pick { display: none; }
+  /* ЭТП: 18 фирменных знаков свободной композицией, без рамок и плашек.
+     Знаки медленно плавают внутри блока, расчёт — в скрипте страницы. */
+  .etp { display: none; }
   @media (max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse) {
-    .plan-pick { display: block; margin-top: 8px; color: #00E7ED;
-      font-size: 12.5px; font-weight: 600; }
-    a.plan:active { transform: scale(.995); }
-  }
-  .sources-grid { display: none; }
-  @media (max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse) {
-    .sources-grid { display: block; margin: 26px auto 8px; }
-    .sources-grid h2 { margin: 0 0 12px; font-family: "Onest", sans-serif;
-      font-size: 15px; font-weight: 700; letter-spacing: .01em; color: #00E7ED; }
-    .emb-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 7px; }
-    .emb { position: relative; display: grid; place-items: center; height: 46px;
-      padding: 6px; border-radius: 11px; border: 1px solid #24545E; background: #08212B; }
-    .emb img { width: 30px; height: 30px; object-fit: contain; }
-    /* широкие фирменные надписи не сжимаем в квадрат: даём две ячейки */
-    .emb-wide { grid-column: span 2; }
-    .emb-wide img { width: auto; max-width: 100%; height: 22px; }
-    /* подпись площадки: нужна и на сенсорном экране — показываем по касанию
-       выбранной эмблемы, не разворачивая весь список */
-    .emb em { position: absolute; left: 50%; bottom: calc(100% + 6px);
-      transform: translateX(-50%); padding: 4px 8px; border-radius: 8px;
-      background: #0B2C37; border: 1px solid #24545E; color: #F1F5F7;
-      font-size: 11px; font-style: normal; white-space: nowrap; opacity: 0;
-      pointer-events: none; transition: opacity .15s ease; z-index: 2; }
-    .emb:hover em, .emb:focus em, .emb:focus-within em, .emb.on em { opacity: 1; }
+    .etp { display: block; margin: 26px auto 10px; }
+    .etp h2 { margin: 0; text-align: center; white-space: nowrap;
+      font-family: "Onest", sans-serif; font-size: 21px; font-weight: 700;
+      letter-spacing: -.02em; color: #F1F5F7; }
+    .etp-cloud { position: relative; height: 218px; max-width: 400px;
+      margin: 14px auto 0; touch-action: pan-y; }
+    /* область нажатия не меньше 44×44, ни рамок, ни плашек, ни теней */
+    .etp-logo { position: absolute; left: 0; top: 0; width: 44px; height: 44px;
+      display: grid; place-items: center; padding: 4px; border: 0; background: none;
+      color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent;
+      will-change: transform; }
+    .etp-logo img { width: 32px; height: 32px; object-fit: contain; }
+    .etp-logo:nth-child(3n) img { width: 36px; height: 36px; }
+    .etp-logo.wide { width: 78px; }
+    .etp-logo.wide img { width: 78px; height: 30px; }
+    .etp-logo:focus-visible { outline: 2px solid #00E7ED; outline-offset: 3px; border-radius: 10px; }
+    /* название выбранной площадки — одна строка под композицией; высота
+       фиксирована, чтобы страница не прыгала при выборе */
+    .etp-label { min-height: 30px; margin: 8px 0 0; text-align: center;
+      font-size: 12.5px; line-height: 1.3; color: #B9D8DF; }
+    .etp-toggle { display: block; margin: 2px auto 0; padding: 8px 12px;
+      border: 0; background: none; color: #8FA9B2; font: inherit; font-size: 11px;
+      cursor: pointer; }
+    .etp-toggle:focus-visible { outline: 2px solid #00E7ED; }
+    .etp-toggle[disabled] { cursor: default; }
     @media (max-width: 360px) {
-      .emb-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
-      .emb { height: 44px; }
-      .emb img { width: 28px; height: 28px; }
+      .etp h2 { font-size: 20px; }
+      .etp-logo img { width: 30px; height: 30px; }
+      .etp-logo:nth-child(3n) img { width: 33px; height: 33px; }
+      .etp-logo.wide { width: 70px; }
+      .etp-logo.wide img { width: 70px; height: 27px; }
     }
   }
   @media (min-width: 721px) and (max-width: 1024px), (min-width: 1025px) and (max-width: 1366px) and (hover: none) and (pointer: coarse) {
-    .emb-grid { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 8px;
-      max-width: 760px; }
-    .emb { height: 52px; border-radius: 12px; }
-    .emb img { width: 32px; height: 32px; }
+    .etp h2 { font-size: 24px; }
+    .etp-cloud { max-width: 400px; }
   }
 
   .sources-m > summary { list-style: none; cursor: pointer; display: flex; align-items: center;
@@ -914,28 +912,42 @@
       --hair: rgba(0,231,237,.24); --glass-brd: #24545E; }
     body, .bg { background: var(--bg); }
     .bg .veil { background: linear-gradient(180deg, rgba(5,21,28,.82), rgba(5,21,28,.6) 45%, rgba(4,17,23,.86)) !important; }
-    html { scroll-padding-top: 72px; }
+    /* переход к разделу не должен прятать заголовок под шапкой:
+       её полная высота — 78px плюс безопасная область */
+    html { scroll-padding-top: calc(78px + env(safe-area-inset-top)); }
     body { overflow-x: clip; }
 
     /* нижняя всплывающая кнопка «Открыть в Telegram» убрана: на первом
        экране есть основная кнопка, второй призыв владелец снял */
     .cta-bar, .cta-bar.show { display: none !important; }
 
-    /* шапка закреплена на всю длину страницы: не уезжает и не прыгает */
+    /* Шапка закреплена на всю длину страницы: не уезжает и не прыгает.
+       Собственный фон у неё есть ВСЕГДА и покрывает всю высоту вместе с
+       безопасной областью — за часами и камерой iPhone не должно
+       просвечивать содержимое страницы. Ниже выреза фон плавно сходит
+       на нет, чтобы шапка продолжала картинку первого экрана. */
     .top, body.has-waves .top { position: fixed; top: 0; left: 0; right: 0;
       z-index: 60; padding-top: env(safe-area-inset-top);
-      background: transparent !important; border: 0; box-shadow: none; }
-    /* матовое стекло под шапкой — отдельный слой, включается при прокрутке;
-       размывается только фон, сам текст и значки остаются чёткими */
-    .top::before { content: ''; position: absolute; inset: 0; z-index: -1;
-      opacity: 0; transition: opacity .22s ease;
-      background: linear-gradient(180deg, rgba(5,21,28,.92), rgba(5,21,28,.72));
+      border: 0; box-shadow: none;
+      background: linear-gradient(180deg,
+        #05151C 0%,
+        #05151C calc(env(safe-area-inset-top) + 8px),
+        rgba(5,21,28,.72) calc(env(safe-area-inset-top) + 34px),
+        rgba(5,21,28,0) 100%) !important; }
+    /* содержимое шапки над её слоями: в Safari отрицательный z-index у
+       ::before прятал бы стекло за собственный фон блока */
+    .top-in { position: relative; z-index: 2; }
+    /* матовое стекло — отдельный слой, включается при прокрутке; размывается
+       только фон, текст и значки остаются чёткими */
+    .top::before { content: ''; position: absolute; inset: 0; z-index: 1;
+      opacity: 0; transition: opacity .22s ease; pointer-events: none;
+      background: linear-gradient(180deg, rgba(5,21,28,.94), rgba(5,21,28,.78));
       -webkit-backdrop-filter: blur(14px) saturate(140%);
       backdrop-filter: blur(14px) saturate(140%); }
     body.scrolled .top::before { opacity: 1; }
     /* мягкое соединение с картинкой первого экрана вместо жёсткой границы */
     .top::after { content: ''; position: absolute; left: 0; right: 0; top: 100%;
-      height: 16px; pointer-events: none;
+      height: 16px; z-index: 1; pointer-events: none;
       background: linear-gradient(180deg, rgba(5,21,28,.55), rgba(5,21,28,0)); }
     body.scrolled .top::after { background: linear-gradient(180deg, rgba(5,21,28,.75), rgba(5,21,28,0)); }
     @media (prefers-reduced-motion: reduce) { .top::before { transition: none; } }
@@ -962,9 +974,12 @@
     .hero { min-height: 0; align-content: start; padding: 0 var(--pad); gap: 0; }
     .hero::before, .hero::after { content: none; }
     .hero-copy { position: relative; z-index: 1; isolation: isolate;
-      padding: 90px 0 30px; min-height: 100svh; }
+      /* 90px — под закреплённую шапку; на телефонах с вырезом добавляем
+         безопасную область, иначе текст уходит под шапку */
+      padding: calc(90px + env(safe-area-inset-top)) 0 30px; min-height: 100svh; }
     .hero-copy::before, .hero-copy::after { content: ''; position: absolute;
-      top: 78px; bottom: 0; left: calc(-1 * var(--pad)); right: calc(-1 * var(--pad));
+      top: calc(78px + env(safe-area-inset-top)); bottom: 0;
+      left: calc(-1 * var(--pad)); right: calc(-1 * var(--pad));
       z-index: -2; pointer-events: none;
       background: linear-gradient(90deg, rgba(1,16,22,.2), transparent 75%),
         url(img/hero-mobile-poster.jpg) center / 100% 100% no-repeat; }
@@ -1169,6 +1184,10 @@
   @media (min-width: 721px) and (max-width: 1024px), (min-width: 1025px) and (max-width: 1366px) and (hover: none) and (pointer: coarse) {
     :root { --pad: clamp(36px, 5.2vw, 64px); --wrap: 1200px; }
     .top-in { height: 96px; gap: 24px; }
+    /* шапка планшета выше: тот же расчёт, но от 96px */
+    html { scroll-padding-top: calc(96px + env(safe-area-inset-top)); }
+    .hero-copy { padding-top: calc(108px + env(safe-area-inset-top)); }
+    .hero-copy::before, .hero-copy::after { top: calc(96px + env(safe-area-inset-top)); }
     .brand { gap: 12px; }
     .mobile-brand-symbol { width: 48px; height: 52px; }
     .brand .brand-name { max-width: 136px; font-size: 19px; }
@@ -1596,9 +1615,11 @@
     <div class="ticker-in" id="ticker"><span class="src"><img src="img/sites/tektorg.png?v=1" alt="" width="22" height="22" loading="lazy">ТЭК-Торг</span><span class="src"><img src="img/sites/b2b.png?v=1" alt="" width="22" height="22" loading="lazy">B2B-Center</span><span class="src"><img src="img/sites/sberast.png?v=1" alt="" width="22" height="22" loading="lazy">Сбербанк-АСТ</span><span class="src"><img src="img/sites/etpgpb.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП ГПБ</span><span class="src"><img src="img/sites/onlinecontract.png?v=1" alt="" width="22" height="22" loading="lazy">OnlineContract</span><span class="src"><img src="img/sites/bidzaar.png?v=1" alt="" width="22" height="22" loading="lazy">Bidzaar</span><span class="src"><img src="img/sites/isource.png?v=1" alt="" width="22" height="22" loading="lazy">isource Reserve</span><span class="src"><img src="img/sites/fabrikant.png?v=1" alt="" width="22" height="22" loading="lazy">Фабрикант</span><span class="src"><img src="img/sites/zakazrf.png?v=1" alt="" width="22" height="22" loading="lazy">ЗаказРФ</span><span class="src"><img src="img/sites/tenderpro.png?v=1" alt="" width="22" height="22" loading="lazy">Tender.Pro</span><span class="src"><img src="img/sites/lotonline.png?v=1" alt="" width="22" height="22" loading="lazy">lot-online (РАД)</span><span class="src"><img src="img/sites/reo.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП РЭО</span><span class="src"><img src="img/sites/interrao.png?v=1" alt="" width="22" height="22" loading="lazy">Интер РАО</span><span class="src"><img src="img/sites/rosneft.png?v=1" alt="" width="22" height="22" loading="lazy">Роснефть</span><span class="src"><img src="img/sites/slavneft.png?v=1" alt="" width="22" height="22" loading="lazy">Славнефть</span><span class="src"><img src="img/sites/alrosa.png?v=1" alt="" width="22" height="22" loading="lazy">АЛРОСА</span><span class="src"><i class="mark mark-enplus">ЭН</i>Эн+</span><span class="src"><i class="mark mark-torgi">ГТ</i>ГИС Торги</span><span class="src"><img src="img/sites/tektorg.png?v=1" alt="" width="22" height="22" loading="lazy">ТЭК-Торг</span><span class="src"><img src="img/sites/b2b.png?v=1" alt="" width="22" height="22" loading="lazy">B2B-Center</span><span class="src"><img src="img/sites/sberast.png?v=1" alt="" width="22" height="22" loading="lazy">Сбербанк-АСТ</span><span class="src"><img src="img/sites/etpgpb.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП ГПБ</span><span class="src"><img src="img/sites/onlinecontract.png?v=1" alt="" width="22" height="22" loading="lazy">OnlineContract</span><span class="src"><img src="img/sites/bidzaar.png?v=1" alt="" width="22" height="22" loading="lazy">Bidzaar</span><span class="src"><img src="img/sites/isource.png?v=1" alt="" width="22" height="22" loading="lazy">isource Reserve</span><span class="src"><img src="img/sites/fabrikant.png?v=1" alt="" width="22" height="22" loading="lazy">Фабрикант</span><span class="src"><img src="img/sites/zakazrf.png?v=1" alt="" width="22" height="22" loading="lazy">ЗаказРФ</span><span class="src"><img src="img/sites/tenderpro.png?v=1" alt="" width="22" height="22" loading="lazy">Tender.Pro</span><span class="src"><img src="img/sites/lotonline.png?v=1" alt="" width="22" height="22" loading="lazy">lot-online (РАД)</span><span class="src"><img src="img/sites/reo.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП РЭО</span><span class="src"><img src="img/sites/interrao.png?v=1" alt="" width="22" height="22" loading="lazy">Интер РАО</span><span class="src"><img src="img/sites/rosneft.png?v=1" alt="" width="22" height="22" loading="lazy">Роснефть</span><span class="src"><img src="img/sites/slavneft.png?v=1" alt="" width="22" height="22" loading="lazy">Славнефть</span><span class="src"><img src="img/sites/alrosa.png?v=1" alt="" width="22" height="22" loading="lazy">АЛРОСА</span><span class="src"><i class="mark mark-enplus">ЭН</i>Эн+</span><span class="src"><i class="mark mark-torgi">ГТ</i>ГИС Торги</span></div>
   </div>
 
-<section class="sources-grid wrap" aria-labelledby="sources-title">
-  <h2 id="sources-title">Торговые площадки под наблюдением</h2>
-  <div class="emb-grid"><span class="emb" title="ТЭК-Торг"><img src="img/sites/tektorg.png?v=2" alt="ТЭК-Торг" loading="lazy" decoding="async"><em>ТЭК-Торг</em></span><span class="emb" title="B2B-Center"><img src="img/sites/b2b.png?v=2" alt="B2B-Center" loading="lazy" decoding="async"><em>B2B-Center</em></span><span class="emb" title="Сбербанк-АСТ"><img src="img/sites/sberast.png?v=2" alt="Сбербанк-АСТ" loading="lazy" decoding="async"><em>Сбербанк-АСТ</em></span><span class="emb" title="ЭТП ГПБ"><img src="img/sites/etpgpb.png?v=2" alt="ЭТП ГПБ" loading="lazy" decoding="async"><em>ЭТП ГПБ</em></span><span class="emb" title="OnlineContract"><img src="img/sites/onlinecontract.png?v=2" alt="OnlineContract" loading="lazy" decoding="async"><em>OnlineContract</em></span><span class="emb" title="Bidzaar"><img src="img/sites/bidzaar.png?v=2" alt="Bidzaar" loading="lazy" decoding="async"><em>Bidzaar</em></span><span class="emb" title="isource Reserve"><img src="img/sites/isource.png?v=2" alt="isource Reserve" loading="lazy" decoding="async"><em>isource Reserve</em></span><span class="emb" title="Фабрикант"><img src="img/sites/fabrikant.png?v=2" alt="Фабрикант" loading="lazy" decoding="async"><em>Фабрикант</em></span><span class="emb" title="ЗаказРФ"><img src="img/sites/zakazrf.png?v=2" alt="ЗаказРФ" loading="lazy" decoding="async"><em>ЗаказРФ</em></span><span class="emb" title="Tender.Pro"><img src="img/sites/tenderpro.png?v=2" alt="Tender.Pro" loading="lazy" decoding="async"><em>Tender.Pro</em></span><span class="emb" title="lot-online (РАД)"><img src="img/sites/lotonline.png?v=2" alt="lot-online (РАД)" loading="lazy" decoding="async"><em>lot-online (РАД)</em></span><span class="emb" title="ЭТП РЭО"><img src="img/sites/reo.png?v=2" alt="ЭТП РЭО" loading="lazy" decoding="async"><em>ЭТП РЭО</em></span><span class="emb" title="Интер РАО"><img src="img/sites/interrao.png?v=2" alt="Интер РАО" loading="lazy" decoding="async"><em>Интер РАО</em></span><span class="emb" title="Роснефть"><img src="img/sites/rosneft.png?v=2" alt="Роснефть" loading="lazy" decoding="async"><em>Роснефть</em></span><span class="emb" title="Славнефть"><img src="img/sites/slavneft.png?v=2" alt="Славнефть" loading="lazy" decoding="async"><em>Славнефть</em></span><span class="emb" title="АЛРОСА"><img src="img/sites/alrosa.png?v=2" alt="АЛРОСА" loading="lazy" decoding="async"><em>АЛРОСА</em></span><span class="emb emb-wide" title="Эн+"><img src="img/sites/enplus.svg?v=2" alt="Эн+" loading="lazy" decoding="async"><em>Эн+</em></span><span class="emb" title="ГИС Торги"><img src="img/sites/torgi.png?v=2" alt="ГИС Торги" loading="lazy" decoding="async"><em>ГИС Торги</em></span></div>
+<section class="etp wrap" aria-labelledby="etp-title">
+  <h2 id="etp-title">ЭТП</h2>
+  <div class="etp-cloud" id="etp-cloud"><button type="button" class="etp-logo" data-name="ТЭК-Торг" aria-label="ТЭК-Торг"><img src="img/sites/tektorg.png?v=3" alt="ТЭК-Торг" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="B2B-Center" aria-label="B2B-Center"><img src="img/sites/b2b.png?v=3" alt="B2B-Center" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Сбербанк-АСТ" aria-label="Сбербанк-АСТ"><img src="img/sites/sberast.png?v=3" alt="Сбербанк-АСТ" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="ЭТП ГПБ" aria-label="ЭТП ГПБ"><img src="img/sites/etpgpb.png?v=3" alt="ЭТП ГПБ" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="OnlineContract" aria-label="OnlineContract"><img src="img/sites/onlinecontract.png?v=3" alt="OnlineContract" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Bidzaar" aria-label="Bidzaar"><img src="img/sites/bidzaar.png?v=3" alt="Bidzaar" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="isource Reserve" aria-label="isource Reserve"><img src="img/sites/isource-mark.png?v=3" alt="isource Reserve" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Фабрикант" aria-label="Фабрикант"><img src="img/sites/fabrikant.png?v=3" alt="Фабрикант" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="ЗаказРФ" aria-label="ЗаказРФ"><img src="img/sites/zakazrf.png?v=3" alt="ЗаказРФ" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Tender.Pro" aria-label="Tender.Pro"><img src="img/sites/tenderpro.png?v=3" alt="Tender.Pro" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="lot-online (РАД)" aria-label="lot-online (РАД)"><img src="img/sites/lotonline-mark.png?v=3" alt="lot-online (РАД)" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="ЭТП РЭО" aria-label="ЭТП РЭО"><img src="img/sites/reo.png?v=3" alt="ЭТП РЭО" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Интер РАО" aria-label="Интер РАО"><img src="img/sites/interrao.png?v=3" alt="Интер РАО" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Роснефть" aria-label="Роснефть"><img src="img/sites/rosneft.png?v=3" alt="Роснефть" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Славнефть" aria-label="Славнефть"><img src="img/sites/slavneft.png?v=3" alt="Славнефть" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="АЛРОСА" aria-label="АЛРОСА"><img src="img/sites/alrosa.png?v=3" alt="АЛРОСА" loading="lazy" decoding="async"></button><button type="button" class="etp-logo wide" data-name="Эн+" aria-label="Эн+"><img src="img/sites/enplus.svg?v=3" alt="Эн+" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="ГИС Торги" aria-label="ГИС Торги"><img src="img/sites/torgi.png?v=3" alt="ГИС Торги" loading="lazy" decoding="async"></button></div>
+  <p class="etp-label" id="etp-label" aria-live="polite"></p>
+  <button type="button" class="etp-toggle" id="etp-toggle" aria-pressed="false">Остановить движение</button>
 </section>
 
   <section class="section proof" style="padding-top:96px" aria-label="Сервис в цифрах">
@@ -2055,21 +2076,129 @@
     window.addEventListener('resize', проверить);
   })();
 
-  // подпись площадки на сенсорном экране: касание показывает название
-  // выбранной эмблемы, повторное касание или касание вне — скрывает
-  (function эмблемы(){
-    var сетка = document.querySelector('.emb-grid');
-    if (!сетка) return;
-    сетка.addEventListener('click', function(e){
-      var я = e.target.closest('.emb'); if (!я) return;
-      var было = я.classList.contains('on');
-      сетка.querySelectorAll('.emb.on').forEach(function(x){ x.classList.remove('on'); });
-      if (!было) я.classList.add('on');
+  /* ——— ЭТП: медленное плавание фирменных знаков ———
+     Расчёт с постоянным шагом 1/120 с — картинка одинаковая на 60 и 120 Гц.
+     Двигаем только transform (translate3d), раскладку страницы не трогаем.
+     Вне экрана, в скрытой вкладке, при «уменьшить движение», при касании и
+     клавиатурном выборе расчёт останавливается. */
+  function создатьДвижениеЭТП(ширина, высота, размеры){
+    var точки = [[8,10],[28,18],[49,8],[72,15],[92,10],[16,35],[39,42],[63,32],[86,40],
+                 [7,62],[29,57],[50,68],[72,57],[93,64],[16,87],[39,92],[65,87],[89,93]];
+    var узлы = размеры.map(function(б, i){
+      return { x: точки[i][0]*ширина/100, y: точки[i][1]*высота/100,
+               w: б.w, h: б.h, vx: 0, vy: 0, фаза: i*2.39996 };
     });
-    document.addEventListener('click', function(e){
-      if (!e.target.closest('.emb-grid'))
-        сетка.querySelectorAll('.emb.on').forEach(function(x){ x.classList.remove('on'); });
+    var время = 0;
+    function вРамках(н){
+      н.x = Math.max(н.w/2+1, Math.min(ширина-н.w/2-1, н.x));
+      н.y = Math.max(н.h/2+1, Math.min(высота-н.h/2-1, н.y));
+    }
+    function развести(){
+      for(var проход=0; проход<24; проход++){
+        узлы.forEach(вРамках);
+        for(var i=0;i<узлы.length;i++) for(var j=i+1;j<узлы.length;j++){
+          var a=узлы[i], b=узлы[j], dx=b.x-a.x, dy=b.y-a.y;
+          var ox=(a.w+b.w)/2+3-Math.abs(dx), oy=(a.h+b.h)/2+3-Math.abs(dy);
+          if(ox>0&&oy>0){
+            if(ox<oy){ var s=dx>=0?1:-1; a.x-=s*ox/2; b.x+=s*ox/2;
+              var v=(a.vx-b.vx)*s; if(v>0){ a.vx-=s*v*.5; b.vx+=s*v*.5; } }
+            else { var s2=dy>=0?1:-1; a.y-=s2*oy/2; b.y+=s2*oy/2;
+              var v2=(a.vy-b.vy)*s2; if(v2>0){ a.vy-=s2*v2*.5; b.vy+=s2*v2*.5; } }
+          }
+        }
+      }
+      узлы.forEach(вРамках);
+    }
+    развести();
+    узлы.forEach(function(н){ н.ax=н.x; н.ay=н.y; });
+    function шаг(dt){
+      dt = Math.min(dt, 1/30); время += dt;
+      // мягкое отталкивание начинается ДО касания: запас 11px
+      for(var i=0;i<узлы.length;i++) for(var j=i+1;j<узлы.length;j++){
+        var a=узлы[i], b=узлы[j], dx=b.x-a.x, dy=b.y-a.y;
+        var ox=(a.w+b.w)/2+11-Math.abs(dx), oy=(a.h+b.h)/2+11-Math.abs(dy);
+        if(ox>0&&oy>0){
+          var f=Math.pow(Math.min(1, Math.min(ox,oy)/11),2)*4*dt;
+          if(ox<oy){ var d=dx>=0?1:-1; a.vx-=d*f; b.vx+=d*f; }
+          else { var d2=dy>=0?1:-1; a.vy-=d2*f; b.vy+=d2*f; }
+        }
+      }
+      for(var k=0;k<узлы.length;k++){
+        var н=узлы[k];
+        var fx=Math.sin(время*.22+н.фаза)*2.4+(н.ax-н.x)*.09;
+        var fy=Math.cos(время*.19+н.фаза)*2+(н.ay-н.y)*.09;
+        н.vx=(н.vx+fx*dt)*Math.exp(-1.2*dt);
+        н.vy=(н.vy+fy*dt)*Math.exp(-1.2*dt);
+        н.x+=н.vx*dt; н.y+=н.vy*dt;
+      }
+      развести();
+      return узлы;
+    }
+    return { узлы: узлы, шаг: шаг };
+  }
+
+  (function этп(){
+    var облако=document.getElementById('etp-cloud');
+    if(!облако) return;
+    var знаки=[].slice.call(облако.querySelectorAll('.etp-logo'));
+    var подпись=document.getElementById('etp-label');
+    var тумблер=document.getElementById('etp-toggle');
+    var тише=matchMedia('(prefers-reduced-motion: reduce)');
+    var движок=null, кадр=0, прошлое=0, остаток=0;
+    var виден=true, пауза=false, держат=false, сКлавиатуры=false;
+
+    function нарисовать(){
+      движок.узлы.forEach(function(н, i){
+        знаки[i].style.transform='translate3d('+н.x+'px,'+н.y+'px,0) translate(-50%,-50%)';
+      });
+    }
+    function идёт(){
+      return !!движок && виден && !document.hidden && !тише.matches
+        && !пауза && !держат && !сКлавиатуры;
+    }
+    function кадрДвижения(t){
+      кадр=0;
+      if(!идёт()) return;
+      // пропущенное время не догоняем скачком: ограничиваем 50 мс
+      остаток += прошлое ? Math.min((t-прошлое)/1000, .05) : 0;
+      прошлое = t;
+      while(остаток >= 1/120){ движок.шаг(1/120); остаток -= 1/120; }
+      нарисовать();
+      кадр = requestAnimationFrame(кадрДвижения);
+    }
+    function согласовать(){
+      cancelAnimationFrame(кадр); кадр=0; прошлое=0; остаток=0;
+      if(тумблер){
+        тумблер.disabled = тише.matches;
+        тумблер.textContent = тише.matches ? 'Движение отключено в настройках устройства'
+          : (пауза ? 'Включить движение' : 'Остановить движение');
+        тумблер.setAttribute('aria-pressed', String(пауза));
+      }
+      if(идёт()) кадр = requestAnimationFrame(кадрДвижения);
+    }
+    function пересобрать(){
+      движок = создатьДвижениеЭТП(облако.clientWidth, облако.clientHeight,
+        знаки.map(function(з){ return { w: з.offsetWidth, h: з.offsetHeight }; }));
+      нарисовать(); согласовать();
+    }
+    if(window.ResizeObserver) new ResizeObserver(пересобрать).observe(облако);
+    else window.addEventListener('resize', пересобрать);
+    if(window.IntersectionObserver)
+      new IntersectionObserver(function(записи){ виден=записи[0].isIntersecting; согласовать(); }).observe(облако);
+    document.addEventListener('visibilitychange', согласовать);
+    if(тише.addEventListener) тише.addEventListener('change', согласовать);
+    if(тумблер) тумблер.addEventListener('click', function(){ пауза=!пауза; согласовать(); });
+    облако.addEventListener('pointerdown', function(){ держат=true; согласовать(); });
+    window.addEventListener('pointerup', function(){ держат=false; согласовать(); });
+    window.addEventListener('pointercancel', function(){ держат=false; согласовать(); });
+    облако.addEventListener('focusin', function(e){
+      сКлавиатуры = !!(e.target.matches && e.target.matches(':focus-visible')); согласовать();
     });
+    облако.addEventListener('focusout', function(){ сКлавиатуры=false; согласовать(); });
+    знаки.forEach(function(з){
+      з.addEventListener('click', function(){ if(подпись) подпись.textContent = з.dataset.name; });
+    });
+    пересобрать();
   })();
 
   // 5. счётчики
