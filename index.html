@@ -294,6 +294,51 @@
   /* якорь не должен уезжать под закреплённую шапку */
   section[id], .hero-wrap { scroll-margin-top: 76px; }
   .sources-m { display: none; }
+
+  /* Площадки: постоянная сетка эмблем вместо раскрывающегося списка.
+     На компьютере блок не показываем — там свой раздел «где мы смотрим». */
+  /* карточки тарифов теперь ссылки: вид прежний, добавлена подпись выбора */
+  a.plan { text-decoration: none; color: inherit; display: block; cursor: pointer; }
+  a.plan:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .plan-pick { display: none; }
+  @media (max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+    .plan-pick { display: block; margin-top: 8px; color: #00E7ED;
+      font-size: 12.5px; font-weight: 600; }
+    a.plan:active { transform: scale(.995); }
+  }
+  .sources-grid { display: none; }
+  @media (max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+    .sources-grid { display: block; margin: 26px auto 8px; }
+    .sources-grid h2 { margin: 0 0 12px; font-family: "Onest", sans-serif;
+      font-size: 15px; font-weight: 700; letter-spacing: .01em; color: #00E7ED; }
+    .emb-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 7px; }
+    .emb { position: relative; display: grid; place-items: center; height: 46px;
+      padding: 6px; border-radius: 11px; border: 1px solid #24545E; background: #08212B; }
+    .emb img { width: 30px; height: 30px; object-fit: contain; }
+    /* широкие фирменные надписи не сжимаем в квадрат: даём две ячейки */
+    .emb-wide { grid-column: span 2; }
+    .emb-wide img { width: auto; max-width: 100%; height: 22px; }
+    /* подпись площадки: нужна и на сенсорном экране — показываем по касанию
+       выбранной эмблемы, не разворачивая весь список */
+    .emb em { position: absolute; left: 50%; bottom: calc(100% + 6px);
+      transform: translateX(-50%); padding: 4px 8px; border-radius: 8px;
+      background: #0B2C37; border: 1px solid #24545E; color: #F1F5F7;
+      font-size: 11px; font-style: normal; white-space: nowrap; opacity: 0;
+      pointer-events: none; transition: opacity .15s ease; z-index: 2; }
+    .emb:hover em, .emb:focus em, .emb:focus-within em, .emb.on em { opacity: 1; }
+    @media (max-width: 360px) {
+      .emb-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+      .emb { height: 44px; }
+      .emb img { width: 28px; height: 28px; }
+    }
+  }
+  @media (min-width: 721px) and (max-width: 1024px), (min-width: 1025px) and (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+    .emb-grid { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 8px;
+      max-width: 760px; }
+    .emb { height: 52px; border-radius: 12px; }
+    .emb img { width: 32px; height: 32px; }
+  }
+
   .sources-m > summary { list-style: none; cursor: pointer; display: flex; align-items: center;
     justify-content: space-between; min-height: 48px; color: var(--accent); font-size: 15px;
     border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); }
@@ -353,6 +398,27 @@
   .install-wrap > summary::-webkit-details-marker { display: none; }
   .install-wrap > summary::after { content: "▾"; transition: transform .3s; }
   .install-wrap[open] > summary::after { transform: rotate(180deg); }
+  /* Уведомление о cookie на телефоне и планшете: компактная полоса внизу,
+     чтобы не закрывать подарок, цену и кнопку Telegram. Текст ужимаем,
+     кнопки в одну строку; на компьютере вид прежний. */
+  @media (max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+    .cc { left: 8px; right: 8px; bottom: calc(8px + env(safe-area-inset-bottom));
+      width: auto; transform: translateY(14px); }
+    .cc.show { transform: translateY(0); }
+    .cc-in { gap: 8px; padding: 10px 12px; border-radius: 14px; align-items: flex-start; }
+    .cc-txt { flex: 1 1 100%; font-size: 12px; line-height: 1.35;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden; }
+    .cc-btns { flex: 1 1 100%; justify-content: flex-end; }
+    .cc-btn { min-height: 34px; padding: 0 12px; font-size: 13px; border-radius: 10px; }
+    /* пока уведомление висит, нижняя закреплённая кнопка поднимается,
+       чтобы они не накладывались друг на друга */
+    body.cc-open .cta-bar.show { bottom: calc(76px + env(safe-area-inset-bottom)); }
+    /* и конец страницы не прячется под полосой: пока она видна,
+       добавляем запас снизу — подвал и настройки остаются доступны */
+    body.cc-open { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+  }
+
   @media (max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse) {
     .install-wrap > summary { display: flex; }
     .install-wrap:not([open]) .install { display: none; }
@@ -851,8 +917,28 @@
     html { scroll-padding-top: 72px; }
     body { overflow-x: clip; }
 
-    .top, body.has-waves .top { position: absolute; top: 0; left: 0; right: 0; background: transparent !important;
-      border: 0; box-shadow: none; }
+    /* нижняя всплывающая кнопка «Открыть в Telegram» убрана: на первом
+       экране есть основная кнопка, второй призыв владелец снял */
+    .cta-bar, .cta-bar.show { display: none !important; }
+
+    /* шапка закреплена на всю длину страницы: не уезжает и не прыгает */
+    .top, body.has-waves .top { position: fixed; top: 0; left: 0; right: 0;
+      z-index: 60; padding-top: env(safe-area-inset-top);
+      background: transparent !important; border: 0; box-shadow: none; }
+    /* матовое стекло под шапкой — отдельный слой, включается при прокрутке;
+       размывается только фон, сам текст и значки остаются чёткими */
+    .top::before { content: ''; position: absolute; inset: 0; z-index: -1;
+      opacity: 0; transition: opacity .22s ease;
+      background: linear-gradient(180deg, rgba(5,21,28,.92), rgba(5,21,28,.72));
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      backdrop-filter: blur(14px) saturate(140%); }
+    body.scrolled .top::before { opacity: 1; }
+    /* мягкое соединение с картинкой первого экрана вместо жёсткой границы */
+    .top::after { content: ''; position: absolute; left: 0; right: 0; top: 100%;
+      height: 16px; pointer-events: none;
+      background: linear-gradient(180deg, rgba(5,21,28,.55), rgba(5,21,28,0)); }
+    body.scrolled .top::after { background: linear-gradient(180deg, rgba(5,21,28,.75), rgba(5,21,28,0)); }
+    @media (prefers-reduced-motion: reduce) { .top::before { transition: none; } }
     .top-in { height: 78px; gap: 10px; }
     .brand { min-width: 0; gap: 9px; }
     .brand .logo { display: none; }
@@ -1510,10 +1596,10 @@
     <div class="ticker-in" id="ticker"><span class="src"><img src="img/sites/tektorg.png?v=1" alt="" width="22" height="22" loading="lazy">ТЭК-Торг</span><span class="src"><img src="img/sites/b2b.png?v=1" alt="" width="22" height="22" loading="lazy">B2B-Center</span><span class="src"><img src="img/sites/sberast.png?v=1" alt="" width="22" height="22" loading="lazy">Сбербанк-АСТ</span><span class="src"><img src="img/sites/etpgpb.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП ГПБ</span><span class="src"><img src="img/sites/onlinecontract.png?v=1" alt="" width="22" height="22" loading="lazy">OnlineContract</span><span class="src"><img src="img/sites/bidzaar.png?v=1" alt="" width="22" height="22" loading="lazy">Bidzaar</span><span class="src"><img src="img/sites/isource.png?v=1" alt="" width="22" height="22" loading="lazy">isource Reserve</span><span class="src"><img src="img/sites/fabrikant.png?v=1" alt="" width="22" height="22" loading="lazy">Фабрикант</span><span class="src"><img src="img/sites/zakazrf.png?v=1" alt="" width="22" height="22" loading="lazy">ЗаказРФ</span><span class="src"><img src="img/sites/tenderpro.png?v=1" alt="" width="22" height="22" loading="lazy">Tender.Pro</span><span class="src"><img src="img/sites/lotonline.png?v=1" alt="" width="22" height="22" loading="lazy">lot-online (РАД)</span><span class="src"><img src="img/sites/reo.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП РЭО</span><span class="src"><img src="img/sites/interrao.png?v=1" alt="" width="22" height="22" loading="lazy">Интер РАО</span><span class="src"><img src="img/sites/rosneft.png?v=1" alt="" width="22" height="22" loading="lazy">Роснефть</span><span class="src"><img src="img/sites/slavneft.png?v=1" alt="" width="22" height="22" loading="lazy">Славнефть</span><span class="src"><img src="img/sites/alrosa.png?v=1" alt="" width="22" height="22" loading="lazy">АЛРОСА</span><span class="src"><i class="mark mark-enplus">ЭН</i>Эн+</span><span class="src"><i class="mark mark-torgi">ГТ</i>ГИС Торги</span><span class="src"><img src="img/sites/tektorg.png?v=1" alt="" width="22" height="22" loading="lazy">ТЭК-Торг</span><span class="src"><img src="img/sites/b2b.png?v=1" alt="" width="22" height="22" loading="lazy">B2B-Center</span><span class="src"><img src="img/sites/sberast.png?v=1" alt="" width="22" height="22" loading="lazy">Сбербанк-АСТ</span><span class="src"><img src="img/sites/etpgpb.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП ГПБ</span><span class="src"><img src="img/sites/onlinecontract.png?v=1" alt="" width="22" height="22" loading="lazy">OnlineContract</span><span class="src"><img src="img/sites/bidzaar.png?v=1" alt="" width="22" height="22" loading="lazy">Bidzaar</span><span class="src"><img src="img/sites/isource.png?v=1" alt="" width="22" height="22" loading="lazy">isource Reserve</span><span class="src"><img src="img/sites/fabrikant.png?v=1" alt="" width="22" height="22" loading="lazy">Фабрикант</span><span class="src"><img src="img/sites/zakazrf.png?v=1" alt="" width="22" height="22" loading="lazy">ЗаказРФ</span><span class="src"><img src="img/sites/tenderpro.png?v=1" alt="" width="22" height="22" loading="lazy">Tender.Pro</span><span class="src"><img src="img/sites/lotonline.png?v=1" alt="" width="22" height="22" loading="lazy">lot-online (РАД)</span><span class="src"><img src="img/sites/reo.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП РЭО</span><span class="src"><img src="img/sites/interrao.png?v=1" alt="" width="22" height="22" loading="lazy">Интер РАО</span><span class="src"><img src="img/sites/rosneft.png?v=1" alt="" width="22" height="22" loading="lazy">Роснефть</span><span class="src"><img src="img/sites/slavneft.png?v=1" alt="" width="22" height="22" loading="lazy">Славнефть</span><span class="src"><img src="img/sites/alrosa.png?v=1" alt="" width="22" height="22" loading="lazy">АЛРОСА</span><span class="src"><i class="mark mark-enplus">ЭН</i>Эн+</span><span class="src"><i class="mark mark-torgi">ГТ</i>ГИС Торги</span></div>
   </div>
 
-  <details class="sources-m wrap">
-  <summary>Торговые площадки под наблюдением</summary>
-  <div class="sources-list"><span class="src"><img src="img/sites/tektorg.png?v=1" alt="" width="22" height="22" loading="lazy">ТЭК-Торг</span><span class="src"><img src="img/sites/b2b.png?v=1" alt="" width="22" height="22" loading="lazy">B2B-Center</span><span class="src"><img src="img/sites/sberast.png?v=1" alt="" width="22" height="22" loading="lazy">Сбербанк-АСТ</span><span class="src"><img src="img/sites/etpgpb.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП ГПБ</span><span class="src"><img src="img/sites/onlinecontract.png?v=1" alt="" width="22" height="22" loading="lazy">OnlineContract</span><span class="src"><img src="img/sites/bidzaar.png?v=1" alt="" width="22" height="22" loading="lazy">Bidzaar</span><span class="src"><img src="img/sites/isource.png?v=1" alt="" width="22" height="22" loading="lazy">isource Reserve</span><span class="src"><img src="img/sites/fabrikant.png?v=1" alt="" width="22" height="22" loading="lazy">Фабрикант</span><span class="src"><img src="img/sites/zakazrf.png?v=1" alt="" width="22" height="22" loading="lazy">ЗаказРФ</span><span class="src"><img src="img/sites/tenderpro.png?v=1" alt="" width="22" height="22" loading="lazy">Tender.Pro</span><span class="src"><img src="img/sites/lotonline.png?v=1" alt="" width="22" height="22" loading="lazy">lot-online (РАД)</span><span class="src"><img src="img/sites/reo.png?v=1" alt="" width="22" height="22" loading="lazy">ЭТП РЭО</span><span class="src"><img src="img/sites/interrao.png?v=1" alt="" width="22" height="22" loading="lazy">Интер РАО</span><span class="src"><img src="img/sites/rosneft.png?v=1" alt="" width="22" height="22" loading="lazy">Роснефть</span><span class="src"><img src="img/sites/slavneft.png?v=1" alt="" width="22" height="22" loading="lazy">Славнефть</span><span class="src"><img src="img/sites/alrosa.png?v=1" alt="" width="22" height="22" loading="lazy">АЛРОСА</span><span class="src"><i class="mark mark-enplus">ЭН</i>Эн+</span><span class="src"><i class="mark mark-torgi">ГТ</i>ГИС Торги</span></div>
-</details>
+<section class="sources-grid wrap" aria-labelledby="sources-title">
+  <h2 id="sources-title">Торговые площадки под наблюдением</h2>
+  <div class="emb-grid"><span class="emb" title="ТЭК-Торг"><img src="img/sites/tektorg.png?v=2" alt="ТЭК-Торг" loading="lazy" decoding="async"><em>ТЭК-Торг</em></span><span class="emb" title="B2B-Center"><img src="img/sites/b2b.png?v=2" alt="B2B-Center" loading="lazy" decoding="async"><em>B2B-Center</em></span><span class="emb" title="Сбербанк-АСТ"><img src="img/sites/sberast.png?v=2" alt="Сбербанк-АСТ" loading="lazy" decoding="async"><em>Сбербанк-АСТ</em></span><span class="emb" title="ЭТП ГПБ"><img src="img/sites/etpgpb.png?v=2" alt="ЭТП ГПБ" loading="lazy" decoding="async"><em>ЭТП ГПБ</em></span><span class="emb" title="OnlineContract"><img src="img/sites/onlinecontract.png?v=2" alt="OnlineContract" loading="lazy" decoding="async"><em>OnlineContract</em></span><span class="emb" title="Bidzaar"><img src="img/sites/bidzaar.png?v=2" alt="Bidzaar" loading="lazy" decoding="async"><em>Bidzaar</em></span><span class="emb" title="isource Reserve"><img src="img/sites/isource.png?v=2" alt="isource Reserve" loading="lazy" decoding="async"><em>isource Reserve</em></span><span class="emb" title="Фабрикант"><img src="img/sites/fabrikant.png?v=2" alt="Фабрикант" loading="lazy" decoding="async"><em>Фабрикант</em></span><span class="emb" title="ЗаказРФ"><img src="img/sites/zakazrf.png?v=2" alt="ЗаказРФ" loading="lazy" decoding="async"><em>ЗаказРФ</em></span><span class="emb" title="Tender.Pro"><img src="img/sites/tenderpro.png?v=2" alt="Tender.Pro" loading="lazy" decoding="async"><em>Tender.Pro</em></span><span class="emb" title="lot-online (РАД)"><img src="img/sites/lotonline.png?v=2" alt="lot-online (РАД)" loading="lazy" decoding="async"><em>lot-online (РАД)</em></span><span class="emb" title="ЭТП РЭО"><img src="img/sites/reo.png?v=2" alt="ЭТП РЭО" loading="lazy" decoding="async"><em>ЭТП РЭО</em></span><span class="emb" title="Интер РАО"><img src="img/sites/interrao.png?v=2" alt="Интер РАО" loading="lazy" decoding="async"><em>Интер РАО</em></span><span class="emb" title="Роснефть"><img src="img/sites/rosneft.png?v=2" alt="Роснефть" loading="lazy" decoding="async"><em>Роснефть</em></span><span class="emb" title="Славнефть"><img src="img/sites/slavneft.png?v=2" alt="Славнефть" loading="lazy" decoding="async"><em>Славнефть</em></span><span class="emb" title="АЛРОСА"><img src="img/sites/alrosa.png?v=2" alt="АЛРОСА" loading="lazy" decoding="async"><em>АЛРОСА</em></span><span class="emb emb-wide" title="Эн+"><img src="img/sites/enplus.svg?v=2" alt="Эн+" loading="lazy" decoding="async"><em>Эн+</em></span><span class="emb" title="ГИС Торги"><img src="img/sites/torgi.png?v=2" alt="ГИС Торги" loading="lazy" decoding="async"><em>ГИС Торги</em></span></div>
+</section>
 
   <section class="section proof" style="padding-top:96px" aria-label="Сервис в цифрах">
     <div class="wrap">
@@ -1784,23 +1870,26 @@
           <p class="ref-note">Приводите коллег: с каждой их оплаты 10% возвращается вам на внутренний кошелёк — им можно оплатить свой тариф.</p>
         </div>
         <div class="plans">
-          <div class="plan">
+          <a class="plan" href="/app/?pay=1&amp;plan=m1" aria-label="Тариф 1 месяц, итого 1 299 ₽ — выбрать и оплатить">
             <div class="plan-term mono">1 месяц</div>
             <div class="plan-sum display">1 299 ₽<small>в месяц</small></div>
             <div class="plan-total">итого 1 299 ₽ · без обязательств</div>
-          </div>
-          <div class="plan">
+            <span class="plan-pick">Выбрать тариф →</span>
+          </a>
+          <a class="plan" href="/app/?pay=1&amp;plan=m3" aria-label="Тариф 3 месяца, итого 2 997 ₽ — выбрать и оплатить">
             <div class="plan-term mono">3 месяца</div>
             <div class="plan-sum display"><s>1 299 ₽</s> 999 ₽<small>в месяц</small></div>
             <div class="plan-total">итого 2 997 ₽ · экономия 900 ₽</div>
-          </div>
-          <div class="plan plan-best">
+            <span class="plan-pick">Выбрать тариф →</span>
+          </a>
+          <a class="plan plan-best" href="/app/?pay=1&amp;plan=m6" aria-label="Тариф 6 месяцев, итого 4 194 ₽ — выбрать и оплатить">
             <span class="plan-flag">выгоднее всего</span>
             <div class="plan-term mono">6 месяцев</div>
             <div class="plan-sum display"><s>1 299 ₽</s> 699 ₽<small>в месяц</small></div>
             <div class="plan-total">итого 4 194 ₽ · экономия 3 600 ₽</div>
-          </div>
-          <a class="btn btn-primary plan-cta" href="/app/">Попробовать бесплатно</a>
+            <span class="plan-pick">Выбрать тариф →</span>
+          </a>
+          <a class="btn btn-primary plan-cta" href="/app/#reg" data-reg="1">Попробовать бесплатно</a>
         </div>
       </div></div>
     </div>
@@ -1811,7 +1900,7 @@
       <div class="final">
         <h2 class="display">Перестаньте проверять площадки вручную</h2>
         <p class="lead"><!--SITES_INLINE-->18<!--SITES_INLINE_END--> торговых площадок, три направления и автоматический мониторинг в одном сервисе.</p>
-        <a class="btn btn-primary" href="/app/">Попробовать бесплатно</a>
+        <a class="btn btn-primary" href="/app/#reg" data-reg="1">Попробовать бесплатно</a>
       </div>
     </div>
   </section>
@@ -1954,6 +2043,35 @@
     targets.forEach(function(el){ io.observe(el); });
   }
 
+  // закреплённая шапка: по метке на body включается матовое стекло
+  (function шапка(){
+    var порог = 8, было = false;
+    function проверить(){
+      var есть = (window.scrollY || document.documentElement.scrollTop || 0) > порог;
+      if (есть !== было) { было = есть; document.body.classList.toggle('scrolled', есть); }
+    }
+    проверить();
+    window.addEventListener('scroll', проверить, { passive: true });
+    window.addEventListener('resize', проверить);
+  })();
+
+  // подпись площадки на сенсорном экране: касание показывает название
+  // выбранной эмблемы, повторное касание или касание вне — скрывает
+  (function эмблемы(){
+    var сетка = document.querySelector('.emb-grid');
+    if (!сетка) return;
+    сетка.addEventListener('click', function(e){
+      var я = e.target.closest('.emb'); if (!я) return;
+      var было = я.classList.contains('on');
+      сетка.querySelectorAll('.emb.on').forEach(function(x){ x.classList.remove('on'); });
+      if (!было) я.classList.add('on');
+    });
+    document.addEventListener('click', function(e){
+      if (!e.target.closest('.emb-grid'))
+        сетка.querySelectorAll('.emb.on').forEach(function(x){ x.classList.remove('on'); });
+    });
+  })();
+
   // 5. счётчики
   function run(el){
     var to = +el.dataset.to, suf = el.dataset.suffix || '', t0 = null, dur = 1400;
@@ -2011,7 +2129,15 @@
 /* Вход/регистрация поверх лендинга: код на почту → сессия в localStorage
    (тот же origin, что и /app/) → переход в приложение. */
 (function(){
-  var API_BASE = (location.hostname==='127.0.0.1'||location.hostname==='localhost'||location.hostname.indexOf('nip.io')>=0) ? '' : 'https://soft-snowflake-37cc.zhuganoff.workers.dev';
+  var API_BASE = (function(){
+  // хосты, которые обслуживает наш nginx, ходят в свой /api/;
+  // остальные (GitHub Pages на кириллическом домене) — через прокси,
+  // пока старый адрес не переведён на тот же сервер
+  var h = location.hostname;
+  var свой = h === 'promlots.ru' || h === 'www.promlots.ru'
+    || h.indexOf('nip.io') >= 0 || h === '127.0.0.1' || h === 'localhost';
+  return свой ? '' : 'https://soft-snowflake-37cc.zhuganoff.workers.dev';
+})();
   function SESS_COOKIE(){
     try {
       var m = document.cookie.match(/(?:^|; )ovd_sid=([^;]+)/);
@@ -2096,14 +2222,39 @@
   function setMode(m){ mode=m; stage='start'; cd.value=''; pw2.value=''; errText=''; render(); }
   trialCheck(function(){ render(); });
 
+  // адаптивный диапазон — тот же, что у всего мобильного и планшетного
+  // оформления: там окно открывается сразу, без анимации появления
+  function адаптив(){
+    try { return matchMedia('(max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse)').matches; }
+    catch (_) { return false; }
+  }
+  function тише(){
+    try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (_) { return false; }
+  }
   function open(m){
     setMode(m==='reg' ? 'reg' : 'login');
     ov.classList.remove('closing'); ov.hidden=false; document.body.classList.add('lg-open');
-    try { em.focus({preventScroll:true}); } catch(_) { em.focus(); }
+    var card = ov.querySelector('.lg-card');
+    if (card) {
+      card.classList.remove('shown', 'anim');
+      if (!адаптив() && !тише()) {
+        card.classList.add('anim');                                   // прежняя анимация появления
+        setTimeout(function(){ card.classList.add('shown'); }, 800);  // страховка: поля видны в любом случае
+      } else {
+        card.classList.add('shown');
+      }
+    }
+    if (адаптив() || тише()) { try { em.focus({preventScroll:true}); } catch(_) { em.focus(); } }
+    else setTimeout(function(){ try{ em.focus(); }catch(_){} }, 700);
   }
   function close(){
     if(ov.hidden) return;
-    ov.hidden=true; document.body.classList.remove('lg-open');
+    if (адаптив() || тише()) {
+      ov.hidden=true; ov.classList.remove('closing'); document.body.classList.remove('lg-open');
+      return;
+    }
+    ov.classList.add('closing');                                       // прежнее закрытие, 360 мс
+    setTimeout(function(){ ov.hidden=true; ov.classList.remove('closing'); document.body.classList.remove('lg-open'); }, 360);
   }
   ov.querySelector('.lg-x').addEventListener('click', close);
   ov.addEventListener('click', function(e){ if(e.target===ov) close(); });
@@ -2113,9 +2264,13 @@
 
   Array.prototype.forEach.call(document.querySelectorAll('a.btn[href^="/app/"], a.mobile-nav-account[href^="/app/"]'), function(a){
     a.addEventListener('click', function(e){
-      var reg = a.getAttribute('href').indexOf('#reg')>=0;
-      if(SESS() && !reg) return;
-      e.preventDefault(); open(reg?'reg':'login');
+      // вошедшего никуда не переспрашиваем — он просто идёт в приложение,
+      // даже если нажал «Попробовать бесплатно»
+      if(SESS()) return;
+      // «Попробовать бесплатно» и ссылки с #reg открывают именно регистрацию,
+      // а не вход: переключаться вручную человек не должен
+      var reg = a.getAttribute('href').indexOf('#reg') >= 0 || a.hasAttribute('data-reg');
+      e.preventDefault(); open(reg ? 'reg' : 'login');
     });
   });
   if(location.hash==='#login') open('login'); else if(location.hash==='#reg') open('reg');
@@ -2214,9 +2369,14 @@
     window.ovdConsent = { analytics: !!on };
     try { document.dispatchEvent(new CustomEvent('ovd-consent', { detail: { analytics: !!on } })); } catch (_) {}
     box.classList.remove('show', 'open');
+    document.body.classList.remove('cc-open');
   }
   window.ovdConsent = { analytics: !!prefs().analytics };
-  if (!read(KEY)) setTimeout(function(){ box.classList.add('show'); }, 1200);
+  // пока уведомление на экране, помечаем страницу: по этой метке
+  // нижняя закреплённая кнопка приподнимается и не перекрывается
+  if (!read(KEY)) setTimeout(function(){
+    box.classList.add('show'); document.body.classList.add('cc-open');
+  }, 1200);
   document.getElementById('cc-ok').addEventListener('click', function(){ save(false); });
   document.getElementById('cc-save').addEventListener('click', function(){ save(analytics.checked); });
   document.getElementById('cc-more').addEventListener('click', function(){ box.classList.toggle('open'); });

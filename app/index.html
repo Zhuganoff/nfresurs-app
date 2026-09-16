@@ -1151,6 +1151,18 @@
       clip-path: inset(50%); white-space: nowrap; border: 0; }
     .auth-brand { display: none; }
     .auth-brand-desktop { display: contents; }
+    /* прежние размеры полей и кнопки: раньше они стояли в атрибутах style
+       самой разметки, новая вёрстка их не содержит — возвращаем классами
+       и только в компьютерном диапазоне */
+    #login-gate .lg-card input { padding: 12px; border-radius: 12px; }
+    #login-gate .lg-card #lg-btn { padding: 12px; border: 0; border-radius: 12px;
+      font-size: 16px; font-weight: 600; cursor: pointer; }
+    #login-gate #lg-msg { max-width: 320px; text-align: center; }
+    #login-gate .lg-consent { max-width: 320px; font-size: 11px; line-height: 1.45;
+      text-align: center; }
+    /* h2 из нового макета: сбрасываем его собственные отступы, чтобы
+       геометрия карточки осталась прежней */
+    #login-gate h2.lg-title { margin: 0; }
     @media (prefers-reduced-motion: reduce) { .lg-card, .lg-card > *, .lg-title { animation: none; opacity: 1; transform: none; } }
   }
 
@@ -1160,6 +1172,8 @@
   @media (max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse) {
     /* на телефоне и планшете — новый знак переработки */
     .auth-brand-desktop { display: none; }
+    /* прежний живой фон входа — только компьютерный: здесь свой снимок */
+    #login-gate canvas.waves, #login-gate .lg-veil { display: none; }
     .auth-screen { position: fixed; inset: 0; z-index: 80; display: flex; flex-direction: column;
       align-items: center; justify-content: flex-start; padding: 24px; overflow-y: auto;
       overscroll-behavior: contain; color-scheme: dark; color: #F1F5F7;
@@ -1396,6 +1410,7 @@
   })();
   </script>
   <div id="login-gate" class="auth-screen" style="display:none" role="dialog" aria-modal="true" aria-labelledby="lg-title">
+    <canvas class="waves" aria-hidden="true"></canvas><div class="lg-veil" aria-hidden="true"></div>
     <div class="lg-card">
       <a class="auth-close" href="../" aria-label="Вернуться на главную">←</a>
       <div class="auth-brand"><svg viewBox="0 0 64 64" aria-hidden="true"><g fill="#00E7ED"><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z"/><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z" transform="rotate(120 32 32)"/><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z" transform="rotate(240 32 32)"/></g></svg><span>Отходы<br>в доходы</span></div>
@@ -2411,7 +2426,15 @@ function SESS(){
 }
 // бэкенд живёт на сервере (nip.io); приложение на github.io — зовём по
 // абсолютному адресу (CORS разрешён на сервере). На самом сервере — относительно.
-const API_BASE = (location.hostname.indexOf('nip.io')>=0 || location.hostname==='127.0.0.1' || location.hostname==='localhost') ? '' : 'https://soft-snowflake-37cc.zhuganoff.workers.dev';
+const API_BASE = (function(){
+  // хосты, которые обслуживает наш nginx, ходят в свой /api/;
+  // остальные (GitHub Pages на кириллическом домене) — через прокси,
+  // пока старый адрес не переведён на тот же сервер
+  var h = location.hostname;
+  var свой = h === 'promlots.ru' || h === 'www.promlots.ru'
+    || h.indexOf('nip.io') >= 0 || h === '127.0.0.1' || h === 'localhost';
+  return свой ? '' : 'https://soft-snowflake-37cc.zhuganoff.workers.dev';
+})();
 function api(path, body){
   var ctrl=window.AbortController?new AbortController():null;
   var to=ctrl?setTimeout(function(){try{ctrl.abort();}catch(_){}},12000):null;
@@ -2609,7 +2632,7 @@ document.addEventListener('click',e=>{
     if(tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light');
     var sb=e.target.closest('#sub-sbp')||e.target.closest('#pw-sbp'); var sold=sb?sb.textContent:'';
     if(sb){ sb.disabled=true; sb.textContent='Открываем оплату…'; }
-    api('/api/pay/create',{}).then(function(d){
+    api('/api/pay/create',{plan: BILL.plan, use_wallet: false}).then(function(d){
       if(sb){ sb.disabled=false; sb.textContent=sold; }
       if(d && d.confirmation_url){ if(tg&&tg.openLink) tg.openLink(d.confirmation_url); else window.open(d.confirmation_url,'_blank');
         try{ if(tg&&tg.showAlert) tg.showAlert('Страница оплаты открыта в браузере. После оплаты вернитесь в приложение — доступ включится автоматически.'); }catch(_){} }
@@ -2636,7 +2659,7 @@ document.addEventListener('click',e=>{
       // Браузер — веб-касса ЮKassa: редирект на страницу оплаты
       var b=e.target.closest('#sub-btn')||e.target.closest('#pw-btn'); var old=b?b.textContent:'';
       if(b){ b.disabled=true; b.textContent='Открываем оплату…'; }
-      api('/api/pay/create',{plan: BILL.plan}).then(function(d){
+      api('/api/pay/create',{plan: BILL.plan, use_wallet: false}).then(function(d){
         if(d && d.confirmation_url){ window.location.href=d.confirmation_url; }
         else { if(b){ b.disabled=false; b.textContent=old; } alert('Не удалось начать оплату.'); }
       }).catch(function(err){ if(b){ b.disabled=false; b.textContent=old; } alert((err&&err.message)||'Оплата недоступна'); });
@@ -3446,10 +3469,42 @@ lbLoadRegions().then(function(){ return lbLoad(); });
    так проще и честнее, человек видит, сколько ещё не хватает). */
 var BILL = { plans: [], plan: 'm3', wallet: 0, ref: null };
 
+/* Тариф, выбранный на лендинге: приходит как /app/?pay=1&plan=m1|m3|m6.
+   Храним до входа — иначе выбор терялся на экране авторизации. Оплату сам
+   по себе адрес не запускает: платёж создаёт только явное нажатие. */
+var ВЫБОР_КЛЮЧ = 'ovd_plan';
+function планИзАдреса(){
+  try {
+    var m = /[?&]plan=(m1|m3|m6)/.exec(location.search || '');
+    if (m) { localStorage.setItem(ВЫБОР_КЛЮЧ, m[1]); return m[1]; }
+    return localStorage.getItem(ВЫБОР_КЛЮЧ) || '';
+  } catch (_) { return ''; }
+}
+function планПрименить(){
+  var код = планИзАдреса();
+  if (!код) return '';
+  BILL.plan = код;
+  return код;
+}
+function планЗабыть(){ try { localStorage.removeItem(ВЫБОР_КЛЮЧ); } catch(_){} }
+
 function рубли(коп){
   var r = (коп || 0) / 100;
   return (Math.round(r * 100) / 100).toLocaleString('ru-RU',
     {minimumFractionDigits: r % 1 ? 2 : 0, maximumFractionDigits: 2}) + ' ₽';
+}
+
+/* Переход к оформлению выбранного тарифа: профиль, блок подписки,
+   выбранная карточка. Платёж не создаём — только показываем. */
+function открытьОформление(){
+  планПрименить();
+  var вкладка = document.querySelector('nav.tabbar button[data-tab="profile"]');
+  if (вкладка && !вкладка.classList.contains('active')) вкладка.click();
+  billPaint();
+  setTimeout(function(){
+    var карта = document.querySelector('.sub-card');
+    if (карта && карта.scrollIntoView) карта.scrollIntoView({ block: 'start' });
+  }, 120);
 }
 
 function billPaint(){
@@ -3614,6 +3669,11 @@ function loadBilling(){
     BILL.plans = (d && d.plans) || [];
     BILL.wallet = (d && d.wallet_kop) || 0;
     BILL.ref = d && d.referral;
+    // выбор с лендинга главнее умолчаний: на клиенте по умолчанию m3,
+    // на сервере m1 — полагаться ни на одно из них нельзя
+    var изАдреса = планИзАдреса();
+    if (изАдреса && BILL.plans.some(function(p){ return p.code === изАдреса; }))
+      BILL.plan = изАдреса;
     if(!BILL.plans.some(function(p){ return p.code === BILL.plan; }) && BILL.plans.length)
       BILL.plan = BILL.plans[0].code;
     // срок пробного периода берём с сервера: у приглашённого он длиннее,
@@ -3697,7 +3757,14 @@ function loadSubscription(){
     var btn=document.getElementById('sub-btn');
     if(btn && d.admin){ btn.textContent='Бесплатный доступ'; btn.disabled=true; btn.style.opacity='.6'; }
     else if(btn && d.active){ btn.textContent='Подписка активна'; btn.disabled=true; btn.style.opacity='.6'; }
-    if(!d.allowed || /[?&]pay=1/.test(location.search)){ var pw=document.getElementById('paywall'); if(pw) pw.style.display='flex'; }
+    // человек сам выбрал тариф — ведём его в оформление, а не в окно
+    // «пробный период закончился»
+    var самВыбрал = /[?&]pay=1/.test(location.search || '');
+    if(!d.allowed && !самВыбрал){ var pw=document.getElementById('paywall'); if(pw) pw.style.display='flex'; }
+    if(самВыбрал){
+      var pw2=document.getElementById('paywall'); if(pw2) pw2.style.display='none';
+      открытьОформление();
+    }
     // счётчик пользователей и админ-выгрузка — ТОЛЬКО владельцу (по d.admin)
     var statsEl=document.getElementById('stats-line'), expBtn=document.getElementById('export-btn');
     if(d.admin){
@@ -3719,13 +3786,23 @@ function bootFeed(tries){
     try { loadStatuses(function(){ loadSeen(function(){ loadLastVisit(function(){ loadFavs(render); }); }); }); }
     catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
     var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); tabPill(false); }
-    try { loadBilling().then(billRefFromLink); } catch(_){}   // код из ссылки ждал входа
+    try { loadBilling().then(billRefFromLink).then(function(){
+      if(/[?&]pay=1/.test(location.search || '')) открытьОформление();
+    }); } catch(_){}   // код из ссылки ждал входа
     try { notesLoad(); favSync(); setTimeout(openLotFromLink, 400); } catch(_){}
   }).catch(function(e){
-    if(e && e.status===402){                                  // триал истёк — пейвол
+    if(e && e.status===402){                                  // триал истёк
       TENDERS=[]; try{ render(); }catch(_){}
-      var pw=document.getElementById('paywall'); if(pw) pw.style.display='flex';
       var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); tabPill(false); }
+      // оплата не должна зависеть от ленты: тарифы грузим отдельно
+      try { loadBilling().then(billRefFromLink).then(function(){
+        if(/[?&]pay=1/.test(location.search || '')) открытьОформление();
+      }); } catch(_){}
+      // если человек пришёл именно покупать — ведём в оформление, а не в
+      // окно «пробный период закончился»
+      if(!/[?&]pay=1/.test(location.search || '')){
+        var pw=document.getElementById('paywall'); if(pw) pw.style.display='flex';
+      }
       return;                                                 // обработано, вход не показываем
     }
     if(e && e.status===401) throw e;                          // сессия невалидна — наверх
@@ -3738,6 +3815,10 @@ function gateWavesOn(g){
   try{
     if(gateWaves||!window.mountShaderBackground) return;
     var c=g.querySelector('canvas.waves'); if(!c) return;
+    // в адаптивном режиме фон другой — лишнюю анимацию не заводим
+    var адаптив=false;
+    try{ адаптив=matchMedia('(max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse)').matches; }catch(_){}
+    if(адаптив) return;
     var phone=false; try{ phone=matchMedia('(max-width: 768px)').matches; }catch(_){}
     gateWaves=mountShaderBackground(c,{ pixelCap: phone?3.5e5:8e5, maxDpr: phone?1.25:1.5 });
     if(gateWaves) g.classList.add('has-waves');
@@ -3828,7 +3909,14 @@ function showLogin(msg){
   try { trialCheck(function(){ render(); }); } catch(_){}
   function render(){
     var reg=mode==='reg', reset=mode==='reset', code=mode==='code';
-    if(title) title.textContent = reg?'Регистрация':(reset?'Новый пароль':'Вход');
+    if(title) {
+      // на телефоне и планшете заголовок нового макета — «Вход»,
+      // на компьютере остаётся прежнее название бренда
+      var узкий = false;
+      try { узкий = matchMedia('(max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse)').matches; } catch(_){}
+      title.textContent = reg ? 'Регистрация'
+        : (reset ? 'Новый пароль' : (узкий ? 'Вход' : 'Отходы в доходы'));
+    }
     show(pw, !code && !(reset && stage==='start'));
     show(pw2, reg && stage==='start');
     show(cd, stage==='confirm');
