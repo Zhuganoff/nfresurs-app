@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Проверка верхней полосы</title>
+<style>
+  :root { color-scheme: dark; }
+  html, body { margin: 0; background: #05151C; color: #F1F5F7;
+    font: 15px/1.45 -apple-system, system-ui, sans-serif; }
+  /* та же крышка, что на сайте: сплошная полоса на высоту выреза */
+  body::before { content: ''; position: fixed; top: 0; left: 0; right: 0;
+    height: env(safe-area-inset-top); background: #E5484D; z-index: 61;
+    pointer-events: none; }
+  /* контрольная зелёная полоса: рисуется шапкой, как на сайте */
+  header { position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+    padding-top: env(safe-area-inset-top);
+    background: linear-gradient(180deg,
+      #1C8A4B 0%,
+      #1C8A4B calc(env(safe-area-inset-top) + 8px),
+      rgba(28,138,75,.6) calc(env(safe-area-inset-top) + 34px),
+      rgba(28,138,75,0) 100%); }
+  header div { height: 64px; display: flex; align-items: center; padding: 0 16px;
+    font-weight: 700; }
+  main { padding: calc(90px + env(safe-area-inset-top)) 16px 40px; }
+  .полоски { display: grid; gap: 6px; margin: 0 0 18px; }
+  .полоска { padding: 8px 10px; border-radius: 8px; background: #0B2C37; }
+  b { color: #00E7ED; }
+  h1 { font-size: 17px; margin: 0 0 10px; }
+  p { margin: 6px 0; }
+  .подсказка { color: #8FA9B2; font-size: 13px; }
+</style>
+<header><div>Зелёная полоса — фон шапки</div></header>
+<main>
+  <h1>Что видно сверху</h1>
+  <p class="подсказка">Красная полоса — отдельная «крышка» на высоту выреза.
+    Зелёная — фон самой шапки. Если сверху видно фото или белый фон — не
+    работает ни то, ни другое.</p>
+  <div class="полоски" id="данные"></div>
+  <p class="подсказка">Сделай снимок этой страницы целиком и пришли.</p>
+</main>
+<script>
+  function строка(имя, значение){
+    var d = document.createElement('div');
+    d.className = 'полоска';
+    d.innerHTML = имя + ': <b>' + значение + '</b>';
+    document.getElementById('данные').appendChild(d);
+  }
+  var проба = document.createElement('div');
+  проба.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:env(safe-area-inset-top);';
+  document.body.appendChild(проба);
+  var верх = проба.getBoundingClientRect().height;
+  проба.style.height = 'env(safe-area-inset-bottom)';
+  var низ = проба.getBoundingClientRect().height;
+  проба.remove();
+
+  строка('safe-area сверху', верх + ' px');
+  строка('safe-area снизу', низ + ' px');
+  строка('окно', innerWidth + ' × ' + innerHeight);
+  строка('экран', screen.width + ' × ' + screen.height);
+  строка('плотность', devicePixelRatio);
+  строка('крышка нарисована', getComputedStyle(document.body, '::before').height);
+  строка('фон шапки', getComputedStyle(document.querySelector('header')).backgroundImage.slice(0, 40) + '…');
+  строка('режим', matchMedia('(display-mode: standalone)').matches ? 'установленное приложение' : 'браузер');
+  строка('браузер', navigator.userAgent.replace(/^Mozilla\/5\.0 \(/, '').slice(0, 60));
+</script>
+</html>
