@@ -725,70 +725,6 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
 
-  /* ——— заставка: буровая вышка + нефтяной фонтан ——— */
-  #splash {
-    position: fixed; inset: 0; z-index: 1000;
-    display: grid; place-items: center;
-    background:
-      radial-gradient(120% 90% at 50% 34%, #28343F 0%, #151D24 46%, #0B0F12 100%);
-    animation: splashOut .6s ease 3.9s forwards;
-    overflow: hidden;
-  }
-  /* живой волновой фон бренда (WebGL, ../shader-bg.js); без WebGL — градиент выше */
-  #splash canvas.waves { position:absolute; inset:0; width:100%; height:100%; display:block; opacity:0; transition: opacity .9s ease; }
-  #splash.has-waves canvas.waves { opacity:1; }
-  #splash .veil { position:absolute; inset:0; background: radial-gradient(90% 70% at 50% 42%, rgba(11,15,18,.40) 0%, rgba(8,12,15,.82) 100%); }
-  /* тёплое свечение «нефтяного пласта» снизу */
-  #splash::after {
-    content:""; position:absolute; left:50%; top:34%;
-    width:320px; height:320px; transform:translate(-50%,-50%);
-    background: radial-gradient(circle, rgba(69,214,205,.22), transparent 62%);
-    animation: glow 2.4s ease-in-out infinite; pointer-events:none;
-  }
-  #splash .flash {
-    position: absolute; inset: 0; background:
-      radial-gradient(circle at 50% 34%, #fff 0%, rgba(255,240,210,.6) 30%, transparent 60%);
-    animation: flash .6s ease .15s forwards; opacity:0;
-  }
-  #splash .stage { position: relative; width: 270px; height: 300px;
-    opacity: 0; transform: scale(.9) translateY(8px);
-    animation: rigIn .8s cubic-bezier(.2,.85,.25,1) .2s forwards; }
-  #splash .rig { position:absolute; inset:0; width:100%; height:100%;
-    filter: drop-shadow(0 10px 26px rgba(0,0,0,.6)) drop-shadow(0 0 18px rgba(69,214,205,.16)); }
-  #splash .drop { fill: #45D6CD; opacity: 0;
-    transform-box: fill-box; transform-origin: center;
-    animation: gush 1.5s cubic-bezier(.3,.1,.4,1) .55s forwards; }
-  #splash .drop:nth-child(2){ animation-delay:.62s }
-  #splash .drop:nth-child(3){ animation-delay:.7s }
-  #splash .drop:nth-child(4){ animation-delay:.78s }
-  #splash .drop:nth-child(5){ animation-delay:.86s }
-  #splash .word {
-    position: absolute; bottom: 8%; width: 100%; text-align: center;
-    font-size: 12px; letter-spacing: .42em; text-transform: uppercase;
-    font-weight: 700;
-    background: linear-gradient(100deg,#45D6CD,#DCEBF2,#45D6CD);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    opacity: 0; animation: rigIn .7s ease .7s forwards;
-  }
-  #splash .word small { display:block; margin-top:7px; font-size:9px;
-    letter-spacing:.34em; font-weight:600; color: #91A2AF;
-    -webkit-text-fill-color:#91A2AF; }
-  @keyframes flash { 0%{opacity:0} 18%{opacity:.85} 100%{opacity:0} }
-  @keyframes glow { 0%,100%{opacity:.6} 50%{opacity:1} }
-  @keyframes rigIn { to { opacity: 1; transform: scale(1) translateY(0); } }
-  @keyframes splashOut { to { opacity: 0; visibility: hidden; } }
-  @keyframes gush {
-    0%   { opacity:0; transform: translateY(0) scale(.5); }
-    18%  { opacity:1; }
-    100% { opacity:0; transform: translateY(-70px) translateX(var(--dx,0)) scale(1.1); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    #splash { animation: splashOut .3s ease 1.6s forwards; }
-    #splash .flash, #splash::after { display: none; }
-    #splash .stage, #splash .word { animation: rigIn .3s ease forwards; }
-    #splash .drop { animation: none; opacity:.9; }
-  }
-
   /* Dense Ledger — компактная рабочая лента */
   header.app { padding: 8px 13px; padding-top: calc(8px + env(safe-area-inset-top)); gap: 10px; }
   .logo { width: 36px; height: 36px; border-radius: 11px; background: linear-gradient(145deg,#58b99a,#28343F); box-shadow: 0 5px 15px rgba(40,130,105,.22); }
@@ -847,46 +783,6 @@
   .sharebtn { background: linear-gradient(145deg,#4a9a82,#255d51); box-shadow: 0 5px 16px rgba(37,93,81,.25); }
   :root[data-theme="dark"] .card, :root[data-theme="dark"] .rows { box-shadow: 0 3px 10px rgba(0,0,0,.24); }
   :root[data-theme="dark"] header.app { box-shadow: 0 5px 22px rgba(0,0,0,.28); }
-  /* Экран входа — продолжение лендинга: тёмный фон с живыми волнами,
-     по центру полупрозрачный стеклянный блок, раскрывающийся из точки. */
-  #login-gate { background: #070d0b !important; color: #eef3f0; overflow: hidden; }
-  #login-gate canvas.waves { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.2s ease; }
-  #login-gate.has-waves canvas.waves { opacity: 1; }
-  #login-gate .lg-veil { position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(70% 60% at 50% 45%, rgba(7,13,11,.25) 0%, rgba(7,13,11,.72) 100%),
-      linear-gradient(180deg, rgba(7,13,11,.55) 0%, rgba(7,13,11,.2) 40%, rgba(7,13,11,.5) 100%); }
-  #login-gate:not(.has-waves) .lg-veil { background:
-      radial-gradient(70% 70% at 20% 10%, rgba(47,128,101,.45), transparent 60%),
-      radial-gradient(60% 60% at 85% 90%, rgba(217,160,74,.3), transparent 60%); }
-  .lg-card { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 14px;
-    width: min(400px, 100%); padding: 30px 28px 24px; border-radius: 24px;
-    background: rgba(14,24,20,.55); border: 1px solid rgba(255,255,255,.14);
-    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 40px 90px -30px rgba(0,0,0,.85), 0 0 0 1px rgba(127,208,180,.06);
-    transform-origin: 50% 50%; animation: lgopen .95s cubic-bezier(.16,1,.3,1) both; }
-  @keyframes lgopen { 0% { opacity: 0; transform: scale(.18); filter: blur(14px); border-radius: 50%; } 55% { opacity: 1; filter: blur(0); } 100% { transform: none; border-radius: 24px; } }
-  .lg-card > * { opacity: 0; transform: translateY(10px); animation: lgrow .6s cubic-bezier(.16,1,.3,1) forwards; }
-  .lg-card > :nth-child(1) { animation-delay: .45s; } .lg-card > :nth-child(2) { animation-delay: .52s; } .lg-card > :nth-child(3) { animation-delay: .59s; }
-  .lg-card > :nth-child(4) { animation-delay: .66s; } .lg-card > :nth-child(5) { animation-delay: .73s; } .lg-card > :nth-child(6) { animation-delay: .8s; } .lg-card > :nth-child(7) { animation-delay: .87s; }
-  @keyframes lgrow { to { opacity: 1; transform: none; } }
-  .lg-logo { width: 56px; height: 56px; filter: drop-shadow(0 0 18px rgba(127,208,180,.45)); }
-  .lg-title { font-family: "Unbounded", "Golos Text", sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -.01em;
-    background: linear-gradient(100deg, #9FB0BD 0%, #E8F1F7 22%, #9FB0BD 44%, #2CB9B1 62%, #E8F1F7 80%, #9FB0BD 100%); background-size: 300% 100%;
-    -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; animation: lgrow .6s cubic-bezier(.16,1,.3,1) .52s forwards, lgshine 7s linear 1s infinite; }
-  @keyframes lgshine { to { background-position: -300% 0; } }
-  .lg-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; font-size: 13px; }
-  .lg-links a { color: rgba(238,243,240,.7); border-bottom: 1px solid transparent; transition: color .2s, border-color .2s; }
-  .lg-links a:hover { color: #9FB0BD; border-color: rgba(127,208,180,.5); text-decoration: none; }
-  .lg-links a[hidden], .lg-card input[hidden] { display: none; }
-  .lg-card #lg-msg { color: rgba(238,243,240,.72) !important; }
-  .lg-card input { width: 100% !important; background: rgba(255,255,255,.06) !important; color: #eef3f0 !important; border: 1px solid rgba(255,255,255,.14) !important; font-size: 15px !important; outline: none; transition: border-color .25s, box-shadow .25s; }
-  .lg-card input::placeholder { color: rgba(238,243,240,.4); }
-  .lg-card input:focus { border-color: rgba(127,208,180,.7) !important; box-shadow: 0 0 0 3px rgba(127,208,180,.18); }
-  .lg-card button { width: 100% !important; background: #9FB0BD !important; color: #070d0b !important; box-shadow: 0 14px 40px -12px rgba(127,208,180,.7); transition: transform .3s cubic-bezier(.16,1,.3,1), background .25s; }
-  .lg-card button:hover { background: #96dfc6 !important; transform: translateY(-1px); }
-  .lg-card > div:last-child { color: rgba(238,243,240,.5) !important; }
-  .lg-card a { color: #9FB0BD; }
-  @media (prefers-reduced-motion: reduce) { .lg-card, .lg-card > *, .lg-title { animation: none; opacity: 1; transform: none; } }
   /* ═══════════ Личный кабинет — десктоп (≥1024px): боковая панель, сетка, две колонки ═══════════ */
   /* неподвижный фон как на лендинге (все экраны): перелив цветов сырья + сетка; блоки — стекло */
   body::before { background:
@@ -1122,6 +1018,205 @@
   .doc-open a { color: inherit; text-decoration: underline; }
   body.doc-lock { overflow: hidden; }
   @media (max-width: 560px) { .doc-box { max-height: 92vh; border-radius: 18px; } .doc-body { padding: 14px 15px 20px; } }
+
+  /* ——— заставка: буровая вышка + нефтяной фонтан ——— */
+  #splash {
+    position: fixed; inset: 0; z-index: 1000;
+    display: grid; place-items: center;
+    background:
+      radial-gradient(120% 90% at 50% 34%, #28343F 0%, #151D24 46%, #0B0F12 100%);
+    animation: splashOut .6s ease 3.9s forwards;
+    overflow: hidden;
+  }
+  /* живой волновой фон бренда (WebGL, ../shader-bg.js); без WebGL — градиент выше */
+  #splash canvas.waves { position:absolute; inset:0; width:100%; height:100%; display:block; opacity:0; transition: opacity .9s ease; }
+  #splash.has-waves canvas.waves { opacity:1; }
+  #splash .veil { position:absolute; inset:0; background: radial-gradient(90% 70% at 50% 42%, rgba(11,15,18,.40) 0%, rgba(8,12,15,.82) 100%); }
+  /* тёплое свечение «нефтяного пласта» снизу */
+  #splash::after {
+    content:""; position:absolute; left:50%; top:34%;
+    width:320px; height:320px; transform:translate(-50%,-50%);
+    background: radial-gradient(circle, rgba(69,214,205,.22), transparent 62%);
+    animation: glow 2.4s ease-in-out infinite; pointer-events:none;
+  }
+  #splash .flash {
+    position: absolute; inset: 0; background:
+      radial-gradient(circle at 50% 34%, #fff 0%, rgba(255,240,210,.6) 30%, transparent 60%);
+    animation: flash .6s ease .15s forwards; opacity:0;
+  }
+  #splash .stage { position: relative; width: 270px; height: 300px;
+    opacity: 0; transform: scale(.9) translateY(8px);
+    animation: rigIn .8s cubic-bezier(.2,.85,.25,1) .2s forwards; }
+  #splash .rig { position:absolute; inset:0; width:100%; height:100%;
+    filter: drop-shadow(0 10px 26px rgba(0,0,0,.6)) drop-shadow(0 0 18px rgba(69,214,205,.16)); }
+  #splash .drop { fill: #45D6CD; opacity: 0;
+    transform-box: fill-box; transform-origin: center;
+    animation: gush 1.5s cubic-bezier(.3,.1,.4,1) .55s forwards; }
+  #splash .drop:nth-child(2){ animation-delay:.62s }
+  #splash .drop:nth-child(3){ animation-delay:.7s }
+  #splash .drop:nth-child(4){ animation-delay:.78s }
+  #splash .drop:nth-child(5){ animation-delay:.86s }
+  #splash .word {
+    position: absolute; bottom: 8%; width: 100%; text-align: center;
+    font-size: 12px; letter-spacing: .42em; text-transform: uppercase;
+    font-weight: 700;
+    background: linear-gradient(100deg,#45D6CD,#DCEBF2,#45D6CD);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    opacity: 0; animation: rigIn .7s ease .7s forwards;
+  }
+  #splash .word small { display:block; margin-top:7px; font-size:9px;
+    letter-spacing:.34em; font-weight:600; color: #91A2AF;
+    -webkit-text-fill-color:#91A2AF; }
+  @keyframes flash { 0%{opacity:0} 18%{opacity:.85} 100%{opacity:0} }
+  @keyframes glow { 0%,100%{opacity:.6} 50%{opacity:1} }
+  @keyframes rigIn { to { opacity: 1; transform: scale(1) translateY(0); } }
+  @keyframes splashOut { to { opacity: 0; visibility: hidden; } }
+  @keyframes gush {
+    0%   { opacity:0; transform: translateY(0) scale(.5); }
+    18%  { opacity:1; }
+    100% { opacity:0; transform: translateY(-70px) translateX(var(--dx,0)) scale(1.1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #splash { animation: splashOut .3s ease 1.6s forwards; }
+    #splash .flash, #splash::after { display: none; }
+    #splash .stage, #splash .word { animation: rigIn .3s ease forwards; }
+    #splash .drop { animation: none; opacity:.9; }
+  }
+
+  /* На телефоне заставки нет: форма входа открывается сразу (ТЗ мобильной
+     версии). На компьютере заставка работает как раньше. */
+  @media (max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+    #splash { display: none !important; animation: none !important; }
+  }
+
+  /* ——— окно входа на компьютере: правила были до мобильной задачи и
+     возвращены как есть. Ограничены 721 px и шире: в старых правилах
+     есть !important, и без этой границы они перебивали бы мобильный
+     макет независимо от специфичности ——— */
+  @media (min-width: 1025px) and (hover: hover), (min-width: 1025px) and (pointer: fine), (min-width: 1025px) and (pointer: none), (min-width: 1367px) {
+    /* раньше эти свойства стояли в атрибуте style самого блока; в новой
+       разметке их заменил класс .auth-screen, который теперь только
+       мобильный — возвращаем раскладку компьютерного экрана входа */
+    #login-gate { position: fixed; inset: 0; z-index: 10000;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 14px; padding: 24px;
+      font-family: system-ui, -apple-system, sans-serif; }
+    #login-gate { background: #070d0b !important; color: #eef3f0; overflow: hidden; }
+    #login-gate canvas.waves { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.2s ease; }
+    #login-gate.has-waves canvas.waves { opacity: 1; }
+    #login-gate .lg-veil { position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(70% 60% at 50% 45%, rgba(7,13,11,.25) 0%, rgba(7,13,11,.72) 100%),
+        linear-gradient(180deg, rgba(7,13,11,.55) 0%, rgba(7,13,11,.2) 40%, rgba(7,13,11,.5) 100%); }
+    #login-gate:not(.has-waves) .lg-veil { background:
+        radial-gradient(70% 70% at 20% 10%, rgba(47,128,101,.45), transparent 60%),
+        radial-gradient(60% 60% at 85% 90%, rgba(217,160,74,.3), transparent 60%); }
+    .lg-card { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 14px;
+      width: min(400px, 100%); padding: 30px 28px 24px; border-radius: 24px;
+      background: rgba(14,24,20,.55); border: 1px solid rgba(255,255,255,.14);
+      -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 40px 90px -30px rgba(0,0,0,.85), 0 0 0 1px rgba(127,208,180,.06);
+      transform-origin: 50% 50%; animation: lgopen .95s cubic-bezier(.16,1,.3,1) both; }
+    @keyframes lgopen { 0% { opacity: 0; transform: scale(.18); filter: blur(14px); border-radius: 50%; } 55% { opacity: 1; filter: blur(0); } 100% { transform: none; border-radius: 24px; } }
+    .lg-card > * { opacity: 0; transform: translateY(10px); animation: lgrow .6s cubic-bezier(.16,1,.3,1) forwards; }
+    .lg-card > :nth-child(1) { animation-delay: .45s; } .lg-card > :nth-child(2) { animation-delay: .52s; } .lg-card > :nth-child(3) { animation-delay: .59s; }
+    .lg-card > :nth-child(4) { animation-delay: .66s; } .lg-card > :nth-child(5) { animation-delay: .73s; } .lg-card > :nth-child(6) { animation-delay: .8s; } .lg-card > :nth-child(7) { animation-delay: .87s; }
+    @keyframes lgrow { to { opacity: 1; transform: none; } }
+    .lg-logo { width: 56px; height: 56px; filter: drop-shadow(0 0 18px rgba(127,208,180,.45)); }
+    .lg-title { font-family: "Unbounded", "Golos Text", sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -.01em;
+      background: linear-gradient(100deg, #9FB0BD 0%, #E8F1F7 22%, #9FB0BD 44%, #2CB9B1 62%, #E8F1F7 80%, #9FB0BD 100%); background-size: 300% 100%;
+      -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; animation: lgrow .6s cubic-bezier(.16,1,.3,1) .52s forwards, lgshine 7s linear 1s infinite; }
+    @keyframes lgshine { to { background-position: -300% 0; } }
+    .lg-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; font-size: 13px; }
+    .lg-links a { color: rgba(238,243,240,.7); border-bottom: 1px solid transparent; transition: color .2s, border-color .2s; }
+    .lg-links a:hover { color: #9FB0BD; border-color: rgba(127,208,180,.5); text-decoration: none; }
+    .lg-links a[hidden], .lg-card input[hidden] { display: none; }
+    .lg-card #lg-msg { color: rgba(238,243,240,.72) !important; }
+    .lg-card input { width: 100% !important; background: rgba(255,255,255,.06) !important; color: #eef3f0 !important; border: 1px solid rgba(255,255,255,.14) !important; font-size: 15px !important; outline: none; transition: border-color .25s, box-shadow .25s; }
+    .lg-card input::placeholder { color: rgba(238,243,240,.4); }
+    .lg-card input:focus { border-color: rgba(127,208,180,.7) !important; box-shadow: 0 0 0 3px rgba(127,208,180,.18); }
+    .lg-card button { width: 100% !important; background: #9FB0BD !important; color: #070d0b !important; box-shadow: 0 14px 40px -12px rgba(127,208,180,.7); transition: transform .3s cubic-bezier(.16,1,.3,1), background .25s; }
+    .lg-card button:hover { background: #96dfc6 !important; transform: translateY(-1px); }
+    .lg-card > div:last-child { color: rgba(238,243,240,.5) !important; }
+    .lg-card a { color: #9FB0BD; }
+    /* новая мобильная разметка добавила в карточку элементы, которых на
+       компьютере не было: кнопку закрытия и подписи над полями. Чтобы
+       компьютерный экран остался прежним, на ширине от 721 px их прячем,
+       а поля возвращаем к прежнему виду во всю ширину карточки */
+    #login-gate .auth-close { display: none; }
+    #login-gate .auth-field { display: contents; }
+    /* подпись убираем с экрана, но не из дерева доступности: скринридер
+       по-прежнему называет поле */
+    #login-gate .auth-field > span { position: absolute; width: 1px; height: 1px;
+      margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0);
+      clip-path: inset(50%); white-space: nowrap; border: 0; }
+    .auth-brand { display: none; }
+    .auth-brand-desktop { display: contents; }
+    @media (prefers-reduced-motion: reduce) { .lg-card, .lg-card > *, .lg-title { animation: none; opacity: 1; transform: none; } }
+  }
+
+  /* Оформление входа и регистрации из мобильного макета — ТОЛЬКО
+     для экранов до 720 px. На компьютере остаётся прежнее окно
+     входа (.lg-ov / .lg-card), как было до задачи. */
+  @media (max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+    /* на телефоне и планшете — новый знак переработки */
+    .auth-brand-desktop { display: none; }
+    .auth-screen { position: fixed; inset: 0; z-index: 80; display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-start; padding: 24px; overflow-y: auto;
+      overscroll-behavior: contain; color-scheme: dark; color: #F1F5F7;
+      font-family: "Golos Text", system-ui, -apple-system, sans-serif;
+      background: linear-gradient(180deg, rgba(5,21,28,.97) 10%, rgba(5,21,28,.82) 65%, rgba(5,21,28,.8)),
+        url('/img/hero-mobile-industrial.jpg') center bottom / cover no-repeat, #05151C; }
+    #login-gate.auth-screen { z-index: 10000; }
+    @media (display-mode: standalone) { #login-gate .auth-close { display: none; } }
+    .auth-screen[hidden], .auth-screen [hidden] { display: none !important; }
+    .auth-screen .lg-card { position: relative; display: flex; flex-direction: column; align-items: stretch;
+      flex-shrink: 0; gap: 16px; width: min(420px, 100%); margin: auto; padding: 28px;
+      background: #08212B; border: 1px solid #254750; border-radius: 22px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.35); }
+    .auth-brand { display: flex; align-items: center; gap: 12px; padding-right: 30px; }
+    .auth-brand svg { flex: none; width: 40px; height: 44px; }
+    .auth-brand span { color: #F1F5F7; font-size: 15px; font-weight: 800; line-height: 1.1; text-transform: uppercase; }
+    .auth-screen .auth-close { position: absolute; top: 15px; right: 14px; display: grid; place-items: center;
+      width: 40px; height: 40px; padding: 0; background: none; border: 0; border-radius: 10px;
+      color: #BBD0D9; font: 28px/1 system-ui, sans-serif; cursor: pointer; text-decoration: none; }
+    .auth-screen .auth-close:hover { background: #153640; color: white; }
+    .auth-screen .lg-title { margin: 8px 0 0; font-family: "Golos Text", system-ui, sans-serif;
+      font-size: 28px; font-weight: 700; line-height: 1.15; letter-spacing: -.025em;
+      background: none; color: #F1F5F7; -webkit-text-fill-color: currentColor; }
+    .auth-screen #lg-msg { margin: -6px 0 2px; max-width: none; color: #BBD0D9;
+      text-align: left; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+    .auth-field { display: flex; flex-direction: column; gap: 7px; width: 100%;
+      color: #D5E3E9; font-size: 13px; font-weight: 500; }
+    .auth-screen input { display: block; width: 100%; min-width: 0; min-height: 50px; padding: 13px 14px;
+      border: 1px solid #31515D; border-radius: 12px; background: #051A23; color: #F1F5F7;
+      font: 400 16px/1.4 "Golos Text", system-ui, sans-serif; outline: none; }
+    .auth-screen input::placeholder { color: #819CA9; opacity: 1; }
+    .auth-screen input:focus { border-color: #00E7ED; box-shadow: 0 0 0 3px rgba(0,231,237,.12); }
+    .auth-screen #lg-btn { width: 100%; min-height: 52px; padding: 14px 12px;
+      border: 0; border-radius: 12px; background: #00E7ED; color: #002127;
+      font: 700 16px/1.4 "Golos Text", system-ui, sans-serif; cursor: pointer; box-shadow: none; }
+    .auth-screen #lg-btn:hover { background: #44F1F4; }
+    .auth-screen #lg-btn:disabled { opacity: .65; cursor: wait; }
+    .auth-screen .lg-links { display: flex; justify-content: flex-start; flex-wrap: wrap;
+      gap: 0 18px; margin-top: -4px; font-size: 13px; }
+    .auth-screen .lg-links a { display: inline-flex; align-items: center; min-height: 36px;
+      color: #85E4E9; text-decoration: none; }
+    .auth-screen .lg-links a:hover { text-decoration: underline; }
+    .auth-screen .lg-consent { max-width: none; margin: 0; text-align: left;
+      color: #829FAB; font-size: 11px; line-height: 1.5; }
+    .auth-screen .lg-consent a { color: #BBD0D9; }
+    .auth-screen a:focus-visible, .auth-screen button:focus-visible { outline: 2px solid #00E7ED; outline-offset: 3px; }
+    body.lg-open { overflow: hidden; }
+      .auth-screen { padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom)); }
+      .auth-screen .lg-card { padding: 24px 20px; gap: 15px; }
+  }
+
+  @media (min-width: 721px) and (max-width: 1024px), (min-width: 1025px) and (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+    .auth-screen { padding: max(32px, env(safe-area-inset-top)) 32px max(32px, env(safe-area-inset-bottom)); }
+    .auth-screen .lg-card { width: min(460px, 100%); padding: 34px; gap: 18px; }
+    .auth-screen .lg-title { font-size: 32px; }
+    .auth-screen .auth-brand span { font-size: 17px; }
+  }
 </style>
 </head>
 <body data-pane="tenders">
@@ -1269,10 +1364,9 @@
     </div>
     <div class="word">ОТХОДЫ В ДОХОДЫ<small>нефтепродукты · металлолом · трубы</small></div>
   </div>
-
   <script>
   // Как можно раньше: Telegram держит свой чёрный экран, пока не получит
-  // web_app_ready. Шлём сигнал сразу после разметки заставки (до остальных
+  // web_app_ready. Шлём сигнал сразу после начала body (до остальных
   // 160 КБ страницы), плюс тёмный фон/шапку — чтобы не мигало светлым.
   (function(){
     function raw(type, data){
@@ -1285,33 +1379,41 @@
     raw('web_app_set_header_color', {color:'#070d0b'});
     raw('web_app_ready');
     raw('web_app_expand');
+    // живой фон заставки — только на компьютере: на телефоне заставки нет
     try {
-      var sp=document.getElementById('splash'), c=sp&&sp.querySelector('canvas.waves');
-      if(c&&window.mountShaderBackground){
-        window.splashWaves = mountShaderBackground(c, { colors: ['#080C0F','#151D24','#28343F','#3A4956'], pixelCap: 4e5, maxDpr: 1.25 });
-        if(window.splashWaves) sp.classList.add('has-waves');
+      var узкий = false;
+      try { узкий = matchMedia('(max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse)').matches; } catch(_){}
+      var sp = document.getElementById('splash');
+      if (узкий) { if (sp && sp.parentNode) sp.parentNode.removeChild(sp); }
+      else {
+        var c = sp && sp.querySelector('canvas.waves');
+        if (c && window.mountShaderBackground) {
+          window.splashWaves = mountShaderBackground(c, { colors: ['#080C0F','#151D24','#28343F','#3A4956'], pixelCap: 4e5, maxDpr: 1.25 });
+          if (window.splashWaves) sp.classList.add('has-waves');
+        }
       }
     } catch(_){}
   })();
   </script>
-  <div id="login-gate" style="display:none;position:fixed;inset:0;z-index:10000;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;font-family:system-ui,-apple-system,sans-serif">
-    <canvas class="waves" aria-hidden="true"></canvas><div class="lg-veil" aria-hidden="true"></div>
+  <div id="login-gate" class="auth-screen" style="display:none" role="dialog" aria-modal="true" aria-labelledby="lg-title">
     <div class="lg-card">
-      <svg class="lg-logo" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#93dcc3"/><stop offset="1" stop-color="#255d51"/></linearGradient><linearGradient id="lgst" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3fff9"/><stop offset=".45" stop-color="#9FB0BD"/><stop offset="1" stop-color="#28343F"/></linearGradient><radialGradient id="lgho" cx=".6" cy=".65" r=".7"><stop offset="0" stop-color="#040a08"/><stop offset=".8" stop-color="#101820"/><stop offset="1" stop-color="#5C6A75"/></radialGradient><linearGradient id="lgoi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4cf7a"/><stop offset="1" stop-color="#b8782a"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#lgbg)"/><circle cx="24" cy="24" r="14.5" fill="url(#lgst)"/><circle cx="24" cy="24" r="10" fill="url(#lgho)"/><path d="M24 15.5c-3.6 4.6-5.6 7.4-5.6 10.2a5.6 5.6 0 0 0 11.2 0c0-2.8-2-5.6-5.6-10.2z" fill="url(#lgoi)"/><path d="M21.6 24.6c0-1.6.9-3.2 2-4.6" stroke="#fff5d6" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".9"/></svg>
-      <div class="lg-title">Отходы в доходы</div>
-      <div id="lg-msg" style="color:var(--text-dim,#5a636d);text-align:center;max-width:320px">Войдите по e-mail, чтобы открыть тендеры</div>
-      <input id="lg-email" type="email" inputmode="email" autocomplete="email" placeholder="you@mail.ru" style="width:min(320px,90vw);padding:12px;border-radius:12px;border:1px solid var(--hair,#d9e2e0)">
-      <input id="lg-pass" type="password" autocomplete="current-password" placeholder="пароль" style="width:min(320px,90vw);padding:12px;border-radius:12px;border:1px solid var(--hair,#d9e2e0)">
-      <input id="lg-pass2" type="password" autocomplete="new-password" placeholder="пароль ещё раз" hidden style="width:min(320px,90vw);padding:12px;border-radius:12px;border:1px solid var(--hair,#d9e2e0)">
-      <input id="lg-code" type="text" inputmode="numeric" maxlength="6" placeholder="код из письма" hidden style="width:min(320px,90vw);padding:12px;border-radius:12px;border:1px solid var(--hair,#d9e2e0)">
-      <button id="lg-btn" type="button" style="width:min(320px,90vw);padding:12px;border:0;border-radius:12px;background:#255d51;color:#fff;font-weight:600;font-size:16px;cursor:pointer">Войти</button>
+      <a class="auth-close" href="../" aria-label="Вернуться на главную">←</a>
+      <div class="auth-brand"><svg viewBox="0 0 64 64" aria-hidden="true"><g fill="#00E7ED"><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z"/><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z" transform="rotate(120 32 32)"/><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z" transform="rotate(240 32 32)"/></g></svg><span>Отходы<br>в доходы</span></div>
+      <div class="auth-brand-desktop" aria-hidden="true"><svg class="lg-logo" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#93dcc3"/><stop offset="1" stop-color="#255d51"/></linearGradient><linearGradient id="lgst" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3fff9"/><stop offset=".45" stop-color="#9FB0BD"/><stop offset="1" stop-color="#28343F"/></linearGradient><radialGradient id="lgho" cx=".6" cy=".65" r=".7"><stop offset="0" stop-color="#040a08"/><stop offset=".8" stop-color="#101820"/><stop offset="1" stop-color="#5C6A75"/></radialGradient><linearGradient id="lgoi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4cf7a"/><stop offset="1" stop-color="#b8782a"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#lgbg)"/><circle cx="24" cy="24" r="14.5" fill="url(#lgst)"/><circle cx="24" cy="24" r="10" fill="url(#lgho)"/><path d="M24 15.5c-3.6 4.6-5.6 7.4-5.6 10.2a5.6 5.6 0 0 0 11.2 0c0-2.8-2-5.6-5.6-10.2z" fill="url(#lgoi)"/><path d="M21.6 24.6c0-1.6.9-3.2 2-4.6" stroke="#fff5d6" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".9"/></svg></div>
+      <h2 class="lg-title" id="lg-title">Вход</h2>
+      <div id="lg-msg">Войдите по e-mail, чтобы открыть тендеры</div>
+      <label class="auth-field"><span>Электронная почта</span><input id="lg-email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.ru"></label>
+      <label class="auth-field"><span>Пароль</span><input id="lg-pass" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
+      <label class="auth-field" hidden><span>Повторите пароль</span><input id="lg-pass2" type="password" autocomplete="new-password" placeholder="Повторите пароль" hidden></label>
+      <label class="auth-field" hidden><span>Код из письма</span><input id="lg-code" type="text" inputmode="numeric" maxlength="6" placeholder="6 цифр" hidden></label>
+      <button id="lg-btn" type="button">Войти</button>
       <div class="lg-links">
         <a href="#" id="lg-to-reset">Забыли пароль?</a>
         <a href="#" id="lg-to-code">Войти по коду</a>
         <a href="#" id="lg-to-reg">Регистрация</a>
         <a href="#" id="lg-to-login" hidden>Уже есть аккаунт — войти</a>
       </div>
-      <div style="max-width:320px;font-size:11px;line-height:1.45;color:var(--text-faint,#8b949e);text-align:center">Нажимая «Войти», вы соглашаетесь на обработку персональных данных согласно <a href="../privacy.html" style="color:var(--accent,#255d51)">Политике конфиденциальности</a>.</div>
+      <div class="lg-consent">Нажимая кнопку, вы соглашаетесь на обработку персональных данных согласно <a href="../privacy.html">Политике конфиденциальности</a>.</div>
     </div>
   </div>
   <header class="app">
@@ -1653,9 +1755,9 @@
 
 <script>window.TENDERS_DATA=/*__DATA_START__*/{"tenders":[]}/*__DATA_END__*/;</script>
 <script>
-// живой фон заставки: WebGL-волны бренда; без WebGL остаётся CSS-градиент
+// заставку убираем принудительно через 4,6 c (не полагаемся на CSS-анимацию).
+// На телефоне её нет вовсе — код ниже просто ничего не найдёт.
 var splashWaves = window.splashWaves || null;
-// заставку убираем принудительно через 4,6 c (не полагаемся на CSS-анимацию)
 setTimeout(function(){ var s=document.getElementById('splash'); if(s){ s.style.transition='opacity .4s'; s.style.opacity='0'; setTimeout(function(){ if(splashWaves){ try{ splashWaves.dispose(); }catch(_){} splashWaves=null; } if(s&&s.parentNode) s.parentNode.removeChild(s); },450); } }, 4600);
 
 // Сигнал Telegram «приложение готово» НАПРЯМУЮ, в обход SDK — чтобы
@@ -3719,21 +3821,21 @@ function showLogin(msg){
   if(!btn) return;
   var lnkReset=document.getElementById('lg-to-reset'), lnkCode=document.getElementById('lg-to-code'),
       lnkReg=document.getElementById('lg-to-reg'), lnkLogin=document.getElementById('lg-to-login');
-  var mode='login', stage='start';
-  function show(el,on){ if(el) el.hidden=!on; }
+  var mode=location.hash==='#reg'?'reg':'login', stage='start';
+  function show(el,on){ if(!el) return; el.hidden=!on; if(el.parentElement.classList.contains('auth-field')) el.parentElement.hidden=!on; }
   // спрашиваем сервер про код приглашения один раз при открытии окна:
   // подтвердит — перерисуем надпись на «7 дней»
   try { trialCheck(function(){ render(); }); } catch(_){}
   function render(){
     var reg=mode==='reg', reset=mode==='reset', code=mode==='code';
-    if(title) title.textContent = reg?'Регистрация':(reset?'Новый пароль':'Отходы в доходы');
+    if(title) title.textContent = reg?'Регистрация':(reset?'Новый пароль':'Вход');
     show(pw, !code && !(reset && stage==='start'));
     show(pw2, reg && stage==='start');
     show(cd, stage==='confirm');
     show(lnkReset, mode==='login'); show(lnkCode, mode==='login');
     show(lnkReg, mode!=='reg'); show(lnkLogin, mode!=='login');
     pw.setAttribute('autocomplete', reg||reset?'new-password':'current-password');
-    pw.placeholder = reset?'новый пароль':'пароль';
+    pw.placeholder = reg || reset ? 'Не менее 8 символов' : 'Введите пароль';
     if(stage==='confirm'){
       btn.textContent = reg?'Подтвердить и войти':(code?'Войти':'Сменить пароль и войти');
       msg.textContent = 'Код отправлен на '+(em.value||'').trim();
