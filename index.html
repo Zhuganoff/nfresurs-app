@@ -374,6 +374,15 @@
   .plan-sum s { color: var(--faint); font-weight: 600; font-size: 17px;
     margin-right: 6px; }
   .plan-cta { justify-content: center; margin-top: 4px; }
+  /* карточка тарифа — ссылка на оформление. Без этих правил она брала
+     оформление обычной ссылки: мятный цвет всего текста и подчёркивание
+     при наведении. Подпись «Выбрать тариф →» нужна только на телефоне
+     и планшете, на компьютере её включает адаптивный блок ниже. */
+  a.plan { display: block; color: var(--text); text-decoration: none; }
+  a.plan:hover, a.plan:focus { text-decoration: none; }
+  a.plan:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  a.plan:active { transform: translateY(0); }
+  .plan-pick { display: none; }
   .ref-note { color: var(--dim); }
   @media (min-width: 961px) { .plans { grid-template-columns: repeat(3, 1fr); }
     .plan-cta { grid-column: 1 / -1; justify-self: start; } }
@@ -1119,6 +1128,10 @@
     .price p { font-size: 14px; line-height: 1.55; }
     .plan { padding: 16px; border-radius: 16px; }
     .plan-sum { font-size: 26px; }
+    .plan-pick { display: block; margin-top: 12px; color: var(--accent);
+      font-size: 14px; font-weight: 600; }
+    a.plan:active { background: rgba(0,231,237,.08);
+      border-color: color-mix(in srgb, var(--accent) 55%, var(--hair)); }
     .final { padding: 36px 20px; border-radius: 22px; }
     .final h2 { font-size: 28px; }
     .final .lead { font-size: 14px; }
@@ -1249,6 +1262,8 @@
     .plan-cta { grid-column: 1 / -1; justify-self: start; }
     .plan { padding: 22px 16px; }
     .plan-sum { font-size: 28px; }
+    .plan-pick { display: block; margin-top: 14px; color: var(--accent);
+      font-size: 15px; font-weight: 600; }
     .cta-bar { display: block; position: fixed; inset: auto 0 0; z-index: 50;
       padding: 10px var(--pad) calc(10px + env(safe-area-inset-bottom));
       border-top: 1px solid var(--hair); backdrop-filter: blur(18px);
@@ -1401,6 +1416,17 @@
     .auth-screen .lg-card { width: min(460px, 100%); padding: 34px; gap: 18px; }
     .auth-screen .lg-title { font-size: 32px; }
     .auth-screen .auth-brand span { font-size: 17px; }
+  }
+  /* ——— ввод без увеличения страницы ———
+     iOS увеличивает страницу, когда фокус попадает в поле с текстом
+     мельче 16 CSS px, и после закрытия клавиатуры масштаб сам не
+     возвращается — отсюда «сайт увеличился и завис». Поэтому на
+     телефоне и планшете у всех полей ввода размер шрифта ровно 16px.
+     Ручное увеличение пальцами не трогаем: ни user-scalable, ни
+     maximum-scale нигде не задаются, масштаб на focus/blur не меняем. */
+  @media (max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+    input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),
+    textarea, select { font-size: 16px !important; }
   }
 </style>
 </head>
@@ -1619,7 +1645,7 @@
 
 <section class="etp wrap" aria-labelledby="etp-title">
   <h2 id="etp-title">ЭТП</h2>
-  <div class="etp-cloud" id="etp-cloud"><button type="button" class="etp-logo" data-name="ТЭК-Торг" aria-label="ТЭК-Торг"><img src="img/sites/tektorg.png?v=3" alt="ТЭК-Торг" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="B2B-Center" aria-label="B2B-Center"><img src="img/sites/b2b.png?v=3" alt="B2B-Center" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Сбербанк-АСТ" aria-label="Сбербанк-АСТ"><img src="img/sites/sberast.png?v=3" alt="Сбербанк-АСТ" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="ЭТП ГПБ" aria-label="ЭТП ГПБ"><img src="img/sites/etpgpb.png?v=3" alt="ЭТП ГПБ" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="OnlineContract" aria-label="OnlineContract"><img src="img/sites/onlinecontract.png?v=3" alt="OnlineContract" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Bidzaar" aria-label="Bidzaar"><img src="img/sites/bidzaar.png?v=3" alt="Bidzaar" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="isource Reserve" aria-label="isource Reserve"><img src="img/sites/isource-mark.png?v=3" alt="isource Reserve" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Фабрикант" aria-label="Фабрикант"><img src="img/sites/fabrikant.png?v=3" alt="Фабрикант" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="ЗаказРФ" aria-label="ЗаказРФ"><img src="img/sites/zakazrf.png?v=3" alt="ЗаказРФ" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Tender.Pro" aria-label="Tender.Pro"><img src="img/sites/tenderpro.png?v=3" alt="Tender.Pro" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="lot-online (РАД)" aria-label="lot-online (РАД)"><img src="img/sites/lotonline-mark.png?v=3" alt="lot-online (РАД)" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="ЭТП РЭО" aria-label="ЭТП РЭО"><img src="img/sites/reo.png?v=3" alt="ЭТП РЭО" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Интер РАО" aria-label="Интер РАО"><img src="img/sites/interrao.png?v=3" alt="Интер РАО" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Роснефть" aria-label="Роснефть"><img src="img/sites/rosneft.png?v=3" alt="Роснефть" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Славнефть" aria-label="Славнефть"><img src="img/sites/slavneft.png?v=3" alt="Славнефть" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="АЛРОСА" aria-label="АЛРОСА"><img src="img/sites/alrosa.png?v=3" alt="АЛРОСА" loading="lazy" decoding="async"></button><button type="button" class="etp-logo wide" data-name="Эн+" aria-label="Эн+"><img src="img/sites/enplus.svg?v=3" alt="Эн+" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="ГИС Торги" aria-label="ГИС Торги"><img src="img/sites/torgi.png?v=3" alt="ГИС Торги" loading="lazy" decoding="async"></button></div>
+  <div class="etp-cloud" id="etp-cloud"><button type="button" class="etp-logo" data-name="ТЭК-Торг" aria-label="ТЭК-Торг"><img src="img/sites/tektorg-mark.svg?v=4" alt="ТЭК-Торг" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="B2B-Center" aria-label="B2B-Center"><img src="img/sites/b2b.png?v=3" alt="B2B-Center" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Сбербанк-АСТ" aria-label="Сбербанк-АСТ"><img src="img/sites/sberast.png?v=3" alt="Сбербанк-АСТ" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="ЭТП ГПБ" aria-label="ЭТП ГПБ"><img src="img/sites/etpgpb.png?v=3" alt="ЭТП ГПБ" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="OnlineContract" aria-label="OnlineContract"><img src="img/sites/onlinecontract.png?v=3" alt="OnlineContract" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Bidzaar" aria-label="Bidzaar"><img src="img/sites/bidzaar.png?v=3" alt="Bidzaar" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="isource Reserve" aria-label="isource Reserve"><img src="img/sites/isource-mark.png?v=3" alt="isource Reserve" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Фабрикант" aria-label="Фабрикант"><img src="img/sites/fabrikant.png?v=3" alt="Фабрикант" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="ЗаказРФ" aria-label="ЗаказРФ"><img src="img/sites/zakazrf.png?v=3" alt="ЗаказРФ" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Tender.Pro" aria-label="Tender.Pro"><img src="img/sites/tenderpro-mark.svg?v=4" alt="Tender.Pro" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="lot-online (РАД)" aria-label="lot-online (РАД)"><img src="img/sites/lotonline-mark.png?v=3" alt="lot-online (РАД)" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="ЭТП РЭО" aria-label="ЭТП РЭО"><img src="img/sites/reo.png?v=3" alt="ЭТП РЭО" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Интер РАО" aria-label="Интер РАО"><img src="img/sites/interrao.png?v=3" alt="Интер РАО" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Роснефть" aria-label="Роснефть"><img src="img/sites/rosneft-mark.svg?v=4" alt="Роснефть" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="Славнефть" aria-label="Славнефть"><img src="img/sites/slavneft.png?v=3" alt="Славнефть" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="АЛРОСА" aria-label="АЛРОСА"><img src="img/sites/alrosa.png?v=3" alt="АЛРОСА" loading="lazy" decoding="async"></button><button type="button" class="etp-logo wide" data-name="Эн+" aria-label="Эн+"><img src="img/sites/enplus.svg?v=3" alt="Эн+" loading="lazy" decoding="async"></button><button type="button" class="etp-logo" data-name="ГИС Торги" aria-label="ГИС Торги"><img src="img/sites/torgi.png?v=3" alt="ГИС Торги" loading="lazy" decoding="async"></button></div>
   <p class="etp-label" id="etp-label" aria-live="polite"></p>
   <button type="button" class="etp-toggle" id="etp-toggle" aria-pressed="false">Остановить движение</button>
 </section>
@@ -2584,10 +2610,16 @@
   if(код){ try { localStorage.setItem('ovd_ref', код); } catch(_){} }
   if(!код){ try { код = localStorage.getItem('ovd_ref') || ''; } catch(_){} }
   if(!код) return;
+  /* адрес собираем через URL: код уходит в параметры, а якорь остаётся
+     последним. Приписывание строки к href давало /app/#reg?ref=КОД —
+     приложение сравнивает hash строго с '#reg' и регистрацию не открывало. */
   Array.prototype.forEach.call(
     document.querySelectorAll('a[href^="/app/"], a[href^="/app"]'), function(a){
-      if(a.href.indexOf('ref=') >= 0) return;
-      a.href += (a.href.indexOf('?') >= 0 ? '&' : '?') + 'ref=' + encodeURIComponent(код);
+      var u;
+      try { u = new URL(a.getAttribute('href'), location.href); } catch(_){ return; }
+      if(u.searchParams.has('ref')) return;
+      u.searchParams.set('ref', код);
+      a.setAttribute('href', u.pathname + u.search + u.hash);
     });
 })();
 </script>

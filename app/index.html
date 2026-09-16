@@ -1231,6 +1231,17 @@
     .auth-screen .lg-title { font-size: 32px; }
     .auth-screen .auth-brand span { font-size: 17px; }
   }
+  /* ——— ввод без увеличения страницы ———
+     iOS увеличивает страницу, когда фокус попадает в поле с текстом
+     мельче 16 CSS px, и после закрытия клавиатуры масштаб сам не
+     возвращается — отсюда «сайт увеличился и завис». Поэтому на
+     телефоне и планшете у всех полей ввода размер шрифта ровно 16px.
+     Ручное увеличение пальцами не трогаем: ни user-scalable, ни
+     maximum-scale нигде не задаются, масштаб на focus/blur не меняем. */
+  @media (max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+    input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),
+    textarea, select { font-size: 16px !important; }
+  }
 </style>
 </head>
 <body data-pane="tenders">
