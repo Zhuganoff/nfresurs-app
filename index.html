@@ -929,7 +929,13 @@
     .top, body.has-waves .top { position: sticky; top: 0; left: auto; right: auto;
       z-index: 60; padding-top: env(safe-area-inset-top);
       border: 0; box-shadow: none;
-      background: #05151C !important; }
+      background: #05151C !important;
+      /* матовое стекло на телефоне отключено намеренно. Фон и так
+         непрозрачный — размывать под ним нечего, а Safari снимает
+         подложку для blur асинхронно: при резком броске страницы
+         снимок отстаёт, и сквозь полосу на мгновение видно содержимое.
+         Без фильтра полоса остаётся сплошной в любой момент прокрутки. */
+      -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
     .top-in { position: relative; z-index: 2; }
     /* сплошная крышка над шапкой: продолжает её фон вверх за край экрана.
        Что бы ни открылось выше строки с меню — безопасная область под
