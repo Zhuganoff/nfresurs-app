@@ -931,6 +931,13 @@
       border: 0; box-shadow: none;
       background: #05151C !important; }
     .top-in { position: relative; z-index: 2; }
+    /* сплошная крышка над шапкой: продолжает её фон вверх за край экрана.
+       Что бы ни открылось выше строки с меню — безопасная область под
+       вырезом, оттяжка при прокрутке вверх, дрожание панели Safari —
+       там всегда тот же тёмный фон, а не содержимое страницы. */
+    .top::before { content: ''; position: absolute; left: 0; right: 0;
+      bottom: 100%; height: 320px; z-index: 1; pointer-events: none;
+      background: #05151C; }
     /* мягкое соединение с картинкой первого экрана вместо жёсткой линии;
        слой декоративный, нажатия не перехватывает */
     .top::after { content: ''; position: absolute; left: 0; right: 0; top: 100%;
