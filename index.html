@@ -3,9 +3,11 @@
 <head>
 <meta charset="utf-8">
 <title>Отходы в доходы — тендеры на продажу нефтепродуктов и лома</title>
-<!-- viewport-fit=cover обязателен: без него env(safe-area-inset-*) равны нулю
-     и закрыть область за часами нечем — её высота остаётся неизвестной,
-     а Safari всё равно рисует содержимое страницы под строкой состояния -->
+<!-- viewport-fit=cover нужен этой разметке: от env(safe-area-inset-*)
+     зависят и отступ шапки, и полоса над ней, а без cover эти значения
+     равны нулю. Проверяемая гипотеза по снимку владельца от 17.09: Safari
+     на его iPhone всё равно рисует страницу под строкой состояния, поэтому
+     закрывать её нужно самим. Подтверждается только проверкой на устройстве. -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Лоты на продажу отработанных нефтепродуктов, металлолома и труб б/у с 18 площадок России. Только реализация, без закупок. Приложение в Telegram и в браузере.">
 <link rel="canonical" href="https://xn-----elcgda8dafa0bybh2fi.xn--p1ai/">
@@ -20,6 +22,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#05151C">
+<meta name="build" content="17.09-C">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-180.png">
@@ -1514,7 +1517,7 @@
       <a href="#inside">Что внутри</a>
       <a href="#how">Как работает</a>
       <a href="#price">Стоимость</a>
-      <span class="build-mark">сборка 17.09-B</span>
+      <span class="build-mark">сборка 17.09-C</span>
     </nav>
   </div>
 </header>
@@ -1981,7 +1984,7 @@
     <a href="https://t.me/nfresursbot">@nfresursbot</a>
     <a href="#" data-cookie-settings>Настройки cookie</a>
   </nav>
-  <span class="build-mark">сборка 17.09-B</span>
+  <span class="build-mark">сборка 17.09-C</span>
 </footer>
 
 
@@ -2642,63 +2645,18 @@
 })();
 </script>
 <script>
-/* Диагностика верхней области: открывается только по адресу с ?diag=1.
-   Нужна, чтобы снять фактические значения на телефоне владельца, а не
-   догадываться о них по измерениям в Chrome. На обычном открытии сайта
-   ничего не создаётся и ничего не считается. */
+/* Диагностику верхней области подгружаем только по явному включению:
+   #diag в адресе или ?diag=1. Обычный посетитель этот файл не скачивает. */
 (function(){
   var вкл = false;
   try {
-    вкл = new URLSearchParams(location.search).get('diag') === '1'
-       || location.hash === '#diag';
+    вкл = location.hash === '#diag'
+       || new URLSearchParams(location.search).get('diag') === '1';
   } catch(_){}
   if(!вкл) return;
-  var п = document.createElement('div');
-  п.setAttribute('aria-hidden','true');
-  п.style.cssText = 'position:fixed;left:6px;right:6px;bottom:6px;z-index:99999;'
-    + 'background:#0B2C37;color:#EAF3F7;border:1px solid #2B6472;border-radius:10px;'
-    + 'padding:8px 10px;font:11px/1.45 -apple-system,system-ui,sans-serif;'
-    + 'white-space:pre-wrap;pointer-events:none;max-height:46vh;overflow:hidden';
-  document.body.appendChild(п);
-  function проба(выр){
-    var d = document.createElement('div');
-    d.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:' + выр + ';visibility:hidden';
-    document.body.appendChild(d);
-    var h = d.getBoundingClientRect().height;
-    d.remove();
-    return Math.round(h * 10) / 10;
-  }
-  function строки(){
-    var t = document.querySelector('.top'), cap = document.querySelector('.top-cap');
-    var cs = t ? getComputedStyle(t) : {}, tr = t ? t.getBoundingClientRect() : {};
-    var cr = cap ? cap.getBoundingClientRect() : {};
-    var vv = window.visualViewport;
-    var отм = document.querySelector('.build-mark');
-    return [
-      'сборка: ' + (отм ? отм.textContent : 'нет отметки'),
-      'safe-area верх/низ: ' + проба('env(safe-area-inset-top)') + ' / ' + проба('env(safe-area-inset-bottom)'),
-      'шапка: ' + cs.position + ' y=' + Math.round(tr.top) + ' h=' + Math.round(tr.height)
-        + ' pad=' + cs.paddingTop + ' z=' + cs.zIndex,
-      'фон шапки: ' + cs.backgroundColor + ' размытие: ' + (cs.webkitBackdropFilter || cs.backdropFilter),
-      'полоса .top-cap: h=' + Math.round(cr.height) + ' y=' + Math.round(cr.top)
-        + ' ' + (cap ? getComputedStyle(cap).display : '—'),
-      'фон html: ' + getComputedStyle(document.documentElement).backgroundColor,
-      'окно: ' + innerWidth + '×' + innerHeight + '  экран: ' + screen.width + '×' + screen.height + '  dpr ' + devicePixelRatio,
-      'видимая область: ' + (vv ? Math.round(vv.width) + '×' + Math.round(vv.height) + ' масштаб ' + (Math.round(vv.scale*100)/100) + ' сдвиг ' + Math.round(vv.offsetTop) : 'нет'),
-      'прокрутка: ' + Math.round(window.scrollY),
-      'режим: ' + (matchMedia('(display-mode: standalone)').matches || navigator.standalone ? 'с домашнего экрана' : 'браузер'),
-      'браузер: ' + navigator.userAgent.replace(/^Mozilla\/5\.0 \(/, '').slice(0, 54)
-    ].join('\n');
-  }
-  function обновить(){ п.textContent = строки(); }
-  обновить();
-  addEventListener('scroll', обновить, {passive:true});
-  addEventListener('resize', обновить);
-  addEventListener('orientationchange', обновить);
-  if(window.visualViewport){
-    visualViewport.addEventListener('resize', обновить);
-    visualViewport.addEventListener('scroll', обновить);
-  }
+  var s = document.createElement('script');
+  s.src = 'diag-panel.js?v=2'; s.defer = true;
+  document.head.appendChild(s);
 })();
 </script>
 </body>
