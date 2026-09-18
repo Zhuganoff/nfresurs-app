@@ -22,7 +22,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#05151C">
-<meta name="build" content="17.09-D">
+<meta name="build" content="18.09-E">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-180.png">
@@ -106,8 +106,6 @@
   /* ——— шапка: тонкое стекло ——— */
   .top { position: sticky; top: 0; z-index: 40;
     background: linear-gradient(180deg, rgba(9,17,14,.92) 0%, rgba(13,25,20,.78) 55%, rgba(20,38,31,.42) 100%); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%); border-bottom: 1px solid var(--hair); padding-top: env(safe-area-inset-top); }
-  /* полоса под вырезом включается только в адаптивном диапазоне */
-  .top-cap { display: none; }
   /* отметка сборки: по ней видно, какая версия реально открыта на телефоне.
      На компьютере скрыта — там оформление не меняем. */
   .build-mark { display: none; color: var(--faint); font-size: 11px;
@@ -961,8 +959,21 @@
        просвечивает ни в начале страницы, ни при прокрутке. */
     .top, body.has-waves .top { position: sticky; top: 0; left: auto; right: auto;
       z-index: 60; padding-top: env(safe-area-inset-top);
-      border: 0; box-shadow: none;
+      border: 0;
       background: #05151C !important;
+      /* Фон шапки продлён вверх её собственной тенью того же цвета.
+         Сдвиг и растяжение равны: прямоугольник тени расширяется во все
+         стороны на 500px и на столько же уезжает вверх, поэтому его нижний
+         край совпадает с нижним краем шапки. Внутри самой шапки внешняя
+         тень не рисуется, и остаётся ровно полоса от её верхнего края
+         вверх — вплотную, без щели. Так она едет вместе с шапкой в любом
+         её положении: и когда шапка стоит у верха экрана, и если её
+         чем-то сдвинуло ниже. Отдельная полоса .top-cap, делавшая ту же
+         работу вторым слоем, из-за этого убрана.
+         Взять просто большой сдвиг без растяжения нельзя: тогда нижний
+         край тени оказывается выше шапки на разницу «сдвиг минус высота»,
+         и в этом зазоре видно страницу — на снимке это было 23px. */
+      box-shadow: 0 -500px 0 500px #05151C;
       /* матовое стекло на телефоне отключено намеренно. Фон и так
          непрозрачный — размывать под ним нечего, а Safari снимает
          подложку для blur асинхронно: при резком броске страницы
@@ -970,15 +981,6 @@
          Без фильтра полоса остаётся сплошной в любой момент прокрутки. */
       -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
     .top-in { position: relative; z-index: 2; }
-    /* полоса безопасной области — отдельный элемент, а не псевдоэлемент
-       шапки. Псевдоэлемент живёт в её слое: если шапку сдвинуло или
-       обрезало, крышка едет вместе с ней. Этот же элемент закреплён
-       относительно окна, лежит выше шапки и закрывает участок за часами
-       независимо от того, что происходит с самой шапкой. Когда браузер
-       не пускает страницу под вырез, env(...) равен нулю и полосы нет. */
-    .top-cap { display: block; position: fixed; left: 0; right: 0; top: 0;
-      height: calc(env(safe-area-inset-top) + 2px); z-index: 61;
-      background: #05151C; pointer-events: none; }
     /* отметка сборки видна только на телефоне и планшете — там её и смотрим */
     .build-mark { display: block; }
     .nav-drop .build-mark { padding: 8px 2px 0; margin-top: 6px;
@@ -991,7 +993,8 @@
       background: linear-gradient(180deg, rgba(5,21,28,.85), rgba(5,21,28,0)); }
     /* при прокрутке нижняя граница становится заметнее — видно, что шапка
        лежит поверх содержимого */
-    body.scrolled .top { box-shadow: 0 10px 24px -18px rgba(0,0,0,.9) !important; }
+    body.scrolled .top { box-shadow: 0 -500px 0 500px #05151C,
+      0 10px 24px -18px rgba(0,0,0,.9) !important; }
     body.scrolled .top::after { background: linear-gradient(180deg, rgba(5,21,28,.95), rgba(5,21,28,0)); }
     @media (prefers-reduced-motion: reduce) { .top { transition: none; } }
     .top-in { height: 78px; gap: 10px; }
@@ -1507,7 +1510,6 @@
   </div>
 </div>
 
-<div class="top-cap" aria-hidden="true"></div>
 <header class="top">
   <div class="wrap top-in">
     <a class="brand" href="/" aria-label="Отходы в доходы — на главную"><span class="logo"><svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#93dcc3"/><stop offset="1" stop-color="#255d51"/></linearGradient><linearGradient id="lgst" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3fff9"/><stop offset=".45" stop-color="#7fd0b4"/><stop offset="1" stop-color="#1b5a49"/></linearGradient><radialGradient id="lgho" cx=".6" cy=".65" r=".7"><stop offset="0" stop-color="#040a08"/><stop offset=".8" stop-color="#0d231c"/><stop offset="1" stop-color="#3f9c7f"/></radialGradient><linearGradient id="lgoi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4cf7a"/><stop offset="1" stop-color="#b8782a"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#lgbg)"/><circle cx="24" cy="24" r="14.5" fill="url(#lgst)"/><circle cx="24" cy="24" r="10" fill="url(#lgho)"/><path d="M24 15.5c-3.6 4.6-5.6 7.4-5.6 10.2a5.6 5.6 0 0 0 11.2 0c0-2.8-2-5.6-5.6-10.2z" fill="url(#lgoi)"/><path d="M21.6 24.6c0-1.6.9-3.2 2-4.6" stroke="#fff5d6" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".9"/></svg></span><svg class="mobile-brand-symbol" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="mobile-cycle" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#69ffff"/><stop offset="1" stop-color="#00bdca"/></linearGradient></defs><g fill="url(#mobile-cycle)"><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z"/><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z" transform="rotate(120 32 32)"/><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z" transform="rotate(240 32 32)"/></g></svg><span class="brand-name">Отходы в доходы</span></a>
@@ -1530,7 +1532,7 @@
       <a href="#inside">Что внутри</a>
       <a href="#how">Как работает</a>
       <a href="#price">Стоимость</a>
-      <span class="build-mark">сборка 17.09-D</span>
+      <span class="build-mark">сборка 18.09-E</span>
     </nav>
   </div>
 </header>
@@ -1997,7 +1999,7 @@
     <a href="https://t.me/nfresursbot">@nfresursbot</a>
     <a href="#" data-cookie-settings>Настройки cookie</a>
   </nav>
-  <span class="build-mark">сборка 17.09-D</span>
+  <span class="build-mark">сборка 18.09-E</span>
 </footer>
 
 
@@ -2668,7 +2670,7 @@
   } catch(_){}
   if(!вкл) return;
   var s = document.createElement('script');
-  s.src = 'diag-panel.js?v=3'; s.defer = true;
+  s.src = 'diag-panel.js?v=4'; s.defer = true;
   document.head.appendChild(s);
 })();
 </script>

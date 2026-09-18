@@ -73,7 +73,7 @@
 
   function собрать() {
     var шапка = document.querySelector('.top') || document.querySelector('header.app');
-    var полоса = document.querySelector('.top-cap');
+    /* отдельной полосы больше нет: фон вверх продлевает тень самой шапки */
     var vv = window.visualViewport;
     var мета = document.querySelector('meta[name=viewport]');
     var сборка = document.querySelector('meta[name=build]');
@@ -87,7 +87,7 @@
       'шапка: ' + прямоугольник(шапка),
       'фон шапки: ' + (csШ ? csШ.backgroundColor : '—') +
         ' размытие: ' + (csШ ? (csШ.webkitBackdropFilter || csШ.backdropFilter) : '—'),
-      'полоса сверху: ' + прямоугольник(полоса),
+      'тень шапки вверх: ' + (csШ ? csШ.boxShadow.slice(0, 60) : '—'),
       'фон html: ' + getComputedStyle(document.documentElement).backgroundColor,
       'фон body: ' + getComputedStyle(document.body).backgroundColor,
       'прокрутка: ' + Math.round(window.scrollY),
