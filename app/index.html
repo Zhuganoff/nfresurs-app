@@ -729,6 +729,59 @@
        тем же весом — иначе он остаётся в панели и делит вкладку пополам */
     .tab-subs { display: none; }
     nav.tabbar button.tab-plus { display: none; }
+
+    /* ——— Нижнее меню: одна стеклянная овальная подложка ———
+       Утверждён вариант 2: фирменная бирюзовая палитра, отдельные цвета
+       вкладок (красный, оранжевый, фиолетовый, синий) сняты, яркого
+       размытого свечения вокруг значков нет. Подложка одна на всё меню
+       и перетекает между разделами — геометрию и движение задаёт
+       tabPill(). Стекло ограничено самим меню: полноэкранных слоёв,
+       зерна и mix-blend-mode поверх шапки здесь не появляется. */
+    /* палитра меню задана эталоном и не зависит от светлой/тёмной темы
+       приложения: панель тёмная, активный акцент #00E7ED, неактивные —
+       светлые серо-бирюзовые. На светлой теме тёмная нижняя панель
+       остаётся читаемой, а стекло подложки рассчитано именно на неё. */
+    /* селектор с body — иначе более позднее правило «nav.tabbar { background:
+       var(--nav-bg) }» перебивает фон сокращённой записью */
+    body nav.tabbar { background: radial-gradient(ellipse at 20% 0, #06464D, transparent 72%), #041117;
+      border-top: 1px solid #24545E; }
+    nav.tabbar button[data-tab] { --tab-c: #00E7ED; opacity: 1;
+      color: #ADCBD1; min-height: 56px; gap: 5px; padding: 6px 0;
+      transition: color .25s ease; }
+    nav.tabbar button[data-tab] svg { width: 23px; height: 23px;
+      stroke-width: 1.8; transition: transform .3s ease; filter: none; }
+    nav.tabbar button[data-tab].active { color: #00E7ED;
+      transform: none; }
+    nav.tabbar button[data-tab].active svg { filter: none;
+      transform: translateY(-1px); }
+    nav.tabbar button[data-tab] span.подпись,
+    nav.tabbar button[data-tab] { font-size: 11px; font-weight: 500;
+      letter-spacing: -.35px; }
+    /* подписи не переносим и не обрезаем: на узких экранах ужимаем трекинг */
+    @media (max-width: 355px) {
+      nav.tabbar { padding-left: 3px; padding-right: 3px; }
+      nav.tabbar button[data-tab] { font-size: 10.5px; letter-spacing: -.65px; }
+    }
+    nav.tabbar .tabpill { top: 0; height: 0; width: 0; border-radius: 999px;
+      background: radial-gradient(ellipse at 25% 0, rgba(101,255,245,.42), transparent 62%),
+        linear-gradient(145deg, rgba(0,231,237,.32), rgba(0,187,198,.22) 52%, rgba(0,141,153,.24));
+      border: 1px solid rgba(0,231,237,.6);
+      box-shadow: inset 0 1px 1px rgba(145,255,242,.67),
+        inset 0 -2px 4px rgba(0,231,237,.25), 0 3px 12px rgba(0,0,0,.27);
+      -webkit-backdrop-filter: blur(14px) saturate(150%);
+      backdrop-filter: blur(14px) saturate(150%);
+      transition: opacity .2s ease;
+      will-change: transform, width; }
+    /* тонкая кромка-блик по верхнему краю вместо бегущего по кругу свечения */
+    nav.tabbar .tabpill::after { content: ''; position: absolute;
+      left: 18%; right: 18%; top: 3px; height: 1px; width: auto;
+      aspect-ratio: auto; translate: none; animation: none;
+      background: linear-gradient(90deg, transparent, rgba(145,255,242,.67), transparent); }
+    /* без backdrop-filter стекло не получится: делаем подложку плотнее,
+       чтобы подпись и значок остались читаемыми */
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      nav.tabbar .tabpill { background: linear-gradient(145deg, #0C4A52, #07343B); }
+    }
   }
   .spinner { width: 26px; height: 26px; border: 3px solid var(--hair); border-top-color: var(--accent); border-radius: 50%; margin: 60px auto; animation: spin .8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -1742,7 +1795,7 @@
     <span class="tabpill" id="tabpill" aria-hidden="true"></span>
     <button data-tab="tenders" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Реализация</button>
     <button data-tab="fav"><span class="badge" id="fav-badge" style="display:none">0</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.5-9.3-9A5 5 0 0 1 12 5.5 5 5 0 0 1 21.3 11C19 15.5 12 20 12 20Z"/></svg>Избранное</button>
-    <button data-tab="ads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 6h18l-2 7H7L5 4H2"/><circle cx="9" cy="19" r="1.6"/><circle cx="17" cy="19" r="1.6"/></svg>Объявления</button>
+    <button data-tab="ads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><rect x="6" y="7.5" width="6" height="5" rx="1.2"/><path d="M15 8h3M15 11.5h3M6.5 16h11"/></svg>Объявления</button>
     <div class="tab-row">
       <button data-tab="labels"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 12V5a2 2 0 0 1 2-2h7l9 9-9 9z"/><circle cx="8" cy="8" r="1.4"/></svg>Метки</button>
       <button class="tab-plus" id="label-new" type="button" title="Новая метка" aria-label="Новая метка">＋</button>
@@ -2504,50 +2557,57 @@ function loadEmail(){ renderEmail(); api('/api/email/status').then(d=>{ EMAIL=d;
 
 // стеклянная капсула переезжает к активной вкладке: считаем место
 // по самой иконке, а не по кнопке — тогда овал сидит вокруг значка
+/* Стеклянная подложка под активной вкладкой: одна на всё меню.
+   При выборе другого раздела она растягивается в сторону движения,
+   переезжает и собирается в овал под новой вкладкой — 620 мс, как в
+   утверждённом эталоне. Раздел переключает существующий обработчик,
+   здесь только оформление: второго маршрутизатора не заводим и конца
+   анимации не ждём. В покое цикл анимации не крутится. */
 function tabPill(плавно){
   var nav=document.querySelector('nav.tabbar'); if(!nav) return;
   var pill=document.getElementById('tabpill'); if(!pill) return;
   if(getComputedStyle(pill).display==='none'){ pill.classList.remove('on'); return; }
   var btn=nav.querySelector('button[data-tab].active'); if(!btn) return;
-  var icon=btn.querySelector('svg')||btn;
-  var nr=nav.getBoundingClientRect(), r=icon.getBoundingClientRect();
+  // «Подборки» лежат внутри .tab-row вместе со скрытым плюсом:
+  // подложка должна накрывать всю ячейку, а не одну кнопку
+  var ячейка=btn.closest('.tab-row')||btn;
+  var nr=nav.getBoundingClientRect(), r=ячейка.getBoundingClientRect();
   if(!r.width){ pill.classList.remove('on'); return; }
-  // овал вокруг значка. По просьбе владельца: уже на 3 мм и ниже на 2 мм
-  // (1 мм = 3.78 css-px, поэтому по бокам снимаем по 1.5 мм = 5.67px,
-  // а вертикальные отступы сдвигаем на 7.56px вниз)
-  var мм = 3.7795;
-  var padX = 12 - 1.5 * мм, padВерх = 8 - 2 * мм, padНиз = 2 * мм;
-  var ш=r.width+padX*2, в=r.height+padВерх+padНиз;
-  var x=r.left-nr.left-padX, y=r.top-nr.top-padВерх;
-  var конец='translate('+x+'px,'+y+'px)';
-  var было=pill._поз;
-  if(!плавно) pill.style.transition='none';
-  pill.style.width=ш+'px';
-  pill.style.height=в+'px';
-  // переезд «каплей»: по дороге овал вытягивается в сторону движения
-  // и слегка сплющивается, у цели — короткий отскок
+  var x=r.left-nr.left+1, w=r.width-2, y=r.top-nr.top, h=r.height;
+  // текущее ВИДИМОЕ положение: читаем до отмены анимации, поэтому быстрые
+  // повторные нажатия продолжают движение с места, а не с начала
+  var было=pill.getBoundingClientRect();
+  var былоX=было.width ? было.left-nr.left : x;
+  var былаШ=было.width || w;
+  if(pill._движение){ try { pill._движение.cancel(); } catch(_){} pill._движение=null; }
+  pill.style.top=y+'px'; pill.style.height=h+'px';
+  pill.style.width=w+'px'; pill.style.transform='translateX('+x+'px)';
+  pill.classList.add('on');
   var тихо=false;
   try { тихо=matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(_){}
-  if(плавно && было && pill.animate && !тихо && Math.abs(x-было.x)>1){
-    var dx=x-было.x, k=Math.min(1.5, 1+Math.abs(dx)/260);
-    pill.animate([
-      {transform:'translate('+было.x+'px,'+было.y+'px) scale(1,1)'},
-      {transform:'translate('+(было.x+dx*0.45)+'px,'+y+'px) scale('+k+','+(0.82+0.18/k)+')',
-       offset:0.42},
-      {transform:'translate('+(x+dx*0.05)+'px,'+y+'px) scale('+(1+(k-1)*0.16)+',0.97)',
-       offset:0.76},
-      {transform:конец}
-    ], {duration:520, easing:'cubic-bezier(.3,.92,.28,1)'});
-  }
-  pill.style.transform=конец;
-  pill._поз={x:x, y:y};
-  var c=getComputedStyle(btn).getPropertyValue('--tab-c');
-  if(c) pill.style.setProperty('--pill-c', c.trim());
-  pill.classList.add('on');
-  if(!плавно){ void pill.offsetWidth; pill.style.transition=''; }
+  if(!плавно || тихо || !pill.animate || Math.abs(былоX-x)<1) return;
+  var путь=Math.abs(x-былоX);
+  var вытяг=Math.min(путь*0.48, w*0.8);
+  var середина=x>былоX ? былоX+путь*0.38 : былоX-путь*0.38-вытяг;
+  pill._движение=pill.animate([
+    {transform:'translateX('+былоX+'px) scaleY(1)',   width:былаШ+'px',      offset:0},
+    {transform:'translateX('+середина+'px) scaleY(.83)', width:(w+вытяг)+'px', offset:.38},
+    {transform:'translateX('+x+'px) scaleY(1.035)',   width:w+'px',          offset:.82},
+    {transform:'translateX('+x+'px) scaleY(1)',       width:w+'px',          offset:1}
+  ], {duration:620, easing:'cubic-bezier(.22,.7,.2,1)', fill:'none'});
 }
-window.addEventListener('resize', function(){ tabPill(false); });
+/* пересчёт положения: поворот, изменение ширины, подгрузка шрифта */
+if(window.ResizeObserver){
+  try {
+    var _наблюдатель=new ResizeObserver(function(){ tabPill(false); });
+    var _панель=document.querySelector('nav.tabbar');
+    if(_панель) _наблюдатель.observe(_панель);
+  } catch(_){}
+} else {
+  window.addEventListener('resize', function(){ tabPill(false); });
+}
 window.addEventListener('orientationchange', function(){ setTimeout(function(){ tabPill(false); }, 220); });
+try { if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ tabPill(false); }); } catch(_){}
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ tabPill(false); });
 else tabPill(false);
 window.addEventListener('load', function(){ tabPill(false); });
