@@ -1473,6 +1473,18 @@
     textarea, select { font-size: 16px !important; }
   }
 </style>
+<style id="nf-brand-20260918">
+/* Shared turquoise brand: artwork only, no changes to header positioning/safe-area. */
+.mobile-brand-symbol { object-fit:contain; }
+.logo img { display:block; width:100%; height:100%; object-fit:contain; }
+.auth-brand img { width:40px; height:44px; object-fit:contain; flex:none; }
+.auth-brand-desktop img { object-fit:contain; }
+.brand .logo, header.app .logo.mark, .lg-logo { filter:none; }
+.brand .brand-name { display:block; background:none; -webkit-text-fill-color:currentColor; color:#F1F5F7; animation:none; font-weight:800; font-size:15px; line-height:1.08; letter-spacing:-.02em; white-space:nowrap; }
+header.app .app-name { font-weight:800; font-size:15px; line-height:1.08; letter-spacing:-.02em; }
+header.app .app-sub { display:none; }
+@media (max-width:360px) { .brand .brand-name { font-size:13px; } }
+</style>
 </head>
 <body>
 
@@ -1501,8 +1513,8 @@
 <div id="login-modal" class="lg-ov auth-screen" hidden role="dialog" aria-modal="true" aria-labelledby="lg-title">
   <div class="lg-card">
     <button type="button" class="lg-x auth-close" aria-label="Закрыть">×</button>
-    <div class="auth-brand"><svg viewBox="0 0 64 64" aria-hidden="true"><g fill="#00E7ED"><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z"/><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z" transform="rotate(120 32 32)"/><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z" transform="rotate(240 32 32)"/></g></svg><span>Отходы<br>в доходы</span></div>
-    <div class="auth-brand-desktop" aria-hidden="true"><svg class="lg-logo" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="mbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#93dcc3"/><stop offset="1" stop-color="#255d51"/></linearGradient><linearGradient id="mst" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3fff9"/><stop offset=".45" stop-color="#7fd0b4"/><stop offset="1" stop-color="#1b5a49"/></linearGradient><radialGradient id="mho" cx=".6" cy=".65" r=".7"><stop offset="0" stop-color="#040a08"/><stop offset=".8" stop-color="#0d231c"/><stop offset="1" stop-color="#3f9c7f"/></radialGradient><linearGradient id="moi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4cf7a"/><stop offset="1" stop-color="#b8782a"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#mbg)"/><circle cx="24" cy="24" r="14.5" fill="url(#mst)"/><circle cx="24" cy="24" r="10" fill="url(#mho)"/><path d="M24 15.5c-3.6 4.6-5.6 7.4-5.6 10.2a5.6 5.6 0 0 0 11.2 0c0-2.8-2-5.6-5.6-10.2z" fill="url(#moi)"/><path d="M21.6 24.6c0-1.6.9-3.2 2-4.6" stroke="#fff5d6" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".9"/></svg></div>
+    <div class="auth-brand"><img src="img/brand-cycle-20260918.png" width="48" height="48" alt="" decoding="async"><span>Отходы<br>в доходы</span></div>
+    <div class="auth-brand-desktop" aria-hidden="true"><img class="lg-logo" src="img/brand-cycle-20260918.png" width="48" height="48" alt="" decoding="async"></div>
     <div class="lg-title" id="lg-title">Отходы в доходы</div>
     <div class="lg-msg" id="lg-msg">Войдите по e-mail, чтобы открыть тендеры</div>
     <label class="auth-field"><span>Электронная почта</span><input id="lg-email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.ru"></label>
@@ -1522,7 +1534,7 @@
 
 <header class="top">
   <div class="wrap top-in">
-    <a class="brand" href="/" aria-label="Отходы в доходы — на главную"><span class="logo"><svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#93dcc3"/><stop offset="1" stop-color="#255d51"/></linearGradient><linearGradient id="lgst" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3fff9"/><stop offset=".45" stop-color="#7fd0b4"/><stop offset="1" stop-color="#1b5a49"/></linearGradient><radialGradient id="lgho" cx=".6" cy=".65" r=".7"><stop offset="0" stop-color="#040a08"/><stop offset=".8" stop-color="#0d231c"/><stop offset="1" stop-color="#3f9c7f"/></radialGradient><linearGradient id="lgoi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4cf7a"/><stop offset="1" stop-color="#b8782a"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#lgbg)"/><circle cx="24" cy="24" r="14.5" fill="url(#lgst)"/><circle cx="24" cy="24" r="10" fill="url(#lgho)"/><path d="M24 15.5c-3.6 4.6-5.6 7.4-5.6 10.2a5.6 5.6 0 0 0 11.2 0c0-2.8-2-5.6-5.6-10.2z" fill="url(#lgoi)"/><path d="M21.6 24.6c0-1.6.9-3.2 2-4.6" stroke="#fff5d6" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".9"/></svg></span><svg class="mobile-brand-symbol" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="mobile-cycle" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#69ffff"/><stop offset="1" stop-color="#00bdca"/></linearGradient></defs><g fill="url(#mobile-cycle)"><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z"/><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z" transform="rotate(120 32 32)"/><path d="M16 10C29 1 45 6 52 18l7-4-2 20-18-9 6-3C39 12 28 8 16 10Z" transform="rotate(240 32 32)"/></g></svg><span class="brand-name">Отходы в доходы</span></a>
+    <a class="brand" href="/" aria-label="Отходы в доходы — на главную"><span class="logo"><img src="img/brand-cycle-20260918.png" width="48" height="48" alt="" decoding="async"></span><img class="mobile-brand-symbol" src="img/brand-cycle-20260918.png" width="48" height="48" alt="" decoding="async"><span class="brand-name">ОТХОДЫ<br>В ДОХОДЫ</span></a>
     <span class="mobile-brand-tagline">Больше<br>возможностей<br>вашему бизнесу</span>
     <nav class="nav" aria-label="Разделы">
       <a href="#inside"><span>Что внутри</span></a>
