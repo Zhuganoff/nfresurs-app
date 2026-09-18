@@ -659,6 +659,15 @@
     -webkit-tap-highlight-color: transparent; }
   .tab-plus:hover { opacity: 1; }
   /* ——— Экран «Подборки»: выбор, условия и найденные лоты ——— */
+  /* в заголовке — один знак «＋» без подписи; название для скринридера
+     в aria-label. Размер задан минимальной областью нажатия 44×44. */
+  .sb-plus { flex: none; width: 44px; height: 44px; display: grid;
+    place-items: center; padding: 0; cursor: pointer;
+    border: 1px solid var(--hair); border-radius: 12px;
+    background: var(--surface-2); color: var(--accent);
+    font-size: 21px; line-height: 1; -webkit-tap-highlight-color: transparent; }
+  .sb-plus:hover { border-color: var(--accent); }
+  .sb-plus:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .sb-chips { display: flex; gap: 7px; overflow-x: auto; padding: 2px 0 8px;
     scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   .sb-chips::-webkit-scrollbar { display: none; }
@@ -688,6 +697,8 @@
     min-height: 40px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
   .sb-in { display: flex; flex-wrap: wrap; gap: 5px; margin: 0 0 6px; }
   .sb-in b { font-weight: 600; }
+  /* плашка выключенной подборки — приглушена: видно, что сообщений нет */
+  .lmark.off { opacity: .55; }
   .sb-manage { margin-top: 18px; border-top: 1px solid var(--hair); padding-top: 10px; }
   .sb-manage > summary { cursor: pointer; font-size: 13px; font-weight: 600;
     color: var(--text-dim); padding: 6px 0; list-style: none; }
@@ -1641,7 +1652,7 @@ header.app .app-sub { display:none; }
       <div id="ads-list"><div class="spinner"></div></div>
     </section>
     <section class="pane" id="pane-labels">
-      <div class="pane-head"><h2>Подборки</h2><button class="ad-new-btn" id="lb-new">＋ Создать подборку</button></div>
+      <div class="pane-head"><h2>Подборки</h2><button class="sb-plus" id="lb-new" type="button" aria-label="Создать подборку" title="Создать подборку">＋</button></div>
       <div class="lb-intro">Лоты по вашим условиям. Подходящие помечаются цветом подборки и в общей ленте, а о новых приходит уведомление. До 10 подборок.</div>
       <!-- выбор подборки, условия выбранной и найденные лоты -->
       <div class="sb-chips" id="sb-chips"></div>
@@ -1692,7 +1703,7 @@ header.app .app-sub { display:none; }
         <label class="lb-check"><input type="checkbox" id="lb-em"> Присылать на электронную почту</label>
         <label class="lb-check soon"><input type="checkbox" id="lb-max" disabled> Уведомление в MAX <span class="lb-soon">скоро</span></label>
         <div class="lb-buttons">
-          <button class="lb-save" id="lb-save" type="button">Сохранить подборку</button>
+          <button class="lb-save" id="lb-save" type="button">Создать и показать лоты</button>
           <button class="lb-cancel" id="lb-cancel" type="button">Отмена</button>
         </div>
         <div class="lb-msg" id="lb-msg"></div>
@@ -1762,7 +1773,9 @@ header.app .app-sub { display:none; }
       <div class="group" id="alerts-group">
         <div class="label">🔔 Мои подборки</div>
         <div class="ehint" style="margin-bottom:8px">Подборка — сохранённые условия поиска: подходящие лоты собираются в своём разделе, помечаются цветом в ленте, а о новых приходит уведомление.</div>
-        <div id="alerts-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px"></div>
+        <!-- список и удаление подборок жили здесь вторым местом управления;
+             по решению владельца управление целиком в разделе «Подборки»,
+             в профиле осталась только ссылка туда -->
         <button class="ebtn" id="lb-open" type="button">Открыть подборки</button>
       </div>
       <div class="group">
@@ -1993,11 +2006,17 @@ var SESSION_LASTVISIT = Date.now();
 // «Новый» = ещё не открывали И (появился после прошлого визита ИЛИ за последние сутки); старше 7 дней — не новый
 function isNew(t){ if(!t.first_seen||seen.has(key(t))) return false; var ts=Date.parse(t.first_seen); if(isNaN(ts)||(Date.now()-ts)>=7*864e5) return false; return ts>SESSION_LASTVISIT || (Date.now()-ts)<864e5; }
 function priceNum(p){ if(!p) return -1; var m=String(p).match(/([\d\s.,]+)/); if(!m) return -1; var n=parseFloat(m[1].replace(/\s/g,'').replace(',','.')); return isNaN(n)?-1:n; }
-/* метки пользователя, под которые подошёл лот, — цветными плашками */
+/* подборки, под которые подошёл лот, — цветными плашками.
+   В общей ленте красят только те, у которых включены уведомления: так
+   было раньше, так и остаётся. В разделе «Подборки» показываем все, иначе
+   у лота, найденного выключенной подборкой, не видно, почему он в списке;
+   выключенная идёт приглушённой. Переключатель на время отрисовки списка. */
+var ПЛАШКИ_ВСЕ = false;
 function lmarks(t){
-  return ((t && t.labels) || []).map(function(l){
-    return '<span class="lmark" style="background:'+escH(l.color)+'">'
-      + escH(l.name) + '</span>';
+  return ((t && t.labels) || []).filter(function(l){ return ПЛАШКИ_ВСЕ || l.active !== 0; })
+    .map(function(l){
+    return '<span class="lmark'+(l.active===0?' off':'')+'" style="background:'
+      + escH(l.color) + '">' + escH(l.name) + '</span>';
   }).join('');
 }
 function card(t){
@@ -2257,7 +2276,7 @@ function resetFilters(){
    счётчики и одним нажатием сужаем ленту до нужного. */
 function sinceCounts(){
   var новые = TENDERS.filter(isNew).length;
-  var поМеткам = TENDERS.filter(function(t){ return (t.labels || []).length; }).length;
+  var поМеткам = TENDERS.filter(function(t){ return (t.labels || []).some(function(l){ return l.active !== 0; }); }).length;
   var сегодня = TENDERS.filter(function(t){
     var d = daysLeft(t.deadline); return d !== null && d === 0; }).length;
   var избранные = TENDERS.filter(function(t){ return favs.has(key(t)); }).length;
@@ -2314,7 +2333,7 @@ function feedItems(){
   let a=TENDERS.slice();
   // сводка сверху: одним нажатием сужаем ленту
   if(SINCE==='new') a=a.filter(isNew);
-  else if(SINCE==='labels') a=a.filter(t=>(t.labels||[]).length);
+  else if(SINCE==='labels') a=a.filter(t=>(t.labels||[]).some(l=>l.active!==0));
   else if(SINCE==='today') a=a.filter(t=>{var d=daysLeft(t.deadline); return d!==null && d===0;});
   // выбрана метка — показываем ровно её лоты, поверх переключателя категорий
   if(FILT.label) a=a.filter(t=>(t.labels||[]).some(l=>l.id===FILT.label));
@@ -2733,8 +2752,6 @@ document.addEventListener('click',e=>{
     if(lbTab) lbTab.click();
     return;
   }
-  var _alrm=e.target.closest('[data-al]');
-  if(_alrm){ api('/api/alerts/delete',{id:+_alrm.getAttribute('data-al')}).then(loadAlerts).catch(function(){}); return; }
   if(e.target.closest('#export-btn')){
     var eb=e.target.closest('#export-btn'), oldt=eb.textContent;
     eb.disabled=true; eb.textContent='Выгружаю…';
@@ -3054,7 +3071,7 @@ function lbOpen(item){
   LB.sitesAll = !LB.sites.length;
   LB.mode = (item && item.mode) || 'instant';
   lbPaintSites(); lbPaintModes();
-  lbEl('lb-save').textContent = item ? 'Сохранить изменения' : 'Сохранить подборку';
+  lbEl('lb-save').textContent = item ? 'Сохранить изменения' : 'Создать и показать лоты';
   lbMsg('');
   lbEl('lb-form').classList.add('on');
   lbLoadRegions().then(function(){ lbPaintColors(); lbPaintRegions(); });
@@ -3208,11 +3225,9 @@ function сборки(){
     return;
   }
   if(!LB.list.length){
-    рез.innerHTML='<div class="empty"><div>Создайте подборку — подходящие лоты '
-      +'будут появляться здесь.</div><button class="ebtn" type="button" id="sb-first">'
-      +'Создать подборку</button></div>';
-    var f=document.getElementById('sb-first');
-    if(f) f.addEventListener('click', function(){ lbOpen(null); });
+    // второй кнопки создания здесь нет намеренно: создаёт «＋» в заголовке
+    рез.innerHTML='<div class="empty"><div>Подходящие лоты будут появляться '
+      +'здесь.</div><div>Нажмите ＋, чтобы создать подборку.</div></div>';
     return;
   }
   var лоты=сбЛоты(LB.выбор);
@@ -3225,9 +3240,12 @@ function сборки(){
     return;
   }
   // один лот может подойти нескольким подборкам — карточка одна, названия все
-  рез.innerHTML='<div class="sb-in">'+лоты.length+' '
-    +plural(лоты.length,'лот','лота','лотов')+'</div>'
-    +лоты.map(card).join('');
+  ПЛАШКИ_ВСЕ = true;                       // в разделе показываем и выключенные
+  try {
+    рез.innerHTML='<div class="sb-in">'+лоты.length+' '
+      +plural(лоты.length,'лот','лота','лотов')+'</div>'
+      +лоты.map(card).join('');
+  } finally { ПЛАШКИ_ВСЕ = false; }
 }
 
 /* Метка выбрана — лента показывает только её лоты. Ноль снимает фильтр. */
@@ -3303,9 +3321,13 @@ function lbSave(){
   var url = LB.edit ? '/api/alerts/update' : '/api/alerts/create';
   if(LB.edit) body.id = LB.edit;
   lbEl('lb-save').disabled = true;
-  api(url, body).then(function(){
+  var создаём = !LB.edit;
+  api(url, body).then(function(d){
     lbEl('lb-save').disabled = false;
     lbMsg('Подборка сохранена', 'ok');
+    // «Создать и показать лоты»: сразу открываем результат новой подборки
+    var id = d && (d.id || (d.alert && d.alert.id));
+    if(создаём && id) LB.выбор = id;
     lbLoad(true, true);
   }).catch(function(e){
     lbEl('lb-save').disabled = false;
@@ -3695,20 +3717,7 @@ function renderInstallHelp(){
   g.style.display='block';
 }
 renderInstallHelp();
-function loadAlerts(){
-  var box=document.getElementById('alerts-list'); if(!box) return;
-  api('/api/alerts/list').then(function(d){
-    var a=(d&&d.alerts)||[];
-    box.innerHTML = a.length ? a.map(function(x){
-      var meta=[x.keywords];
-      if(x.category) meta.push({oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом'}[x.category]||x.category);
-      if(x.regions) meta.push('📍 '+x.regions);
-      var tags=[]; if(x.category) tags.push({oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом'}[x.category]||x.category); if(x.regions) tags.push('📍 '+x.regions);
-      return '<div class="al-item"><span class="lb-dot" style="background:'+escH(x.color||'#45D6CD')+'"></span><span class="al-kws">'+escH(x.name||x.keywords)+'</span>'+tags.map(function(g){return '<span class="al-tag">'+escH(g)+'</span>';}).join('')+'<button class="ad-rm" data-al="'+x.id+'" type="button">✕</button></div>';
-    }).join('') : '<div style="font-size:12px;color:var(--text-faint,#8b949e)">Меток пока нет — заведите первую.</div>';
-  }).catch(function(){});
-}
-loadAlerts();
+/* список подборок в профиле убран: управление целиком в разделе «Подборки» */
 // сверить недавно завершённую оплату (вебхук мог опоздать), затем показать статус
 api('/api/pay/status',{}).catch(function(){}).then(function(){ loadSubscription(); });
 loadBilling().then(billRefFromLink);
