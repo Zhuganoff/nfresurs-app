@@ -22,7 +22,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#05151C">
-<meta name="build" content="18.09-E">
+<meta name="build" content="18.09-F">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-180.png">
@@ -934,6 +934,23 @@
       --accent: #00E7ED; --accent-deep: #00BBC6; --accent-ink: #002127;
       --hair: rgba(0,231,237,.24); --glass-brd: #24545E; }
     body, .bg { background: var(--bg); }
+    /* Полноэкранное зерно (body::after: position: fixed, inset: 0,
+       z-index: 999, mix-blend-mode: overlay) на телефоне и планшете
+       выключено полностью. Оно лежало ВЫШЕ шапки и накрывало в том
+       числе область за часами; именно его снятие устранило мигание
+       лендинга над шапкой — владелец подтвердил это на своём iPhone
+       на проверочной сборке T3. Выключаем content и display, а не
+       opacity: прозрачный слой всё равно остаётся слоем для
+       композитора и для механизмов Safari, выбирающих цвет верхней
+       области. На компьютере зерно остаётся как было. */
+    body::after { content: none !important; display: none !important; }
+    /* Закреплённый декоративный слой .bg (fixed + translateZ + will-change
+       + contain: strict с анимированными пятнами внутри) в адаптивном
+       диапазоне не рисуется — фон статический. Это часть подтверждённого
+       на устройстве сочетания T3; промышленная иллюстрация первого экрана
+       живёт в .hero-copy и не затрагивается. */
+    .bg { display: none !important; }
+    html, body { background: #05151C !important; }
     .bg .veil { background: linear-gradient(180deg, rgba(5,21,28,.82), rgba(5,21,28,.6) 45%, rgba(4,17,23,.86)) !important; }
     /* переход к разделу не должен прятать заголовок под шапкой:
        её полная высота — 78px плюс безопасная область */
@@ -961,19 +978,13 @@
       z-index: 60; padding-top: env(safe-area-inset-top);
       border: 0;
       background: #05151C !important;
-      /* Фон шапки продлён вверх её собственной тенью того же цвета.
-         Сдвиг и растяжение равны: прямоугольник тени расширяется во все
-         стороны на 500px и на столько же уезжает вверх, поэтому его нижний
-         край совпадает с нижним краем шапки. Внутри самой шапки внешняя
-         тень не рисуется, и остаётся ровно полоса от её верхнего края
-         вверх — вплотную, без щели. Так она едет вместе с шапкой в любом
-         её положении: и когда шапка стоит у верха экрана, и если её
-         чем-то сдвинуло ниже. Отдельная полоса .top-cap, делавшая ту же
-         работу вторым слоем, из-за этого убрана.
-         Взять просто большой сдвиг без растяжения нельзя: тогда нижний
-         край тени оказывается выше шапки на разницу «сдвиг минус высота»,
-         и в этом зазоре видно страницу — на снимке это было 23px. */
-      box-shadow: 0 -500px 0 500px #05151C;
+      /* Тени, продлевавшей фон шапки вверх, здесь нет намеренно.
+         Владелец проверил на iPhone: с ней (сборка E) лендинг мигал над
+         шапкой, без неё и без слоёв ниже (проверочная T3) — не мигает.
+         Область за часами закрывает сама шапка: padding-top под
+         безопасную область плюс непрозрачный фон. Возвращать тень
+         или отдельные верхние полосы не нужно. */
+      box-shadow: none;
       /* матовое стекло на телефоне отключено намеренно. Фон и так
          непрозрачный — размывать под ним нечего, а Safari снимает
          подложку для blur асинхронно: при резком броске страницы
@@ -993,8 +1004,7 @@
       background: linear-gradient(180deg, rgba(5,21,28,.85), rgba(5,21,28,0)); }
     /* при прокрутке нижняя граница становится заметнее — видно, что шапка
        лежит поверх содержимого */
-    body.scrolled .top { box-shadow: 0 -500px 0 500px #05151C,
-      0 10px 24px -18px rgba(0,0,0,.9) !important; }
+    body.scrolled .top { box-shadow: 0 10px 24px -18px rgba(0,0,0,.9) !important; }
     body.scrolled .top::after { background: linear-gradient(180deg, rgba(5,21,28,.95), rgba(5,21,28,0)); }
     @media (prefers-reduced-motion: reduce) { .top { transition: none; } }
     .top-in { height: 78px; gap: 10px; }
@@ -1532,7 +1542,7 @@
       <a href="#inside">Что внутри</a>
       <a href="#how">Как работает</a>
       <a href="#price">Стоимость</a>
-      <span class="build-mark">сборка 18.09-E</span>
+      <span class="build-mark">сборка 18.09-F</span>
     </nav>
   </div>
 </header>
@@ -1999,7 +2009,7 @@
     <a href="https://t.me/nfresursbot">@nfresursbot</a>
     <a href="#" data-cookie-settings>Настройки cookie</a>
   </nav>
-  <span class="build-mark">сборка 18.09-E</span>
+  <span class="build-mark">сборка 18.09-F</span>
 </footer>
 
 
