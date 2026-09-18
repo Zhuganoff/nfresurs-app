@@ -22,7 +22,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#05151C">
-<meta name="build" content="17.09-C">
+<meta name="build" content="17.09-D">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-180.png">
@@ -927,6 +927,11 @@
 
   /* Мобильный первый экран по референсу: промышленная сцена и живой текст. */
   @media (max-width: 1024px), (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+    /* тёмная схема объявлена явно: область, которая открывается при
+       оттягивании страницы, и собственные элементы браузера берут цвет
+       отсюда. Без объявления часть из них рисуется по светлой схеме.
+       На компьютере схему не меняем — правило только в адаптивном диапазоне. */
+    :root { color-scheme: dark; }
     :root { --pad: 24px; --bg: #05151C; --bg-2: #041117;
       --accent: #00E7ED; --accent-deep: #00BBC6; --accent-ink: #002127;
       --hair: rgba(0,231,237,.24); --glass-brd: #24545E; }
@@ -935,7 +940,15 @@
     /* переход к разделу не должен прятать заголовок под шапкой:
        её полная высота — 78px плюс безопасная область */
     html { scroll-padding-top: calc(78px + env(safe-area-inset-top)); }
-    body { overflow-x: clip; }
+    /* Обрезание по горизонтали снято с html и body. Это единственное, чем
+       цепочка родителей нашей шапки отличалась от рабочего примера
+       marketing-club.org, где у html и body overflow: visible. Обрезание
+       на корне и body — известная помеха для sticky и fixed в WebKit.
+       Измерено, что правило лишнее: без него горизонтальной прокрутки нет
+       ни на 320/360/390/430/768/1024 в начале страницы, ни в шести точках
+       прокрутки — декоративные слои и так обрезаны внутри .bg
+       (overflow: hidden; contain: strict). Компьютера правило не касается. */
+    html, body { overflow-x: visible; }
 
     /* нижняя всплывающая кнопка «Открыть в Telegram» убрана: на первом
        экране есть основная кнопка, второй призыв владелец снял */
@@ -1517,7 +1530,7 @@
       <a href="#inside">Что внутри</a>
       <a href="#how">Как работает</a>
       <a href="#price">Стоимость</a>
-      <span class="build-mark">сборка 17.09-C</span>
+      <span class="build-mark">сборка 17.09-D</span>
     </nav>
   </div>
 </header>
@@ -1984,7 +1997,7 @@
     <a href="https://t.me/nfresursbot">@nfresursbot</a>
     <a href="#" data-cookie-settings>Настройки cookie</a>
   </nav>
-  <span class="build-mark">сборка 17.09-C</span>
+  <span class="build-mark">сборка 17.09-D</span>
 </footer>
 
 
@@ -2655,7 +2668,7 @@
   } catch(_){}
   if(!вкл) return;
   var s = document.createElement('script');
-  s.src = 'diag-panel.js?v=2'; s.defer = true;
+  s.src = 'diag-panel.js?v=3'; s.defer = true;
   document.head.appendChild(s);
 })();
 </script>

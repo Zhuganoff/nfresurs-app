@@ -98,8 +98,24 @@
       'режим: ' + (matchMedia('(display-mode: standalone)').matches || navigator.standalone
         ? 'с домашнего экрана' : (window.Telegram && window.Telegram.WebApp &&
           window.Telegram.WebApp.initData ? 'Telegram' : 'браузер')),
-      'браузер: ' + navigator.userAgent.replace(/^Mozilla\/5\.0 \(/, '').slice(0, 54)
-    ].join('\n');
+      'браузер: ' + navigator.userAgent.replace(/^Mozilla\/5\.0 \(/, '').slice(0, 54),
+      телеграм()
+    ].filter(Boolean).join('\n');
+  }
+
+  /* Telegram отдаёт свои безопасные области отдельно от CSS. Здесь мы их
+     только показываем: нужно увидеть, отличаются ли они от env(...), и не
+     складывать два источника отступов вслепую. */
+  function телеграм() {
+    var tg = window.Telegram && window.Telegram.WebApp;
+    if (!tg) return '';
+    function пара(o) {
+      return o ? [o.top, o.right, o.bottom, o.left].join('/') : 'нет';
+    }
+    return 'Telegram: safeArea ' + пара(tg.safeAreaInset) +
+      '  content ' + пара(tg.contentSafeAreaInset) +
+      '  высота ' + (tg.viewportHeight || '—') + '/' + (tg.viewportStableHeight || '—') +
+      '  версия ' + (tg.version || '—');
   }
 
   var ждёмКадр = false;
