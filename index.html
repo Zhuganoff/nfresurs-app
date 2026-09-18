@@ -171,6 +171,12 @@
     background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
     background-size: 72px 72px; -webkit-mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); }
   .hero { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 72px var(--pad) 64px; min-height: calc(100vh - 240px); }
+  /* Фоновый мотив роста для компьютерного первого экрана. Без данных и анимации. */
+  .hero-growth { display: none; }
+  @media (min-width: 1025px) and (hover: hover) and (pointer: fine) {
+    .hero-growth { display: block; position: absolute; inset: 0; width: 100%; height: 100%;
+      z-index: 0; pointer-events: none; overflow: hidden; }
+  }
   .hero-copy > * + * { margin-top: 26px; }
   /* заголовок и абзац одной ширины — блок читается ровным прямоугольником */
   .hero-copy { --hero-w: 700px; }
@@ -1561,6 +1567,23 @@ header.app .app-sub { display:none; }
 
 <main>
   <div class="hero-wrap">
+    <svg class="hero-growth" viewBox="0 0 1440 760" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="hero-growth-stroke" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#A4C8C0" stop-opacity="0"/>
+          <stop offset=".23" stop-color="#A4C8C0" stop-opacity=".10"/>
+          <stop offset=".62" stop-color="#A4C8C0" stop-opacity=".24"/>
+          <stop offset=".86" stop-color="#D6C49A" stop-opacity=".18"/>
+          <stop offset="1" stop-color="#D6C49A" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="hero-growth-fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#88B9AD" stop-opacity=".035"/>
+          <stop offset="1" stop-color="#88B9AD" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="M120 674 C234 664 300 637 380 610 S529 566 603 574 S744 513 820 487 S943 475 1008 415 S1114 382 1184 306 S1305 252 1410 156 L1410 760 L120 760 Z" fill="url(#hero-growth-fill)"/>
+      <path d="M120 674 C234 664 300 637 380 610 S529 566 603 574 S744 513 820 487 S943 475 1008 415 S1114 382 1184 306 S1305 252 1410 156" fill="none" stroke="url(#hero-growth-stroke)" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linecap="round"/>
+    </svg>
     <section class="wrap hero">
       <div class="hero-copy">
         <span class="eyebrow mono"><span class="desktop-copy">Мониторинг торгов · Металлолом · Нефтепродукты · Трубы</span><span class="mobile-copy">Мониторинг торгов</span></span>
