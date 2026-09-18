@@ -3,7 +3,7 @@
    /app/ на корневой sw.js → scope «/»). HTML берём network-first (свежая
    оболочка), статику (иконки, manifest, telegram-web-app.js) — cache-first.
    Офлайн: навигация внутри /app/ → последняя виденная оболочка приложения. */
-const CACHE = 'ovd-v7';
+const CACHE = 'ovd-v8';
 const APP = '/app/';
 const ASSETS = [
   APP,
@@ -35,6 +35,11 @@ self.addEventListener('fetch', (e) => {
   let url;
   try { url = new URL(req.url); } catch (_) { return; }
   if (url.origin !== location.origin) return; // сторонние запросы не трогаем
+
+  // проверочные страницы всегда идут мимо кэша: их смысл в том, чтобы
+  // на телефоне открылась именно свежая версия, без вмешательства
+  // ранее установленного service worker
+  if (url.pathname.indexOf('/test') === 0) return;
 
   const isHTML = req.mode === 'navigate' ||
     (req.headers.get('accept') || '').includes('text/html');
