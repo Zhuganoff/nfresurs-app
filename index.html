@@ -561,11 +561,27 @@
      карточки, ни подсветки, ни drop-shadow: иначе фон снимка стоит
      прямоугольником внутри карточки и видно шов. Подписи, «подробнее →»,
      оборот карточки и всё остальное не трогаем. */
+  /* снимок не лежит в карточке прямоугольником, а растворяется в её фоне:
+     края уводим в прозрачность мягкой маской, поэтому ни рамки, ни угла,
+     ни границы между фотографией и карточкой не видно. Предмет в центре
+     маска не трогает — она начинает гасить только к краям кадра. */
   .face-front .pic:has(> .mat-photo) { padding: 0; }
   .face-front .pic:has(> .mat-photo)::before { display: none; }
+  /* Маска — пересечение двух растяжек: по горизонтали и по вертикали.
+     Так гаснут все четыре стороны сразу, а не только углы, и прямой
+     границы между снимком и карточкой не остаётся. Центр, где сам
+     предмет, маска не трогает. */
   .face-front .pic > .mat-photo { width: 100%; height: 100%; max-height: none;
-    object-fit: cover; object-position: center 46%; filter: none;
-    border-radius: 0; }
+    object-fit: cover; object-position: center 46%;
+    border-radius: 0; box-shadow: none;
+    filter: saturate(.96) brightness(.97);
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0, #000 22%, #000 78%, transparent 100%),
+      linear-gradient(to bottom, transparent 0, #000 20%, #000 76%, transparent 100%);
+    mask-image:
+      linear-gradient(to right, transparent 0, #000 22%, #000 78%, transparent 100%),
+      linear-gradient(to bottom, transparent 0, #000 20%, #000 76%, transparent 100%);
+    -webkit-mask-composite: source-in; mask-composite: intersect; }
   .face-front .txt { flex: none; padding: 22px 26px 26px; border-top: 1px solid var(--hair); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
   .face-front .txt h3 { font-size: 22px; }
   .face-front .txt .more { color: var(--faint); font-size: 13px; white-space: nowrap; }
@@ -1166,7 +1182,17 @@
        Прежний значок остаётся в разметке и включится обратно, если
        фотографию уберут. */
     .mat .face-front .pic > img.mat-photo { display: block; width: 100%; height: 100%;
-      object-fit: cover; object-position: center 46%; border-radius: 12px; }
+      object-fit: cover; object-position: center 46%; border-radius: 0;
+      box-shadow: none; filter: saturate(.96) brightness(.97);
+      /* плитка на телефоне всего 76×70 — растяжка мягче, иначе от снимка
+         остаётся одно пятно: гасим только внешний край */
+      -webkit-mask-image:
+        linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%),
+        linear-gradient(to bottom, transparent 0, #000 8%, #000 92%, transparent 100%);
+      mask-image:
+        linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%),
+        linear-gradient(to bottom, transparent 0, #000 8%, #000 92%, transparent 100%);
+      -webkit-mask-composite: source-in; mask-composite: intersect; }
     .mat .face-front .pic:has(> .mat-photo) .material-illustration-mobile { display: none; }
     .mat .face-front .pic:has(> .mat-photo) { width: 100%; }
     .mat .face-front .pic .material-illustration-mobile { display: block; width: 76px; height: 64px;
