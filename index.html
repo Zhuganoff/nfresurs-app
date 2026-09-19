@@ -556,6 +556,16 @@
   .face-front .pic::before { content: ''; position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 60%, var(--m-soft), transparent 70%); }
   .face-front .pic img { width: 100%; height: auto; max-height: 100%; object-fit: contain; position: relative; filter: drop-shadow(0 30px 40px rgba(0,0,0,.6)); transition: transform .9s cubic-bezier(.55,0,.2,1); }
   .mat:hover .face-front .pic img { transform: translateY(-6px) scale(1.04); }
+  /* ——— вариант 5: вместо вырезанной иллюстрации — фотография ———
+     Снимок приносит свой фон и тень, поэтому у него нет ни отступа
+     карточки, ни подсветки, ни drop-shadow: иначе фон снимка стоит
+     прямоугольником внутри карточки и видно шов. Подписи, «подробнее →»,
+     оборот карточки и всё остальное не трогаем. */
+  .face-front .pic:has(> .mat-photo) { padding: 0; }
+  .face-front .pic:has(> .mat-photo)::before { display: none; }
+  .face-front .pic > .mat-photo { width: 100%; height: 100%; max-height: none;
+    object-fit: cover; object-position: center 46%; filter: none;
+    border-radius: 0; }
   .face-front .txt { flex: none; padding: 22px 26px 26px; border-top: 1px solid var(--hair); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
   .face-front .txt h3 { font-size: 22px; }
   .face-front .txt .more { color: var(--faint); font-size: 13px; white-space: nowrap; }
@@ -1152,6 +1162,13 @@
     .mat .face-front { grid-template-columns: 76px 1fr; min-height: 102px; padding: 10px 13px; }
     .mat .face-front .pic { height: 70px; }
     .mat .face-front .pic > img { display: none; }
+    /* вариант 5 на телефоне: тот же снимок вместо векторного значка.
+       Прежний значок остаётся в разметке и включится обратно, если
+       фотографию уберут. */
+    .mat .face-front .pic > img.mat-photo { display: block; width: 100%; height: 100%;
+      object-fit: cover; object-position: center 46%; border-radius: 12px; }
+    .mat .face-front .pic:has(> .mat-photo) .material-illustration-mobile { display: none; }
+    .mat .face-front .pic:has(> .mat-photo) { width: 100%; }
     .mat .face-front .pic .material-illustration-mobile { display: block; width: 76px; height: 64px;
       max-width: 100%; overflow: visible; filter: drop-shadow(0 5px 4px rgba(0,0,0,.28)); }
     .mat .face-front .txt h3 { font-size: 16px; }
@@ -1699,19 +1716,19 @@ header.app .app-sub { display:none; }
           <div class="stack-label mono">Так выглядят лоты в ленте</div>
           <!--SHOWCASE_START-->
           <article class="lot" style="--m: var(--oil); --i: 0; --z: 48">
-            <div class="lot-head mono"><span>ГИС Торги</span><span>реализация</span></div>
-            <div class="lot-title">Технические жидкости</div>
-            <div class="lot-meta"><span>Россия</span><span class="lot-price">56 466 695 ₽</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Нефтеюганск</div>
+            <div class="lot-meta"><span>ХМАО — Югра</span><span>приём заявок до 15 сентября</span></div>
           </article>
           <article class="lot" style="--m: var(--scrap); --i: 1; --z: 24">
-            <div class="lot-head mono"><span>Tender.Pro</span><span>реализация</span></div>
-            <div class="lot-title">АО &quot;КИП &quot;Мастер&quot;, РТ, г. Набережные Челны…</div>
-            <div class="lot-meta"><span>Республика Татарстан</span><span>22.09.2026 10:00</span></div>
+            <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
+            <div class="lot-title">Лом чёрных металлов, 200 т, Жердевский сахарный завод</div>
+            <div class="lot-meta"><span>Тамбовская область</span><span>самовывоз</span></div>
           </article>
           <article class="lot" style="--m: var(--pipe); --i: 2; --z: 0">
-            <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
-            <div class="lot-title">Трубы э/с 630х10мм Ст3 Колпинский Трубный…</div>
-            <div class="lot-meta"><span>Россия</span><span>2026-09-28 15:00</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Труба обсадная 139,7×9,17 P-110 с муфтами, 61 т</div>
+            <div class="lot-meta"><span>Ямало-Ненецкий АО</span><span class="lot-price">6 285 866 ₽</span></div>
           </article>
           <!--SHOWCASE_END-->
         </div>
@@ -1734,9 +1751,9 @@ header.app .app-sub { display:none; }
     <div class="wrap">
       <div class="grid-4">
         <div class="stat" data-i style="--i:0"><div class="num display" data-to="18">18</div><!--SITES_COUNT--><div class="lbl">площадок под наблюдением, проверка каждый час</div></div>
-        <div class="stat" data-i style="--i:1"><div class="num display" data-to="592" data-suffix="+"><!--LOTS_START-->592<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
+        <div class="stat" data-i style="--i:1"><div class="num display" data-to="526" data-suffix="+"><!--LOTS_START-->526<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
         <div class="stat" data-i style="--i:2"><div class="num display" data-to="24" data-suffix="/7">24<small>/7</small></div><div class="lbl">мониторинг площадок в режиме онлайн, без выходных</div></div>
-        <div class="stat" data-i style="--i:3"><div class="num display" data-to="49" data-suffix="+"><!--NEW24_START-->49<!--NEW24_END--><small>+</small></div><div class="lbl">новых лотов за сутки: нефтепродукты, лом, трубы</div></div>
+        <div class="stat" data-i style="--i:3"><div class="num display" data-to="93" data-suffix="+"><!--NEW24_START-->93<!--NEW24_END--><small>+</small></div><div class="lbl">новых лотов за сутки: нефтепродукты, лом, трубы</div></div>
       </div>
     </div>
   </section>
@@ -1751,7 +1768,7 @@ header.app .app-sub { display:none; }
         <article class="mat mat-oil" data-i style="--i:0" tabindex="0">
           <div class="mat-in">
             <div class="face face-front">
-              <div class="pic"><img src="img/oil.svg?v=2" alt="Бочка с нефтепродуктами" width="240" height="200" loading="lazy"><svg class="material-illustration-mobile" viewBox="0 0 64 48" fill="none" aria-hidden="true" focusable="false">
+              <div class="pic"><img class="mat-photo" src="img/mat-oil-v5.jpg" alt="Металлическая бочка с нефтепродуктами" width="760" height="755" loading="lazy" decoding="async"><svg class="material-illustration-mobile" viewBox="0 0 64 48" fill="none" aria-hidden="true" focusable="false">
               <defs>
                 <linearGradient id="card-material-oil-body" x1="18" y1="24" x2="46" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#81501C"/><stop offset=".25" stop-color="#F1BD61"/><stop offset=".55" stop-color="#BF7D2D"/><stop offset="1" stop-color="#59381E"/></linearGradient>
                 <linearGradient id="card-material-oil-rim" x1="17" y1="0" x2="46" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#8597A8"/><stop offset=".3" stop-color="#E4ECF2"/><stop offset=".65" stop-color="#BCC8D3"/><stop offset="1" stop-color="#536477"/></linearGradient>
@@ -1779,7 +1796,7 @@ header.app .app-sub { display:none; }
         <article class="mat mat-scrap" data-i style="--i:1" tabindex="0">
           <div class="mat-in">
             <div class="face face-front">
-              <div class="pic"><img src="img/scrap.svg?v=3" alt="Куча лома чёрных металлов" width="240" height="200" loading="lazy"><svg class="material-illustration-mobile" viewBox="0 0 64 48" fill="none" aria-hidden="true" focusable="false">
+              <div class="pic"><img class="mat-photo" src="img/mat-scrap-v5.jpg" alt="Лом чёрных металлов: листы, профиль, обрезки труб" width="760" height="755" loading="lazy" decoding="async"><svg class="material-illustration-mobile" viewBox="0 0 64 48" fill="none" aria-hidden="true" focusable="false">
               <defs>
                 <linearGradient id="card-material-scrap-metal" x1="12" y1="7" x2="40" y2="44" gradientUnits="userSpaceOnUse"><stop stop-color="#E2EAF1"/><stop offset=".38" stop-color="#A8BBCB"/><stop offset=".7" stop-color="#5A6C7E"/><stop offset="1" stop-color="#263341"/></linearGradient>
                 <linearGradient id="card-material-scrap-edge" x1="6" y1="20" x2="56" y2="39" gradientUnits="userSpaceOnUse"><stop stop-color="#F5F8FC"/><stop offset=".45" stop-color="#C2D0DC"/><stop offset="1" stop-color="#728C9F"/></linearGradient>
@@ -1811,7 +1828,7 @@ header.app .app-sub { display:none; }
         <article class="mat mat-pipe" data-i style="--i:2" tabindex="0">
           <div class="mat-in">
             <div class="face face-front">
-              <div class="pic"><img src="img/pipes.svg?v=2" alt="Пакет стальных труб, вид с торца" width="240" height="200" loading="lazy"><svg class="material-illustration-mobile" viewBox="0 0 96 72" fill="none" aria-hidden="true" focusable="false">
+              <div class="pic"><img class="mat-photo" src="img/mat-pipe-v5.jpg" alt="Стальные трубы разного диаметра, вид с торца" width="760" height="751" loading="lazy" decoding="async"><svg class="material-illustration-mobile" viewBox="0 0 96 72" fill="none" aria-hidden="true" focusable="false">
               <defs>
                 <linearGradient id="card-material-pipe-wall" x1="0" y1="-11" x2="0" y2="11" gradientUnits="userSpaceOnUse">
                   <stop stop-color="#314C60"/><stop offset=".16" stop-color="#97B1C3"/><stop offset=".3" stop-color="#EFF7FA"/><stop offset=".46" stop-color="#748E9F"/><stop offset="1" stop-color="#1D3446"/>
