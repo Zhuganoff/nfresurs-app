@@ -1873,6 +1873,17 @@ header.app .app-sub { display:none; }
               <div class="ehint" id="tg-hint">Укажите свой ник в Telegram, чтобы уведомления по меткам приходили в бот. Один Telegram привязывается к одной почте.</div>
             </div>
           </div>
+          <!-- уведомления в MAX: строка появляется, только когда бот MAX
+               подключён на сервере, иначе обещали бы несуществующее -->
+          <div class="row" id="max-row" style="display:none">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 3z"/><path d="M8 10h8M8 13h5"/></svg></span>
+            <span class="rl">MAX</span>
+            <span class="rv" id="max-state">—</span>
+            <div id="max-box" style="flex-basis:100%; display:none; flex-direction:column; gap:8px">
+              <button class="ebtn" id="max-connect" type="button">Подключить уведомления в MAX</button>
+              <div class="ehint" id="max-hint">Откроется бот в MAX: нажмите «Начать», и лоты по вашим подборкам пойдут туда. Номер телефона не нужен, ссылка одноразовая и живёт 30 минут.</div>
+            </div>
+          </div>
         </div>
         <div class="ehint">На эту почту приходят тендеры по кнопке «Отправить на почту». Подтверждается кодом.<br>Регистрируя почту, вы соглашаетесь на обработку персональных данных согласно <a href="#" onclick="openDoc('../privacy.html');return false" style="color:var(--accent);text-decoration:underline">Политике конфиденциальности</a>.</div>
       </div>
@@ -2904,6 +2915,24 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#lb-sites-none')){
     LB.sitesAll = false; LB.sites = []; lbPaintSites(); return;
   }
+  if(e.target.closest('#max-connect')){
+    var кн = e.target.closest('#max-connect'); кн.disabled = true;
+    api('/api/max/link', {}).then(function(d){
+      кн.disabled = false;
+      var подсказка = document.getElementById('max-hint');
+      if(!d || !d.deep_link){
+        if(подсказка) подсказка.textContent = (d && d.error) || 'Не удалось создать ссылку';
+        return;
+      }
+      try { if(tg && tg.openLink){ tg.openLink(d.deep_link); } else { window.open(d.deep_link, '_blank'); } }
+      catch(_){ window.open(d.deep_link, '_blank'); }
+      if(подсказка) подсказка.textContent = 'Ссылка открыта. Нажмите в боте «Начать» — и вернитесь сюда.';
+      setTimeout(maxState, 6000);
+    }).catch(function(e2){ кн.disabled = false;
+      var п = document.getElementById('max-hint');
+      if(п) п.textContent = (e2 && e2.message) || 'Не удалось создать ссылку'; });
+    return;
+  }
   if(e.target.closest('#tg-connect')){
     var кн = e.target.closest('#tg-connect'); кн.disabled = true;
     api('/api/telegram/link', {}).then(function(d){
@@ -2958,6 +2987,27 @@ document.addEventListener('click',e=>{
     document.body.dataset.pane=tab.dataset.tab;document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds(); else adWatchStop(); if(tab.dataset.tab==='labels'){ lbLoadRegions().then(lbLoad); } tabPill(true);}
 });
 
+
+/* ——— MAX в профиле ———
+   Строку показываем только когда сервер подтвердил, что бот MAX настроен:
+   предлагать подключение к тому, чего нет, хуже, чем не предлагать. */
+function maxState(){
+  var строка = document.getElementById('max-row');
+  if(!строка) return;
+  api('/api/max/status', {}).then(function(d){
+    if(!d || !d.ready){ строка.style.display = 'none'; return; }
+    строка.style.display = '';
+    var сост = document.getElementById('max-state');
+    var коробка = document.getElementById('max-box');
+    if(d.linked){
+      if(сост) сост.textContent = 'подключён';
+      if(коробка) коробка.style.display = 'none';
+    } else {
+      if(сост) сост.textContent = 'не подключён';
+      if(коробка) коробка.style.display = 'flex';
+    }
+  }).catch(function(){ строка.style.display = 'none'; });
+}
 
 /* ——— Telegram в профиле: куда слать уведомления по меткам ———
    У входа по почте бота может не быть вовсе. Ник сохраняем с проверкой:
@@ -3801,6 +3851,7 @@ loadBilling().then(billRefFromLink);
 loadPlatforms().then(function(){ try{ lbPaintSites(); }catch(_){} });
 notesLoad();
 tgState();
+maxState();
 // метки грузим при старте: подпункты в боковом меню нужны сразу
 lbLoadRegions().then(function(){ return lbLoad(); });
 
