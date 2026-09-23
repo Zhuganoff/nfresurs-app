@@ -71,6 +71,12 @@
       radial-gradient(110% 55% at -10% 105%, var(--glow-b), transparent 60%);
   }
   header.app, main { position: relative; z-index: 1; }
+  .app-home { display: flex; align-items: center; gap: 10px; color: inherit;
+    text-decoration: none; -webkit-tap-highlight-color: transparent;
+    transition: opacity .18s ease; }
+  .app-home:active { opacity: .7; }
+  .app-home:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px;
+    border-radius: 12px; }
   header.app {
     flex: none; padding: 11px 16px 11px; display: flex; align-items: center; gap: 12px;
     background: var(--nav-bg);
@@ -1596,11 +1602,16 @@ header.app .app-sub { display:none; }
     </div>
   </div>
   <header class="app">
-    <div class="logo mark"><img src="../img/brand-cycle-20260918.png" width="48" height="48" alt="" decoding="async"></div>
-    <div>
-      <div class="app-name">ОТХОДЫ<br>В ДОХОДЫ</div>
-      <div class="app-sub">НЕФТЕПРОДУКТЫ · МЕТАЛЛОЛОМ · ТРУБЫ</div>
-    </div>
+    <!-- логотип и название — переход на главную. В Telegram обычная ссылка
+         увела бы окно Mini App на лендинг без пути назад, поэтому там
+         открываем сайт снаружи; в браузере это простой переход. -->
+    <a class="app-home" href="../" aria-label="На главную страницу сайта">
+      <div class="logo mark"><img src="../img/brand-cycle-20260918.png" width="48" height="48" alt="" decoding="async"></div>
+      <div>
+        <div class="app-name">ОТХОДЫ<br>В ДОХОДЫ</div>
+        <div class="app-sub">НЕФТЕПРОДУКТЫ · МЕТАЛЛОЛОМ · ТРУБЫ</div>
+      </div>
+    </a>
   </header>
 
   <main>
@@ -1969,6 +1980,21 @@ function applyTheme(){
   // (светлая/тёмная) по-прежнему сильнее и не сбрасывается.
   root.setAttribute('data-theme', 'dark');
 }
+/* Логотип ведёт на лендинг. Внутри Telegram обычный переход увёл бы окно
+   Mini App на сайт, и вернуться в приложение было бы нечем — поэтому там
+   открываем лендинг снаружи, а окно приложения оставляем на месте. */
+document.addEventListener('click', function(e){
+  var дом = e.target.closest && e.target.closest('.app-home');
+  if(!дом) return;
+  var tgw = window.Telegram && window.Telegram.WebApp;
+  if(tgw && tgw.initData){
+    e.preventDefault();
+    var адрес = new URL('../', location.href).href;
+    try { if(tgw.openLink) { tgw.openLink(адрес); return; } } catch(_){}
+    window.open(адрес, '_blank');
+  }
+});
+
 function setTheme(v){ themePref = v; try { localStorage.setItem('theme', v); } catch(_){} applyTheme(); }
 applyTheme();
 
@@ -2918,7 +2944,18 @@ document.addEventListener('click',e=>{
   // только настоящие вкладки: «плюс» и подпункты меток тоже кнопки
   // внутри панели, и без data-tab обработчик гасил все панели
   const tab=e.target.closest('nav.tabbar button[data-tab]');
-  if(tab){document.body.dataset.pane=tab.dataset.tab;document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds(); else adWatchStop(); if(tab.dataset.tab==='labels'){ lbLoadRegions().then(lbLoad); } tabPill(true);}
+  if(tab){
+    // Возврат на «Реализацию» показывает ленту целиком. Человек уходит в
+    // «Подборки», нажимает там ключ — лента сужается до этой подборки; без
+    // сброса он возвращается на вкладку и видит обрезанную ленту, считая,
+    // что лотов мало. Сбрасываем только когда фильтр реально стоит, иначе
+    // затирали бы поиск, который человек набрал сам на этой же вкладке.
+    if(tab.dataset.tab==='tenders' && typeof FILT==='object' &&
+       (FILT.label || FILT.q || FILT.site || FILT.region || FILT.city ||
+        FILT.onlyNew || FILT.showHidden)){
+      try { resetFilters(); } catch(_){}
+    }
+    document.body.dataset.pane=tab.dataset.tab;document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds(); else adWatchStop(); if(tab.dataset.tab==='labels'){ lbLoadRegions().then(lbLoad); } tabPill(true);}
 });
 
 
