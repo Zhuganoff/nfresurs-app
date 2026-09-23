@@ -331,7 +331,7 @@
   .modal-details::before { content: ""; position: absolute; inset: 0; border-radius: inherit;
     padding: 1.4px; pointer-events: none;
     background: conic-gradient(from var(--da, 0deg), rgba(180,196,210,.25) 0deg,
-      rgba(69,214,205,.85) 60deg, #ffffff 95deg, rgba(217,160,74,.75) 130deg,
+      rgba(69,214,205,.85) 60deg, #ffffff 95deg, rgba(44,185,177,.75) 130deg,
       rgba(180,196,210,.25) 200deg, rgba(180,196,210,.25) 360deg);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -916,11 +916,16 @@
   :root[data-theme="dark"] header.app { box-shadow: 0 5px 22px rgba(0,0,0,.28); }
   /* ═══════════ Личный кабинет — десктоп (≥1024px): боковая панель, сетка, две колонки ═══════════ */
   /* неподвижный фон как на лендинге (все экраны): перелив цветов сырья + сетка; блоки — стекло */
+  /* Фон кабинета: приглушённая глубина в одной палитре. Тёплые пятна
+     (янтарное rgba(217,160,74) и медное rgba(212,116,79) — «цвета сырья»)
+     убраны: на графитовом фоне они читались как жёлтый налёт и спорили
+     с бирюзовым акцентом. Цвета сырья остаются там, где они несут смысл —
+     в метках категорий и карточках лотов, а не в фоне. */
   body::before { background:
-    radial-gradient(55% 60% at 30% -10%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 60%),
-    radial-gradient(40% 45% at 100% 15%, rgba(217,160,74,.26), transparent 60%),
-    radial-gradient(45% 45% at 75% 110%, rgba(212,116,79,.22), transparent 60%),
-    radial-gradient(35% 40% at 45% 60%, rgba(159,176,192,.12), transparent 60%); }
+    radial-gradient(55% 60% at 30% -10%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%),
+    radial-gradient(40% 45% at 100% 15%, rgba(69,214,205,.10), transparent 60%),
+    radial-gradient(45% 45% at 75% 110%, rgba(58,73,86,.22), transparent 60%),
+    radial-gradient(35% 40% at 45% 60%, rgba(159,176,192,.08), transparent 60%); }
   body::after { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .7;
     background-image: linear-gradient(color-mix(in srgb, var(--text) 8%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--text) 8%, transparent) 1px, transparent 1px);
     background-size: 72px 72px; -webkit-mask-image: radial-gradient(80% 80% at 50% 40%, #000 30%, transparent 100%); mask-image: radial-gradient(80% 80% at 50% 40%, #000 30%, transparent 100%); }
