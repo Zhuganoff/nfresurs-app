@@ -1243,11 +1243,12 @@
     #login-gate canvas.waves { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.2s ease; }
     #login-gate.has-waves canvas.waves { opacity: 1; }
     #login-gate .lg-veil { position: absolute; inset: 0; pointer-events: none;
-      background: radial-gradient(70% 60% at 50% 45%, rgba(7,13,11,.25) 0%, rgba(7,13,11,.72) 100%),
-        linear-gradient(180deg, rgba(7,13,11,.55) 0%, rgba(7,13,11,.2) 40%, rgba(7,13,11,.5) 100%); }
+      background: radial-gradient(70% 60% at 50% 45%, rgba(16,24,30,.25) 0%, rgba(16,24,30,.72) 100%),
+        linear-gradient(180deg, rgba(16,24,30,.55) 0%, rgba(16,24,30,.2) 40%, rgba(16,24,30,.5) 100%); }
+    /* запасная вуаль, когда живой фон не запустился: тоже без тёплых пятен */
     #login-gate:not(.has-waves) .lg-veil { background:
-        radial-gradient(70% 70% at 20% 10%, rgba(47,128,101,.45), transparent 60%),
-        radial-gradient(60% 60% at 85% 90%, rgba(217,160,74,.3), transparent 60%); }
+        radial-gradient(70% 70% at 20% 10%, rgba(69,214,205,.28), transparent 60%),
+        radial-gradient(60% 60% at 85% 90%, rgba(58,73,86,.35), transparent 60%); }
     .lg-card { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 14px;
       width: min(400px, 100%); padding: 30px 28px 24px; border-radius: 24px;
       background: rgba(14,24,20,.55); border: 1px solid rgba(255,255,255,.14);
