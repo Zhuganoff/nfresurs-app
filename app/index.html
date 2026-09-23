@@ -5,8 +5,8 @@
 <title>Отходы в доходы — приложение</title>
 <meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#255d51" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#081016" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#10181E" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#10181E" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="icon" href="../icons/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="../icons/apple-touch-180.png">
@@ -32,20 +32,20 @@
     --glow-a: rgba(65,151,126,.10); --glow-b: rgba(37,93,81,.08);
   }
   :root:not([data-theme="light"]) { @media (prefers-color-scheme: dark) {
-    --app-bg:#0B0F12; --app-bg2:#080C0F; --surface:#151D24; --surface-2:#1B252E;
+    --app-bg:#141B20; --app-bg2:#10181E; --surface:#1D2932; --surface-2:#23313C;
     --text:#F1F5F7; --text-dim:#BAC6CF; --text-faint:#91A2AF;
     --hair:#34434F; --accent:#45D6CD; --accent-soft:#12333A;
-    --urgent:#F08C92; --fresh:#76D6AE; --warn:#E4BA72; --nav-bg:rgba(11,15,18,.62);
+    --urgent:#F08C92; --fresh:#76D6AE; --warn:#E4BA72; --nav-bg:rgba(20,27,32,.62);
     --glass:#151D24; --glass-2:#1B252E;
     --glass-brd: rgba(255,255,255,.10); --glass-hair: rgba(255,255,255,.07);
     --shadow: rgba(0,0,0,.45); --shadow-s: rgba(0,0,0,.3);
     --glow-a: rgba(69,214,205,.10); --glow-b: rgba(58,73,86,.14);
   }}
   :root[data-theme="dark"] {
-    --app-bg:#0B0F12; --app-bg2:#080C0F; --surface:#151D24; --surface-2:#1B252E;
+    --app-bg:#141B20; --app-bg2:#10181E; --surface:#1D2932; --surface-2:#23313C;
     --text:#F1F5F7; --text-dim:#BAC6CF; --text-faint:#91A2AF;
     --hair:#34434F; --accent:#45D6CD; --accent-soft:#12333A;
-    --urgent:#F08C92; --fresh:#76D6AE; --warn:#E4BA72; --nav-bg:rgba(11,15,18,.62);
+    --urgent:#F08C92; --fresh:#76D6AE; --warn:#E4BA72; --nav-bg:rgba(20,27,32,.62);
     --glass:#151D24; --glass-2:#1B252E;
     --glass-brd: rgba(255,255,255,.10); --glass-hair: rgba(255,255,255,.07);
     --shadow: rgba(0,0,0,.45); --shadow-s: rgba(0,0,0,.3);
@@ -301,7 +301,7 @@
   .modal-fav svg { width: 18px; height: 18px; }
   .modal-fav.on { color: #e5484d; }
   .modal-hide { width: 100%; margin-top: 10px; padding: 9px; border: none; background: transparent; color: var(--text-faint); font-size: 13px; cursor: pointer; }
-  .toast { position: fixed; left: 50%; bottom: calc(74px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 300; display: flex; align-items: center; gap: 14px; background: #1e2a24; color: #fff; padding: 10px 16px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.35); font-size: 13px; max-width: 90vw; }
+  .toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 300; display: flex; align-items: center; gap: 14px; background: #1e2a24; color: #fff; padding: 10px 16px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.35); font-size: 13px; max-width: 90vw; }
   .toast button { background: none; border: none; color: #9FB0BD; font-weight: 700; font-size: 13px; cursor: pointer; }
   .modal-chips { display: flex; gap: 7px; flex-wrap: wrap; margin: 2px 96px 12px 0; }
   .modal-title { margin: 0 0 14px; font-size: 16px; font-weight: 700; line-height: 1.32; }
@@ -790,14 +790,33 @@
        остаётся читаемой, а стекло подложки рассчитано именно на неё. */
     /* селектор с body — иначе более позднее правило «nav.tabbar { background:
        var(--nav-bg) }» перебивает фон сокращённой записью */
-    body nav.tabbar { background: radial-gradient(ellipse at 20% 0, #06464D, transparent 72%), #041117;
-      border-top: 1px solid #24545E; }
-    nav.tabbar button[data-tab] { --tab-c: #00E7ED; opacity: 1;
-      color: #ADCBD1; min-height: 56px; gap: 5px; padding: 6px 0;
-      transition: color .25s ease; }
+    body nav.tabbar {
+      /* одна цельная капсула, а не полоса во всю ширину: равные внешние
+         отступы слева и справа задаются здесь, поэтому центрирование не
+         зависит от содержимого и не правится сдвигами по месту */
+      left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom));
+      border: 1px solid rgba(255,255,255,.10); border-top: 1px solid rgba(255,255,255,.10);
+      border-radius: 30px; padding: 7px 6px;
+      background: linear-gradient(180deg, rgba(41,55,66,.72), rgba(20,27,32,.86));
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      backdrop-filter: blur(20px) saturate(160%);
+      box-shadow: 0 12px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.12); }
+    nav.tabbar button[data-tab] { --tab-c: var(--accent); opacity: 1;
+      color: #A9B7C2; min-height: 52px; gap: 5px; padding: 5px 0;
+      border-radius: 24px;
+      transition: color .18s ease, transform .18s ease; }
+    /* отклик на нажатие: короткое уменьшение и возврат, без подпрыгивания */
+    nav.tabbar button[data-tab]:active { transform: scale(.97); }
+    @media (hover: hover) and (pointer: fine) {
+      nav.tabbar button[data-tab]:hover { color: #D3DEE6; } }
+    nav.tabbar button[data-tab]:focus-visible { outline: 2px solid var(--accent);
+      outline-offset: -3px; }
+    @media (prefers-reduced-motion: reduce) {
+      nav.tabbar button[data-tab] { transition: none; }
+      nav.tabbar button[data-tab]:active { transform: none; } }
     nav.tabbar button[data-tab] svg { width: 23px; height: 23px;
       stroke-width: 1.8; transition: transform .3s ease; filter: none; }
-    nav.tabbar button[data-tab].active { color: #00E7ED;
+    nav.tabbar button[data-tab].active { color: var(--accent);
       transform: none; }
     nav.tabbar button[data-tab].active svg { filter: none;
       transform: translateY(-1px); }
@@ -810,11 +829,11 @@
       nav.tabbar button[data-tab] { font-size: 10.5px; letter-spacing: -.65px; }
     }
     nav.tabbar .tabpill { top: 0; height: 0; width: 0; border-radius: 999px;
-      background: radial-gradient(ellipse at 25% 0, rgba(101,255,245,.42), transparent 62%),
-        linear-gradient(145deg, rgba(0,231,237,.32), rgba(0,187,198,.22) 52%, rgba(0,141,153,.24));
-      border: 1px solid rgba(0,231,237,.6);
-      box-shadow: inset 0 1px 1px rgba(145,255,242,.67),
-        inset 0 -2px 4px rgba(0,231,237,.25), 0 3px 12px rgba(0,0,0,.27);
+      background: radial-gradient(ellipse at 25% 0, rgba(148,240,233,.34), transparent 62%),
+        linear-gradient(145deg, rgba(69,214,205,.30), rgba(44,185,177,.20) 52%, rgba(32,140,134,.22));
+      border: 1px solid rgba(69,214,205,.55);
+      box-shadow: inset 0 1px 1px rgba(168,244,238,.55),
+        inset 0 -2px 4px rgba(69,214,205,.22), 0 3px 12px rgba(0,0,0,.30);
       -webkit-backdrop-filter: blur(14px) saturate(150%);
       backdrop-filter: blur(14px) saturate(150%);
       transition: opacity .2s ease;
@@ -823,11 +842,11 @@
     nav.tabbar .tabpill::after { content: ''; position: absolute;
       left: 18%; right: 18%; top: 3px; height: 1px; width: auto;
       aspect-ratio: auto; translate: none; animation: none;
-      background: linear-gradient(90deg, transparent, rgba(145,255,242,.67), transparent); }
+      background: linear-gradient(90deg, transparent, rgba(168,244,238,.6), transparent); }
     /* без backdrop-filter стекло не получится: делаем подложку плотнее,
        чтобы подпись и значок остались читаемыми */
     @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-      nav.tabbar .tabpill { background: linear-gradient(145deg, #0C4A52, #07343B); }
+      nav.tabbar .tabpill { background: linear-gradient(145deg, #1F4C4A, #163835); }
     }
   }
   .spinner { width: 26px; height: 26px; border: 3px solid var(--hair); border-top-color: var(--accent); border-radius: 50%; margin: 60px auto; animation: spin .8s linear infinite; }
@@ -840,7 +859,8 @@
   .logo svg { width: 21px; height: 21px; fill: none; stroke: #effff9; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .app-name { font-size: 14px; }
   .app-sub { font-size: 9px; letter-spacing: .11em; margin-top: 3px; }
-  .pane { padding: 8px 8px calc(68px + env(safe-area-inset-bottom)); }
+  /* запас снизу: высота капсулы (66) + её отступ от края (10) + воздух */
+  .pane { padding: 8px 8px calc(92px + env(safe-area-inset-bottom)); }
   .pane-head { padding: 2px 2px 8px; }
   .pane-head h2 { font-size: 19px; }
   .toolbar { gap: 6px; margin-bottom: 7px; }
@@ -1745,7 +1765,7 @@ header.app .app-sub { display:none; }
         <button class="sub-btn sub-btn-alt" id="sub-sbp" style="display:none">Оплатить через СБП или картой на сайте</button>
         <div class="sub-note" id="sub-note-trial"><span id="sub-trial-days">Первые 3 дня</span> — бесплатно. Дальше выбранный тариф, оплата картой или через СБП.<br>Оформляя подписку, вы принимаете <a href="#" onclick="openDoc('../oferta.html');return false" style="color:#fff;text-decoration:underline">условия оферты</a>.</div>
       </div>
-      <div class="group recent" id="recent" style="display:none"></div>
+      <!-- «Недавно смотрели» убрано из профиля 23.09.2026 -->
       <div class="group" id="wallet-group">
         <div class="label">💰 Кошелёк</div>
         <div class="wal-top"><span class="wal-sum" id="wal-sum">0 ₽</span><span class="wal-hint" id="wal-hint">хватит на тариф — оплатите кошельком</span></div>
@@ -1766,18 +1786,12 @@ header.app .app-sub { display:none; }
         <div class="ehint" id="ref-stats">Приглашено: 0 · заработано: 0 ₽</div>
         <div class="inv-list" id="inv-list"></div>
       </div>
-      <div class="myads-block">
-        <button class="myads-toggle" id="myads-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3z"/><path d="M8 9h8M8 12h5"/></svg>Мои объявления</button>
-        <div id="myads-list" class="myads-list" style="display:none"></div>
-      </div>
-      <div class="group" id="alerts-group">
-        <div class="label">🔔 Мои подборки</div>
-        <div class="ehint" style="margin-bottom:8px">Подборка — сохранённые условия поиска: подходящие лоты собираются в своём разделе, помечаются цветом в ленте, а о новых приходит уведомление.</div>
-        <!-- список и удаление подборок жили здесь вторым местом управления;
-             по решению владельца управление целиком в разделе «Подборки»,
-             в профиле осталась только ссылка туда -->
-        <button class="ebtn" id="lb-open" type="button">Открыть подборки</button>
-      </div>
+      <!-- «Мои объявления» убраны из профиля 23.09.2026: тот же список
+           открывается во вкладке «Объявления», два входа в одно место
+           только путали -->
+      <!-- блок «Мои подборки» убран из профиля 23.09.2026: подборки
+           живут в своей вкладке, в профиле дублировалось описание и
+           кнопка-переход -->
       <div class="group">
         <div class="label">Уведомления</div>
         <div class="rows">
@@ -1936,11 +1950,12 @@ try { themePref = localStorage.getItem('theme') || 'auto'; } catch(_){}
 function applyTheme(){
   var root = document.documentElement;
   if (themePref === 'light' || themePref === 'dark') { root.setAttribute('data-theme', themePref); return; }
-  var tgw = window.Telegram && window.Telegram.WebApp;              // auto: как в Telegram
-  // десктопный кабинет в браузере — тёмный, как лендинг (пока пользователь не выбрал тему сам)
-  try { if (!(tgw && tgw.initData) && matchMedia('(min-width: 1024px)').matches) { root.setAttribute('data-theme', 'dark'); return; } } catch(_){}
-  if (tgw && tgw.colorScheme) root.setAttribute('data-theme', tgw.colorScheme);
-  else root.removeAttribute('data-theme');                          // вне Telegram — по системной
+  // auto: единая тёмная палитра лендинга на ВСЕХ устройствах (владелец,
+  // 23.09.2026). Раньше тема зависела от экрана: на компьютере тёмная, на
+  // телефоне светлая, в Telegram — по теме клиента. Именно поэтому кабинет
+  // выглядел по-разному на разных устройствах. Явный выбор пользователя
+  // (светлая/тёмная) по-прежнему сильнее и не сбрасывается.
+  root.setAttribute('data-theme', 'dark');
 }
 function setTheme(v){ themePref = v; try { localStorage.setItem('theme', v); } catch(_){} applyTheme(); }
 applyTheme();
@@ -2643,12 +2658,24 @@ function tabPill(плавно){
   var pill=document.getElementById('tabpill'); if(!pill) return;
   if(getComputedStyle(pill).display==='none'){ pill.classList.remove('on'); return; }
   var btn=nav.querySelector('button[data-tab].active'); if(!btn) return;
-  // «Подборки» лежат внутри .tab-row вместе со скрытым плюсом:
-  // подложка должна накрывать всю ячейку, а не одну кнопку
+  // Овал сидит РОВНО под значком: центр овала совпадает с центром значка.
+  // Раньше он накрывал всю ячейку вместе с подписью, и его середина
+  // оказывалась на 12,5 px ниже значка — именно это и выглядело перекосом.
+  // Считаем от прямоугольника значка, а не кнопки: тогда ни отступы
+  // кнопки, ни высота подписи, ни безопасная зона на овал не влияют.
   var ячейка=btn.closest('.tab-row')||btn;
-  var nr=nav.getBoundingClientRect(), r=ячейка.getBoundingClientRect();
+  var значок=btn.querySelector('svg');
+  var nr=nav.getBoundingClientRect();
+  var r=(значок||ячейка).getBoundingClientRect();
   if(!r.width){ pill.classList.remove('on'); return; }
-  var x=r.left-nr.left+1, w=r.width-2, y=r.top-nr.top, h=r.height;
+  // без округления: центр значка попадает на дробную координату, и
+  // округление возвращало бы тот самый перекос, только в один пиксель
+  var w=r.width+30, h=r.height+16;
+  // clientLeft/clientTop — толщина рамки панели. Абсолютно позиционированный
+  // овал отсчитывается от ВНУТРЕННЕГО края панели, а getBoundingClientRect
+  // даёт внешний: без поправки овал уезжает ровно на толщину рамки.
+  var x=r.left+r.width/2-nr.left-nav.clientLeft-w/2;
+  var y=r.top+r.height/2-nr.top-nav.clientTop-h/2;
   // текущее ВИДИМОЕ положение: читаем до отмены анимации, поэтому быстрые
   // повторные нажатия продолжают движение с места, а не с начала
   var было=pill.getBoundingClientRect();
@@ -2872,7 +2899,7 @@ document.addEventListener('click',e=>{
   if(e.target.closest('.ad-photo-add')){ if(adPhotos.length>=3){ document.getElementById('ad-hint').textContent='Максимум 3 фото'; return; } document.getElementById('ad-files').click(); return; }
   if(e.target.closest('.ad-rm')){ var i=+e.target.closest('.ad-rm').dataset.i; adPhotos.splice(i,1); adThumbs(); return; }
   if(e.target.closest('#ad-submit')){ submitAd(); return; }
-  if(e.target.closest('#myads-toggle')){ var ml=document.getElementById('myads-list'); if(ml.style.display==='none'){ ml.style.display='flex'; loadMyAds(); } else { ml.style.display='none'; } return; }
+  if(e.target.closest('#myads-toggle')){ var ml=document.getElementById('myads-list'); if(!ml) return; if(ml.style.display==='none'){ ml.style.display='flex'; loadMyAds(); } else { ml.style.display='none'; } return; }
   if(e.target.closest('.myad-edit')){ startEditAd(+e.target.closest('.myad-edit').dataset.id); return; }
   if(e.target.closest('.myad-renew')){ renewAd(+e.target.closest('.myad-renew').dataset.id); return; }
   if(e.target.closest('.myad-del')){ deleteAd(+e.target.closest('.myad-del').dataset.id); return; }
@@ -3637,7 +3664,8 @@ function submitAd(){ var btn=document.getElementById('ad-submit'), hint=document
     _editAd=null; btn.textContent='Отправить на модерацию';
     adDoneShow(правка);
     loadAds();
-    if(document.getElementById('myads-list').style.display!=='none') loadMyAds();
+    var _мои=document.getElementById('myads-list');   // блок убран из профиля
+    if(_мои && _мои.style.display!=='none') loadMyAds();
   }).catch(function(err){ btn.disabled=false; hint.textContent=(err&&err.message)||'Не удалось отправить'; }); }
 var _editAd=null, MYADS=[];
 function myAdBadge(s){ var m={pending:'на модерации',approved:'опубликовано',rejected:'отклонено',expired:'истекло',banned:'заблокировано'}; return m[s]||s; }
@@ -4290,9 +4318,12 @@ function showLogin(msg){
     b.type = 'button';
     b.textContent = '⬇ Установить приложение';
     b.setAttribute('style',
-      'position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));'
-    + 'z-index:9999;border:0;border-radius:14px;padding:12px 18px;font:600 15px/1 system-ui,-apple-system,sans-serif;'
-    + 'color:#fff;background:#255d51;box-shadow:0 8px 24px rgba(24,34,50,.28);cursor:pointer;');
+      // кнопка висела на 16px от нижнего края и перекрывала пункты меню
+      // (на 390px — правые, на 834px — центральный). Поднимаем её над
+      // капсулой: 10 отступ + 66 высота + 12 воздух
+      'position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom));'
+    + 'z-index:9;border:0;border-radius:14px;padding:12px 18px;font:600 15px/1 system-ui,-apple-system,sans-serif;'
+    + 'color:var(--accent-ink,#071719);background:var(--accent,#45D6CD);box-shadow:0 8px 24px rgba(0,0,0,.35);cursor:pointer;');
     b.addEventListener('click', function(){
       if (!deferred) return;
       deferred.prompt();

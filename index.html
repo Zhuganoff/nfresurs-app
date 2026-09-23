@@ -21,7 +21,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#05151C">
+<meta name="theme-color" content="#141B20">
 <meta name="build" content="18.09-F">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
@@ -330,7 +330,7 @@
     .etp-logo:nth-child(3n) img { width: 36px; height: 36px; }
     .etp-logo.wide { width: 78px; }
     .etp-logo.wide img { width: 78px; height: 30px; }
-    .etp-logo:focus-visible { outline: 2px solid #00E7ED; outline-offset: 3px; border-radius: 10px; }
+    .etp-logo:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 10px; }
     /* название выбранной площадки — одна строка под композицией; высота
        фиксирована, чтобы страница не прыгала при выборе */
     .etp-label { min-height: 30px; margin: 8px 0 0; text-align: center;
@@ -338,7 +338,7 @@
     .etp-toggle { display: block; margin: 2px auto 0; padding: 8px 12px;
       border: 0; background: none; color: #8FA9B2; font: inherit; font-size: 11px;
       cursor: pointer; }
-    .etp-toggle:focus-visible { outline: 2px solid #00E7ED; }
+    .etp-toggle:focus-visible { outline: 2px solid var(--accent); }
     .etp-toggle[disabled] { cursor: default; }
     @media (max-width: 360px) {
       .etp h2 { font-size: 20px; }
@@ -407,7 +407,7 @@
   .ticker img, .sources-list img { width: 22px; height: 22px; object-fit: contain; border-radius: 5px; }
   .mark { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px;
     font-style: normal; font-size: 10px; font-weight: 700; letter-spacing: .02em;
-    background: linear-gradient(145deg, #3A4956, #1B252E); color: #BAC6CF;
+    background: linear-gradient(145deg, #42525F, #23313C); color: #BAC6CF;
     border: 1px solid #34434F; }
   .mark-enplus { background: linear-gradient(145deg, #1f8ecd, #0b4f7e);
     color: #fff; border-color: #1f8ecd; }
@@ -846,30 +846,30 @@
 
   /* ——— Dark Industrial Glass: графит, оружейная сталь, дымчатое стекло ——— */
   :root {
-    --bg: #0B0F12; --bg-2: #080C0F;
-    --surface: rgba(21,29,36,.9); --surface-2: rgba(27,37,46,.9);
+    --bg: #141B20; --bg-2: #10181E;
+    --surface: rgba(29,41,50,.9); --surface-2: rgba(35,49,60,.9);
     --text: #F1F5F7; --dim: #BAC6CF; --faint: #91A2AF;
     --hair: #34434F;
     --accent: #45D6CD; --accent-deep: #2CB9B1; --accent-ink: #071719;
     /* коды категорий по палитре промта: различимы и не спорят с графитом */
     --oil: #45D6CD; --scrap: #BAC6CF; --pipe: #647887;
     --m-oil-soft: rgba(69,214,205,.16); --m-scrap-soft: rgba(186,198,207,.14); --m-pipe-soft: rgba(100,120,135,.18);
-    --glass: rgba(21,29,36,.9); --glass-brd: #34434F; --glass-hi: rgba(217,230,239,.08);
+    --glass: rgba(29,41,50,.9); --glass-brd: #34434F; --glass-hi: rgba(217,230,239,.08);
   }
-  body, .bg { background: #0B0F12; }
-  .bg .veil { background: linear-gradient(180deg, rgba(11,15,18,.78) 0%, rgba(11,15,18,.5) 40%, rgba(8,12,15,.72) 100%) !important; }
+  body, .bg { background: #141B20; }
+  .bg .veil { background: linear-gradient(180deg, rgba(20,27,32,.78) 0%, rgba(20,27,32,.5) 40%, rgba(16,24,30,.72) 100%) !important; }
   .glow .g1 { background: radial-gradient(circle, rgba(40,52,63,.75) 0%, rgba(40,52,63,0) 62%); }
   .glow .g2 { background: radial-gradient(circle, rgba(58,73,86,.5) 0%, rgba(58,73,86,0) 62%); }
   .glow .g3 { background: radial-gradient(circle, rgba(69,214,205,.05) 0%, rgba(69,214,205,0) 62%); }
-  .top, body.has-waves .top { background: rgba(11,15,18,.95) !important; border-bottom: 1px solid #34434F; }
+  .top, body.has-waves .top { background: rgba(20,27,32,.95) !important; border-bottom: 1px solid #34434F; }
   .top::after { display: none; }
   .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 8px 24px rgba(0,0,0,.2); }
   .btn-primary:hover { background: #6BE5DD; }
   .btn-ghost { background: rgba(27,37,46,.9); border-color: #647887; color: #F1F5F7; }
-  .lot { background: linear-gradient(145deg, #28343F 0%, #1B252E 45%, #151D24 100%);
+  .lot { background: linear-gradient(145deg, #303E4B 0%, #23313C 45%, #1D2932 100%);
     border-color: #34434F; box-shadow: 0 12px 32px rgba(0,0,0,.28), inset 0 1px 0 rgba(217,230,239,.08); }
   .stat, .who-card, .vs-col, .where, .face, .price-wrap {
-    background: linear-gradient(145deg, #28343F 0%, #1B252E 45%, #151D24 100%) !important;
+    background: linear-gradient(145deg, #303E4B 0%, #23313C 45%, #1D2932 100%) !important;
     border-color: #34434F !important; box-shadow: 0 8px 24px rgba(0,0,0,.2) !important; }
   .price-wrap::before { background: radial-gradient(35% 45% at 18% 25%, rgba(69,214,205,.1), transparent 70%) !important; animation: none !important; }
   .price-wrap::after { display: none; }
@@ -886,13 +886,13 @@
   .vs-manual:hover { border-color: rgba(100,120,135,.75) !important; box-shadow: 0 12px 32px rgba(0,0,0,.42), inset 0 1px 0 rgba(217,230,239,.12) !important; }
   .vs-manual:hover .vs-h, .vs-manual:hover li::before { color: #BAC6CF !important; -webkit-text-fill-color: #BAC6CF !important; }
   .vs-ours:hover { border-color: rgba(69,214,205,.6) !important; box-shadow: 0 12px 32px rgba(0,0,0,.42), inset 0 1px 0 rgba(217,230,239,.12) !important; }
-  .step .dot { background: linear-gradient(145deg, #28343F, #151D24); border-color: #34434F; }
+  .step .dot { background: linear-gradient(145deg, #303E4B, #1D2932); border-color: #34434F; }
   .step .dot svg { color: var(--accent); }
   .step:hover .dot { background: radial-gradient(circle at 50% 35%, #2CB9B1, #10161B 72%) !important; border-color: rgba(140,244,236,.7) !important;
     box-shadow: 0 0 0 1px rgba(140,244,236,.3), 0 0 30px -6px rgba(69,214,205,.85) !important; }
   .step:hover h3 { color: #F1F5F7; text-shadow: 0 0 20px rgba(69,214,205,.45); }
   .hero h1 em { color: var(--accent); }
-  .ticker { background: rgba(11,15,18,.7); border-color: #34434F; }
+  .ticker { background: rgba(20,27,32,.7); border-color: #34434F; }
   .stat:hover { box-shadow: 0 12px 32px rgba(0,0,0,.42), 0 0 0 1px rgba(69,214,205,.22) !important; border-color: rgba(69,214,205,.35) !important; }
   .stat::before { background: conic-gradient(from var(--sa, 0deg), transparent 0 62%, rgba(69,214,205,.9) 74%, #8CF4EC 80%, rgba(100,120,135,.9) 88%, transparent 100%); }
   .lot-fresh, .live-note { color: var(--accent); }
@@ -921,7 +921,7 @@
   .doc-box { position: relative; display: flex; flex-direction: column;
     width: min(820px, 100%); max-height: min(86vh, 900px); border-radius: 22px;
     border: 1px solid #34434F; overflow: hidden;
-    background: linear-gradient(145deg, #1B252E 0%, #151D24 55%, #10161B 100%);
+    background: linear-gradient(145deg, #23313C 0%, #1D2932 55%, #181F26 100%);
     box-shadow: inset 0 1px 0 rgba(217,230,239,.08), 0 40px 90px -30px rgba(0,0,0,.85);
     animation: docin .45s cubic-bezier(.16,1,.3,1) both; }
   @keyframes docin { from { opacity: 0; transform: translateY(16px) scale(.985); } }
@@ -930,7 +930,7 @@
   .doc-head h3 { font-size: 17px; font-weight: 700; color: var(--text); flex: 1;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .doc-x { width: 38px; height: 38px; flex: none; border-radius: 50%; border: 1px solid #34434F;
-    background: #1B252E; color: var(--dim); font-size: 20px; line-height: 1; cursor: pointer; }
+    background: #23313C; color: var(--dim); font-size: 20px; line-height: 1; cursor: pointer; }
   .doc-x:hover { background: rgba(255,255,255,.1); color: var(--text); }
   .doc-body { overflow: auto; padding: 18px 20px 24px; -webkit-overflow-scrolling: touch;
     font-size: 14.5px; line-height: 1.6; color: var(--dim); }
@@ -962,9 +962,12 @@
        отсюда. Без объявления часть из них рисуется по светлой схеме.
        На компьютере схему не меняем — правило только в адаптивном диапазоне. */
     :root { color-scheme: dark; }
-    :root { --pad: 24px; --bg: #05151C; --bg-2: #041117;
-      --accent: #00E7ED; --accent-deep: #00BBC6; --accent-ink: #002127;
-      --hair: rgba(0,231,237,.24); --glass-brd: #24545E; }
+    /* Палитра на телефоне и планшете больше НЕ отличается от компьютера:
+       владелец 23.09.2026 потребовал одинаковый вид везде. Раньше здесь
+       была отдельная схема (#141B20 + бирюзовый #00E7ED), из-за неё сайт
+       на телефоне не совпадал ни с сайтом на компьютере, ни с кабинетом.
+       Осталась только величина отступа — она про размер экрана, не про цвет. */
+    :root { --pad: 24px; }
     body, .bg { background: var(--bg); }
     /* Полноэкранное зерно (body::after: position: fixed, inset: 0,
        z-index: 999, mix-blend-mode: overlay) на телефоне и планшете
@@ -982,8 +985,8 @@
        на устройстве сочетания T3; промышленная иллюстрация первого экрана
        живёт в .hero-copy и не затрагивается. */
     .bg { display: none !important; }
-    html, body { background: #05151C !important; }
-    .bg .veil { background: linear-gradient(180deg, rgba(5,21,28,.82), rgba(5,21,28,.6) 45%, rgba(4,17,23,.86)) !important; }
+    html, body { background: var(--bg) !important; }
+    .bg .veil { background: linear-gradient(180deg, rgba(20,27,32,.82), rgba(20,27,32,.6) 45%, rgba(16,24,30,.86)) !important; }
     /* переход к разделу не должен прятать заголовок под шапкой:
        её полная высота — 78px плюс безопасная область */
     html { scroll-padding-top: calc(78px + env(safe-area-inset-top)); }
@@ -1009,7 +1012,7 @@
     .top, body.has-waves .top { position: sticky; top: 0; left: auto; right: auto;
       z-index: 60; padding-top: env(safe-area-inset-top);
       border: 0;
-      background: #05151C !important;
+      background: #141B20 !important;
       /* Тени, продлевавшей фон шапки вверх, здесь нет намеренно.
          Владелец проверил на iPhone: с ней (сборка E) лендинг мигал над
          шапкой, без неё и без слоёв ниже (проверочная T3) — не мигает.
@@ -1033,11 +1036,11 @@
        слой декоративный, нажатия не перехватывает */
     .top::after { content: ''; position: absolute; left: 0; right: 0; top: 100%;
       height: 16px; z-index: 1; pointer-events: none;
-      background: linear-gradient(180deg, rgba(5,21,28,.85), rgba(5,21,28,0)); }
+      background: linear-gradient(180deg, rgba(20,27,32,.85), rgba(20,27,32,0)); }
     /* при прокрутке нижняя граница становится заметнее — видно, что шапка
        лежит поверх содержимого */
     body.scrolled .top { box-shadow: 0 10px 24px -18px rgba(0,0,0,.9) !important; }
-    body.scrolled .top::after { background: linear-gradient(180deg, rgba(5,21,28,.95), rgba(5,21,28,0)); }
+    body.scrolled .top::after { background: linear-gradient(180deg, rgba(20,27,32,.95), rgba(20,27,32,0)); }
     @media (prefers-reduced-motion: reduce) { .top { transition: none; } }
     .top-in { height: 78px; gap: 10px; }
     .brand { min-width: 0; gap: 9px; }
@@ -1127,7 +1130,7 @@
       width: min(66%, 218px); margin-top: 20px; }
     .hero .cta .btn { min-width: 0; min-height: 46px; padding: 12px 8px; gap: 6px;
       font-size: clamp(11.5px, 3.2vw, 13.5px); font-weight: 800; border-radius: 11px; white-space: nowrap; }
-    .hero .cta .btn-primary { background: #00E7ED; color: #002127; box-shadow: 0 8px 30px rgba(0,0,0,.12); }
+    .hero .cta .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 8px 30px rgba(0,0,0,.12); }
     .hero .cta .btn-ghost { display: none; }
     .hero .cta .btn svg { width: 18px; height: 18px; flex: none; }
     .hero .cta .btn .mobile-cta-arrow { display: block; width: 9px; height: 16px; margin-left: auto; }
@@ -1136,7 +1139,7 @@
       font-size: 13.5px; line-height: 1.45; color: #F1F5F7 !important; text-align: left;
       white-space: normal; text-wrap: wrap; letter-spacing: 0; font-weight: 500;
       -webkit-text-fill-color: currentColor !important; text-shadow: 0 1px 12px #03151D; }
-    .trial-gift { display: block; width: 30px; height: 35px; flex: none; margin-top: 2px; color: #00E7ED; }
+    .trial-gift { display: block; width: 30px; height: 35px; flex: none; margin-top: 2px; color: var(--accent); }
     .hero .trial-offer { display: block; font-weight: 800; }
     .hero .trial-start { display: block; }
     .hero .trial-ref { display: block; }
@@ -1144,7 +1147,7 @@
 
     .stage { position: relative; z-index: 2; margin-top: 18px; padding: 12px; overflow: visible;
       border: 1px solid rgba(186,198,207,.22); border-radius: 20px;
-      background: rgba(11,15,18,.74); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+      background: rgba(20,27,32,.74); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
       box-shadow: 0 22px 50px rgba(0,0,0,.36), inset 0 1px rgba(255,255,255,.06); }
     .stack { padding: 0; transform: none; animation: none; }
     .stack-label { display: flex; align-items: center; gap: 7px; margin: 0 0 8px;
@@ -1253,7 +1256,7 @@
     #where .install-wrap[open] > summary::after { transform: rotate(225deg); }
     #where .install-wrap[open] > .install-mobile { display: grid; grid-auto-rows: 1fr; gap: 10px; list-style: none;
       margin: 0; padding: 0 0 16px; }
-    .install-mobile > li { padding: 13px; border: 1px solid #24545E; border-radius: 13px;
+    .install-mobile > li { padding: 13px; border: 1px solid var(--hair); border-radius: 13px;
       background: rgba(3,22,30,.6); }
     .install-device-title { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
     .install-device-title b { font-size: 14px; line-height: 1.3; font-weight: 700; color: #F1F5F7; }
@@ -1273,14 +1276,14 @@
     /* Нижние разделы продолжают бирюзовую палитру первого экрана. */
     .mat .face, #where .where, .price-wrap {
       background: linear-gradient(135deg, #0B2C37, #071B24) !important;
-      border-color: #24545E !important; box-shadow: 0 8px 24px rgba(0,0,0,.16) !important; }
-    #how .step, .plan, .sources-list .src { background: #08212B; border-color: #24545E; }
+      border-color: var(--hair) !important; box-shadow: 0 8px 24px rgba(0,0,0,.16) !important; }
+    #how .step, .plan, .sources-list .src { background: var(--surface-2); border-color: var(--hair); }
     .plan-best { background: #0A3039; border-color: var(--accent); }
     .price-wrap::before { background: radial-gradient(35% 45% at 18% 25%, rgba(0,231,237,.1), transparent 70%) !important; }
     .btn-primary:hover, .cc-ok:hover { background: #00EDF1; box-shadow: 0 8px 24px rgba(0,231,237,.18); }
     .price .btn-primary { animation: none; box-shadow: 0 8px 24px rgba(0,231,237,.18); }
     #how .step .dot, #how .step:hover .dot, #how .step:focus-within .dot {
-      background: #08212B !important; border-color: rgba(0,231,237,.4) !important; box-shadow: none !important; }
+      background: var(--surface-2) !important; border-color: rgba(0,231,237,.4) !important; box-shadow: none !important; }
     #how .step .dot::before { background: radial-gradient(circle at 32% 28%, rgba(0,237,241,.25), transparent 72%); }
     #how .step:hover .dot svg, #how .step:focus-within .dot svg { color: #00EDF1; filter: none; }
     #how .step:hover h3, #how .step:focus-within h3 { color: #F1F5F7; text-shadow: none; }
@@ -1307,7 +1310,7 @@
     .hero { grid-template-columns: minmax(0, 1fr); }
     .hero-copy { min-width: 0; padding-top: 116px; padding-bottom: 40px; min-height: max(900px, 100svh); }
     .hero-copy::before, .hero-copy::after { top: 96px;
-      background-image: linear-gradient(90deg, #05151C 0%, rgba(5,21,28,.88) 24%, rgba(5,21,28,.24) 60%, transparent 83%), url(img/hero-mobile-poster.jpg);
+      background-image: linear-gradient(90deg, #141B20 0%, rgba(20,27,32,.88) 24%, rgba(20,27,32,.24) 60%, transparent 83%), url(img/hero-mobile-poster.jpg);
       background-size: 100% 100%, auto 100%; background-position: center, right top; }
     .hero .eyebrow { font-size: 11px; letter-spacing: .22em; }
     .hero h1 { width: min(76%, 660px); font-size: clamp(38px, 4.8vw, 54px); line-height: 1.12; }
@@ -1404,7 +1407,7 @@
     .lg-ov.closing { animation: lgdim .35s ease reverse both; }
     @keyframes lgdim { from { opacity: 0; } }
     .lg-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 14px; width: min(400px, 100%); padding: 30px 28px 24px; border-radius: 24px;
-      background: linear-gradient(145deg, #1B252E 0%, #151D24 55%, #10161B 100%);
+      background: linear-gradient(145deg, #23313C 0%, #1D2932 55%, #181F26 100%);
       border: 1px solid #34434F;
       -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
       box-shadow: inset 0 1px 0 rgba(217,230,239,.08), 0 40px 90px -30px rgba(0,0,0,.85);
@@ -1421,7 +1424,7 @@
        содержимое всё равно показываем — пустое окно недопустимо */
     .lg-card.shown > * { opacity: 1 !important; transform: none !important; }   /* страховка */
     @keyframes lgrow { to { opacity: 1; transform: none; } }
-    .lg-x { position: absolute; top: 10px; right: 12px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid #34434F; background: #1B252E; color: var(--dim); font-size: 22px; line-height: 1; cursor: pointer; transition: background .25s, color .25s; }
+    .lg-x { position: absolute; top: 10px; right: 12px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid #34434F; background: #23313C; color: var(--dim); font-size: 22px; line-height: 1; cursor: pointer; transition: background .25s, color .25s; }
     .lg-x:hover { background: rgba(255,255,255,.14); color: var(--text); }
     .lg-logo { width: 56px; height: 56px; filter: drop-shadow(0 0 18px rgba(69,214,205,.35)); }
     .lg-title { font-family: "Onest", sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -.01em; opacity: 1;
@@ -1458,13 +1461,13 @@
       align-items: center; justify-content: flex-start; padding: 24px; overflow-y: auto;
       overscroll-behavior: contain; color-scheme: dark; color: #F1F5F7;
       font-family: "Golos Text", system-ui, -apple-system, sans-serif;
-      background: linear-gradient(180deg, rgba(5,21,28,.97) 10%, rgba(5,21,28,.82) 65%, rgba(5,21,28,.8)),
-        url('/img/hero-mobile-industrial.jpg') center bottom / cover no-repeat, #05151C; }
+      background: linear-gradient(180deg, rgba(20,27,32,.97) 10%, rgba(20,27,32,.82) 65%, rgba(20,27,32,.8)),
+        url('/img/hero-mobile-industrial.jpg') center bottom / cover no-repeat, #141B20; }
     #login-gate.auth-screen { z-index: 10000; }
     .auth-screen[hidden], .auth-screen [hidden] { display: none !important; }
     .auth-screen .lg-card { position: relative; display: flex; flex-direction: column; align-items: stretch;
       flex-shrink: 0; gap: 16px; width: min(420px, 100%); margin: auto; padding: 28px;
-      background: #08212B; border: 1px solid #254750; border-radius: 22px;
+      background: var(--surface-2); border: 1px solid #254750; border-radius: 22px;
       box-shadow: 0 24px 70px rgba(0,0,0,.35); }
     .auth-brand { display: flex; align-items: center; gap: 12px; padding-right: 30px; }
     .auth-brand svg { flex: none; width: 40px; height: 44px; }
@@ -1484,9 +1487,9 @@
       border: 1px solid #31515D; border-radius: 12px; background: #051A23; color: #F1F5F7;
       font: 400 16px/1.4 "Golos Text", system-ui, sans-serif; outline: none; }
     .auth-screen input::placeholder { color: #819CA9; opacity: 1; }
-    .auth-screen input:focus { border-color: #00E7ED; box-shadow: 0 0 0 3px rgba(0,231,237,.12); }
+    .auth-screen input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,231,237,.12); }
     .auth-screen #lg-btn { width: 100%; min-height: 52px; padding: 14px 12px;
-      border: 0; border-radius: 12px; background: #00E7ED; color: #002127;
+      border: 0; border-radius: 12px; background: var(--accent); color: var(--accent-ink);
       font: 700 16px/1.4 "Golos Text", system-ui, sans-serif; cursor: pointer; box-shadow: none; }
     .auth-screen #lg-btn:hover { background: #44F1F4; }
     .auth-screen #lg-btn:disabled { opacity: .65; cursor: wait; }
@@ -1498,7 +1501,7 @@
     .auth-screen .lg-consent { max-width: none; margin: 0; text-align: left;
       color: #829FAB; font-size: 11px; line-height: 1.5; }
     .auth-screen .lg-consent a { color: #BBD0D9; }
-    .auth-screen a:focus-visible, .auth-screen button:focus-visible { outline: 2px solid #00E7ED; outline-offset: 3px; }
+    .auth-screen a:focus-visible, .auth-screen button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     body.lg-open { overflow: hidden; }
       .auth-screen { padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom)); }
       .auth-screen .lg-card { padding: 24px 20px; gap: 15px; }
@@ -1742,19 +1745,19 @@ header.app .app-sub { display:none; }
           <div class="stack-label mono">Так выглядят лоты в ленте</div>
           <!--SHOWCASE_START-->
           <article class="lot" style="--m: var(--oil); --i: 0; --z: 48">
-            <div class="lot-head mono"><span>B2B-Center</span><span>реализация</span></div>
-            <div class="lot-title">Смесь масел минеральных отработанных Смесь…</div>
-            <div class="lot-meta"><span>Курская область</span><span>23.09.2026</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Нефтеюганск</div>
+            <div class="lot-meta"><span>ХМАО — Югра</span><span>приём заявок до 15 сентября</span></div>
           </article>
           <article class="lot" style="--m: var(--scrap); --i: 1; --z: 24">
-            <div class="lot-head mono"><span>Tender.Pro</span><span>реализация</span></div>
-            <div class="lot-title">Лома цветных металлов г. Воронеж (сентябрь…</div>
-            <div class="lot-meta"><span>Воронежская область</span><span>23.09.2026 15:15</span></div>
+            <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
+            <div class="lot-title">Лом чёрных металлов, 200 т, Жердевский сахарный завод</div>
+            <div class="lot-meta"><span>Тамбовская область</span><span>самовывоз</span></div>
           </article>
           <article class="lot" style="--m: var(--pipe); --i: 2; --z: 0">
-            <div class="lot-head mono"><span>Tender.Pro</span><span>реализация</span></div>
-            <div class="lot-title">Металлопрокат 193 позиции (балка, квадрат,…</div>
-            <div class="lot-meta"><span>Республика Башкортостан</span><span>13.10.2026 10:10</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Труба обсадная 139,7×9,17 P-110 с муфтами, 61 т</div>
+            <div class="lot-meta"><span>Ямало-Ненецкий АО</span><span class="lot-price">6 285 866 ₽</span></div>
           </article>
           <!--SHOWCASE_END-->
         </div>
@@ -1777,9 +1780,9 @@ header.app .app-sub { display:none; }
     <div class="wrap">
       <div class="grid-4">
         <div class="stat" data-i style="--i:0"><div class="num display" data-to="18">18</div><!--SITES_COUNT--><div class="lbl">площадок под наблюдением, проверка каждый час</div></div>
-        <div class="stat" data-i style="--i:1"><div class="num display" data-to="642" data-suffix="+"><!--LOTS_START-->642<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
+        <div class="stat" data-i style="--i:1"><div class="num display" data-to="526" data-suffix="+"><!--LOTS_START-->526<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
         <div class="stat" data-i style="--i:2"><div class="num display" data-to="24" data-suffix="/7">24<small>/7</small></div><div class="lbl">мониторинг площадок в режиме онлайн, без выходных</div></div>
-        <div class="stat" data-i style="--i:3"><div class="num display" data-to="62" data-suffix="+"><!--NEW24_START-->62<!--NEW24_END--><small>+</small></div><div class="lbl">новых лотов за сутки: нефтепродукты, лом, трубы</div></div>
+        <div class="stat" data-i style="--i:3"><div class="num display" data-to="93" data-suffix="+"><!--NEW24_START-->93<!--NEW24_END--><small>+</small></div><div class="lbl">новых лотов за сутки: нефтепродукты, лом, трубы</div></div>
       </div>
     </div>
   </section>
