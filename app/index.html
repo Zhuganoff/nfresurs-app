@@ -1744,7 +1744,8 @@ header.app .app-sub { display:none; }
         </div>
         <label class="lb-check"><input type="checkbox" id="lb-tg" checked> Присылать в Telegram</label>
         <label class="lb-check"><input type="checkbox" id="lb-em"> Присылать на электронную почту</label>
-        <label class="lb-check soon"><input type="checkbox" id="lb-max" disabled> Уведомление в MAX <span class="lb-soon">скоро</span></label>
+        <label class="lb-check"><input type="checkbox" id="lb-max"> Присылать в MAX</label>
+        <div class="ehint" id="lb-kw-hint" style="margin:-2px 0 6px">Без ключевых слов подборка возьмёт все лоты выбранной категории.</div>
         <div class="lb-buttons">
           <button class="lb-save" id="lb-save" type="button">Создать и показать лоты</button>
           <button class="lb-cancel" id="lb-cancel" type="button">Отмена</button>
@@ -3192,6 +3193,7 @@ function lbOpen(item){
   lbEl('lb-cat').value = item ? (item.category||'') : '';
   lbEl('lb-tg').checked = item ? !!item.notify_tg : true;
   lbEl('lb-em').checked = item ? !!item.notify_email : false;
+  lbEl('lb-max').checked = item ? !!item.notify_max : false;
   LB.sites = item && item.sites
     ? item.sites.split(',').map(function(s){ return s.trim(); }).filter(Boolean) : [];
   LB.sitesAll = !LB.sites.length;
@@ -3233,6 +3235,7 @@ function lbPaint(){
     if(a.excludes) parts.push('кроме: '+a.excludes);
     var каналы=[]; if(a.notify_tg) каналы.push('Telegram');
     if(a.notify_email) каналы.push('почта');
+    if(a.notify_max) каналы.push('MAX');
     var режим = (LB_MODES.filter(function(m){ return m.v === (a.mode||'instant'); })[0]
                  || LB_MODES[0]).label;
     parts.push(режим);
@@ -3440,10 +3443,14 @@ function lbSave(){
     category: lbEl('lb-cat').value,
     notify_tg: lbEl('lb-tg').checked,
     notify_email: lbEl('lb-em').checked,
+    notify_max: lbEl('lb-max').checked,
     sites: LB.sitesAll ? '' : LB.sites.join(', '),
     mode: LB.mode
   };
-  if(!body.keywords){ lbMsg('Укажите хотя бы одно ключевое слово', 'err'); return; }
+  // Слова не обязательны, если подборка сужена иначе: выбрана категория,
+  // регионы или площадки — тогда это «все лоты по этому условию».
+  if(!body.keywords && !body.category && !body.regions && !body.sites){
+    lbMsg('Укажите ключевые слова или выберите категорию', 'err'); return; }
   var url = LB.edit ? '/api/alerts/update' : '/api/alerts/create';
   if(LB.edit) body.id = LB.edit;
   lbEl('lb-save').disabled = true;
