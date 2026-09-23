@@ -1545,8 +1545,10 @@ header.app .app-sub { display:none; }
       try { if (window.external && window.external.notify) window.external.notify(JSON.stringify({eventType:type, eventData:data||{}})); } catch(_){}
       try { if (window.parent && window.parent !== window) window.parent.postMessage(JSON.stringify({eventType:type, eventData:data||{}}), '*'); } catch(_){}
     }
-    raw('web_app_set_background_color', {color:'#070d0b'});
-    raw('web_app_set_header_color', {color:'#070d0b'});
+    // цвет окна Telegram задаётся отдельно от страницы: пока здесь стоял
+    // старый #070d0b, рамка Mini App была темнее и зеленее самой страницы
+    raw('web_app_set_background_color', {color:'#141B20'});
+    raw('web_app_set_header_color', {color:'#141B20'});
     raw('web_app_ready');
     raw('web_app_expand');
     // живой фон заставки — только на компьютере: на телефоне заставки нет
