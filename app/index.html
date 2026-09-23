@@ -301,8 +301,8 @@
   .modal-fav svg { width: 18px; height: 18px; }
   .modal-fav.on { color: #e5484d; }
   .modal-hide { width: 100%; margin-top: 10px; padding: 9px; border: none; background: transparent; color: var(--text-faint); font-size: 13px; cursor: pointer; }
-  .toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 300; display: flex; align-items: center; gap: 14px; background: #1e2a24; color: #fff; padding: 10px 16px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.35); font-size: 13px; max-width: 90vw; }
-  .toast button { background: none; border: none; color: #9FB0BD; font-weight: 700; font-size: 13px; cursor: pointer; }
+  .toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 300; display: flex; align-items: center; gap: 14px; background: var(--surface-2); color: var(--text); padding: 10px 16px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.35); font-size: 13px; max-width: 90vw; }
+  .toast button { background: none; border: none; color: var(--accent); font-weight: 700; font-size: 13px; cursor: pointer; }
   .modal-chips { display: flex; gap: 7px; flex-wrap: wrap; margin: 2px 96px 12px 0; }
   .modal-title { margin: 0 0 14px; font-size: 16px; font-weight: 700; line-height: 1.32; }
   .modal-meta { display: flex; flex-direction: column; gap: 9px; margin: 0 0 18px; }
@@ -331,7 +331,7 @@
   .modal-details::before { content: ""; position: absolute; inset: 0; border-radius: inherit;
     padding: 1.4px; pointer-events: none;
     background: conic-gradient(from var(--da, 0deg), rgba(180,196,210,.25) 0deg,
-      rgba(127,208,180,.85) 60deg, #ffffff 95deg, rgba(217,160,74,.75) 130deg,
+      rgba(69,214,205,.85) 60deg, #ffffff 95deg, rgba(217,160,74,.75) 130deg,
       rgba(180,196,210,.25) 200deg, rgba(180,196,210,.25) 360deg);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -355,7 +355,7 @@
   :root:not([data-theme="light"]) .modal-details {
     background: linear-gradient(180deg, #141f1b 0%, #101917 100%);
     box-shadow: 0 20px 44px -26px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.06); }
-  :root[data-theme="dark"] .det-text, :root[data-theme="dark"] .det-v { color: #eef3f0; }
+  :root[data-theme="dark"] .det-text, :root[data-theme="dark"] .det-v { color: var(--text); }
   :root[data-theme="dark"] .det-rows { background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.1); }
   :root[data-theme="dark"] .det-row { border-color: rgba(255,255,255,.07); }
   :root[data-theme="dark"] .det-row:nth-child(odd) { background: rgba(255,255,255,.025); }
@@ -635,7 +635,7 @@
   @keyframes adpop { from { transform: scale(.85); opacity: 0; } }
   .ad-check { width: 62px; height: 62px; border-radius: 50%; flex: none;
     display: grid; place-items: center; color: #fff;
-    background: linear-gradient(145deg, #3fd47f, #1f9d55);
+    background: linear-gradient(145deg, var(--accent), var(--accent-deep, #2CB9B1));
     box-shadow: 0 10px 26px -10px rgba(31,157,85,.9); }
   .ad-check svg { width: 34px; height: 34px; stroke-dasharray: 34;
     stroke-dashoffset: 34; animation: adtick .5s .18s ease forwards; }
@@ -785,7 +785,7 @@
        tabPill(). Стекло ограничено самим меню: полноэкранных слоёв,
        зерна и mix-blend-mode поверх шапки здесь не появляется. */
     /* палитра меню задана эталоном и не зависит от светлой/тёмной темы
-       приложения: панель тёмная, активный акцент #00E7ED, неактивные —
+       приложения: панель тёмная, активный акцент — var(--accent), неактивные —
        светлые серо-бирюзовые. На светлой теме тёмная нижняя панель
        остаётся читаемой, а стекло подложки рассчитано именно на неё. */
     /* селектор с body — иначе более позднее правило «nav.tabbar { background:
@@ -855,7 +855,7 @@
 
   /* Dense Ledger — компактная рабочая лента */
   header.app { padding: 8px 13px; padding-top: calc(8px + env(safe-area-inset-top)); gap: 10px; }
-  .logo { width: 36px; height: 36px; border-radius: 11px; background: linear-gradient(145deg,#58b99a,#28343F); box-shadow: 0 5px 15px rgba(40,130,105,.22); }
+  .logo { width: 36px; height: 36px; border-radius: 11px; background: linear-gradient(145deg, var(--accent), #303E4B); box-shadow: 0 5px 15px rgba(40,130,105,.22); }
   .logo svg { width: 21px; height: 21px; fill: none; stroke: #effff9; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .app-name { font-size: 14px; }
   .app-sub { font-size: 9px; letter-spacing: .11em; margin-top: 3px; }
@@ -909,7 +909,9 @@
   nav.tabbar button { opacity: .6; font-size: 10px; gap: 2px; }
   nav.tabbar button.active { opacity: 1; }
   nav.tabbar button svg { width: 26px; height: 26px; stroke-width: 1.8; }
-  .sharebtn { background: linear-gradient(145deg,#4a9a82,#255d51); box-shadow: 0 5px 16px rgba(37,93,81,.25); }
+  .sharebtn { background: linear-gradient(145deg, var(--accent), var(--accent-deep, #2CB9B1));
+    color: var(--accent-ink, #071719);
+    box-shadow: 0 5px 16px rgba(69,214,205,.22); }
   :root[data-theme="dark"] .card, :root[data-theme="dark"] .rows { box-shadow: 0 3px 10px rgba(0,0,0,.24); }
   :root[data-theme="dark"] header.app { box-shadow: 0 5px 22px rgba(0,0,0,.28); }
   /* ═══════════ Личный кабинет — десктоп (≥1024px): боковая панель, сетка, две колонки ═══════════ */
@@ -1119,7 +1121,7 @@
   .doc-box { position: relative; display: flex; flex-direction: column;
     width: min(820px, 100%); max-height: min(86vh, 900px); border-radius: 22px;
     border: 1px solid #34434F; overflow: hidden;
-    background: linear-gradient(145deg, #1B252E 0%, #151D24 55%, #10161B 100%);
+    background: linear-gradient(145deg, #23313C 0%, #1D2932 55%, #181F26 100%);
     box-shadow: inset 0 1px 0 rgba(217,230,239,.08), 0 40px 90px -30px rgba(0,0,0,.85);
     animation: docin .45s cubic-bezier(.16,1,.3,1) both; }
   @keyframes docin { from { opacity: 0; transform: translateY(16px) scale(.985); } }
@@ -1128,7 +1130,7 @@
   .doc-head h3 { font-size: 17px; font-weight: 700; color: #EAF2F8; flex: 1;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .doc-x { width: 38px; height: 38px; flex: none; border-radius: 50%; border: 1px solid #34434F;
-    background: #1B252E; color: #C3D0DA; font-size: 20px; line-height: 1; cursor: pointer; }
+    background: #23313C; color: var(--text-dim); font-size: 20px; line-height: 1; cursor: pointer; }
   .doc-x:hover { background: rgba(255,255,255,.1); color: #EAF2F8; }
   .doc-body { overflow: auto; padding: 18px 20px 24px; -webkit-overflow-scrolling: touch;
     font-size: 14.5px; line-height: 1.6; color: #C3D0DA; }
@@ -1153,7 +1155,7 @@
     position: fixed; inset: 0; z-index: 1000;
     display: grid; place-items: center;
     background:
-      radial-gradient(120% 90% at 50% 34%, #28343F 0%, #151D24 46%, #0B0F12 100%);
+      radial-gradient(120% 90% at 50% 34%, #303E4B 0%, #1D2932 46%, #141B20 100%);
     animation: splashOut .6s ease 3.9s forwards;
     overflow: hidden;
   }
@@ -1230,7 +1232,9 @@
       flex-direction: column; align-items: center; justify-content: center;
       gap: 14px; padding: 24px;
       font-family: system-ui, -apple-system, sans-serif; }
-    #login-gate { background: #070d0b !important; color: #eef3f0; overflow: hidden; }
+    /* фон экрана входа брался из старой палитры (#070d0b) и был темнее и
+       зеленее кабинета — человек видел смену цвета прямо при входе */
+    #login-gate { background: var(--app-bg) !important; color: var(--text); overflow: hidden; }
     #login-gate canvas.waves { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.2s ease; }
     #login-gate.has-waves canvas.waves { opacity: 1; }
     #login-gate .lg-veil { position: absolute; inset: 0; pointer-events: none;
@@ -1243,30 +1247,30 @@
       width: min(400px, 100%); padding: 30px 28px 24px; border-radius: 24px;
       background: rgba(14,24,20,.55); border: 1px solid rgba(255,255,255,.14);
       -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 40px 90px -30px rgba(0,0,0,.85), 0 0 0 1px rgba(127,208,180,.06);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 40px 90px -30px rgba(0,0,0,.85), 0 0 0 1px rgba(69,214,205,.06);
       transform-origin: 50% 50%; animation: lgopen .95s cubic-bezier(.16,1,.3,1) both; }
     @keyframes lgopen { 0% { opacity: 0; transform: scale(.18); filter: blur(14px); border-radius: 50%; } 55% { opacity: 1; filter: blur(0); } 100% { transform: none; border-radius: 24px; } }
     .lg-card > * { opacity: 0; transform: translateY(10px); animation: lgrow .6s cubic-bezier(.16,1,.3,1) forwards; }
     .lg-card > :nth-child(1) { animation-delay: .45s; } .lg-card > :nth-child(2) { animation-delay: .52s; } .lg-card > :nth-child(3) { animation-delay: .59s; }
     .lg-card > :nth-child(4) { animation-delay: .66s; } .lg-card > :nth-child(5) { animation-delay: .73s; } .lg-card > :nth-child(6) { animation-delay: .8s; } .lg-card > :nth-child(7) { animation-delay: .87s; }
     @keyframes lgrow { to { opacity: 1; transform: none; } }
-    .lg-logo { width: 56px; height: 56px; filter: drop-shadow(0 0 18px rgba(127,208,180,.45)); }
+    .lg-logo { width: 56px; height: 56px; filter: drop-shadow(0 0 18px rgba(69,214,205,.45)); }
     .lg-title { font-family: "Unbounded", "Golos Text", sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -.01em;
       background: linear-gradient(100deg, #9FB0BD 0%, #E8F1F7 22%, #9FB0BD 44%, #2CB9B1 62%, #E8F1F7 80%, #9FB0BD 100%); background-size: 300% 100%;
       -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; animation: lgrow .6s cubic-bezier(.16,1,.3,1) .52s forwards, lgshine 7s linear 1s infinite; }
     @keyframes lgshine { to { background-position: -300% 0; } }
     .lg-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; font-size: 13px; }
-    .lg-links a { color: rgba(238,243,240,.7); border-bottom: 1px solid transparent; transition: color .2s, border-color .2s; }
-    .lg-links a:hover { color: #9FB0BD; border-color: rgba(127,208,180,.5); text-decoration: none; }
+    .lg-links a { color: rgba(241,245,247,.7); border-bottom: 1px solid transparent; transition: color .2s, border-color .2s; }
+    .lg-links a:hover { color: var(--accent); border-color: rgba(69,214,205,.5); text-decoration: none; }
     .lg-links a[hidden], .lg-card input[hidden] { display: none; }
-    .lg-card #lg-msg { color: rgba(238,243,240,.72) !important; }
-    .lg-card input { width: 100% !important; background: rgba(255,255,255,.06) !important; color: #eef3f0 !important; border: 1px solid rgba(255,255,255,.14) !important; font-size: 15px !important; outline: none; transition: border-color .25s, box-shadow .25s; }
-    .lg-card input::placeholder { color: rgba(238,243,240,.4); }
-    .lg-card input:focus { border-color: rgba(127,208,180,.7) !important; box-shadow: 0 0 0 3px rgba(127,208,180,.18); }
-    .lg-card button { width: 100% !important; background: #9FB0BD !important; color: #070d0b !important; box-shadow: 0 14px 40px -12px rgba(127,208,180,.7); transition: transform .3s cubic-bezier(.16,1,.3,1), background .25s; }
-    .lg-card button:hover { background: #96dfc6 !important; transform: translateY(-1px); }
-    .lg-card > div:last-child { color: rgba(238,243,240,.5) !important; }
-    .lg-card a { color: #9FB0BD; }
+    .lg-card #lg-msg { color: var(--text-dim) !important; }
+    .lg-card input { width: 100% !important; background: rgba(255,255,255,.06) !important; color: var(--text) !important; border: 1px solid rgba(255,255,255,.14) !important; font-size: 15px !important; outline: none; transition: border-color .25s, box-shadow .25s; }
+    .lg-card input::placeholder { color: var(--text-faint); }
+    .lg-card input:focus { border-color: rgba(69,214,205,.7) !important; box-shadow: 0 0 0 3px rgba(69,214,205,.18); }
+    .lg-card button { width: 100% !important; background: var(--accent) !important; color: var(--accent-ink, #071719) !important; box-shadow: 0 14px 40px -12px rgba(69,214,205,.7); transition: transform .3s cubic-bezier(.16,1,.3,1), background .25s; }
+    .lg-card button:hover { background: var(--accent-deep, #2CB9B1) !important; transform: translateY(-1px); }
+    .lg-card > div:last-child { color: var(--text-faint) !important; }
+    .lg-card a { color: var(--accent); }
     /* новая мобильная разметка добавила в карточку элементы, которых на
        компьютере не было: кнопку закрытия и подписи над полями. Чтобы
        компьютерный экран остался прежним, на ширине от 721 px их прячем,
@@ -1307,14 +1311,14 @@
       align-items: center; justify-content: flex-start; padding: 24px; overflow-y: auto;
       overscroll-behavior: contain; color-scheme: dark; color: #F1F5F7;
       font-family: "Golos Text", system-ui, -apple-system, sans-serif;
-      background: linear-gradient(180deg, rgba(5,21,28,.97) 10%, rgba(5,21,28,.82) 65%, rgba(5,21,28,.8)),
-        url('/img/hero-mobile-industrial.jpg') center bottom / cover no-repeat, #05151C; }
+      background: linear-gradient(180deg, rgba(20,27,32,.97) 10%, rgba(20,27,32,.82) 65%, rgba(20,27,32,.8)),
+        url('/img/hero-mobile-industrial.jpg') center bottom / cover no-repeat, var(--app-bg); }
     #login-gate.auth-screen { z-index: 10000; }
     @media (display-mode: standalone) { #login-gate .auth-close { display: none; } }
     .auth-screen[hidden], .auth-screen [hidden] { display: none !important; }
     .auth-screen .lg-card { position: relative; display: flex; flex-direction: column; align-items: stretch;
       flex-shrink: 0; gap: 16px; width: min(420px, 100%); margin: auto; padding: 28px;
-      background: #08212B; border: 1px solid #254750; border-radius: 22px;
+      background: var(--surface); border: 1px solid var(--hair); border-radius: 22px;
       box-shadow: 0 24px 70px rgba(0,0,0,.35); }
     .auth-brand { display: flex; align-items: center; gap: 12px; padding-right: 30px; }
     .auth-brand svg { flex: none; width: 40px; height: 44px; }
@@ -1322,7 +1326,7 @@
     .auth-screen .auth-close { position: absolute; top: 15px; right: 14px; display: grid; place-items: center;
       width: 40px; height: 40px; padding: 0; background: none; border: 0; border-radius: 10px;
       color: #BBD0D9; font: 28px/1 system-ui, sans-serif; cursor: pointer; text-decoration: none; }
-    .auth-screen .auth-close:hover { background: #153640; color: white; }
+    .auth-screen .auth-close:hover { background: var(--surface-2); color: var(--text); }
     .auth-screen .lg-title { margin: 8px 0 0; font-family: "Golos Text", system-ui, sans-serif;
       font-size: 28px; font-weight: 700; line-height: 1.15; letter-spacing: -.025em;
       background: none; color: #F1F5F7; -webkit-text-fill-color: currentColor; }
@@ -1334,11 +1338,11 @@
       border: 1px solid #31515D; border-radius: 12px; background: #051A23; color: #F1F5F7;
       font: 400 16px/1.4 "Golos Text", system-ui, sans-serif; outline: none; }
     .auth-screen input::placeholder { color: #819CA9; opacity: 1; }
-    .auth-screen input:focus { border-color: #00E7ED; box-shadow: 0 0 0 3px rgba(0,231,237,.12); }
+    .auth-screen input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(69,214,205,.14); }
     .auth-screen #lg-btn { width: 100%; min-height: 52px; padding: 14px 12px;
-      border: 0; border-radius: 12px; background: #00E7ED; color: #002127;
+      border: 0; border-radius: 12px; background: var(--accent); color: var(--accent-ink, #071719);
       font: 700 16px/1.4 "Golos Text", system-ui, sans-serif; cursor: pointer; box-shadow: none; }
-    .auth-screen #lg-btn:hover { background: #44F1F4; }
+    .auth-screen #lg-btn:hover { background: var(--accent-deep, #2CB9B1); }
     .auth-screen #lg-btn:disabled { opacity: .65; cursor: wait; }
     .auth-screen .lg-links { display: flex; justify-content: flex-start; flex-wrap: wrap;
       gap: 0 18px; margin-top: -4px; font-size: 13px; }
@@ -1348,7 +1352,7 @@
     .auth-screen .lg-consent { max-width: none; margin: 0; text-align: left;
       color: #829FAB; font-size: 11px; line-height: 1.5; }
     .auth-screen .lg-consent a { color: #BBD0D9; }
-    .auth-screen a:focus-visible, .auth-screen button:focus-visible { outline: 2px solid #00E7ED; outline-offset: 3px; }
+    .auth-screen a:focus-visible, .auth-screen button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     body.lg-open { overflow: hidden; }
       .auth-screen { padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom)); }
       .auth-screen .lg-card { padding: 24px 20px; gap: 15px; }
@@ -1554,7 +1558,7 @@ header.app .app-sub { display:none; }
       else {
         var c = sp && sp.querySelector('canvas.waves');
         if (c && window.mountShaderBackground) {
-          window.splashWaves = mountShaderBackground(c, { colors: ['#080C0F','#151D24','#28343F','#3A4956'], pixelCap: 4e5, maxDpr: 1.25 });
+          window.splashWaves = mountShaderBackground(c, { colors: ['#10181E','#1D2932','#303E4B','#42525F'], pixelCap: 4e5, maxDpr: 1.25 });
           if (window.splashWaves) sp.classList.add('has-waves');
         }
       }
@@ -3717,7 +3721,7 @@ function renderInstallHelp(){
     steps.innerHTML='Нажмите кнопку — приложение откроется в браузере, дальше добавьте на «Домой»:<br>iPhone: «Поделиться» ⬆️ → «На экран „Домой“». Android: меню ⋮ → «Установить приложение».';
     var appUrl=location.origin+location.pathname;
     btn.textContent='📲 Добавить на рабочий стол';
-    btn.style.cssText='display:block;width:min(340px,92%);margin:12px auto 0;padding:15px 18px;border:0;border-radius:14px;background:#255d51;color:#fff;font-weight:700;font-size:16px;cursor:pointer;text-align:center';
+    btn.style.cssText='display:block;width:min(340px,92%);margin:12px auto 0;padding:15px 18px;border:0;border-radius:14px;background:var(--accent,#45D6CD);color:var(--accent-ink,#071719);font-weight:700;font-size:16px;cursor:pointer;text-align:center';
     btn.onclick=function(){
       try{ if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.openLink){ window.Telegram.WebApp.openLink(appUrl); return; } }catch(_){}
       window.open(appUrl,'_blank');
@@ -3738,7 +3742,7 @@ function renderInstallHelp(){
     steps.innerHTML='Нажмите кнопку ниже, либо меню ⋮ браузера → «Установить приложение» / «Добавить на главный экран».';
     if(window.__pwaPrompt){
       btn.textContent='📲 Добавить на рабочий стол';
-      btn.style.cssText='display:block;width:min(340px,92%);margin:12px auto 0;padding:15px 18px;border:0;border-radius:14px;background:#255d51;color:#fff;font-weight:700;font-size:16px;cursor:pointer;text-align:center';
+      btn.style.cssText='display:block;width:min(340px,92%);margin:12px auto 0;padding:15px 18px;border:0;border-radius:14px;background:var(--accent,#45D6CD);color:var(--accent-ink,#071719);font-weight:700;font-size:16px;cursor:pointer;text-align:center';
       btn.onclick=function(){ window.__pwaPrompt.prompt(); window.__pwaPrompt.userChoice.finally(function(){ window.__pwaPrompt=null; btn.style.display='none'; }); };
     } else { btn.style.display='none'; }
   }
@@ -4350,7 +4354,7 @@ function showLogin(msg){
       + 'font:500 14px/1.35 system-ui,-apple-system,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.35);'
       + 'display:flex;gap:10px;align-items:center;');
       h.innerHTML = '<span style="flex:1">Установить как приложение: <b>Поделиться</b> ⬆️ → <b>«На экран „Домой“»</b></span>'
-      + '<button type="button" style="border:0;background:#255d51;color:#fff;border-radius:9px;padding:8px 10px;font:600 13px system-ui;cursor:pointer">ОК</button>';
+      + '<button type="button" style="border:0;background:var(--accent,#45D6CD);color:var(--accent-ink,#071719);border-radius:9px;padding:8px 10px;font:600 13px system-ui;cursor:pointer">ОК</button>';
       h.querySelector('button').addEventListener('click', function(){
         try { localStorage.setItem('pwa_ios_hint','1'); } catch(_){}
         h.remove();
