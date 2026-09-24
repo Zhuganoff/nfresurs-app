@@ -1874,6 +1874,15 @@ header.app .app-sub { display:none; }
               <div class="ehint" id="tg-hint">Укажите свой ник в Telegram, чтобы уведомления по меткам приходили в бот. Один Telegram привязывается к одной почте.</div>
             </div>
           </div>
+          <div class="row" id="handoff-row" style="display:none">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></span>
+            <span class="rl">Второй адрес сайта</span>
+            <span class="rv" id="handoff-name">—</span>
+            <div style="flex-basis:100%; display:flex; flex-direction:column; gap:8px">
+              <button class="ebtn" id="handoff-go" type="button">Открыть без повторного входа</button>
+              <div class="ehint">Приложение работает на двух адресах — promlots.ru и отходы-в-доходы.рф. Учётная запись одна, но браузер считает адреса разными сайтами, поэтому вход на каждом свой. Кнопка переносит вход на второй адрес: ссылка одноразовая и живёт две минуты.</div>
+            </div>
+          </div>
           <!-- уведомления в MAX: строка появляется, только когда бот MAX
                подключён на сервере, иначе обещали бы несуществующее -->
           <div class="row" id="max-row" style="display:none">
@@ -2637,6 +2646,26 @@ function SESS(){
   try { var v = localStorage.getItem('session'); if (v) return v; } catch (_) {}
   return SESS_COOKIE();
 }
+/* Переход с другого нашего адреса без повторного входа.
+   Сессия принадлежит адресу сайта: для браузера promlots.ru и
+   отходы-в-доходы.рф — разные сайты. Одноразовый ключ в ?ho= обменивается
+   здесь на обычную сессию, после чего СРАЗУ убирается из адресной строки:
+   иначе он останется в истории, в закладке и в реферере. */
+function ПРИНЯТЬ_ПЕРЕХОД(){
+  var ключ = '';
+  try { ключ = new URLSearchParams(location.search).get('ho') || ''; } catch(_){}
+  if (!ключ) return Promise.resolve(false);
+  var чисто = location.pathname + location.hash;
+  try { history.replaceState(null, '', чисто); } catch(_){}
+  return fetch(API_BASE + '/api/auth/handoff/use', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({token: ключ})})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.session) { SESS_SAVE(d.session); return true; }
+      return false;
+    }).catch(function(){ return false; });
+}
 // бэкенд живёт на сервере (nip.io); приложение на github.io — зовём по
 // абсолютному адресу (CORS разрешён на сервере). На самом сервере — относительно.
 const API_BASE = (function(){
@@ -2916,6 +2945,14 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#lb-sites-none')){
     LB.sitesAll = false; LB.sites = []; lbPaintSites(); return;
   }
+  if(e.target.closest('#handoff-go')){
+    var кн = e.target.closest('#handoff-go'); кн.disabled = true;
+    api('/api/auth/handoff', {to: ВТОРОЙ_АДРЕС()}).then(function(d){
+      кн.disabled = false;
+      if(d && d.url) location.href = d.url;
+    }).catch(function(){ кн.disabled = false; });
+    return;
+  }
   if(e.target.closest('#max-connect')){
     var кн = e.target.closest('#max-connect'); кн.disabled = true;
     api('/api/max/link', {}).then(function(d){
@@ -2988,6 +3025,25 @@ document.addEventListener('click',e=>{
     document.body.dataset.pane=tab.dataset.tab;document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds(); else adWatchStop(); if(tab.dataset.tab==='labels'){ lbLoadRegions().then(lbLoad); } tabPill(true);}
 });
 
+
+/* ——— второй адрес сайта ———
+   В Telegram кнопка не нужна: там приложение открывается из бота, а не
+   по адресу, и «второго адреса» для человека не существует. */
+function ВТОРОЙ_АДРЕС(){
+  var сейчас = location.hostname.toLowerCase();
+  return (сейчас === 'promlots.ru') ? 'отходы-в-доходы.рф' : 'promlots.ru';
+}
+function handoffState(){
+  var строка = document.getElementById('handoff-row');
+  if(!строка) return;
+  var вТг = false;
+  try { вТг = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData); } catch(_){}
+  var наши = ['promlots.ru', 'отходы-в-доходы.рф', 'xn-----elcgda8dafa0bybh2fi.xn--p1ai'];
+  if(вТг || наши.indexOf(location.hostname.toLowerCase()) < 0){ строка.style.display='none'; return; }
+  строка.style.display = '';
+  var имя = document.getElementById('handoff-name');
+  if(имя) имя.textContent = ВТОРОЙ_АДРЕС();
+}
 
 /* ——— MAX в профиле ———
    Строку показываем только когда сервер подтвердил, что бот MAX настроен:
@@ -3859,6 +3915,7 @@ loadPlatforms().then(function(){ try{ lbPaintSites(); }catch(_){} });
 notesLoad();
 tgState();
 maxState();
+handoffState();
 // метки грузим при старте: подпункты в боковом меню нужны сразу
 lbLoadRegions().then(function(){ return lbLoad(); });
 
@@ -4236,6 +4293,17 @@ function showLogin(msg){
 (function initAuth(){
   var inTg = false;
   try { inTg = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData); } catch(_){}
+  // пришли по ссылке перехода с другого нашего адреса — сначала меняем
+  // ключ на сессию и только потом решаем, показывать ли вход
+  var есть_ключ = false;
+  try { есть_ключ = !!new URLSearchParams(location.search).get('ho'); } catch(_){}
+  if (есть_ключ) {
+    ПРИНЯТЬ_ПЕРЕХОД().then(function(удалось){
+      if (удалось || inTg) { bootFeed().catch(function(){ showLogin(); }); }
+      else showLogin('Ссылка перехода устарела — войдите по почте.');
+    });
+    return;
+  }
   if (inTg || SESS()) { bootFeed().catch(function(e){
     if(e && e.status===401){ try{ localStorage.removeItem('session'); }catch(_){}; if(!inTg) showLogin('Сессия истекла — войдите заново'); }
     else if(!inTg){ showLogin('Не удалось загрузить ленту — проверьте связь и обновите. Повторный вход не нужен.'); }
