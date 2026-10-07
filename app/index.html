@@ -489,16 +489,19 @@
 
 
   /* «новое с прошлого входа»: короткая сводка вместо ручного пролистывания */
-  .since { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 10px; }
-  .since-btn { display: inline-flex; align-items: baseline; gap: 7px;
-    padding: 8px 12px; border-radius: 12px; border: 1px solid var(--hair);
-    background: var(--surface); color: var(--text-dim); font: inherit;
-    font-size: 12.5px; cursor: pointer; }
-  .since-btn b { font-size: 15px; font-weight: 800; color: var(--text);
-    font-variant-numeric: tabular-nums; }
+  .since { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px; margin: 0 0 8px; }
+  .since-btn { display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 1px; min-width: 0; min-height: 48px; padding: 6px 4px; border-radius: 12px;
+    border: 1px solid var(--hair); background: var(--surface); color: var(--text-dim);
+    font: inherit; font-size: 11px; line-height: 1.15; text-align: center; cursor: pointer; }
+  .since-btn b { font-size: 16px; font-weight: 800; color: var(--text);
+    font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .since-btn span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .since-btn:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--hair)); }
   .since-btn.on { border-color: var(--accent); color: var(--accent); }
   .since-btn.on b { color: var(--accent); }
+  .list-resize { display: none; }
   .recent { margin-top: 18px; }
   .recent h4 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase;
     letter-spacing: .06em; color: var(--text-faint); font-weight: 700; }
@@ -779,7 +782,11 @@
   .tab-sub.on { opacity: 1; color: var(--text); background: var(--surface);
     box-shadow: inset 0 0 0 1px var(--hair); }
   .tab-sub .lb-dot { width: 9px; height: 9px; }
-  .tab-sub span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tab-sub .sb-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; text-align: left; }
+  .tab-sub .sb-x { margin-left: auto; margin-right: 0; }
+  nav.tabbar .tab-sub button { flex: 0 1 auto; flex-direction: row; gap: 9px;
+    opacity: 1; transform: none; font-size: inherit; font-weight: inherit;
+    padding: 0; color: inherit; }
   .tab-sub.off { opacity: .45; }
   /* плашка «показан фильтр метки» над лентой */
   .lbfilter { display: flex; align-items: center; gap: 9px; margin: 0 0 10px;
@@ -1087,6 +1094,13 @@
     #tenders-list .card h3, #fav-list .card h3 { -webkit-line-clamp: 2; font-size: 13.5px; margin-bottom: 7px; }
     body:not([data-pane="tenders"]):not([data-pane="fav"]) .modal-ov { display: none !important; }
     body[data-pane="tenders"] .modal-ov, body[data-pane="fav"] .modal-ov { display: flex !important; position: fixed; left: calc(var(--side) + var(--list) + var(--list-pad) + 12px); top: 0; bottom: 0; right: 0; width: auto; padding: 28px 28px 28px 0; background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; align-items: stretch; z-index: 5; }
+    body[data-pane="tenders"] .list-resize, body[data-pane="fav"] .list-resize {
+      display: block; position: fixed; top: 0; bottom: 0; z-index: 30;
+      width: 14px; margin-left: -7px; cursor: col-resize; touch-action: none;
+      left: calc(var(--side) + var(--list) + var(--list-pad) + 12px); }
+    .list-resize::after { content: ''; position: absolute; top: 18px; bottom: 18px; left: 6px;
+      width: 2px; border-radius: 2px; background: transparent; transition: background .15s; }
+    .list-resize:hover::after, .list-resize.drag::after { background: var(--accent); }
     body[data-pane="tenders"] .modal, body[data-pane="fav"] .modal { width: 100%; max-width: none; height: 100%; max-height: none; border-radius: 22px; border: 1px solid var(--hair); box-shadow: none; animation: none; padding: 28px 28px 24px; }
     .modal-ov[style*="none"] .modal { display: none; }
     .modal-ov[style*="none"]::after { content: 'Выберите лот в ленте — карточка появится здесь'; display: flex; align-items: center; justify-content: center; text-align: center; width: 100%; height: 100%; border: 1px dashed var(--hair); border-radius: 22px; color: var(--text-faint); font-size: 15px; padding: 40px; }
@@ -1653,6 +1667,7 @@ header.app .app-sub { display:none; }
         <label class="fp-row fp-toggle"><span>Показать скрытые</span><input type="checkbox" id="f-hidden-cb"></label>
       </div>
       <div id="tenders-list"><div class="spinner"></div></div>
+      <div class="list-resize" id="list-resize" title="Потяните, чтобы изменить ширину списка"></div>
     </section>
     <section class="pane" id="pane-ads">
       <div class="pane-head"><h2>Объявления</h2><button class="ad-new-btn" id="ad-new">＋ Подать</button></div>
@@ -2360,9 +2375,9 @@ function sincePaint(){
   var box = document.getElementById('since'); if(!box) return;
   var c = sinceCounts();
   var кнопки = [
-    {id: 'new', n: c.новые, подпись: 'новых с прошлого входа'},
-    {id: 'labels', n: c.метки, подпись: 'по вашим подборкам'},
-    {id: 'today', n: c.сегодня, подпись: 'заканчиваются сегодня'}
+    {id: 'new', n: c.новые, подпись: 'новых', полное: 'Новых с прошлого входа'},
+    {id: 'labels', n: c.метки, подпись: 'подборки', полное: 'По вашим подборкам'},
+    {id: 'today', n: c.сегодня, подпись: 'сегодня', полное: 'Заканчиваются сегодня'}
   ].filter(function(x){ return x.n > 0; });
   if(!кнопки.length || FILT.label){ box.style.display = 'none'; return; }
   box.style.display = 'flex';
@@ -2371,7 +2386,8 @@ function sincePaint(){
     var b = document.createElement('button');
     b.type = 'button';
     b.className = 'since-btn' + (SINCE === к.id ? ' on' : '');
-    b.innerHTML = '<b>' + к.n + '</b>' + к.подпись;
+    b.title = к.полное;
+    b.innerHTML = '<b>' + к.n + '</b><span>' + к.подпись + '</span>';
     b.addEventListener('click', function(){
       SINCE = (SINCE === к.id) ? '' : к.id;
       render();
@@ -2379,6 +2395,41 @@ function sincePaint(){
     box.appendChild(b);
   });
 }
+
+function initListResize(){
+  var handle = document.getElementById('list-resize');
+  if(!handle) return;
+  var key = 'nf-list-w';
+  function apply(w){
+    var max = Math.max(340, Math.min(760, window.innerWidth - 280 - 320));
+    w = Math.round(Math.max(300, Math.min(max, w)));
+    document.documentElement.style.setProperty('--list', w + 'px');
+    try { localStorage.setItem(key, String(w)); } catch(_){}
+  }
+  try {
+    var saved = parseInt(localStorage.getItem(key), 10);
+    if(saved) apply(saved);
+  } catch(_){}
+  var drag = false, startX = 0, startW = 380;
+  handle.addEventListener('pointerdown', function(e){
+    if(window.innerWidth < 1024 || e.button) return;
+    drag = true;
+    startX = e.clientX;
+    var cur = getComputedStyle(document.documentElement).getPropertyValue('--list');
+    startW = parseInt(cur, 10) || 380;
+    handle.classList.add('drag');
+    try { handle.setPointerCapture(e.pointerId); } catch(_){}
+    e.preventDefault();
+  });
+  handle.addEventListener('pointermove', function(e){
+    if(!drag) return;
+    apply(startW + (e.clientX - startX));
+  });
+  function end(){ drag = false; handle.classList.remove('drag'); }
+  handle.addEventListener('pointerup', end);
+  handle.addEventListener('pointercancel', end);
+}
+initListResize();
 
 /* Недавно смотрели — быстрый возврат к лоту, который уже открывал. */
 function recentPaint(){
@@ -3245,6 +3296,23 @@ function lbClose(){
   LB.edit=0; lbMsg('');
 }
 
+function lbDelete(a){
+  if(!a || !a.id) return;
+  var go = function(){
+    api('/api/alerts/delete', {id: a.id}).then(function(){
+      if(LB.выбор === a.id) LB.выбор = 0;
+      if(FILT.label === a.id) lbFilter(0);
+      if(LB.edit === a.id) lbClose();
+      return lbLoad(false, true);
+    }).catch(function(err){
+      try{ if(tg && tg.showAlert) tg.showAlert((err && err.message) || 'Не удалось удалить подборку'); }catch(_){}
+    });
+  };
+  var текст = 'Удалить подборку «' + (a.name || '') + '»?';
+  try{ if(tg && tg.showConfirm){ tg.showConfirm(текст, function(ok){ if(ok) go(); }); return; } }catch(_){}
+  if(window.confirm(текст)) go();
+}
+
 function lbPaint(){
   var box=lbEl('lb-list'); if(!box) return;
   if(!LB.list.length){
@@ -3283,10 +3351,7 @@ function lbPaint(){
      [a.active?'выключить':'включить', function(){
         api('/api/alerts/update',{id:a.id, active:!a.active})
           .then(function(){ return lbLoad(false, true); }).catch(function(){}); }],
-     ['удалить', function(){
-        api('/api/alerts/delete',{id:a.id}).then(function(){
-          if(FILT.label===a.id) lbFilter(0);
-          return lbLoad(false, true); }).catch(function(){}); }]
+     ['удалить', function(){ lbDelete(a); }]
     ].forEach(function(pair){
       var b=document.createElement('button'); b.type='button'; b.className='lb-act';
       b.textContent=pair[0]; b.addEventListener('click', pair[1]); row.appendChild(b);
@@ -3356,13 +3421,7 @@ function сборки(){
       x.setAttribute('aria-label', 'Удалить подборку '+a.name);
       x.addEventListener('click', function(ev){
         ev.stopPropagation();
-        if(!window.confirm('Удалить подборку «'+a.name+'»?')) return;
-        api('/api/alerts/delete', {id:a.id}).then(function(){
-          if(LB.выбор===a.id) LB.выбор=0;
-          if(FILT.label===a.id) lbFilter(0);
-          if(LB.edit===a.id) lbClose();
-          return lbLoad(false, true);
-        }).catch(function(){});
+        lbDelete(a);
       });
       b.appendChild(main); b.appendChild(x);
       чипы.appendChild(b);
@@ -3453,21 +3512,28 @@ function lbPaintSubs(){
   var box=document.getElementById('tab-subs'); if(!box) return;
   box.innerHTML='';
   LB.list.forEach(function(a){
-    var b=document.createElement('button');
-    b.type='button';
+    var b=document.createElement('div');
     b.className='tab-sub'+(a.active?'':' off')+(FILT.label===a.id?' on':'');
     b.dataset.lb=a.id;
     b.title=(a.keywords||'')+(a.excludes?' · кроме: '+a.excludes:'');
+    var open=document.createElement('button');
+    open.type='button'; open.className='sb-chip-main';
+    open.style.flex='1'; open.style.minWidth='0'; open.style.padding='0';
     var dot=document.createElement('span'); dot.className='lb-dot';
     dot.style.background=a.color; dot.style.color=a.color;
-    var nm=document.createElement('span'); nm.textContent=a.name;
-    b.appendChild(dot); b.appendChild(nm);
-    b.addEventListener('click', function(){
+    var nm=document.createElement('span'); nm.className='sb-name'; nm.textContent=a.name;
+    open.appendChild(dot); open.appendChild(nm);
+    open.addEventListener('click', function(){
       var tab=document.querySelector('nav.tabbar button[data-tab="tenders"]');
       if(tab && !tab.classList.contains('active')) tab.click();
       lbFilter(FILT.label===a.id ? 0 : a.id);
       var main=document.querySelector('main'); if(main) main.scrollTop=0;
     });
+    var x=document.createElement('button');
+    x.type='button'; x.className='sb-x'; x.textContent='×';
+    x.setAttribute('aria-label', 'Удалить подборку '+a.name);
+    x.addEventListener('click', function(ev){ ev.stopPropagation(); lbDelete(a); });
+    b.appendChild(open); b.appendChild(x);
     box.appendChild(b);
   });
 }
