@@ -684,13 +684,26 @@
   .sb-chips { display: flex; gap: 7px; overflow-x: auto; padding: 2px 0 8px;
     scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   .sb-chips::-webkit-scrollbar { display: none; }
-  .sb-chip { flex: none; display: inline-flex; align-items: center; gap: 6px;
-    min-height: 34px; padding: 6px 12px; border-radius: 999px; cursor: pointer;
+  .sb-chip { flex: none; display: inline-flex; align-items: center; gap: 0;
+    min-height: 34px; padding: 0; border-radius: 999px; cursor: pointer;
     border: 1px solid var(--hair); background: var(--surface-2);
     color: var(--text); font-size: 13px; font-weight: 600; white-space: nowrap; }
+  button.sb-chip { padding: 6px 12px; gap: 6px; }
   .sb-chip.on { border-color: var(--accent);
     background: color-mix(in srgb, var(--accent) 16%, transparent); }
   .sb-chip.off { opacity: .55; }
+  .sb-chip-main { display: inline-flex; align-items: center; gap: 6px;
+    border: 0; background: transparent; color: inherit; font: inherit;
+    padding: 6px 2px 6px 12px; cursor: pointer; }
+  .sb-x { flex: none; width: 22px; height: 22px; margin-right: 4px; padding: 0;
+    border: 0; border-radius: 50%; background: transparent; color: var(--text-faint);
+    font-size: 16px; line-height: 1; cursor: pointer; }
+  .sb-x:hover { color: var(--text); background: var(--surface); }
+  #pane-labels.lb-editing .lb-intro,
+  #pane-labels.lb-editing .sb-chips,
+  #pane-labels.lb-editing .sb-cond,
+  #pane-labels.lb-editing .sb-results,
+  #pane-labels.lb-editing .sb-manage { display: none; }
   .sb-chip .lb-dot { width: 9px; height: 9px; }
   .sb-chip .sb-n { font-variant-numeric: tabular-nums; opacity: .7; font-weight: 500; }
   .sb-cond { display: none; align-items: center; flex-wrap: wrap; gap: 8px;
@@ -3216,12 +3229,21 @@ function lbOpen(item){
   lbEl('lb-save').textContent = item ? 'Сохранить изменения' : 'Создать и показать лоты';
   lbMsg('');
   lbEl('lb-form').classList.add('on');
+  var pane = lbEl('pane-labels');
+  if(pane) pane.classList.add('lb-editing');
   lbLoadRegions().then(function(){ lbPaintColors(); lbPaintRegions(); });
   lbPaintRegions();
   lbEl('lb-name').focus();
+  var main = document.querySelector('main');
+  if(main) main.scrollTop = 0;
 }
 
-function lbClose(){ lbEl('lb-form').classList.remove('on'); LB.edit=0; lbMsg(''); }
+function lbClose(){
+  lbEl('lb-form').classList.remove('on');
+  var pane = lbEl('pane-labels');
+  if(pane) pane.classList.remove('lb-editing');
+  LB.edit=0; lbMsg('');
+}
 
 function lbPaint(){
   var box=lbEl('lb-list'); if(!box) return;
@@ -3319,15 +3341,30 @@ function сборки(){
     все.addEventListener('click', function(){ LB.выбор=0; сборки(); });
     чипы.appendChild(все);
     LB.list.forEach(function(a){
-      var b=document.createElement('button');
-      b.type='button';
+      var b=document.createElement('div');
       b.className='sb-chip'+(LB.выбор===a.id?' on':'')+(a.active?'':' off');
+      var main=document.createElement('button');
+      main.type='button'; main.className='sb-chip-main';
       var d=document.createElement('span'); d.className='lb-dot';
       d.style.background=a.color; d.style.color=a.color;
       var n=document.createElement('span'); n.textContent=a.name;
-      b.appendChild(d); b.appendChild(n);
-      b.title=сбУсловия(a);
-      b.addEventListener('click', function(){ LB.выбор=a.id; сборки(); });
+      main.appendChild(d); main.appendChild(n);
+      main.title=сбУсловия(a);
+      main.addEventListener('click', function(){ LB.выбор=a.id; сборки(); });
+      var x=document.createElement('button');
+      x.type='button'; x.className='sb-x'; x.textContent='×';
+      x.setAttribute('aria-label', 'Удалить подборку '+a.name);
+      x.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        if(!window.confirm('Удалить подборку «'+a.name+'»?')) return;
+        api('/api/alerts/delete', {id:a.id}).then(function(){
+          if(LB.выбор===a.id) LB.выбор=0;
+          if(FILT.label===a.id) lbFilter(0);
+          if(LB.edit===a.id) lbClose();
+          return lbLoad(false, true);
+        }).catch(function(){});
+      });
+      b.appendChild(main); b.appendChild(x);
       чипы.appendChild(b);
     });
   }
