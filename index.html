@@ -9,21 +9,21 @@
      на его iPhone всё равно рисует страницу под строкой состояния, поэтому
      закрывать её нужно самим. Подтверждается только проверкой на устройстве. -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Лоты на продажу отработанных нефтепродуктов, металлолома и труб б/у с 21 площадок России. Только реализация, без закупок. Приложение в Telegram и в браузере.">
+<meta name="description" content="Лоты на продажу отработанных нефтепродуктов, металлолома и труб б/у с 18 площадок России. Только реализация, без закупок. Приложение в Telegram и в браузере.">
 <link rel="canonical" href="https://xn-----elcgda8dafa0bybh2fi.xn--p1ai/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ru_RU">
 <meta property="og:site_name" content="Отходы в доходы">
 <meta property="og:url" content="https://xn-----elcgda8dafa0bybh2fi.xn--p1ai/">
 <meta property="og:title" content="Отходы в доходы — тендеры на продажу нефтепродуктов, лома и труб">
-<meta property="og:description" content="Лоты на продажу отработанных нефтепродуктов, металлолома и труб б/у с 21 площадок России. Только реализация, без закупок. Приложение в Telegram и в браузере.">
+<meta property="og:description" content="Лоты на продажу отработанных нефтепродуктов, металлолома и труб б/у с 18 площадок России. Только реализация, без закупок. Приложение в Telegram и в браузере.">
 <meta property="og:image" content="https://xn-----elcgda8dafa0bybh2fi.xn--p1ai/og.png?v=20261007">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Отходы в доходы — тендеры на продажу нефтепродуктов, лома и труб">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Отходы в доходы — тендеры на продажу нефтепродуктов, лома и труб">
-<meta name="twitter:description" content="Лоты на продажу отработанных нефтепродуктов, металлолома и труб б/у с 21 площадок России. Только реализация, без закупок. Приложение в Telegram и в браузере.">
+<meta name="twitter:description" content="Лоты на продажу отработанных нефтепродуктов, металлолома и труб б/у с 18 площадок России. Только реализация, без закупок. Приложение в Telegram и в браузере.">
 <meta name="twitter:image" content="https://xn-----elcgda8dafa0bybh2fi.xn--p1ai/og.png?v=20261007">
 <meta name="theme-color" content="#070d0b">
 <meta name="build" content="18.09-F">
@@ -1407,13 +1407,13 @@
 
     /* ——— вход поверх лендинга: затемнение + стеклянный блок из центра ——— */
     .lg-ov { position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; padding: 24px;
-      background: radial-gradient(70% 60% at 50% 45%, rgba(8,12,15,.55) 0%, rgba(8,12,15,.88) 100%); animation: lgdim .5s ease both; }
+      background: rgba(7,13,11,.42); animation: lgdim .5s ease both; }
     .lg-ov[hidden] { display: none; }
     .lg-ov.closing { animation: lgdim .35s ease reverse both; }
     @keyframes lgdim { from { opacity: 0; } }
     .lg-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 14px; width: min(400px, 100%); padding: 30px 28px 24px; border-radius: 24px;
-      background: linear-gradient(145deg, #23313C 0%, #1D2932 55%, #181F26 100%);
-      border: 1px solid #34434F;
+      background: rgba(11,20,17,.9);
+      border: 1px solid rgba(255,255,255,.12);
       -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
       box-shadow: inset 0 1px 0 rgba(217,230,239,.08), 0 40px 90px -30px rgba(0,0,0,.85);
       transform-origin: 50% 50%; animation: lgopen .95s cubic-bezier(.16,1,.3,1) both; }
@@ -1429,19 +1429,19 @@
        содержимое всё равно показываем — пустое окно недопустимо */
     .lg-card.shown > * { opacity: 1 !important; transform: none !important; }   /* страховка */
     @keyframes lgrow { to { opacity: 1; transform: none; } }
-    .lg-x { position: absolute; top: 10px; right: 12px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid #34434F; background: #23313C; color: var(--dim); font-size: 22px; line-height: 1; cursor: pointer; transition: background .25s, color .25s; }
+    .lg-x { position: absolute; top: 10px; right: 12px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(255,255,255,.16); background: transparent; color: #eef3f0; font-size: 22px; line-height: 1; cursor: pointer; transition: background .25s, color .25s; }
     .lg-x:hover { background: rgba(255,255,255,.14); color: var(--text); }
-    .lg-logo { width: 56px; height: 56px; filter: drop-shadow(0 0 18px rgba(69,214,205,.35)); }
+    .lg-logo { width: 56px; height: 56px; filter: drop-shadow(0 0 18px rgba(127,208,180,.4)); }
     .lg-title { font-family: "Onest", sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -.01em; opacity: 1;
       background: linear-gradient(100deg, #7fd0b4 0%, #eafff6 22%, #7fd0b4 44%, #d9a04a 62%, #eafff6 80%, #7fd0b4 100%); background-size: 300% 100%;
       -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
       animation: lgrow .6s cubic-bezier(.16,1,.3,1) .45s forwards, brandshine 7s linear 1s infinite; }
     .lg-msg { color: var(--dim); text-align: center; max-width: 320px; font-size: 15px; line-height: 1.45; }
     .lg-card input { width: 100%; padding: 13px 14px; border-radius: 12px; font: inherit; font-size: 15px;
-      color: var(--text); background: #151D24; border: 1px solid #34434F; outline: none;
+      color: #eef3f0; background: #070d0b; border: 1px solid rgba(255,255,255,.14); outline: none;
       transition: border-color .25s, box-shadow .25s; }
-    .lg-card input::placeholder { color: #91A2AF; }
-    .lg-card input:focus { border-color: #45D6CD; box-shadow: 0 0 0 3px rgba(69,214,205,.18); }
+    .lg-card input::placeholder { color: rgba(238,243,240,.48); }
+    .lg-card input:focus { border-color: #7fd0b4; box-shadow: 0 0 0 3px rgba(127,208,180,.18); }
     .lg-card input[hidden] { display: none; }
     .lg-card .lg-btn { width: 100%; }
     .lg-card .lg-btn[disabled] { opacity: .7; cursor: default; }
@@ -1508,6 +1508,20 @@
     .auth-screen .lg-consent a { color: #BBD0D9; }
     .auth-screen a:focus-visible, .auth-screen button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     body.lg-open { overflow: hidden; }
+    /* вход и регистрация — карточка поверх лендинга, не отдельный экран */
+    #login-modal.auth-screen { background: rgba(7,13,11,.42) !important; justify-content: center;
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+    #login-modal .lg-card { background: rgba(11,20,17,.92) !important; border: 1px solid rgba(255,255,255,.12) !important;
+      color: #eef3f0; box-shadow: 0 24px 70px rgba(0,0,0,.45) !important; }
+    #login-modal .lg-title { background: linear-gradient(100deg, #7fd0b4 0%, #eafff6 28%, #d9a04a 72%, #7fd0b4 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+    #login-modal input, #login-modal .lg-card input { background: #070d0b !important; color: #eef3f0 !important;
+      border: 1px solid rgba(255,255,255,.14) !important; }
+    #login-modal input:focus { border-color: #7fd0b4 !important; box-shadow: 0 0 0 3px rgba(127,208,180,.18) !important; }
+    #login-modal #lg-btn, #login-modal .lg-btn { background: #7fd0b4 !important; color: #070d0b !important; }
+    #login-modal #lg-btn:hover, #login-modal .lg-btn:hover { background: #96dfc6 !important; }
+    #login-modal .lg-links a, #login-modal .lg-consent a { color: #7fd0b4; }
+    #login-modal #lg-msg, #login-modal .lg-consent { color: rgba(238,243,240,.68) !important; }
       .auth-screen { padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom)); }
       .auth-screen .lg-card { padding: 24px 20px; gap: 15px; }
   }
@@ -1750,19 +1764,19 @@ header.app .app-sub { display:none; }
           <div class="stack-label mono">Так выглядят лоты в ленте</div>
           <!--SHOWCASE_START-->
           <article class="lot" style="--m: var(--oil); --i: 0; --z: 48">
-            <div class="lot-head mono"><span>OnlineContract</span><span>реализация</span></div>
-            <div class="lot-title">Реализации нефтепродуктов (масла)</div>
-            <div class="lot-meta"><span>Россия</span><span class="lot-price">3681646.96 RUR</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Реализация отработанного масла для филиала ООО «РН-Транспорт» в г. Нефтеюганск</div>
+            <div class="lot-meta"><span>ХМАО — Югра</span><span>приём заявок до 15 сентября</span></div>
           </article>
           <article class="lot" style="--m: var(--scrap); --i: 1; --z: 24">
-            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
-            <div class="lot-title">Лома цветных металлов, образовавшегося в ходе…</div>
-            <div class="lot-meta"><span>Россия</span><span>2026-10-19 12:30</span></div>
+            <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
+            <div class="lot-title">Лом чёрных металлов, 200 т, Жердевский сахарный завод</div>
+            <div class="lot-meta"><span>Тамбовская область</span><span>самовывоз</span></div>
           </article>
           <article class="lot" style="--m: var(--pipe); --i: 2; --z: 0">
-            <div class="lot-head mono"><span>Bidzaar</span><span>реализация</span></div>
-            <div class="lot-title">Труба ВГП оцинкованная (ф20х2,8мм и ф40х3мм)…</div>
-            <div class="lot-meta"><span>Россия</span><span>2026-10-27 06:06</span></div>
+            <div class="lot-head mono"><span>ТЭК-Торг</span><span>реализация</span></div>
+            <div class="lot-title">Труба обсадная 139,7×9,17 P-110 с муфтами, 61 т</div>
+            <div class="lot-meta"><span>Ямало-Ненецкий АО</span><span class="lot-price">6 285 866 ₽</span></div>
           </article>
           <!--SHOWCASE_END-->
         </div>
@@ -1784,10 +1798,10 @@ header.app .app-sub { display:none; }
   <section class="section proof" style="padding-top:96px" aria-label="Сервис в цифрах">
     <div class="wrap">
       <div class="grid-4">
-        <div class="stat" data-i style="--i:0"><div class="num display" data-to="21">21</div><!--SITES_COUNT--><div class="lbl">площадок под наблюдением, проверка каждый час</div></div>
-        <div class="stat" data-i style="--i:1"><div class="num display" data-to="723" data-suffix="+"><!--LOTS_START-->723<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
+        <div class="stat" data-i style="--i:0"><div class="num display" data-to="18">18</div><!--SITES_COUNT--><div class="lbl">площадок под наблюдением, проверка каждый час</div></div>
+        <div class="stat" data-i style="--i:1"><div class="num display" data-to="526" data-suffix="+"><!--LOTS_START-->526<!--LOTS_END--><small>+</small></div><div class="lbl">лотов на продажу в базе прямо сейчас</div></div>
         <div class="stat" data-i style="--i:2"><div class="num display" data-to="24" data-suffix="/7">24<small>/7</small></div><div class="lbl">мониторинг площадок в режиме онлайн, без выходных</div></div>
-        <div class="stat" data-i style="--i:3"><div class="num display" data-to="40" data-suffix="+"><!--NEW24_START-->40<!--NEW24_END--><small>+</small></div><div class="lbl">новых лотов за сутки: нефтепродукты, лом, трубы</div></div>
+        <div class="stat" data-i style="--i:3"><div class="num display" data-to="93" data-suffix="+"><!--NEW24_START-->93<!--NEW24_END--><small>+</small></div><div class="lbl">новых лотов за сутки: нефтепродукты, лом, трубы</div></div>
       </div>
     </div>
   </section>
@@ -2079,7 +2093,7 @@ header.app .app-sub { display:none; }
     <div class="wrap">
       <div class="final">
         <h2 class="display">Перестаньте проверять площадки вручную</h2>
-        <p class="lead"><!--SITES_INLINE-->21<!--SITES_INLINE_END--> торговых площадок, три направления и автоматический мониторинг в одном сервисе.</p>
+        <p class="lead"><!--SITES_INLINE-->18<!--SITES_INLINE_END--> торговых площадок, три направления и автоматический мониторинг в одном сервисе.</p>
         <a class="btn btn-primary" href="/app/#reg" data-reg="1">Попробовать бесплатно</a>
       </div>
     </div>
