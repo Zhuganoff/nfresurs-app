@@ -1868,11 +1868,18 @@ header.app .app-sub { display:none; }
           <div class="row" style="flex-wrap:wrap; gap:10px">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
             <span class="rl">Вход по паролю</span>
-            <span class="rv" id="pw-state"></span>
+            <span class="rv" id="pw-state">не задан</span>
+            <button class="ebtn" id="pw-edit" type="button">Задать</button>
             <div id="pw-box" style="flex-basis:100%; display:none; flex-direction:column; gap:8px">
-              <input id="pw-old" class="search" type="password" autocomplete="current-password" placeholder="текущий пароль" hidden>
-              <input id="pw-new" class="search" type="password" autocomplete="new-password" placeholder="новый пароль, от 8 символов">
-              <div class="efield"><button class="ebtn" id="pw-save">Сохранить</button><button class="ebtn ghost" id="pw-cancel">Отмена</button></div>
+              <div id="pw-old-wrap" hidden>
+                <div class="ehint">Старый пароль</div>
+                <input id="pw-old" class="search" type="password" autocomplete="current-password" placeholder="Старый пароль">
+              </div>
+              <div class="ehint">Новый пароль</div>
+              <input id="pw-new" class="search" type="password" autocomplete="new-password" placeholder="Новый пароль, от 8 символов">
+              <div class="ehint">Подтвердить пароль</div>
+              <input id="pw-new2" class="search" type="password" autocomplete="new-password" placeholder="Подтвердить пароль">
+              <div class="efield"><button class="ebtn" id="pw-save" type="button">Сохранить</button><button class="ebtn ghost" id="pw-cancel" type="button">Отмена</button></div>
             </div>
           </div>
         </div>
@@ -2771,7 +2778,14 @@ function renderEmail(){
     };
   }
 }
-function loadEmail(){ renderEmail(); api('/api/email/status').then(d=>{ EMAIL=d; var cr=document.getElementById('e-code-row'); if(cr && cr.style.display!=='none') return; /* не стираем открытый ввод кода */ renderEmail(); }).catch(()=>{}); }
+function loadEmail(){
+  api('/api/email/status').then(d=>{
+    EMAIL=d;
+    var cr=document.getElementById('e-code-row');
+    if(cr && cr.style.display!=='none') return; /* не стираем открытый ввод кода */
+    renderEmail();
+  }).catch(function(){ renderEmail(); });
+}
 
 // стеклянная капсула переезжает к активной вкладке: считаем место
 // по самой иконке, а не по кнопке — тогда овал сидит вокруг значка
@@ -4388,38 +4402,58 @@ function showLogin(msg){
       oldI=document.getElementById('pw-old'), newI=document.getElementById('pw-new'),
       save=document.getElementById('pw-save'), cancel=document.getElementById('pw-cancel'),
       hint=document.getElementById('pw-hint');
-  var byEmail=false;
-  try{ byEmail = !!SESS() && !(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData); }catch(_){}
-  if(!byEmail) return;                       // в Telegram пароль не нужен
-  group.hidden=false;
-  var hasPw=false;
-  function paint(){
-    state.innerHTML = hasPw
-      ? '<a href="#" id="pw-edit" style="color:var(--accent)">сменить</a>'
-      : '<a href="#" id="pw-edit" style="color:var(--accent)">задать</a>';
-    var edit=document.getElementById('pw-edit');
-    if(edit) edit.addEventListener('click', function(e){
-      e.preventDefault(); box.style.display='flex'; oldI.hidden=!hasPw;
-      (hasPw?oldI:newI).focus();
-    });
+  var byEmail=false, hasPw=false, editBtn=document.getElementById('pw-edit'),
+      new2=document.getElementById('pw-new2'), oldWrap=document.getElementById('pw-old-wrap');
+  function входПоПочте(){
+    var вТелеграме=false;
+    try{ вТелеграме=!!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData); }catch(_){}
+    return !!SESS() && !вТелеграме;
   }
-  // есть ли уже пароль — узнаём по ответу /api/email/status (там же почта)
-  api('/api/auth/password/status',{}).then(function(d){ hasPw=!!(d&&d.has_password); paint(); })
-    .catch(function(){ paint(); });
-  cancel.addEventListener('click', function(){ box.style.display='none'; oldI.value=''; newI.value=''; hint.textContent='Пароль хранится только в виде хеша. После смены все прежние сеансы закрываются.'; });
+  if(!входПоПочте()){
+    document.addEventListener('ovd-session', function(){ if(входПоПочте()) старт(); });
+    return;
+  }
+  старт();
+  function старт(){
+  if(byEmail) return;
+  byEmail=true;
+  group.hidden=false;
+  function paint(){
+    state.textContent = hasPw ? 'установлен' : 'не задан';
+    if(editBtn) editBtn.textContent = hasPw ? 'Изменить' : 'Задать';
+    if(oldWrap) oldWrap.hidden = !hasPw;
+  }
+  function reload(){
+    api('/api/auth/password/status',{}).then(function(d){
+      hasPw=!!(d&&d.has_password); paint();
+    }).catch(function(){ paint(); });
+  }
+  if(editBtn) editBtn.addEventListener('click', function(){
+    box.style.display='flex';
+    if(oldWrap) oldWrap.hidden=!hasPw;
+    (hasPw?oldI:newI).focus();
+  });
+  reload();
+  document.addEventListener('ovd-session', reload);
+  cancel.addEventListener('click', function(){
+    box.style.display='none'; oldI.value=''; newI.value=''; if(new2) new2.value='';
+    hint.textContent='Пароль хранится только в виде хеша. После смены все прежние сеансы закрываются.';
+  });
   save.addEventListener('click', function(){
-    var np=newI.value||'';
+    var np=newI.value||'', np2=new2?new2.value:'';
     if(np.length<8){ hint.textContent='Пароль короче 8 символов'; return; }
+    if(np!==np2){ hint.textContent='Пароли не совпадают'; return; }
     save.disabled=true; save.textContent='Сохраняем…';
-    api('/api/auth/password',{old_password:oldI.value||'', password:np}).then(function(d){
+    api('/api/auth/password',{old_password:oldI.value||'', password:np, password2:np2}).then(function(d){
       if (d && d.session) SESS_SAVE(d.session);
-      hasPw=true; box.style.display='none'; oldI.value=''; newI.value='';
+      hasPw=true; box.style.display='none'; oldI.value=''; newI.value=''; if(new2) new2.value='';
       hint.textContent='Пароль сохранён.'; save.disabled=false; save.textContent='Сохранить'; paint();
     }).catch(function(e){
       hint.textContent=(e&&e.message)||'Не удалось сохранить';
       save.disabled=false; save.textContent='Сохранить';
     });
   });
+  }
 })();
 (function loginHandlers(){
   var btn=document.getElementById('lg-btn'), em=document.getElementById('lg-email'),
@@ -4489,6 +4523,8 @@ function showLogin(msg){
   function done(d){
     SESS_SAVE(d.session);
     btn.textContent='Готово';
+    try { document.dispatchEvent(new Event('ovd-session')); } catch(_){}
+    try { loadEmail(); tgState(); maxState(); } catch(_){}
     bootFeed().then(function(){ var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); tabPill(false); } })
       .catch(function(){ msg.textContent='Вход выполнен, но лента не загрузилась — обновите страницу.'; render(); });
   }
