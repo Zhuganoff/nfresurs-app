@@ -789,6 +789,7 @@
     padding: 0; color: inherit; }
   .tab-sub.off { opacity: .45; }
   nav.tabbar #prof-logout { color: #d4744f; }
+  body.in-telegram #prof-logout { display: none !important; }
   /* плашка «показан фильтр метки» над лентой */
   .lbfilter { display: flex; align-items: center; gap: 9px; margin: 0 0 10px;
     padding: 8px 12px; border-radius: 12px; border: 1px solid var(--hair);
@@ -2077,6 +2078,19 @@ try {
     } catch(_){}
   }
 } catch(_) { tg = null; }
+
+(function(){
+  var inTg = false;
+  try { inTg = !!(tg && tg.initData) || location.hash.indexOf('tgWebAppData') >= 0; } catch(_){}
+  if (!inTg) return;
+  document.body.classList.add('in-telegram');
+  var btn = document.querySelector('nav.tabbar button[data-tab="profile"]');
+  if (btn) btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>Профиль';
+  var out = document.getElementById('prof-logout');
+  if (out) out.style.display = 'none';
+  var h = document.querySelector('#pane-profile h2');
+  if (h) h.textContent = 'Мой профиль';
+})();
 
 const PLATFORMS = {
   torgi:'ГИС Торги',tektorg:'ТЭК-Торг',rosneft:'Роснефть',etpgpb:'ЭТП ГПБ',b2b_center:'B2B-Center',onlinecontract:'OnlineContract',sberbank_ast:'Сбербанк-АСТ',interrao:'Интер РАО',nelikvidi:'Неликвиды',slavneft:'Славнефть',isource:'isource Reserve',bidzaar:'Bidzaar',alrosa:'АЛРОСА',reo:'ЭТП РЭО',enplus:'Эн+'};
