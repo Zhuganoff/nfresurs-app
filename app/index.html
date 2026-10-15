@@ -1417,6 +1417,54 @@
     input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),
     textarea, select { font-size: 16px !important; }
   }
+  #pane-ads .ad-tabs { display: flex; gap: 6px; margin: 0 0 10px; }
+  #pane-ads .ad-tab { flex: 1; min-height: 36px; border-radius: 999px; border: 1px solid rgba(255,255,255,.12);
+    background: rgba(11,20,17,.72); color: rgba(238,243,240,.68); font-weight: 650; font-size: 13px; cursor: pointer; }
+  #pane-ads .ad-tab.on { background: #7fd0b4; color: #070d0b; border-color: #7fd0b4; }
+  #pane-ads .ad-tools { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
+  #pane-ads .ad-tools .search { flex: 1 1 160px; min-width: 0; }
+  #pane-ads .ad-sel { flex: 1 1 120px; min-width: 0; min-height: 40px; border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.14); background: #070d0b; color: #eef3f0; padding: 8px 10px; }
+  #pane-ads #adf-cats { margin: 0 0 10px; }
+  #pane-ads #ads-list.ad-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: start; }
+  @media (min-width: 768px) { #pane-ads #ads-list.ad-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 1100px) { #pane-ads #ads-list.ad-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  #pane-ads .ad-card { display: flex; flex-direction: column; gap: 0; margin: 0; padding: 0; min-width: 0;
+    overflow: visible; background: rgba(11,20,17,.9); border: 1px solid rgba(255,255,255,.1); border-radius: 16px; cursor: pointer; }
+  #pane-ads .ad-card.cat-oil { box-shadow: inset 3px 0 0 #d9a04a; }
+  #pane-ads .ad-card.cat-metal { box-shadow: inset 3px 0 0 #9fb0c0; }
+  #pane-ads .ad-card.cat-pipe { box-shadow: inset 3px 0 0 #d4744f; }
+  #pane-ads .ad-card.cat-other { box-shadow: inset 3px 0 0 rgba(238,243,240,.35); }
+  #pane-ads .ac-ph { position: relative; width: 100%; height: 112px; flex: none; min-height: 0; overflow: hidden;
+    border-radius: 15px 15px 0 0; background: #070d0b; }
+  #pane-ads .ac-ph img, #pane-ads .ac-noph { width: 100%; height: 100%; object-fit: cover; display: flex; align-items: center; justify-content: center; color: rgba(238,243,240,.45); font-size: 12px; }
+  #pane-ads .ac-body { display: flex; flex-direction: column; gap: 4px; padding: 10px 10px 12px; min-width: 0; }
+  #pane-ads .ac-price { font-size: 16px; font-weight: 800; color: #eef3f0; line-height: 1.2; }
+  #pane-ads .ad-card h3 { margin: 0; font-size: 14px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  #pane-ads .ac-foot { display: flex; justify-content: space-between; gap: 6px; color: rgba(238,243,240,.62); font-size: 12px; }
+  #pane-ads .ac-foot span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #pane-ads .ac-ops { position: absolute; top: 6px; right: 6px; z-index: 5; }
+  #pane-ads .ad-card { position: relative; }
+  #pane-ads .ac-dot { width: 32px; height: 32px; border: 0; border-radius: 10px; background: rgba(7,13,11,.72); color: #eef3f0; font-size: 18px; cursor: pointer; }
+  #pane-ads .ac-pop { position: absolute; right: 0; top: 36px; min-width: 168px; padding: 6px; border-radius: 12px;
+    background: #163028; border: 1px solid rgba(127,208,180,.45); display: flex; flex-direction: column;
+    box-shadow: 0 10px 28px rgba(0,0,0,.55); z-index: 6; }
+  #pane-ads .ac-pop[hidden] { display: none; }
+  #pane-ads .ac-pop button { border: 0; background: transparent; color: #eef3f0; text-align: left; padding: 8px 10px; border-radius: 8px; cursor: pointer; font: inherit; font-size: 13px; }
+  #pane-ads .ac-pop button:hover { background: rgba(127,208,180,.14); }
+  #pane-ads .ad-more { display: block; margin: 12px auto 0; min-height: 40px; padding: 8px 16px; border-radius: 12px;
+    border: 1px solid rgba(127,208,180,.45); background: transparent; color: #7fd0b4; font-weight: 700; cursor: pointer; }
+  #pane-ads .ad-more[hidden] { display: none; }
+  #pane-ads .ads-empty { grid-column: 1 / -1; padding: 28px 12px; text-align: center; color: rgba(238,243,240,.68); }
+  #pane-ads .ac-badge { align-self: flex-start; font-size: 11px; font-weight: 700; color: #7fd0b4;
+    background: rgba(127,208,180,.12); border-radius: 999px; padding: 2px 8px; }
+  #pane-ads .ac-badge.arc { color: #d9a04a; background: rgba(217,160,74,.14); }
+  #pane-ads .ad-view { position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(7,13,11,.55); }
+  #pane-ads .ad-view[hidden] { display: none; }
+  #pane-ads .ad-view-card { width: min(520px, 100%); max-height: min(86vh, 760px); overflow: auto; padding: 18px;
+    border-radius: 18px; background: #0b1411; border: 1px solid rgba(255,255,255,.12); color: #eef3f0; position: relative; }
+  #pane-ads .ad-view-card img { width: 100%; max-height: 240px; object-fit: cover; border-radius: 12px; margin: 0 0 8px; background: #070d0b; }
+  #pane-ads .ad-new-btn { background: #7fd0b4; color: #070d0b; }
 </style>
 <style id="nf-brand-20260918">
 /* Shared turquoise brand: artwork only, no changes to header positioning/safe-area. */
@@ -1723,25 +1771,30 @@ header.app .app-sub { display:none; }
         <p id="ad-done-text">Мы проверим его вручную — обычно это занимает несколько часов. Объявление уже в списке ниже с пометкой «на модерации»: как только его одобрят, пометка сменится сама, и объявление увидят покупатели. Оно будет висеть 10 дней.</p>
         <button type="button" id="ad-done-ok">Хорошо</button>
       </div>
-      <div class="toolbar" id="ads-filters" style="display:none">
-        <button id="adf-btn" class="filters-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>Фильтры</button>
+      <div class="ad-tabs" role="tablist">
+        <button type="button" class="ad-tab on" data-adtab="all">Все объявления</button>
+        <button type="button" class="ad-tab" data-adtab="mine">Мои объявления</button>
       </div>
-      <div id="adf-panel" class="filters-panel" style="display:none">
-        <div class="fp-row"><span>Вид объявления</span></div>
-        <div class="fchips" id="adf-cats">
-          <button class="fchip on" type="button" data-adcat="">Все</button>
-          <button class="fchip" type="button" data-adcat="oil">Нефтепродукты</button>
-          <button class="fchip" type="button" data-adcat="metal">Металлолом</button>
-          <button class="fchip" type="button" data-adcat="pipe">Трубы</button>
-          <button class="fchip" type="button" data-adcat="other">Другое</button>
-        </div>
-        <div class="fp-row"><span>Регион</span>
-          <div class="dd" id="adf-dd"></div>
-        </div>
-        <label class="fp-row fp-toggle"><span>Только новые</span><input type="checkbox" id="adf-new"></label>
-        <div class="fp-row"><button class="lb-cancel" type="button" id="adf-reset">Сбросить фильтры</button></div>
+      <div class="ad-tools">
+        <input id="ad-q" class="search" type="search" placeholder="Поиск по названию" autocomplete="off">
+        <select id="ad-sort" class="ad-sel" aria-label="Сортировка"></select>
+        <select id="ad-status" class="ad-sel" aria-label="Статус" hidden></select>
+        <select id="ad-region-sel" class="ad-sel" aria-label="Регион"></select>
       </div>
-      <div id="ads-list"><div class="spinner"></div></div>
+      <div class="fchips" id="adf-cats">
+        <button class="fchip on" type="button" data-adcat="">Все</button>
+        <button class="fchip" type="button" data-adcat="oil">Нефтепродукты</button>
+        <button class="fchip" type="button" data-adcat="metal">Металлолом</button>
+        <button class="fchip" type="button" data-adcat="pipe">Трубы</button>
+      </div>
+      <div id="ads-list" class="ad-grid"><div class="spinner"></div></div>
+      <button type="button" id="ad-more" class="ad-more" hidden>Показать ещё</button>
+      <div id="ad-view" class="ad-view" hidden>
+        <div class="ad-view-card" role="dialog" aria-modal="true">
+          <button type="button" class="doc-x" id="ad-view-x" aria-label="Закрыть">×</button>
+          <div id="ad-view-body"></div>
+        </div>
+      </div>
     </section>
     <section class="pane" id="pane-labels">
       <div class="pane-head"><h2>Подборки</h2><button class="sb-plus" id="lb-new" type="button" aria-label="Создать подборку" title="Создать подборку">＋</button></div>
@@ -2902,27 +2955,12 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#f-reset')){ resetFilters(); return; }
   var cseg=e.target.closest('#catseg button');
   if(cseg){ FILT.cat=cseg.dataset.cat; document.querySelectorAll('#catseg button').forEach(function(b){b.classList.toggle('on',b===cseg);}); document.querySelector('main').scrollTop=0; render(); return; }
-  if(e.target.closest('#adf-btn')){
-    var ap=document.getElementById('adf-panel');
-    var открыть=ap.style.display==='none';
-    ap.style.display=открыть?'flex':'none';
-    e.target.closest('#adf-btn').classList.toggle('on',открыть);
-    if(!открыть) adRegionClose();
-    return;
-  }
-  var _adcat=e.target.closest('[data-adcat]');
-  if(_adcat){
-    ADFILT.cat=_adcat.getAttribute('data-adcat');
-    document.querySelectorAll('#adf-cats .fchip').forEach(function(b){
-      b.classList.toggle('on', b===_adcat); });
-    renderAds(); adfMark(); return;
-  }
   if(e.target.closest('#adf-reset')){
-    ADFILT.region=''; ADFILT.cat=''; ADFILT.onlyNew=false;
-    var nb=document.getElementById('adf-new'); if(nb) nb.checked=false;
-    document.querySelectorAll('#adf-cats .fchip').forEach(function(b){
-      b.classList.toggle('on', b.getAttribute('data-adcat')===''); });
-    fillAdRegions(); renderAds(); adfMark(); return;
+    ADFILT={region:'', q:'', cat:'', status:'', sort: ADTAB==='mine'?'new':'new'};
+    var q=document.getElementById('ad-q'); if(q) q.value='';
+    adSyncControls();
+    adReload();
+    return;
   }
   if(e.target.closest('#filters-btn')){ var fp=document.getElementById('filters-panel'); var open=fp.style.display==='none'; fp.style.display=open?'flex':'none'; e.target.closest('#filters-btn').classList.toggle('on',open); return; }
   if(e.target.closest('#modal-hide')){ var _t=_modalT; closeTender(); hideTender(_t); return; }
@@ -3115,7 +3153,7 @@ document.addEventListener('click',e=>{
         FILT.onlyNew || FILT.showHidden)){
       try { resetFilters(); } catch(_){}
     }
-    document.body.dataset.pane=tab.dataset.tab;document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') loadAds(); else adWatchStop(); if(tab.dataset.tab==='labels'){ lbLoadRegions().then(lbLoad); } tabPill(true);}
+    document.body.dataset.pane=tab.dataset.tab;document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') adReload(); else adWatchStop(); if(tab.dataset.tab==='labels'){ lbLoadRegions().then(lbLoad); } tabPill(true);}
 });
 
 
@@ -3692,150 +3730,261 @@ function adContact(a){
   return '<div class="ac-meta">' + escH(текст) + '</div>';
 }
 
-/* Значок категории для объявления без фото: пустой серый прямоугольник
-   выглядит как сломанная картинка, а лента должна оставаться ровной. */
-var AD_ICON = {
-  oil: '<path d="M12 3c-4 5.2-6.2 8.3-6.2 11.3a6.2 6.2 0 0 0 12.4 0C18.2 11.3 16 8.2 12 3z"/>',
-  metal: '<path d="M4 17l6-10 4 6 2-3 4 7z"/><circle cx="8" cy="6" r="2"/>',
-  pipe: '<rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 8v8M17 8v8"/>',
-  other: '<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 15l4-4 3 3 3-4 6 6"/>'
-};
+/* Каталог объявлений: фото, цена, название, регион, дата. */
+var ADTAB = 'all';
+var ADS = [];
+var ADMORE = null;
+var ADFILT = {q:'', cat:'', region:'', status:'', sort:'new'};
+var AD_KIND = {oil:0, metal:1, pipe:2, other:3};
+var AD_LABEL = {oil:'Нефтепродукты', metal:'Металлолом', pipe:'Трубы', other:'Другое'};
+var AD_STATUS = {pending:'на модерации', approved:'опубликовано', rejected:'отклонено', expired:'срок истёк', banned:'заблокировано', archived:'в архиве'};
 
-function adPhoto(a){
-  var n = a.nphotos || 0;
-  if(n > 0){
-    var src = API_BASE + '/api/ad/photo?id=' + a.id + '&n=0';
-    return '<div class="ac-ph"><img src="' + src + '" loading="lazy" alt="">'
-      + (n > 1 ? '<span class="ac-more">+' + (n - 1) + '</span>' : '') + '</div>';
+function adDate(s){
+  var d = new Date(s);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('ru-RU', {day:'numeric', month:'short'});
+}
+function adPrice(a){
+  if (a.price_type === 'negotiable' && !a.price) return 'Договорная';
+  if (!a.price) return 'Цена не указана';
+  var t = escH(a.price);
+  if (/\d/.test(a.price)) t += ' ₽';
+  if (a.vat === 'with') t += ' <span class="ac-vat">с НДС</span>';
+  if (a.vat === 'without') t += ' <span class="ac-vat">без НДС</span>';
+  return t;
+}
+function adPhotoPublic(a){
+  return (a.status === 'approved' || !a.status) && !a.archived;
+}
+function adPhotoUrl(a, n){
+  return API_BASE + '/api/ad/photo?id=' + encodeURIComponent(a.id) + '&n=' + n;
+}
+function adPhotoTag(a, n){
+  if (adPhotoPublic(a)) {
+    return '<img src="' + adPhotoUrl(a, n) + '" alt="" loading="lazy">';
   }
-  var icon = AD_ICON[a.category] || AD_ICON.other;
-  return '<div class="ac-ph"><div class="ac-noph">'
-    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"'
-    + ' stroke-linejoin="round">' + icon + '</svg><span>фото нет</span></div></div>';
+  return '<img alt="" data-adphoto="' + a.id + '" data-n="' + n + '">';
+}
+function adDropBlobs(root){
+  if (!root) return;
+  root.querySelectorAll('img[data-blob]').forEach(function(img){
+    if (img.src && img.src.indexOf('blob:') === 0) {
+      try { URL.revokeObjectURL(img.src); } catch (_) {}
+    }
+  });
+}
+function adBindPrivatePhotos(root){
+  if (!root) return;
+  root.querySelectorAll('img[data-adphoto]').forEach(function(img){
+    if (img.getAttribute('data-asked')) return;
+    img.setAttribute('data-asked', '1');
+    var body = {id: +img.getAttribute('data-adphoto'), n: +(img.getAttribute('data-n') || 0)};
+    try { body.session = SESS() || ''; } catch (_) { body.session = ''; }
+    try { body.initData = (typeof initData === 'string') ? initData : ''; } catch (_) { body.initData = ''; }
+    fetch(API_BASE + '/api/ad/photo', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    }).then(function(r){
+      if (!r.ok) throw new Error('fail');
+      return r.blob();
+    }).then(function(blob){
+      if (!img.isConnected) return;
+      img.src = URL.createObjectURL(blob);
+      img.setAttribute('data-blob', '1');
+    }).catch(function(){
+      if (!img.isConnected || !img.parentNode) return;
+      var ph = document.createElement('div');
+      ph.className = 'ac-noph';
+      ph.textContent = 'нет фото';
+      img.parentNode.replaceChild(ph, img);
+    });
+  });
+}
+function adPhoto(a){
+  if ((a.nphotos || 0) > 0 && (adPhotoPublic(a) || a.mine)) {
+    return '<div class="ac-ph">' + adPhotoTag(a, 0) + '</div>';
+  }
+  return '<div class="ac-ph"><div class="ac-noph">нет фото</div></div>';
+}
+function adCard(a){
+  var badge = '';
+  if (a.mine) {
+    var st = a.archived ? 'archived' : (a.status || '');
+    badge = '<span class="ac-badge' + (a.archived ? ' arc' : '') + '">' + escH(AD_STATUS[st] || st) + '</span>';
+  }
+  var menu = '';
+  if (a.mine) {
+    var renew = (a.status === 'approved' && !a.archived) ? '<button type="button" data-act="renew">Продлить</button>' : '';
+    var arch = a.archived ? 'Восстановить' : 'В архив';
+    menu = '<div class="ac-ops"><button type="button" class="ac-dot" data-id="' + a.id + '" aria-label="Действия">⋯</button>'
+      + '<div class="ac-pop" hidden>' + renew
+      + '<button type="button" data-act="edit" data-id="' + a.id + '">Редактировать</button>'
+      + '<button type="button" data-act="arch" data-id="' + a.id + '">' + arch + '</button>'
+      + '<button type="button" data-act="del" data-id="' + a.id + '">Удалить</button></div></div>';
+  }
+  return '<article class="ad-card cat-' + escH(a.category || 'other') + '" data-id="' + a.id + '">'
+    + adPhoto(a) + menu
+    + '<div class="ac-body">' + badge
+    + '<div class="ac-price">' + adPrice(a) + '</div>'
+    + '<h3>' + escH(a.title || '') + '</h3>'
+    + '<div class="ac-foot"><span>' + escH(a.region || 'регион не указан') + '</span><span>' + escH(adDate(a.created)) + '</span></div>'
+    + '</div></article>';
 }
 
-var AD_STATUS={pending:'на модерации',rejected:'отклонено',expired:'срок истёк',approved:'опубликовано'};
-function adCard(a){ var cat={oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом',other:'Другое'}[a.category]||'Другое';
-  var свой=a.mine?'<span class="ac-mine ac-'+a.status+'">'+(AD_STATUS[a.status]||a.status)+'</span>':'';
-  var price=a.price?(escH(a.price)+(/\d/.test(a.price)?' ₽':''))
-    :(a.price_type==='negotiable'?'Договорная':'<span class="ac-noprice">Цена не указана</span>');
-  if(a.vat) price+=' <span class="ac-vat">'+(a.vat==='with'?'с НДС':'без НДС')+'</span>';
-  var go=adContact(a);
-  return '<div class="ad-card'+(a.mine?' ad-mine':'')+'">'
-    + adPhoto(a)
-    + '<div class="ac-body">'
-    + (isAdNew(a)&&!a.mine?'<span class="ac-new">Новое</span>':'')
-    + '<div class="ac-cat">'+cat+' · частное'+свой+'</div><h3>'+escH(a.title)+'</h3>'
-    + (a.description?'<div class="ac-desc">'+escH(a.description)+'</div>':'')
-    + '<div class="ac-meta"><span class="ac-price">'+price+'</span>'+(a.region?'<span>📍 '+escH(a.region)+'</span>':'')+'</div>'
-    + go + '</div></div>';
-}
-var ADS=[]; var ADFILT={region:'',onlyNew:false,cat:''};
-function isAdNew(a){ if(!a.created) return false; var ts=Date.parse(a.created); return !isNaN(ts) && (Date.now()-ts) < 3*864e5; }
-/* Регионы для фильтра — только те, что реально есть в объявлениях, с числом
-   объявлений. Список свой, а не системный select: тот на телефоне
-   разворачивается во весь экран и выпадает из оформления приложения. */
-function fillAdRegions(){
-  var счёт={};
-  ADS.forEach(function(a){ var r=(a.region||'').trim(); if(r) счёт[r]=(счёт[r]||0)+1; });
-  var regs=Object.keys(счёт).sort(function(a,b){ return a.localeCompare(b,'ru'); });
-  if(ADFILT.region && regs.indexOf(ADFILT.region)<0) ADFILT.region='';
-  var items=[{v:'', label:'Любой регион', n:ADS.length}];
-  regs.forEach(function(r){ items.push({v:r, label:r, n:счёт[r]}); });
-  ddSet('adf-dd', {items:items, value:ADFILT.region, empty:'Любой регион',
-    onPick:function(v){ ADFILT.region=v; fillAdRegions(); renderAds(); adfMark(); }});
+function adSyncControls(){
+  var sort = document.getElementById('ad-sort');
+  var st = document.getElementById('ad-status');
+  var mine = ADTAB === 'mine';
+  if (st) st.hidden = !mine;
+  if (sort) {
+    var cur = ADFILT.sort;
+    var opts = mine
+      ? [['new','Сначала новые'],['old','Сначала старые'],['kind','По виду'],['expiry','По сроку окончания']]
+      : [['new','Сначала новые'],['old','Сначала старые'],['kind','По виду']];
+    if (!opts.some(function(o){ return o[0] === cur; })) cur = 'new';
+    ADFILT.sort = cur;
+    sort.innerHTML = opts.map(function(o){ return '<option value="' + o[0] + '"' + (o[0]===cur?' selected':'') + '>' + o[1] + '</option>'; }).join('');
+  }
+  if (st) {
+    var sts = [['','Любой статус'],['pending','На модерации'],['approved','Опубликовано'],['rejected','Отклонено'],['expired','Срок истёк'],['archived','В архиве']];
+    st.innerHTML = sts.map(function(o){ return '<option value="' + o[0] + '"' + (o[0]===ADFILT.status?' selected':'') + '>' + o[1] + '</option>'; }).join('');
+  }
+  var chips = document.getElementById('adf-cats');
+  if (chips && !chips.querySelector('[data-adcat="other"]') && (ADTAB==='mine' ? MYADS : ADS).some(function(a){ return a.category==='other'; })) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'fchip'; b.setAttribute('data-adcat','other'); b.textContent = 'Другое';
+    chips.appendChild(b);
+  }
 }
 
-function adRegionClose(){ ddClose(null); }
-
-/* Кнопка «Фильтры» помечается точкой, когда что-то выбрано. */
-function adfMark(){
-  var b=document.getElementById('adf-btn'); if(!b) return;
-  var есть=!!(ADFILT.region || ADFILT.cat || ADFILT.onlyNew);
-  b.classList.toggle('has', есть);
+function adQuery(){
+  return {q: ADFILT.q, category: ADFILT.cat, region: ADFILT.region, sort: ADFILT.sort === 'expiry' ? 'new' : ADFILT.sort};
 }
 
-/* ——— Ожидание модерации ———
-   Пока в разделе есть своё объявление на модерации, тихо переспрашиваем
-   статус. Решение приходит через секунды-часы, а человек стоит на странице
-   и ждёт: опубликованное объявление должно появиться само, без перезахода. */
-var AD_WATCH = null, AD_SEEN = {};
-
-function adPending(){
-  return ADS.some(function(a){ return a.mine && a.status === 'pending'; });
+function adFillRegions(list){
+  var sel = document.getElementById('ad-region-sel'); if (!sel) return;
+  var regs = {};
+  (list || []).forEach(function(r){ if (r) regs[r] = 1; });
+  (ADTAB === 'mine' ? MYADS : []).forEach(function(a){ if (a.region) regs[a.region] = 1; });
+  var names = Object.keys(regs).sort(function(a,b){ return a.localeCompare(b,'ru'); });
+  var cur = ADFILT.region;
+  if (cur && names.indexOf(cur) < 0) names.push(cur);
+  sel.innerHTML = '<option value="">Любой регион</option>' + names.map(function(r){
+    return '<option value="' + escH(r) + '"' + (r===cur?' selected':'') + '>' + escH(r) + '</option>';
+  }).join('');
 }
 
-function adWatchStop(){
-  if(AD_WATCH){ clearInterval(AD_WATCH); AD_WATCH = null; }
+function adMineView(){
+  var a = MYADS.slice();
+  var q = (ADFILT.q || '').toLowerCase();
+  if (q) a = a.filter(function(x){ return (x.title || '').toLowerCase().indexOf(q) >= 0; });
+  if (ADFILT.cat) a = a.filter(function(x){ return x.category === ADFILT.cat; });
+  if (ADFILT.region) a = a.filter(function(x){ return (x.region || '') === ADFILT.region; });
+  if (ADFILT.status === 'archived') a = a.filter(function(x){ return !!x.archived; });
+  else if (ADFILT.status) a = a.filter(function(x){ return !x.archived && x.status === ADFILT.status; });
+  var kind = function(x){ return AD_KIND[x.category] == null ? 9 : AD_KIND[x.category]; };
+  a.sort(function(x, y){
+    if (ADFILT.sort === 'old') return x.id - y.id;
+    if (ADFILT.sort === 'kind') return kind(x) - kind(y) || y.id - x.id;
+    if (ADFILT.sort === 'expiry') return String(x.expires_at || '9999').localeCompare(String(y.expires_at || '9999')) || y.id - x.id;
+    return y.id - x.id;
+  });
+  return a;
 }
 
-function adWatchStart(){
-  adWatchStop();
-  if(!adPending()) return;
-  ADS.forEach(function(a){ if(a.mine) AD_SEEN[a.id] = a.status; });
-  var тиков = 0;
-  AD_WATCH = setInterval(function(){
-    // полчаса ожидания хватает: дальше человек всё равно уйдёт со страницы,
-    // а решение он увидит при следующем заходе
-    if(++тиков > 150){ adWatchStop(); return; }
-    if(document.hidden || document.body.dataset.pane !== 'ads'){ return; }
-    api('/api/ad/mine').then(function(d){
-      var мои = (d && d.ads) || [];
-      var изменилось = мои.some(function(a){
-        return AD_SEEN[a.id] && AD_SEEN[a.id] !== a.status;
-      });
-      if(!изменилось) return;
-      мои.forEach(function(a){
-        if(AD_SEEN[a.id] === 'pending' && a.status === 'approved')
-          showToast('Объявление «' + (a.title || '').slice(0, 30) + '» опубликовано');
-        else if(AD_SEEN[a.id] === 'pending' && a.status === 'rejected')
-          showToast('Объявление отклонено модератором');
-        AD_SEEN[a.id] = a.status;
-      });
-      loadAds();
-    }).catch(function(){});
-  }, 12000);
+function adPaint(items, empty){
+  var box = document.getElementById('ads-list'); if (!box) return;
+  adDropBlobs(box);
+  box.innerHTML = items.length ? items.map(adCard).join('') : '<div class="ads-empty">' + empty + '</div>';
+  adBindPrivatePhotos(box);
 }
-
-// вернулись на вкладку браузера — сразу сверяем, не решилась ли модерация
-document.addEventListener('visibilitychange', function(){
-  if(!document.hidden && document.body.dataset.pane === 'ads' && adPending())
-    loadAds();
-});
 
 function renderAds(){
-  var box=document.getElementById('ads-list'); if(!box) return;
-  var fp=document.getElementById('ads-filters'); if(fp) fp.style.display=ADS.length?'flex':'none';
-  fillAdRegions();
-  var a=ADS.slice();
-  if(ADFILT.cat) a=a.filter(function(x){return (x.category||'other')===ADFILT.cat;});
-  if(ADFILT.region) a=a.filter(function(x){return (x.region||'').trim()===ADFILT.region;});
-  if(ADFILT.onlyNew) a=a.filter(isAdNew);
-  box.innerHTML=a.length?a.map(adCard).join(''):'<div class="ads-empty">'+(ADS.length?'Ничего не найдено по фильтру.':'Пока нет объявлений. Будьте первым — нажмите «Подать».')+'</div>';
+  adSyncControls();
+  if (ADTAB === 'mine') {
+    var more = document.getElementById('ad-more'); if (more) more.hidden = true;
+    adFillRegions(MYADS.map(function(a){ return a.region; }));
+    var list = adMineView();
+    adPaint(list, MYADS.length ? 'Ничего не найдено по этим условиям.' : 'У вас пока нет объявлений.');
+    return;
+  }
+  adFillRegions(ADREGS);
+  adPaint(ADS, 'Пока нет объявлений. Будьте первым — нажмите «Подать».');
+  var btn = document.getElementById('ad-more');
+  if (btn) btn.hidden = !ADMORE;
 }
-/* Лента объявлений = чужие одобренные + ВСЕ свои, включая те, что ещё на
-   модерации: человек только что подал объявление и должен видеть его здесь,
-   а не гадать, дошло ли оно. Чужие видят его после одобрения. */
-function loadAds(){
-  var box=document.getElementById('ads-list'); if(!box) return;
-  box.innerHTML='<div class="spinner"></div>';
-  var общие=api('/api/ads').then(function(d){ return (d&&d.ads)||[]; })
-                           .catch(function(){ return null; });
-  var свои=api('/api/ad/mine').then(function(d){ return (d&&d.ads)||[]; })
-                              .catch(function(){ return []; });
-  Promise.all([общие, свои]).then(function(пара){
-    if(пара[0]===null){
-      box.innerHTML='<div class="ads-empty">Не удалось загрузить объявления.</div>';
-      return;
-    }
-    var есть={}, список=[];
-    (пара[1]||[]).forEach(function(a){
-      if(a.status==='banned') return;
-      a.mine=true; есть[a.id]=true; список.push(a);
+
+var ADREGS = [];
+function loadMine(){
+  return api('/api/ad/mine').then(function(d){
+    MYADS = (d && d.ads) || [];
+    MYADS.forEach(function(a){ a.mine = true; });
+  }).catch(function(){ MYADS = []; });
+}
+function loadAds(append){
+  var box = document.getElementById('ads-list');
+  if (box && !append) box.innerHTML = '<div class="spinner"></div>';
+  var body = adQuery();
+  if (append && ADMORE) {
+    body.before_id = ADMORE.before_id;
+    body.before_rank = ADMORE.before_rank;
+  }
+  return api('/api/ads', body).then(function(d){
+    var chunk = (d && d.ads) || [];
+    var mineIds = {};
+    MYADS.forEach(function(a){ mineIds[a.id] = a; });
+    chunk.forEach(function(a){
+      var own = mineIds[a.id];
+      if (!own) return;
+      a.mine = true;
+      a.status = own.status;
+      a.archived = own.archived;
+      a.expires_at = own.expires_at;
     });
-    (пара[0]||[]).forEach(function(a){ if(!есть[a.id]) список.push(a); });
-    ADS=список; renderAds(); adWatchStart();
+    ADS = append ? ADS.concat(chunk) : chunk;
+    ADMORE = (d && d.has_more && d.next) ? d.next : null;
+    ADREGS = (d && d.regions) || ADREGS;
+    renderAds();
+  }).catch(function(){
+    if (box && !append) box.innerHTML = '<div class="ads-empty">Не удалось загрузить объявления.</div>';
   });
+}
+function adReload(){
+  ADMORE = null;
+  if (ADTAB === 'mine') {
+    var box = document.getElementById('ads-list');
+    if (box) box.innerHTML = '<div class="spinner"></div>';
+    return loadMine().then(renderAds);
+  }
+  return loadMine().then(function(){ return loadAds(false); });
+}
+function loadMyAds(){ return loadMine().then(function(){ if (ADTAB === 'mine') renderAds(); }); }
+
+function adOpen(a){
+  var box = document.getElementById('ad-view'), body = document.getElementById('ad-view-body');
+  if (!box || !body || !a) return;
+  var photos = '';
+  var n = a.nphotos || 0;
+  if (n && (adPhotoPublic(a) || a.mine)) {
+    for (var i = 0; i < n; i++) photos += adPhotoTag(a, i);
+  } else if (!n) photos = '<div class="ac-noph">нет фото</div>';
+  adDropBlobs(body);
+  body.innerHTML = photos
+    + '<div class="ac-price">' + adPrice(a) + '</div>'
+    + '<h3>' + escH(a.title || '') + '</h3>'
+    + '<div class="ac-foot"><span>' + escH(AD_LABEL[a.category] || 'Другое') + '</span><span>' + escH(a.region || '') + '</span><span>' + escH(adDate(a.created)) + '</span></div>'
+    + (a.description ? '<p>' + escH(a.description) + '</p>' : '')
+    + adContact(a);
+  adBindPrivatePhotos(body);
+  box.hidden = false;
+}
+function adCloseView(){ var box = document.getElementById('ad-view'); if (box) box.hidden = true; }
+function adById(id){
+  id = +id;
+  var mine = MYADS.find(function(a){ return a.id === id; });
+  if (mine) return mine;
+  return ADS.find(function(a){ return a.id === id; });
 }
 
 /* ——— Подача объявления: открыть форму, свернуть её после отправки ——— */
@@ -3844,14 +3993,16 @@ function loadAds(){
    телефоне разворачивается во весь экран и выглядит чужим. Значение держим
    в скрытом поле, чтобы отправка формы не менялась. */
 var AD_CATS = [{v: 'oil', label: 'Нефтепродукты'}, {v: 'metal', label: 'Металлолом'},
-               {v: 'pipe', label: 'Трубы'}, {v: 'other', label: 'Другое'}];
+               {v: 'pipe', label: 'Трубы'}];
 var AD_VATS = [{v: '', label: 'НДС не указан'}, {v: 'with', label: 'с НДС'},
                {v: 'without', label: 'без НДС'}];
 
 function adSelects(){
   var cat = document.getElementById('ad-cat'), vat = document.getElementById('ad-vat');
   if(!cat || !vat) return;
-  ddSet('ad-cat-dd', {items: AD_CATS, value: cat.value || 'oil',
+  var items = AD_CATS.slice();
+  if (cat.value === 'other') items = items.concat([{v:'other', label:'Другое'}]);
+  ddSet('ad-cat-dd', {items: items, value: cat.value || 'oil',
     empty: 'Нефтепродукты',
     onPick: function(v){ cat.value = v; adSelects(); }});
   ddSet('ad-vat-dd', {items: AD_VATS, value: vat.value || '',
@@ -3935,45 +4086,97 @@ function submitAd(){ var btn=document.getElementById('ad-submit'), hint=document
     document.getElementById('ad-vat').value='';
     _editAd=null; btn.textContent='Отправить на модерацию';
     adDoneShow(правка);
-    loadAds();
-    var _мои=document.getElementById('myads-list');   // блок убран из профиля
-    if(_мои && _мои.style.display!=='none') loadMyAds();
+    ADTAB='mine';
+    adSyncControls();
+    adReload();
   }).catch(function(err){ btn.disabled=false; hint.textContent=(err&&err.message)||'Не удалось отправить'; }); }
 var _editAd=null, MYADS=[];
 function myAdBadge(s){ var m={pending:'на модерации',approved:'опубликовано',rejected:'отклонено',expired:'истекло',banned:'заблокировано'}; return m[s]||s; }
 function myDaysLeft(a){ if(a.status!=='approved'||!a.expires_at) return ''; var ms=Date.parse(a.expires_at)-Date.now(); if(isNaN(ms)||ms<0) return ''; var d=Math.ceil(ms/864e5); return ' · осталось '+d+' дн.'; }
-function loadMyAds(){ var box=document.getElementById('myads-list'); if(!box) return; box.innerHTML='<div class="spinner"></div>';
-  api('/api/ad/mine').then(function(d){ MYADS=(d&&d.ads)||[]; if(!MYADS.length){ box.innerHTML='<div class="ads-empty">У вас пока нет объявлений.</div>'; return; }
-    box.innerHTML=MYADS.map(function(a){ return '<div class="myad"><div class="myad-top"><h4>'+escH(a.title)+'</h4><span class="myad-badge '+a.status+'">'+myAdBadge(a.status)+'</span></div>'+
-      '<div class="myad-meta">'+escH({oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом',other:'Другое'}[a.category]||'')+(a.price?' · '+escH(a.price):'')+(a.vat?' ('+(a.vat==='with'?'с НДС':'без НДС')+')':'')+myDaysLeft(a)+'</div>'+
-      '<div class="myad-acts">'+((a.status==='approved'||a.status==='expired')?'<button class="myad-renew" data-id="'+a.id+'">Продлить</button>':'')+'<button class="myad-edit" data-id="'+a.id+'">Редактировать</button><button class="myad-del del" data-id="'+a.id+'">Удалить</button></div></div>'; }).join('');
-  }).catch(function(){ box.innerHTML='<div class="ads-empty">Не удалось загрузить.</div>'; }); }
-function startEditAd(id){ var a=MYADS.find(function(x){return x.id===id;}); if(!a) return; _editAd=id;
-  document.getElementById('ad-cat').value=a.category||'other';
-  document.getElementById('ad-title').value=a.title||'';
-  document.getElementById('ad-desc').value=a.description||'';
-  document.getElementById('ad-price').value=a.price||'';
-  document.getElementById('ad-neg').checked=a.price_type==='negotiable';
-  document.getElementById('ad-region').value=a.region||'';
-  document.getElementById('ad-contact').value=a.contact||'';
-  adPhotos=[]; adThumbs();
-  document.getElementById('ad-submit').textContent='Сохранить изменения';
-  document.getElementById('ad-ov-title').textContent='Правка объявления';
-  document.getElementById('ad-vat').value=a.vat||'';
+function startEditAd(id){
+  var a = MYADS.find(function(x){ return x.id === id; });
+  if (!a) return;
+  _editAd = id;
+  var items = AD_CATS.slice();
+  if (a.category === 'other') items = items.concat([{v:'other', label:'Другое'}]);
+  document.getElementById('ad-cat').value = a.category || 'oil';
+  document.getElementById('ad-title').value = a.title || '';
+  document.getElementById('ad-desc').value = a.description || '';
+  document.getElementById('ad-price').value = a.price || '';
+  document.getElementById('ad-neg').checked = a.price_type === 'negotiable';
+  document.getElementById('ad-region').value = a.region || '';
+  document.getElementById('ad-contact').value = a.contact || '';
+  document.getElementById('ad-vat').value = a.vat || '';
+  ddSet('ad-cat-dd', {items: items, value: document.getElementById('ad-cat').value,
+    empty: 'Нефтепродукты',
+    onPick: function(v){ document.getElementById('ad-cat').value = v; adSelects(); }});
+  adPhotos = []; adThumbs();
+  document.getElementById('ad-submit').textContent = 'Сохранить изменения';
+  document.getElementById('ad-ov-title').textContent = 'Правка объявления';
+  document.getElementById('ad-hint').textContent = a.nphotos ? 'Фото сохранятся прежние. Добавите новые — заменят их.' : '';
   adFormOpen(true);
-  document.getElementById('ad-hint').textContent=a.nphotos?'Фото сохранятся прежние. Добавите новые — заменят их.':'';
-  // переключаемся на вкладку Доска и открываем форму
-  document.querySelectorAll('nav.tabbar button').forEach(function(b){b.classList.remove('active');});
-  document.querySelector('nav.tabbar button[data-tab="ads"]').classList.add('active');
-  document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('active');});
-  document.getElementById('pane-ads').classList.add('active');
-  adFormOpen();                       // форма живёт в окне поверх страницы
-  document.querySelector('main').scrollTop=0;
 }
-function deleteAd(id){ var go=function(){ api('/api/ad/delete',{id:id}).then(function(){ if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success'); loadMyAds(); loadAds(); }).catch(function(err){ try{ if(tg&&tg.showAlert) tg.showAlert((err&&err.message)||'Не удалось удалить'); }catch(_){} }); };
+function deleteAd(id){ var go=function(){ api('/api/ad/delete',{id:id}).then(function(){ if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success'); adReload(); }).catch(function(err){ try{ if(tg&&tg.showAlert) tg.showAlert((err&&err.message)||'Не удалось удалить'); }catch(_){} }); };
   try{ if(tg&&tg.showConfirm){ tg.showConfirm('Удалить объявление?',function(ok){ if(ok) go(); }); return; } }catch(_){}
   if(window.confirm('Удалить объявление?')) go(); }
-function renewAd(id){ api('/api/ad/renew',{id:id}).then(function(){ if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success'); try{ if(tg&&tg.showAlert) tg.showAlert('✅ Срок продлён ещё на 10 дней.'); }catch(_){} loadMyAds(); loadAds(); }).catch(function(err){ try{ if(tg&&tg.showAlert) tg.showAlert((err&&err.message)||'Не удалось продлить'); }catch(_){} }); }
+function renewAd(id){ api('/api/ad/renew',{id:id}).then(function(){ if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success'); try{ if(tg&&tg.showAlert) tg.showAlert('✅ Срок продлён ещё на 10 дней.'); }catch(_){} adReload(); }).catch(function(err){ try{ if(tg&&tg.showAlert) tg.showAlert((err&&err.message)||'Не удалось продлить'); }catch(_){} }); }
+document.addEventListener('click', function(e){
+  var tab = e.target.closest('#pane-ads [data-adtab]');
+  if (tab) {
+    ADTAB = tab.getAttribute('data-adtab');
+    document.querySelectorAll('#pane-ads .ad-tab').forEach(function(b){ b.classList.toggle('on', b === tab); });
+    ADFILT.sort = 'new';
+    adSyncControls();
+    adReload();
+    return;
+  }
+  var chip = e.target.closest('#adf-cats [data-adcat]');
+  if (chip) {
+    ADFILT.cat = chip.getAttribute('data-adcat') || '';
+    document.querySelectorAll('#adf-cats .fchip').forEach(function(b){ b.classList.toggle('on', b === chip); });
+    adReload();
+    return;
+  }
+  if (e.target.id === 'ad-more') { loadAds(true); return; }
+  if (e.target.id === 'ad-view-x' || e.target.id === 'ad-view') { adCloseView(); return; }
+  var dot = e.target.closest('.ac-dot');
+  if (dot) {
+    e.stopPropagation();
+    var pop = dot.parentNode.querySelector('.ac-pop');
+    document.querySelectorAll('#pane-ads .ac-pop').forEach(function(p){ if (p !== pop) p.hidden = true; });
+    if (pop) pop.hidden = !pop.hidden;
+    return;
+  }
+  var act = e.target.closest('#ads-list [data-act]');
+  if (act) {
+    e.stopPropagation();
+    var id = +act.getAttribute('data-id');
+    var kind = act.getAttribute('data-act');
+    if (kind === 'edit') startEditAd(id);
+    else if (kind === 'del') deleteAd(id);
+    else if (kind === 'renew') renewAd(id);
+    else if (kind === 'arch') {
+      var item = adById(id);
+      api(item && item.archived ? '/api/ad/restore' : '/api/ad/archive', {id: id}).then(function(){ adReload(); });
+    }
+    return;
+  }
+  var card = e.target.closest('#ads-list .ad-card');
+  if (card && !e.target.closest('.ac-ops')) adOpen(adById(card.getAttribute('data-id')));
+});
+document.addEventListener('change', function(e){
+  if (!e.target) return;
+  if (e.target.id === 'ad-sort') { ADFILT.sort = e.target.value; if (ADTAB === 'mine') renderAds(); else adReload(); }
+  if (e.target.id === 'ad-status') { ADFILT.status = e.target.value; renderAds(); }
+  if (e.target.id === 'ad-region-sel') { ADFILT.region = e.target.value; if (ADTAB === 'mine') renderAds(); else adReload(); }
+});
+var adQTimer = null;
+document.addEventListener('input', function(e){
+  if (!e.target || e.target.id !== 'ad-q') return;
+  ADFILT.q = (e.target.value || '').trim();
+  clearTimeout(adQTimer);
+  adQTimer = setTimeout(function(){ if (ADTAB === 'mine') renderAds(); else adReload(); }, 250);
+});
 document.addEventListener('change',function(e){ if(e.target&&e.target.id==='ad-files'){ adFilesChosen(e.target.files); e.target.value=''; } });
 loadEmail();
 function renderInstallHelp(){
