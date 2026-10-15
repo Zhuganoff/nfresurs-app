@@ -788,19 +788,7 @@
     opacity: 1; transform: none; font-size: inherit; font-weight: inherit;
     padding: 0; color: inherit; }
   .tab-sub.off { opacity: .45; }
-  .prof-wrap { position: relative; }
-  .prof-menu { position: absolute; right: 0; bottom: calc(100% + 8px); z-index: 40;
-    min-width: 168px; padding: 6px; display: flex; flex-direction: column; gap: 2px;
-    border-radius: 14px; background: #0b1411; border: 1px solid rgba(255,255,255,.12);
-    box-shadow: 0 16px 40px rgba(0,0,0,.45); }
-  .prof-menu[hidden] { display: none; }
-  nav.tabbar .prof-menu button { flex: none; flex-direction: row; align-items: center;
-    justify-content: flex-start; gap: 0; width: 100%; min-height: 0; padding: 10px 12px;
-    border: 0; border-radius: 10px; background: transparent; color: #eef3f0;
-    opacity: 1; transform: none; font-size: 14px; font-weight: 600; text-align: left;
-    box-shadow: none; }
-  nav.tabbar .prof-menu button:hover { background: rgba(127,208,180,.14); color: #eef3f0; }
-  nav.tabbar .prof-menu button.out { color: #d4744f; }
+  nav.tabbar #prof-logout { color: #d4744f; }
   /* плашка «показан фильтр метки» над лентой */
   .lbfilter { display: flex; align-items: center; gap: 9px; margin: 0 0 10px;
     padding: 8px 12px; border-radius: 12px; border: 1px solid var(--hair);
@@ -1070,8 +1058,7 @@
     :root { --list: 380px; --list-pad: 28px; }
     .ad-ov { padding-top: 177px; }      /* вровень с первой карточкой */
     /* «Профиль» — в самый низ панели; лишнее на десктопе прячем */
-    nav.tabbar .prof-wrap { margin-top: auto; width: 100%; }
-    nav.tabbar .prof-wrap > button[data-tab="profile"] { width: 100%; }
+    nav.tabbar button[data-tab="profile"] { margin-top: auto; }
     /* подпункт метки: сдвиг вправо относительно «Меток» (правило кнопок
        панели специфичнее .tab-sub, поэтому повторяем его с nav.tabbar) */
     nav.tabbar .tab-sub { padding: 8px 12px 8px 34px; font-size: 13.5px;
@@ -1823,7 +1810,7 @@ header.app .app-sub { display:none; }
       <div id="fav-list"></div>
     </section>
     <section class="pane" id="pane-profile">
-      <div class="pane-head"><h2>Мой профиль</h2></div>
+      <div class="pane-head"><h2>Настройки</h2></div>
       <button id="share-btn" class="sharebtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Поделиться приложением</button>
       <div id="stats-line" style="display:none; margin:0 0 14px; padding:11px 14px; border-radius:12px; background:var(--glass); border:1px solid var(--glass-hair); font-size:13px; color:var(--text-dim); text-align:center"></div>
       <button id="export-btn" class="sharebtn" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Выгрузить пользователей на почту</button>
@@ -1986,13 +1973,8 @@ header.app .app-sub { display:none; }
       <button class="tab-plus" id="label-new" type="button" title="Новая подборка" aria-label="Новая подборка">＋</button>
     </div>
     <div class="tab-subs" id="tab-subs"></div>
-    <div class="prof-wrap">
-      <div class="prof-menu" id="prof-menu" hidden>
-        <button type="button" id="prof-settings">Настройки</button>
-        <button type="button" id="prof-logout" class="out">Выход</button>
-      </div>
-      <button data-tab="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>Профиль</button>
-    </div>
+    <button data-tab="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.3.6.9 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>Настройки</button>
+    <button type="button" id="prof-logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M9 6H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/><path d="M15 16l4-4-4-4M19 12H9"/></svg>Выход</button>
   </nav>
 
   <div id="paywall" class="paywall" style="display:none">
@@ -2940,7 +2922,7 @@ document.addEventListener('click',e=>{
     const k=decodeURIComponent(s.dataset.send); const t=TENDERS.find(x=>key(x)===k);
     if(!t) return;
     const alert=m=>{ try{ if(tg&&tg.showAlert) tg.showAlert(m); else s.title=m; }catch(_){ s.title=m; } };
-    if(!EMAIL.verified){ alert('Сначала подтвердите e-mail в разделе «Профиль».'); return; }
+    if(!EMAIL.verified){ alert('Сначала подтвердите e-mail в разделе «Настройки».'); return; }
     s.style.opacity='.5';
     api('/api/tender/send',{tender:t}).then(()=>{s.style.opacity='';s.classList.add('sent');s.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>';if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success');})
       .catch(err=>{s.style.opacity='';alert(err.message);});
@@ -3101,33 +3083,13 @@ document.addEventListener('click',e=>{
   if(e.target.closest('.myad-del')){ deleteAd(+e.target.closest('.myad-del').dataset.id); return; }
   // только настоящие вкладки: «плюс» и подпункты меток тоже кнопки
   // внутри панели, и без data-tab обработчик гасил все панели
-  var profMenu=document.getElementById('prof-menu');
   if(e.target.closest('#prof-logout')){
     try { localStorage.removeItem('session'); } catch(_){}
     try { document.cookie='ovd_sid=; path=/; max-age=0; SameSite=Lax'; } catch(_){}
     location.replace('/#login');
     return;
   }
-  if(e.target.closest('#prof-settings')){
-    if(profMenu) profMenu.hidden=true;
-    var profBtn=document.querySelector('nav.tabbar button[data-tab="profile"]');
-    if(profBtn){
-      document.body.dataset.pane='profile';
-      document.querySelectorAll('nav.tabbar button[data-tab]').forEach(function(b){ b.classList.remove('active'); });
-      profBtn.classList.add('active');
-      document.querySelectorAll('.pane').forEach(function(p){ p.classList.remove('active'); });
-      var pane=document.getElementById('pane-profile'); if(pane) pane.classList.add('active');
-      var main=document.querySelector('main'); if(main) main.scrollTop=0;
-      try { tabPill(true); } catch(_){}
-    }
-    return;
-  }
-  if(profMenu && !e.target.closest('.prof-wrap')) profMenu.hidden=true;
   const tab=e.target.closest('nav.tabbar button[data-tab]');
-  if(tab && tab.dataset.tab==='profile'){
-    profMenu.hidden=!profMenu.hidden;
-    return;
-  }
   if(tab){
     // Возврат на «Реализацию» показывает ленту целиком. Человек уходит в
     // «Подборки», нажимает там ключ — лента сужается до этой подборки; без
