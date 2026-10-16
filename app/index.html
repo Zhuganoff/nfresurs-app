@@ -3153,7 +3153,7 @@ document.addEventListener('click',e=>{
         FILT.onlyNew || FILT.showHidden)){
       try { resetFilters(); } catch(_){}
     }
-    document.body.dataset.pane=tab.dataset.tab;document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') adReload(); else adWatchStop(); if(tab.dataset.tab==='labels'){ lbLoadRegions().then(lbLoad); } tabPill(true);}
+    document.body.dataset.pane=tab.dataset.tab;document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));tab.classList.add('active');tab.classList.remove('pulse');void tab.offsetWidth;tab.classList.add('pulse');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+tab.dataset.tab).classList.add('active');document.querySelector('main').scrollTop=0; if(tab.dataset.tab==='ads') adReload(); if(tab.dataset.tab==='labels'){ lbLoadRegions().then(lbLoad); } tabPill(true);}
 });
 
 
