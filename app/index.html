@@ -1542,6 +1542,29 @@
   #cat-tip.show { opacity: 1; transform: translate(-50%, 0); }
   #cat-tip::after { content: ''; position: absolute; left: 50%; top: 100%; margin-left: -5px;
     border: 5px solid transparent; border-top-color: #0b1411; }
+
+  /* шапка ленты — заголовок, категории, поиск и фильтры — стоит на месте,
+     под ней прокручиваются только лоты. Отрицательные поля перекрывают
+     отступы колонки, чтобы карточки не просвечивали по краям. */
+  .feed-top { position: sticky; top: 0; z-index: 6; margin: -8px -8px 0; padding: 8px 8px 1px;
+    background: var(--app-bg);
+    -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%); }
+  .feed-top.stuck { box-shadow: 0 10px 18px -14px var(--shadow); border-bottom: 1px solid var(--glass-hair); }
+  #tenders-list { padding-top: 2px; }
+  @media (min-width: 1024px) {
+    body[data-pane="tenders"] .feed-top { margin: -28px -12px 0 calc(-1 * var(--list-pad));
+      padding: 28px 12px 1px var(--list-pad); }
+  }
+
+  /* iOS 26, сайт сохранён на экран «Домой»: при чёрно-прозрачной строке
+     состояния WebKit отдаёт окно короче экрана на высоту этой строки
+     (WebKit 301108) — меню-капсула и лента обрываются выше нижнего края,
+     под ними пустая полоса. Документ чуть выше окна заставляет WebKit
+     отдать полную высоту; min() не даёт вырасти больше экрана. */
+  @media (display-mode: standalone) {
+    html { min-height: calc(100% + env(safe-area-inset-top));
+           min-height: min(100lvh, calc(100% + env(safe-area-inset-top))); }
+  }
 </style>
 <style id="nf-brand-20260918">
 /* Shared turquoise brand: artwork only, no changes to header positioning/safe-area. */
@@ -1782,34 +1805,36 @@ header.app .app-sub { display:none; }
       <div class="logo mark"><img src="../img/brand-emblem-2026-09-23.png" width="48" height="48" alt="" decoding="async"></div>
       <div>
         <div class="app-name">ОТХОДЫ<br>В ДОХОДЫ</div>
-        <div class="app-sub">НЕФТЕПРОДУКТЫ · МЕТАЛЛОЛОМ · ТРУБЫ</div>
+        <div class="app-sub">НЕФТЕПРОДУКТЫ · МЕТАЛЛОЛОМ · ТРУБЫ · ЗАДВИЖКИ · КАБЕЛИ</div>
       </div>
     </a>
   </header>
 
   <main>
     <section class="pane active" id="pane-tenders">
-      <div class="pane-head"><h2>Реализация</h2><span class="count" id="tenders-count"></span></div>
-      <div class="since" id="since" style="display:none"></div>
-      <div class="lbfilter" id="lbfilter" style="display:none"></div>
-      <div class="catseg" id="catseg">
-        <button data-cat="oil" class="on" aria-label="Нефтепродукты" data-tip="Нефтепродукты"><svg class="ci ci-oil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.5" y="3" width="13" height="18" rx="2.2"/><path d="M5.5 8h13M5.5 16h13"/><path class="drip" d="M12 9.6c-1.1 1.5-1.9 2.4-1.9 3.3a1.9 1.9 0 0 0 3.8 0c0-.9-.8-1.8-1.9-3.3z" fill="currentColor" stroke="none"/></svg><span class="cs-l">Нефтепродукты</span></button>
-        <button data-cat="metal" aria-label="Металлолом" data-tip="Металлолом"><svg class="ci ci-metal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="gear"><circle cx="15.5" cy="8.5" r="2.2"/><path d="M15.5 3.8v1.7M15.5 11.5v1.7M10.8 8.5h1.7M18.5 8.5h1.7M12.2 5.2l1.2 1.2M17.6 10.6l1.2 1.2M12.2 11.8l1.2-1.2M17.6 6.4l1.2-1.2"/></g><path d="M3 15.5h9M3 20.5h9M7.5 15.5v5"/></svg><span class="cs-l">Металлолом</span></button>
-        <button data-cat="pipe" aria-label="Трубы" data-tip="Трубы"><svg class="ci ci-pipe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="p1"><ellipse cx="6.5" cy="8" rx="2.4" ry="3"/><path d="M6.5 5h11a2.4 3 0 0 1 0 6h-11"/></g><g class="p2"><ellipse cx="6.5" cy="16.5" rx="2.4" ry="3"/><path d="M6.5 13.5h9a2.4 3 0 0 1 0 6h-9"/></g></svg><span class="cs-l">Трубы</span></button>
-        <button data-cat="valve" aria-label="Задвижки" data-tip="Задвижки"><svg class="ci ci-valve" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="wheel"><circle cx="12" cy="5.2" r="3.2"/><path d="M12 2v6.4M8.8 5.2h6.4"/></g><path d="M12 8.4v3.2"/><rect x="2.5" y="12.5" width="3.5" height="7" rx="1"/><rect x="18" y="12.5" width="3.5" height="7" rx="1"/><path d="M6 14h12v4H6z"/></svg><span class="cs-l">Задвижки</span></button>
-        <button data-cat="cable" aria-label="Кабели" data-tip="Кабели"><svg class="ci ci-cable" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3v3.5M19 3v3.5M13 6.5h8v3a4 4 0 0 1-8 0z"/><path class="wire" d="M17 13.5v2.5c0 2.5-2.2 4.5-5 4.5H3"/><circle class="spark" cx="3" cy="20.5" r="1.2" fill="currentColor" stroke="none"/></svg><span class="cs-l">Кабели</span></button>
-      </div>
-      <div class="toolbar">
-        <input id="search" class="search" type="search" placeholder="Поиск по названию…" autocomplete="off">
-        <button id="filters-btn" class="filters-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>Фильтры</button>
-      </div>
-      <div id="filters-panel" class="filters-panel" style="display:none">
-        <div class="fp-row"><span>Площадка</span><div class="dd" id="dd-site"></div></div>
-        <div class="fp-row"><span>Область</span><div class="dd" id="dd-region"></div></div>
-        <label class="fp-row"><span>Город</span><input id="f-city" class="fsel" type="text" placeholder="Любой город" autocomplete="off"></label>
-        <div class="fp-row"><span>Сортировка</span><div class="dd" id="dd-sort"></div></div>
-        <label class="fp-row fp-toggle"><span>Только новые</span><input type="checkbox" id="f-new-cb"></label>
-        <label class="fp-row fp-toggle"><span>Показать скрытые</span><input type="checkbox" id="f-hidden-cb"></label>
+      <div class="feed-top" id="feed-top">
+        <div class="pane-head"><h2>Реализация</h2><span class="count" id="tenders-count"></span></div>
+        <div class="since" id="since" style="display:none"></div>
+        <div class="lbfilter" id="lbfilter" style="display:none"></div>
+        <div class="catseg" id="catseg">
+          <button data-cat="oil" class="on" aria-label="Нефтепродукты" data-tip="Нефтепродукты"><svg class="ci ci-oil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.5" y="3" width="13" height="18" rx="2.2"/><path d="M5.5 8h13M5.5 16h13"/><path class="drip" d="M12 9.6c-1.1 1.5-1.9 2.4-1.9 3.3a1.9 1.9 0 0 0 3.8 0c0-.9-.8-1.8-1.9-3.3z" fill="currentColor" stroke="none"/></svg><span class="cs-l">Нефтепродукты</span></button>
+          <button data-cat="metal" aria-label="Металлолом" data-tip="Металлолом"><svg class="ci ci-metal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="gear"><circle cx="15.5" cy="8.5" r="2.2"/><path d="M15.5 3.8v1.7M15.5 11.5v1.7M10.8 8.5h1.7M18.5 8.5h1.7M12.2 5.2l1.2 1.2M17.6 10.6l1.2 1.2M12.2 11.8l1.2-1.2M17.6 6.4l1.2-1.2"/></g><path d="M3 15.5h9M3 20.5h9M7.5 15.5v5"/></svg><span class="cs-l">Металлолом</span></button>
+          <button data-cat="pipe" aria-label="Трубы" data-tip="Трубы"><svg class="ci ci-pipe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="p1"><ellipse cx="6.5" cy="8" rx="2.4" ry="3"/><path d="M6.5 5h11a2.4 3 0 0 1 0 6h-11"/></g><g class="p2"><ellipse cx="6.5" cy="16.5" rx="2.4" ry="3"/><path d="M6.5 13.5h9a2.4 3 0 0 1 0 6h-9"/></g></svg><span class="cs-l">Трубы</span></button>
+          <button data-cat="valve" aria-label="Задвижки" data-tip="Задвижки"><svg class="ci ci-valve" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="wheel"><circle cx="12" cy="5.2" r="3.2"/><path d="M12 2v6.4M8.8 5.2h6.4"/></g><path d="M12 8.4v3.2"/><rect x="2.5" y="12.5" width="3.5" height="7" rx="1"/><rect x="18" y="12.5" width="3.5" height="7" rx="1"/><path d="M6 14h12v4H6z"/></svg><span class="cs-l">Задвижки</span></button>
+          <button data-cat="cable" aria-label="Кабели" data-tip="Кабели"><svg class="ci ci-cable" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3v3.5M19 3v3.5M13 6.5h8v3a4 4 0 0 1-8 0z"/><path class="wire" d="M17 13.5v2.5c0 2.5-2.2 4.5-5 4.5H3"/><circle class="spark" cx="3" cy="20.5" r="1.2" fill="currentColor" stroke="none"/></svg><span class="cs-l">Кабели</span></button>
+        </div>
+        <div class="toolbar">
+          <input id="search" class="search" type="search" placeholder="Поиск по названию…" autocomplete="off">
+          <button id="filters-btn" class="filters-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>Фильтры</button>
+        </div>
+        <div id="filters-panel" class="filters-panel" style="display:none">
+          <div class="fp-row"><span>Площадка</span><div class="dd" id="dd-site"></div></div>
+          <div class="fp-row"><span>Область</span><div class="dd" id="dd-region"></div></div>
+          <label class="fp-row"><span>Город</span><input id="f-city" class="fsel" type="text" placeholder="Любой город" autocomplete="off"></label>
+          <div class="fp-row"><span>Сортировка</span><div class="dd" id="dd-sort"></div></div>
+          <label class="fp-row fp-toggle"><span>Только новые</span><input type="checkbox" id="f-new-cb"></label>
+          <label class="fp-row fp-toggle"><span>Показать скрытые</span><input type="checkbox" id="f-hidden-cb"></label>
+        </div>
       </div>
       <div id="tenders-list"><div class="spinner"></div></div>
       <div class="list-resize" id="list-resize" title="Потяните, чтобы изменить ширину списка"></div>
@@ -5265,6 +5290,15 @@ try{ if(tg&&tg.initData){ ['pw-sbp','sub-sbp'].forEach(function(id){ var b=docum
   var s = document.createElement('script');
   s.src = '../diag-panel.js?v=4'; s.defer = true;
   document.head.appendChild(s);
+})();
+
+// тень под закреплённой шапкой ленты появляется, когда лоты уехали под неё
+(function(){
+  var top=document.getElementById('feed-top'); if(!top) return;
+  function upd(){ var m=document.querySelector('main');
+    var y=(m&&m.scrollTop)||window.pageYOffset||0; top.classList.toggle('stuck', y>4); }
+  var m=document.querySelector('main'); if(m) m.addEventListener('scroll',upd,{passive:true});
+  window.addEventListener('scroll',upd,{passive:true}); upd();
 })();
 </script>
 </body>
