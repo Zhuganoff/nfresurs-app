@@ -612,6 +612,12 @@
   .mats > .mat, .mats .mat-in { min-height: var(--mat-h); }
   .mats .face-front .txt { padding: 18px 22px 20px; }
   .mats .face-front .txt h3 { font-size: 20px; }
+  /* оборот: карточка на 20 % меньше прежней — текст тоже мельче, иначе
+     он не влезал и появлялась полоса прокрутки (замечание владельца 28.10) */
+  .mats .face-back { padding: 22px 22px; gap: 10px; }
+  .mats .face-back h3 { font-size: 20px; }
+  .mats .face-back p { font-size: 14px; line-height: 1.45; }
+  .mats .face-back ul { font-size: 13.5px; line-height: 1.55; padding-left: 16px; }
   /* у задвижки штурвал у верхнего края снимка: кадрируем ниже, срезая пол */
   .mats .mat-valve .face-front .pic > .mat-photo { object-position: center 70%; }
 
@@ -1687,8 +1693,8 @@ header.app .app-sub { display:none; }
     </svg>
     <section class="wrap hero">
       <div class="hero-copy">
-        <span class="eyebrow mono"><span class="desktop-copy">Мониторинг торгов · Нефтепродукты · Металлолом · Трубы · Задвижки · Кабели</span><span class="mobile-copy">Мониторинг торгов</span></span>
-        <h1 class="display"><span class="desktop-copy"><span class="hl">Электронные торги по</span><span class="hl">реализации имущества:</span><span class="hl accent">нефтепродукты, металлолом, трубы, задвижки, кабели</span></span><span class="mobile-copy"><span class="mobile-heading-line mobile-heading-brand">Отходы в доходы —</span> <strong class="mobile-heading-line">все торги<br>в одной ленте</strong></span></h1>
+        <span class="eyebrow mono"><span class="desktop-copy">Нефтепродукты · Металлолом · Трубы · Задвижки · Кабели</span><span class="mobile-copy">Мониторинг торгов</span></span>
+        <h1 class="display"><span class="desktop-copy"><span class="hl">Электронные торги по</span><span class="hl">реализации имущества:</span><span class="hl accent">нефтепродукты, металлолом,</span><span class="hl accent">трубы, задвижки, кабели</span></span><span class="mobile-copy"><span class="mobile-heading-line mobile-heading-brand">Отходы в доходы —</span> <strong class="mobile-heading-line">все торги<br>в одной ленте</strong></span></h1>
         <p class="lead glassy desktop-copy">Предприятия по всей России выставляют на торги нефтепродукты и масла, металлолом, трубы и детали трубопроводов, задвижки и кабели. Мы круглосуточно отслеживаем площадки, отделяем продажу от закупок и показываем подходящие лоты в одной ленте. О новых предложениях по вашим подборкам сообщаем в Telegram.</p>
         <p class="lead mobile-copy">Сделано для тех, кто профессионально покупает промышленное сырьё.</p>
         <ul class="hero-categories" role="list" aria-label="Категории сырья">
