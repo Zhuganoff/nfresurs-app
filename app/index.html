@@ -3872,12 +3872,12 @@ function openDocExternal(name){ var u; try{ u=new URL(name, location.href).href;
 var openDoc = openDocExternal;   // переопределяется окном документа в конце страницы
 // --- объявления (маркетплейс «Прямые лоты») ---
 function escH(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-var adPhotos=[];
+var adPhotos=[], adPreparing=0;   // adPreparing — фото, которые ещё сжимаются
 function adThumbs(){ var box=document.getElementById('ad-thumbs'); if(!box)return; box.innerHTML=adPhotos.map(function(src,i){return '<div class="thumb"><img src="'+src+'"><button class="ad-rm" data-i="'+i+'">×</button></div>';}).join(''); }
 // пределы как на сервере (PHOTO_MAX 2 МБ, тело ≤ 9 МБ): base64 длиннее в 4/3
 var AD_PHOTO_B64=2*1024*1024*4/3, AD_BODY_B64=8*1024*1024;
 function adDownscale(file, cb){ var img=new Image(), url=URL.createObjectURL(file); img.onload=function(){ var max=1280,w=img.width,h=img.height; if(w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;} } var c=document.createElement('canvas'); c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); URL.revokeObjectURL(url); try{ var du=c.toDataURL('image/jpeg',0.8); if(du.length>AD_PHOTO_B64) du=c.toDataURL('image/jpeg',0.6); cb(du.length>AD_PHOTO_B64?null:du); }catch(_){cb(null);} }; img.onerror=function(){ URL.revokeObjectURL(url); cb(null); }; img.src=url; }
-function adFilesChosen(files){ var arr=[].slice.call(files||[]); arr.forEach(function(f){ if(adPhotos.length>=3||!/^image\//.test(f.type))return; adDownscale(f,function(dataUrl){ if(!dataUrl){ var h=document.getElementById('ad-hint'); if(h) h.textContent='Фото «'+(f.name||'')+'» не удалось подготовить — выберите другое'; return; } if(adPhotos.length<3){ adPhotos.push(dataUrl); adThumbs(); } }); }); }
+function adFilesChosen(files){ var arr=[].slice.call(files||[]), h=document.getElementById('ad-hint'); arr.forEach(function(f){ if(adPhotos.length+adPreparing>=3||!/^image\//.test(f.type))return; adPreparing++; if(h) h.textContent='Готовлю фото…'; adDownscale(f,function(dataUrl){ adPreparing--; if(h&&!adPreparing&&h.textContent==='Готовлю фото…') h.textContent=''; if(!dataUrl){ if(h) h.textContent='Фото «'+(f.name||'')+'» не удалось подготовить — выберите другое'; return; } if(adPhotos.length<3){ adPhotos.push(dataUrl); adThumbs(); } }); }); }
 function openTg(u){ u=String(u).replace(/^@/,''); var url='https://t.me/'+encodeURIComponent(u); try{ if(tg&&tg.openTelegramLink){ tg.openTelegramLink(url); return; } }catch(_){} try{ if(tg&&tg.openLink){ tg.openLink(url); return; } }catch(_){} window.open(url,'_blank'); }
 
 
@@ -4252,6 +4252,8 @@ function submitAd(){ var btn=document.getElementById('ad-submit'), hint=document
     price_type:document.getElementById('ad-neg').checked?'negotiable':'fixed',
     vat:document.getElementById('ad-vat').value,
     region:(document.getElementById('ad-region').value||'').trim(), contact:contact };
+  // фото ещё сжимаются — иначе объявление ушло бы без них
+  if(adPreparing){ hint.textContent='Подождите, фото ещё готовятся'; return; }
   var вес=adPhotos.reduce(function(s,p){ return s+(p?p.length:0); },0);
   if(вес>AD_BODY_B64){ hint.textContent='Фото слишком тяжёлые — уберите одно и отправьте снова'; return; }
   btn.disabled=true; hint.textContent=adPhotos.length?'Отправляю фото…':'Отправляю…';
