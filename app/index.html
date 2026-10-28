@@ -1322,6 +1322,7 @@
     .lg-links a:hover { color: #7fd0b4; border-color: rgba(127,208,180,.5); text-decoration: none; }
     .lg-links a[hidden], .lg-card input[hidden] { display: none; }
     .lg-card #lg-msg { color: var(--text-dim) !important; }
+
     .lg-card input { width: 100% !important; background: rgba(255,255,255,.06) !important; color: var(--text) !important; border: 1px solid rgba(255,255,255,.14) !important; font-size: 15px !important; outline: none; transition: border-color .25s, box-shadow .25s; }
     .lg-card input::placeholder { color: var(--text-faint); }
     .lg-card input:focus { border-color: rgba(127,208,180,.7) !important; box-shadow: 0 0 0 3px rgba(127,208,180,.18); }
@@ -1482,6 +1483,65 @@
     border-radius: 18px; background: #0b1411; border: 1px solid rgba(255,255,255,.12); color: #eef3f0; position: relative; }
   #pane-ads .ad-view-card img { width: 100%; max-height: 240px; object-fit: cover; border-radius: 12px; margin: 0 0 8px; background: #070d0b; }
   #pane-ads .ad-new-btn { background: #7fd0b4; color: #070d0b; }
+  /* ошибка входа: отдельная красная плашка, а не та же серая строка
+     подсказки — раньше «неверная почта или пароль» было не отличить
+     от обычного текста и казалось, что ничего не произошло (28.10.2026) */
+  #login-modal #lg-msg.is-err, .lg-card #lg-msg.is-err {
+    position: relative; align-self: stretch; max-width: none;
+    padding: 10px 14px 10px 40px; border-radius: 12px; text-align: left;
+    font-size: 14px; line-height: 1.4; font-weight: 500;
+    color: #ff9a92 !important; background: rgba(255, 82, 82, .10);
+    border: 1px solid rgba(255, 107, 107, .38);
+    animation: lgerrin .3s cubic-bezier(.16,1,.3,1) both; }
+  #login-modal #lg-msg.is-err::before, .lg-card #lg-msg.is-err::before {
+    content: '!'; position: absolute; left: 13px; top: 11px; width: 18px; height: 18px;
+    border-radius: 50%; background: #ff6b6b; color: #1c0b0b; font: 800 12px/18px system-ui, sans-serif;
+    text-align: center; }
+  #login-modal #lg-msg.is-err a, .lg-card #lg-msg.is-err a { display: inline-block; margin-top: 4px; }
+  #login-modal input.is-bad, .lg-card input.is-bad {
+    border-color: rgba(255, 107, 107, .8) !important; box-shadow: 0 0 0 3px rgba(255, 82, 82, .16) !important; }
+  .lg-card.shake { animation: lgshake .42s cubic-bezier(.36,.07,.19,.97) both !important; }
+  @keyframes lgerrin { from { opacity: 0; transform: translateY(-4px); } }
+  @keyframes lgshake { 10%, 90% { transform: translateX(-2px); } 20%, 80% { transform: translateX(3px); }
+    30%, 50%, 70% { transform: translateX(-5px); } 40%, 60% { transform: translateX(5px); } }
+  @media (prefers-reduced-motion: reduce) { .lg-card.shake, #lg-msg.is-err { animation: none !important; } }
+  /* ——— категории ленты иконками (28.10.2026): пять подписей не влезали
+     в колонку ленты и давали белую полосу прокрутки. Название видно у
+     выбранной; у остальных — подсказка при наведении (#cat-tip), иконки
+     «живые»: штурвал и шестерня крутятся, капля капает, искра бежит. ——— */
+  #catseg { gap: 6px; scrollbar-width: none; overflow-y: hidden; }
+  #catseg::-webkit-scrollbar { display: none; }
+  #catseg button { display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    height: 40px; min-width: 40px; padding: 0 11px !important; font-size: 13px !important;
+    transition: background .25s, border-color .25s, color .25s, transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s; }
+  #catseg button .ci { width: 20px; height: 20px; flex: none; overflow: visible; }
+  #catseg button .cs-l { display: none; white-space: nowrap; }
+  #catseg button.on .cs-l { display: inline; }
+  #catseg button.on { padding: 0 14px 0 12px !important; box-shadow: 0 6px 18px -8px var(--accent); }
+  @media (hover: hover) and (pointer: fine) {   /* на касании «наведение» залипает */
+  #catseg button:not(.on):hover { transform: translateY(-2px); color: var(--text); border-color: color-mix(in srgb, var(--accent) 55%, transparent); } }
+  #catseg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .ci .gear, .ci .wheel { transform-box: fill-box; transform-origin: center; }
+  .ci .drip, .ci .p1, .ci .p2, .ci .spark { transform-box: fill-box; transform-origin: center; }
+  #catseg button.on .gear, #catseg.hov button:hover .gear { animation: ci-spin 2.4s linear infinite; }
+  #catseg button.on .wheel, #catseg.hov button:hover .wheel { animation: ci-turn 1.8s cubic-bezier(.45,0,.55,1) infinite; }
+  #catseg button.on .drip, #catseg.hov button:hover .drip { animation: ci-drip 1.6s ease-in infinite; }
+  #catseg button.on .p1, #catseg.hov button:hover .p1 { animation: ci-roll 1.6s ease-in-out infinite; }
+  #catseg button.on .p2, #catseg.hov button:hover .p2 { animation: ci-roll 1.6s ease-in-out .2s infinite reverse; }
+  #catseg button.on .spark, #catseg.hov button:hover .spark { animation: ci-spark 1.4s ease-in-out infinite; }
+  @keyframes ci-spin { to { transform: rotate(360deg); } }
+  @keyframes ci-turn { 0% { transform: rotate(0); } 50%, 100% { transform: rotate(180deg); } }
+  @keyframes ci-drip { 0% { transform: translateY(-2px); opacity: 0; } 25% { opacity: 1; } 80% { transform: translateY(2.5px); opacity: 1; } 100% { transform: translateY(3px); opacity: 0; } }
+  @keyframes ci-roll { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(1.6px); } }
+  @keyframes ci-spark { 0%, 100% { opacity: .25; transform: scale(.7); } 50% { opacity: 1; transform: scale(1.35); } }
+  @media (prefers-reduced-motion: reduce) { #catseg .ci * { animation: none !important; } #catseg button:hover { transform: none; } }
+  #cat-tip { position: fixed; z-index: 400; pointer-events: none; padding: 6px 10px; border-radius: 9px;
+    background: #0b1411; color: #eef3f0; border: 1px solid rgba(127,208,180,.35); font-size: 12.5px; font-weight: 600;
+    white-space: nowrap; box-shadow: 0 10px 28px -10px rgba(0,0,0,.7); opacity: 0; transform: translate(-50%, 4px);
+    transition: opacity .16s, transform .16s cubic-bezier(.16,1,.3,1); }
+  #cat-tip.show { opacity: 1; transform: translate(-50%, 0); }
+  #cat-tip::after { content: ''; position: absolute; left: 50%; top: 100%; margin-left: -5px;
+    border: 5px solid transparent; border-top-color: #0b1411; }
 </style>
 <style id="nf-brand-20260918">
 /* Shared turquoise brand: artwork only, no changes to header positioning/safe-area. */
@@ -1733,11 +1793,11 @@ header.app .app-sub { display:none; }
       <div class="since" id="since" style="display:none"></div>
       <div class="lbfilter" id="lbfilter" style="display:none"></div>
       <div class="catseg" id="catseg">
-        <button data-cat="oil" class="on">Нефтепродукты</button>
-        <button data-cat="metal">Металлолом</button>
-        <button data-cat="pipe">Трубы</button>
-        <button data-cat="valve">Задвижки</button>
-        <button data-cat="cable">Кабели</button>
+        <button data-cat="oil" class="on" aria-label="Нефтепродукты" data-tip="Нефтепродукты"><svg class="ci ci-oil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.5" y="3" width="13" height="18" rx="2.2"/><path d="M5.5 8h13M5.5 16h13"/><path class="drip" d="M12 9.6c-1.1 1.5-1.9 2.4-1.9 3.3a1.9 1.9 0 0 0 3.8 0c0-.9-.8-1.8-1.9-3.3z" fill="currentColor" stroke="none"/></svg><span class="cs-l">Нефтепродукты</span></button>
+        <button data-cat="metal" aria-label="Металлолом" data-tip="Металлолом"><svg class="ci ci-metal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="gear"><circle cx="15.5" cy="8.5" r="2.2"/><path d="M15.5 3.8v1.7M15.5 11.5v1.7M10.8 8.5h1.7M18.5 8.5h1.7M12.2 5.2l1.2 1.2M17.6 10.6l1.2 1.2M12.2 11.8l1.2-1.2M17.6 6.4l1.2-1.2"/></g><path d="M3 15.5h9M3 20.5h9M7.5 15.5v5"/></svg><span class="cs-l">Металлолом</span></button>
+        <button data-cat="pipe" aria-label="Трубы" data-tip="Трубы"><svg class="ci ci-pipe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="p1"><ellipse cx="6.5" cy="8" rx="2.4" ry="3"/><path d="M6.5 5h11a2.4 3 0 0 1 0 6h-11"/></g><g class="p2"><ellipse cx="6.5" cy="16.5" rx="2.4" ry="3"/><path d="M6.5 13.5h9a2.4 3 0 0 1 0 6h-9"/></g></svg><span class="cs-l">Трубы</span></button>
+        <button data-cat="valve" aria-label="Задвижки" data-tip="Задвижки"><svg class="ci ci-valve" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="wheel"><circle cx="12" cy="5.2" r="3.2"/><path d="M12 2v6.4M8.8 5.2h6.4"/></g><path d="M12 8.4v3.2"/><rect x="2.5" y="12.5" width="3.5" height="7" rx="1"/><rect x="18" y="12.5" width="3.5" height="7" rx="1"/><path d="M6 14h12v4H6z"/></svg><span class="cs-l">Задвижки</span></button>
+        <button data-cat="cable" aria-label="Кабели" data-tip="Кабели"><svg class="ci ci-cable" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3v3.5M19 3v3.5M13 6.5h8v3a4 4 0 0 1-8 0z"/><path class="wire" d="M17 13.5v2.5c0 2.5-2.2 4.5-5 4.5H3"/><circle class="spark" cx="3" cy="20.5" r="1.2" fill="currentColor" stroke="none"/></svg><span class="cs-l">Кабели</span></button>
       </div>
       <div class="toolbar">
         <input id="search" class="search" type="search" placeholder="Поиск по названию…" autocomplete="off">
@@ -3226,6 +3286,7 @@ document.addEventListener('click',e=>{
   // только настоящие вкладки: «плюс» и подпункты меток тоже кнопки
   // внутри панели, и без data-tab обработчик гасил все панели
   if(e.target.closest('#prof-logout')){
+    feedForget();
     try { localStorage.removeItem('session'); } catch(_){}
     try { document.cookie='ovd_sid=; path=/; max-age=0; SameSite=Lax'; } catch(_){}
     location.replace('/#login');
@@ -4638,12 +4699,42 @@ function loadSubscription(){
 
 // Лента больше НЕ вшита в страницу — грузим её с авторизованного API.
 // В Telegram авторизация по initData; в браузере — по сессии из localStorage.
+/* Последняя лента хранится на устройстве: при открытии показываем её
+   сразу, свежая с сервера подтягивается следом и тихо подменяет. Раньше
+   человек смотрел на пустой экран, пока шёл запрос (28.10.2026). Ключ —
+   свой у каждого входа; при выходе, истёкшей сессии и без подписки
+   сохранённая лента стирается. */
+var FEED_KEEP_MS = 24 * 3600 * 1000;
+function feedKey(){
+  var who = '';
+  try { var u = window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user; if (u && u.id) who = 'tg' + u.id; } catch(_){}
+  if (!who) { var s = SESS() || ''; who = s ? 's' + s.slice(0, 12) : ''; }
+  return who ? 'feed_cache:' + who : '';
+}
+function feedSave(list){
+  var k = feedKey(); if (!k) return;
+  try { localStorage.setItem(k, JSON.stringify({at: Date.now(), tenders: list})); } catch(_){}   // переполнение — не беда
+}
+function feedForget(){
+  try { for (var i = localStorage.length - 1; i >= 0; i--) { var k = localStorage.key(i); if (k && k.indexOf('feed_cache:') === 0) localStorage.removeItem(k); } } catch(_){}
+}
+function feedFromCache(){
+  var k = feedKey(); if (!k) return false;
+  var d = null;
+  try { d = JSON.parse(localStorage.getItem(k) || 'null'); } catch(_){}
+  if (!d || !d.tenders || !d.tenders.length || Date.now() - (d.at || 0) > FEED_KEEP_MS) return false;
+  TENDERS = d.tenders; LB.лента = 'ok'; window.FEED_CACHED = true;
+  try { loadFavs(render); } catch(_) { try { render(); } catch(__){} }
+  var g = document.getElementById('login-gate'); if (g) { g.style.display = 'none'; gateWavesOff(); tabPill(false); }
+  return true;
+}
 function bootFeed(tries){
   tries = (tries==null)?3:tries;
-  LB.лента='loading'; try { сборки(); } catch(_){}
+  if (LB.лента !== 'ok') { LB.лента='loading'; try { сборки(); } catch(_){} }   // есть сохранённая — не мигаем «загрузкой»
   return api('/api/tenders', {}).then(function(d){
     TENDERS = (d && d.tenders) || [];
     LB.лента='ok';
+    feedSave(TENDERS);
     try { loadStatuses(function(){ loadSeen(function(){ loadLastVisit(function(){ loadFavs(render); }); }); }); }
     catch(_) { try{ loadFavs(render);}catch(__){ render(); } }
     var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); tabPill(false); }
@@ -4653,6 +4744,7 @@ function bootFeed(tries){
     try { notesLoad(); favSync(); setTimeout(openLotFromLink, 400); } catch(_){}
   }).catch(function(e){
     if(e && e.status===402){                                  // триал истёк
+      feedForget();
       TENDERS=[]; LB.лента='paywall'; try{ render(); }catch(_){}
       var g=document.getElementById('login-gate'); if(g){ g.style.display='none'; gateWavesOff(); tabPill(false); }
       // оплата не должна зависеть от ленты: тарифы грузим отдельно
@@ -4668,7 +4760,7 @@ function bootFeed(tries){
     }
     if(e && e.status===401) throw e;                          // сессия невалидна — наверх
     if(tries>1) return new Promise(function(r){ setTimeout(r,1500); }).then(function(){ return bootFeed(tries-1); });
-    LB.лента='error'; try { сборки(); } catch(_){}            // экран подборок покажет ошибку, а не «пусто»
+    if (!window.FEED_CACHED) { LB.лента='error'; try { сборки(); } catch(_){} }   // экран подборок покажет ошибку, а не «пусто»; с сохранённой лентой — молчим
     throw e;                                                  // не 401 и ретраи кончились
   });
 }
@@ -4688,6 +4780,7 @@ function gateWavesOn(g){
 }
 function gateWavesOff(){ if(gateWaves){ try{ gateWaves.dispose(); }catch(_){} gateWaves=null; } }
 function dropSession(){
+  feedForget();
   try { localStorage.removeItem('session'); } catch(_){}
   try { document.cookie='ovd_sid=; path=/; max-age=0; SameSite=Lax'; } catch(_){}
 }
@@ -4719,15 +4812,40 @@ function showLogin(msg){
     });
     return;
   }
-  if (inTg || SESS()) { bootFeed().catch(function(e){
-    if(e && e.status===401){ try{ localStorage.removeItem('session'); }catch(_){}; if(!inTg) showLogin('Сессия истекла — войдите заново'); }
-    else if(!inTg){ showLogin('Не удалось загрузить ленту — проверьте связь и обновите. Повторный вход не нужен.'); }
+  if (inTg || SESS()) {
+    try { feedFromCache(); } catch(_){}                     // сразу — сохранённая лента
+    bootFeed().catch(function(e){
+    if(e && e.status===401){ feedForget(); try{ localStorage.removeItem('session'); }catch(_){}; if(!inTg) showLogin('Сессия истекла — войдите заново'); }
+    // сохранённая лента уже на экране — сбой связи не повод выкидывать на вход
+    else if(!inTg && !window.FEED_CACHED){ showLogin('Не удалось загрузить ленту — проверьте связь и обновите. Повторный вход не нужен.'); }
   }); return; }
   showLogin();
 })();
 // Обновлять ленту при возврате приложения на передний план: iOS-PWA не
 // перезагружает web-view, и без этого показывалась устаревшая лента
 // (например лот, ушедший на модерацию). Дребезг гасим — не чаще раза в 30 с.
+/* подсказка у иконок категорий — только где есть наведение мышью; один
+   плавающий слой, чтобы край колонки ленты её не обрезал */
+(function catTips(){
+  var seg = document.getElementById('catseg'); if (!seg) return;
+  var fine = false; try { fine = matchMedia('(hover: hover) and (pointer: fine)').matches; } catch(_){}
+  if (!fine) return;
+  seg.classList.add('hov');                                  // «живые» при наведении — только с мышью
+  var tip = document.createElement('div'); tip.id = 'cat-tip'; tip.setAttribute('role', 'tooltip'); document.body.appendChild(tip);
+  function hide(){ tip.classList.remove('show'); }
+  seg.addEventListener('mouseover', function(e){
+    var b = e.target.closest('#catseg button'); if (!b) return;
+    if (b.classList.contains('on')) { hide(); return; }        // у выбранной название и так видно
+    tip.textContent = b.getAttribute('data-tip') || '';
+    var r = b.getBoundingClientRect();
+    tip.style.left = (r.left + r.width / 2) + 'px';
+    tip.style.top = (r.top - 38) + 'px';
+    tip.classList.add('show');
+  });
+  seg.addEventListener('mouseleave', hide);
+  seg.addEventListener('click', hide);
+  window.addEventListener('scroll', hide, true);
+})();
 (function freshOnResume(){
   var last=Date.now();
   document.addEventListener('visibilitychange', function(){
@@ -4822,6 +4940,8 @@ function showLogin(msg){
       title.textContent = reg ? 'Регистрация'
         : (reset ? 'Новый пароль' : (узкий ? 'Вход' : 'Отходы в доходы'));
     }
+    msg.classList.remove('is-err');
+    [em, pw, pw2, cd].forEach(function(i){ if (i) i.classList.remove('is-bad'); });
     show(pw, !code && !(reset && stage==='start'));
     show(pw2, reg && stage==='start');
     show(cd, stage==='confirm');
@@ -4850,6 +4970,16 @@ function showLogin(msg){
   var errText = '';
   function showErr(){
     msg.textContent = errText;
+    msg.classList.add('is-err');
+    // подсвечиваем поле, к которому относится ошибка
+    var bad = [];
+    if (/логин|почт|e-mail/i.test(errText)) bad.push(em);
+    if (/парол/i.test(errText)) bad.push(pw);
+    if (/совпада/i.test(errText)) bad.push(pw2);
+    if (/код/i.test(errText) && stage==='confirm') bad.push(cd);
+    bad.forEach(function(i){ if (i) i.classList.add('is-bad'); });
+    var card = msg.closest && msg.closest('.lg-card');
+    if (card) { card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); }
     // аккаунты, заведённые до паролей, входят по коду; сервер намеренно
     // отвечает одинаково на неверный пароль и на незнакомую почту, поэтому
     // второй путь подсказываем прямо здесь
@@ -4863,7 +4993,16 @@ function showLogin(msg){
       msg.appendChild(a);
     }
   }
-  function fail(e){ errText = (e && e.message) || 'Ошибка'; render(); }
+  function fail(e){
+    errText = (e && e.message) || 'Ошибка';
+    // сервер отвечает одинаково на чужую почту и неверный пароль — так и пишем
+    if (e && e.status===401 && mode==='login' && stage==='start') errText = 'Неверный логин или пароль';
+    render();
+  }
+  // начал исправлять — красное убираем, возвращаем обычную подсказку
+  [em, pw, pw2, cd].forEach(function(i){
+    if (i) i.addEventListener('input', function(){ if (errText) { errText = ''; render(); } });
+  });
   function done(d){
     SESS_SAVE(d.session);
     btn.textContent='Готово';

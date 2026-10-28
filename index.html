@@ -97,6 +97,24 @@
     -webkit-hyphens: none; word-spacing: -.01em; }
   .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--accent); margin-bottom: 18px; }
   .eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--accent); opacity: .7; }
+  /* строка направлений над заголовком: на компьютере — бегущая, во всю
+     ширину абзаца под заголовком; края гаснут, при наведении замирает */
+  @media (min-width: 1025px) {
+    .hero .eyebrow-run { display: block; width: 100%; max-width: var(--hero-w); }
+    .hero .eyebrow-run::before { display: none; }
+    .eyebrow-run .run { display: block; overflow: hidden; white-space: nowrap; padding: 2px 0;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+              mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+    .eyebrow-run .run-track { display: inline-flex; width: max-content; animation: eyerun 26s linear infinite; }
+    .eyebrow-run .run-track > span { display: inline-flex; align-items: center; letter-spacing: .14em; }
+    .eyebrow-run .run-track i { font-style: normal; opacity: .55; margin: 0 1.1em; }
+    .eyebrow-run:hover .run-track { animation-play-state: paused; }
+    @keyframes eyerun { to { transform: translateX(-50%); } }
+  }
+  @media (min-width: 1025px) and (prefers-reduced-motion: reduce) {
+    .eyebrow-run .run-track { animation: none; }
+    .eyebrow-run .run-track > span + span { display: none; }
+  }
 
   /* ——— кнопки ——— */
   .btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 15px 24px; border-radius: 14px; font-weight: 600; font-size: 16px; border: 1px solid transparent; min-height: 50px; transition: transform .25s var(--ease-out), box-shadow .25s var(--ease-out), background .2s ease, border-color .2s ease; will-change: transform; }
@@ -1557,6 +1575,7 @@
     #login-modal #lg-btn:hover, #login-modal .lg-btn:hover { background: #96dfc6 !important; }
     #login-modal .lg-links a, #login-modal .lg-consent a { color: #7fd0b4; }
     #login-modal #lg-msg, #login-modal .lg-consent { color: rgba(238,243,240,.68) !important; }
+
       .auth-screen { padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom)); }
       .auth-screen .lg-card { padding: 24px 20px; gap: 15px; }
   }
@@ -1585,6 +1604,28 @@
     input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),
     textarea, select { font-size: 16px !important; }
   }
+  /* ошибка входа: отдельная красная плашка, а не та же серая строка
+     подсказки — раньше «неверная почта или пароль» было не отличить
+     от обычного текста и казалось, что ничего не произошло (28.10.2026) */
+  #login-modal #lg-msg.is-err, .lg-card #lg-msg.is-err {
+    position: relative; align-self: stretch; max-width: none;
+    padding: 10px 14px 10px 40px; border-radius: 12px; text-align: left;
+    font-size: 14px; line-height: 1.4; font-weight: 500;
+    color: #ff9a92 !important; background: rgba(255, 82, 82, .10);
+    border: 1px solid rgba(255, 107, 107, .38);
+    animation: lgerrin .3s cubic-bezier(.16,1,.3,1) both; }
+  #login-modal #lg-msg.is-err::before, .lg-card #lg-msg.is-err::before {
+    content: '!'; position: absolute; left: 13px; top: 11px; width: 18px; height: 18px;
+    border-radius: 50%; background: #ff6b6b; color: #1c0b0b; font: 800 12px/18px system-ui, sans-serif;
+    text-align: center; }
+  #login-modal #lg-msg.is-err a, .lg-card #lg-msg.is-err a { display: inline-block; margin-top: 4px; }
+  #login-modal input.is-bad, .lg-card input.is-bad {
+    border-color: rgba(255, 107, 107, .8) !important; box-shadow: 0 0 0 3px rgba(255, 82, 82, .16) !important; }
+  .lg-card.shake { animation: lgshake .42s cubic-bezier(.36,.07,.19,.97) both !important; }
+  @keyframes lgerrin { from { opacity: 0; transform: translateY(-4px); } }
+  @keyframes lgshake { 10%, 90% { transform: translateX(-2px); } 20%, 80% { transform: translateX(3px); }
+    30%, 50%, 70% { transform: translateX(-5px); } 40%, 60% { transform: translateX(5px); } }
+  @media (prefers-reduced-motion: reduce) { .lg-card.shake, #lg-msg.is-err { animation: none !important; } }
 </style>
 <style id="nf-brand-20260918">
 /* Shared turquoise brand: artwork only, no changes to header positioning/safe-area. */
@@ -1667,7 +1708,7 @@ header.app .app-sub { display:none; }
       <a href="#inside">Что внутри</a>
       <a href="#how">Как работает</a>
       <a href="#price">Стоимость</a>
-      <span class="build-mark">сборка 28.10-A</span>
+      <span class="build-mark">сборка 28.10-B</span>
     </nav>
   </div>
 </header>
@@ -1693,7 +1734,7 @@ header.app .app-sub { display:none; }
     </svg>
     <section class="wrap hero">
       <div class="hero-copy">
-        <span class="eyebrow mono"><span class="desktop-copy">Нефтепродукты · Металлолом · Трубы · Задвижки · Кабели</span><span class="mobile-copy">Мониторинг торгов</span></span>
+        <span class="eyebrow mono eyebrow-run"><span class="desktop-copy run" role="text" aria-label="Нефтепродукты · Металлолом · Трубы · Задвижки · Кабели"><span class="run-track" aria-hidden="true"><span>Нефтепродукты<i>·</i>Металлолом<i>·</i>Трубы<i>·</i>Задвижки<i>·</i>Кабели<i>·</i></span><span>Нефтепродукты<i>·</i>Металлолом<i>·</i>Трубы<i>·</i>Задвижки<i>·</i>Кабели<i>·</i></span><span>Нефтепродукты<i>·</i>Металлолом<i>·</i>Трубы<i>·</i>Задвижки<i>·</i>Кабели<i>·</i></span><span>Нефтепродукты<i>·</i>Металлолом<i>·</i>Трубы<i>·</i>Задвижки<i>·</i>Кабели<i>·</i></span></span></span><span class="mobile-copy">Мониторинг торгов</span></span>
         <h1 class="display"><span class="desktop-copy"><span class="hl">Электронные торги по</span><span class="hl">реализации имущества:</span><span class="hl accent">нефтепродукты, металлолом,</span><span class="hl accent">трубы, задвижки, кабели</span></span><span class="mobile-copy"><span class="mobile-heading-line mobile-heading-brand">Отходы в доходы —</span> <strong class="mobile-heading-line">все торги<br>в одной ленте</strong></span></h1>
         <p class="lead glassy desktop-copy">Предприятия по всей России выставляют на торги нефтепродукты и масла, металлолом, трубы и детали трубопроводов, задвижки и кабели. Мы круглосуточно отслеживаем площадки, отделяем продажу от закупок и показываем подходящие лоты в одной ленте. О новых предложениях по вашим подборкам сообщаем в Telegram.</p>
         <p class="lead mobile-copy">Сделано для тех, кто профессионально покупает промышленное сырьё.</p>
@@ -2215,7 +2256,7 @@ header.app .app-sub { display:none; }
     <a href="https://t.me/nfresursbot">@nfresursbot</a>
     <a href="#" data-cookie-settings>Настройки cookie</a>
   </nav>
-  <span class="build-mark">сборка 28.10-A</span>
+  <span class="build-mark">сборка 28.10-B</span>
 </footer>
 
 
@@ -2597,6 +2638,8 @@ header.app .app-sub { display:none; }
   function render(){
     var reg = mode==='reg', reset = mode==='reset', code = mode==='code';
     title.textContent = reg ? 'Регистрация' : (reset ? 'Новый пароль' : 'Вход');
+    msg.classList.remove('is-err');
+    [em, pw, pw2, cd].forEach(function(i){ if (i) i.classList.remove('is-bad'); });
     show(pw, !code && !(reset && stage==='start'));
     show(pw2, reg && stage==='start');
     show(cd, stage==='confirm');
@@ -2690,6 +2733,16 @@ header.app .app-sub { display:none; }
   var errText = '';
   function showErr(){
     msg.textContent = errText;
+    msg.classList.add('is-err');
+    // подсвечиваем поле, к которому относится ошибка
+    var bad = [];
+    if (/логин|почт|e-mail/i.test(errText)) bad.push(em);
+    if (/парол/i.test(errText)) bad.push(pw);
+    if (/совпада/i.test(errText)) bad.push(pw2);
+    if (/код/i.test(errText) && stage==='confirm') bad.push(cd);
+    bad.forEach(function(i){ if (i) i.classList.add('is-bad'); });
+    var card = msg.closest && msg.closest('.lg-card');
+    if (card) { card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); }
     // аккаунты, заведённые до паролей, входят по коду; сервер намеренно
     // отвечает одинаково на неверный пароль и на незнакомую почту, поэтому
     // второй путь подсказываем прямо здесь
@@ -2703,7 +2756,16 @@ header.app .app-sub { display:none; }
       msg.appendChild(a);
     }
   }
-  function fail(e){ errText = (e && e.message) || 'Ошибка'; render(); }
+  function fail(e){
+    errText = (e && e.message) || 'Ошибка';
+    // сервер отвечает одинаково на чужую почту и неверный пароль — так и пишем
+    if (e && e.status===401 && mode==='login' && stage==='start') errText = 'Неверный логин или пароль';
+    render();
+  }
+  // начал исправлять — красное убираем, возвращаем обычную подсказку
+  [em, pw, pw2, cd].forEach(function(i){
+    if (i) i.addEventListener('input', function(){ if (errText) { errText = ''; render(); } });
+  });
   function done(d){
     SESS_SAVE(d.session);
     btn.disabled=true; btn.textContent='Готово';
