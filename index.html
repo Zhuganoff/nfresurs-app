@@ -1297,7 +1297,7 @@
       width: 16px; height: 16px; margin-top: 1px; border-radius: 50%; background: rgba(0,231,237,.1);
       color: var(--accent); text-align: center; font-size: 10px; font-weight: 600; line-height: 16px; }
     .install-steps strong { color: #EAF4F7; font-weight: 600; }
-    #board .lead.mobile-copy, #price p.mobile-copy { display: block; }
+    #board .lead.mobile-copy, #price p.mobile-copy, #inside .lead.mobile-copy { display: block; }
     #price .ref-note { display: none; }
 
     /* Нижние разделы продолжают бирюзовую палитру первого экрана. */
@@ -1661,7 +1661,7 @@ header.app .app-sub { display:none; }
       <a href="#inside">Что внутри</a>
       <a href="#how">Как работает</a>
       <a href="#price">Стоимость</a>
-      <span class="build-mark">сборка 18.09-F</span>
+      <span class="build-mark">сборка 28.10-A</span>
     </nav>
   </div>
 </header>
@@ -1882,6 +1882,9 @@ header.app .app-sub { display:none; }
       <div class="section-head wide">
         <span class="eyebrow mono">Что внутри</span>
         <h2 class="display"><span class="desktop-copy">Сделано для тех, кто профессионально покупает промышленное сырьё</span><span class="mobile-copy">Что можно найти</span></h2>
+        <!-- на телефоне абзац первого экрана (desktop-copy) не виден — повторяем
+             его здесь, у пяти направлений (просьба владельца 28.10.2026) -->
+        <p class="lead mobile-copy">Предприятия по всей России выставляют на торги нефтепродукты и масла, металлолом, трубы и детали трубопроводов, задвижки и кабели. Мы круглосуточно отслеживаем площадки, отделяем продажу от закупок и показываем подходящие лоты в одной ленте. О новых предложениях по вашим подборкам сообщаем в Telegram.</p>
       </div>
       <div class="grid-3 mats">
         <article class="mat mat-oil" data-i style="--i:0" tabindex="0">
@@ -1979,7 +1982,7 @@ header.app .app-sub { display:none; }
               <use href="#card-material-pipe-mouth" transform="translate(17 50) rotate(-22)"/>
               <use href="#card-material-pipe-mouth" transform="translate(28 30) rotate(-22)"/>
             </svg></div>
-              <div class="txt"><h3>Трубы</h3><span class="ex">НКТ, обсадные, трубы <span class="nowrap">б/у</span></span><span class="more">подробнее →</span></div>
+              <div class="txt"><h3>Трубы</h3><span class="ex">НКТ, обсадные, <span class="nowrap">б/у</span>, отводы и фланцы</span><span class="more">подробнее →</span></div>
             </div>
             <div class="face face-back">
               <h3>Трубы</h3>
@@ -2206,7 +2209,7 @@ header.app .app-sub { display:none; }
     <a href="https://t.me/nfresursbot">@nfresursbot</a>
     <a href="#" data-cookie-settings>Настройки cookie</a>
   </nav>
-  <span class="build-mark">сборка 18.09-F</span>
+  <span class="build-mark">сборка 28.10-A</span>
 </footer>
 
 
