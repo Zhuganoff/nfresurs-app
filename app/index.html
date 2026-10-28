@@ -2992,12 +2992,12 @@ const API_BASE = (function(){
     || h.indexOf('nip.io') >= 0 || h === '127.0.0.1' || h === 'localhost';
   return свой ? '' : 'https://soft-snowflake-37cc.zhuganoff.workers.dev';
 })();
-function api(path, body){
+function api(path, body, waitMs){
   var ctrl=window.AbortController?new AbortController():null;
-  var to=ctrl?setTimeout(function(){try{ctrl.abort();}catch(_){}},12000):null;
+  var to=ctrl?setTimeout(function(){try{ctrl.abort();}catch(_){}},waitMs||12000):null;
   return fetch(API_BASE+path, {method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify(Object.assign({initData:initData, session:SESS()}, body||{})), signal: ctrl&&ctrl.signal})
-    .then(async r=>{ if(to)clearTimeout(to); const d=await r.json().catch(()=>({})); if(!r.ok){ var e1=new Error(d.error||('ошибка '+r.status)); e1.status=r.status; throw e1; } return d; },
+    .then(async r=>{ if(to)clearTimeout(to); const d=await r.json().catch(()=>({})); if(!r.ok){ var e1=new Error(d.error||(r.status===413?'Слишком большой запрос — уменьшите или уберите фото':('ошибка '+r.status))); e1.status=r.status; throw e1; } return d; },
       err=>{ if(to)clearTimeout(to); var e2=new Error('Сервер недоступен — возможно, VPN блокирует. Отключите VPN и повторите.'); e2.status=0; throw e2; });
 }
 // отметка визита (аналитика; тихо, не мешает загрузке)
@@ -3874,8 +3874,10 @@ var openDoc = openDocExternal;   // переопределяется окном 
 function escH(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 var adPhotos=[];
 function adThumbs(){ var box=document.getElementById('ad-thumbs'); if(!box)return; box.innerHTML=adPhotos.map(function(src,i){return '<div class="thumb"><img src="'+src+'"><button class="ad-rm" data-i="'+i+'">×</button></div>';}).join(''); }
-function adDownscale(file, cb){ var img=new Image(), url=URL.createObjectURL(file); img.onload=function(){ var max=1280,w=img.width,h=img.height; if(w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;} } var c=document.createElement('canvas'); c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); URL.revokeObjectURL(url); try{cb(c.toDataURL('image/jpeg',0.8));}catch(_){cb(null);} }; img.onerror=function(){ URL.revokeObjectURL(url); cb(null); }; img.src=url; }
-function adFilesChosen(files){ var arr=[].slice.call(files||[]); arr.forEach(function(f){ if(adPhotos.length>=3||!/^image\//.test(f.type))return; adDownscale(f,function(dataUrl){ if(dataUrl&&adPhotos.length<3){ adPhotos.push(dataUrl); adThumbs(); } }); }); }
+// пределы как на сервере (PHOTO_MAX 2 МБ, тело ≤ 9 МБ): base64 длиннее в 4/3
+var AD_PHOTO_B64=2*1024*1024*4/3, AD_BODY_B64=8*1024*1024;
+function adDownscale(file, cb){ var img=new Image(), url=URL.createObjectURL(file); img.onload=function(){ var max=1280,w=img.width,h=img.height; if(w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;} } var c=document.createElement('canvas'); c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); URL.revokeObjectURL(url); try{ var du=c.toDataURL('image/jpeg',0.8); if(du.length>AD_PHOTO_B64) du=c.toDataURL('image/jpeg',0.6); cb(du.length>AD_PHOTO_B64?null:du); }catch(_){cb(null);} }; img.onerror=function(){ URL.revokeObjectURL(url); cb(null); }; img.src=url; }
+function adFilesChosen(files){ var arr=[].slice.call(files||[]); arr.forEach(function(f){ if(adPhotos.length>=3||!/^image\//.test(f.type))return; adDownscale(f,function(dataUrl){ if(!dataUrl){ var h=document.getElementById('ad-hint'); if(h) h.textContent='Фото «'+(f.name||'')+'» не удалось подготовить — выберите другое'; return; } if(adPhotos.length<3){ adPhotos.push(dataUrl); adThumbs(); } }); }); }
 function openTg(u){ u=String(u).replace(/^@/,''); var url='https://t.me/'+encodeURIComponent(u); try{ if(tg&&tg.openTelegramLink){ tg.openTelegramLink(url); return; } }catch(_){} try{ if(tg&&tg.openLink){ tg.openLink(url); return; } }catch(_){} window.open(url,'_blank'); }
 
 
@@ -4250,10 +4252,13 @@ function submitAd(){ var btn=document.getElementById('ad-submit'), hint=document
     price_type:document.getElementById('ad-neg').checked?'negotiable':'fixed',
     vat:document.getElementById('ad-vat').value,
     region:(document.getElementById('ad-region').value||'').trim(), contact:contact };
-  btn.disabled=true; hint.textContent='Отправляю…';
+  var вес=adPhotos.reduce(function(s,p){ return s+(p?p.length:0); },0);
+  if(вес>AD_BODY_B64){ hint.textContent='Фото слишком тяжёлые — уберите одно и отправьте снова'; return; }
+  btn.disabled=true; hint.textContent=adPhotos.length?'Отправляю фото…':'Отправляю…';
   var body=_editAd?{id:_editAd, ad:ad, images:adPhotos}:{ad:ad, images:adPhotos};
   var url=_editAd?'/api/ad/update':'/api/ad/create';
-  api(url,body).then(function(){
+  // с фото по мобильной сети 12 секунд мало
+  api(url,body,adPhotos.length?90000:12000).then(function(){
     var правка=!!_editAd;
     btn.disabled=false; hint.textContent='';
     if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success');
