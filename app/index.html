@@ -3,6 +3,17 @@
 <head>
 <meta charset="utf-8">
 <title>Отходы в доходы — приложение</title>
+<!-- превью ссылки в Telegram и мессенджерах: без этих тегов показывался
+     только заголовок «приложение» (28.10.2026) -->
+<meta name="description" content="Торги по продаже нефтепродуктов, металлолома, труб, задвижек и кабелей с площадок России в одной ленте. Только реализация, без закупок. Подборки и уведомления.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Отходы в доходы">
+<meta property="og:title" content="Отходы в доходы — приложение">
+<meta property="og:description" content="Торги по продаже нефтепродуктов, металлолома, труб, задвижек и кабелей с площадок России в одной ленте. Только реализация, без закупок. Подборки и уведомления.">
+<meta property="og:image" content="https://xn-----elcgda8dafa0bybh2fi.xn--p1ai/og.png?v=20261028">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#10181E" media="(prefers-color-scheme: light)">
@@ -393,6 +404,10 @@
   .mbtn-go { background: var(--accent); color: #fff; }
   .mbtn-ic { flex: none; width: 52px; border-radius: 13px; display: grid; place-items: center; cursor: pointer; border: 1px solid var(--hair); background: var(--surface-2); color: var(--text); transition: opacity .12s; }
   .mbtn-ic svg { width: 21px; height: 21px; }
+  /* «Поделиться лотом» только внутри Telegram. На сайте рядом с
+     «Открыть лот» стоит дискета — скачать документацию. */
+  #modal-share { display: none; }
+  body.in-telegram #modal-share { display: grid; }
   .mbtn-ic.mail { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
   .mbtn-ic.sent { color: var(--fresh); border-color: var(--fresh); background: color-mix(in srgb, var(--fresh) 14%, var(--surface)); }
   .row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--hair); }
@@ -1069,7 +1084,7 @@
     .tab-row .tab-plus { width: 34px; height: 34px; border-radius: 10px; font-size: 20px;
       display: grid; place-items: center; transition: background .18s, opacity .18s; }
     .tab-row .tab-plus:hover { background: var(--surface); opacity: 1; }
-    #share-btn, #install-group { display: none !important; }
+    #share-btn, #install-group, #pwa-install { display: none !important; }
     /* лента — узкая сплошная колонка слева, предпросмотр — справа */
     /* узкая колонка ленты фиксированной ширины; предпросмотр — сразу за ней, до правого края */
     body[data-pane="tenders"] #pane-tenders, body[data-pane="fav"] #pane-fav { width: calc(var(--list) + var(--list-pad) + 12px); max-width: none; padding: 28px 12px 72px var(--list-pad); }
@@ -1434,6 +1449,8 @@
   #pane-ads .ad-card.cat-oil { box-shadow: inset 3px 0 0 #d9a04a; }
   #pane-ads .ad-card.cat-metal { box-shadow: inset 3px 0 0 #9fb0c0; }
   #pane-ads .ad-card.cat-pipe { box-shadow: inset 3px 0 0 #d4744f; }
+  #pane-ads .ad-card.cat-valve { box-shadow: inset 3px 0 0 #7fa7c9; }
+  #pane-ads .ad-card.cat-cable { box-shadow: inset 3px 0 0 #c98a5a; }
   #pane-ads .ad-card.cat-other { box-shadow: inset 3px 0 0 rgba(238,243,240,.35); }
   #pane-ads .ac-ph { position: relative; width: 100%; height: 112px; flex: none; min-height: 0; overflow: hidden;
     border-radius: 15px 15px 0 0; background: #070d0b; }
@@ -1640,7 +1657,7 @@ header.app .app-sub { display:none; }
         </g>
       </svg>
     </div>
-    <div class="word">ОТХОДЫ В ДОХОДЫ<small>нефтепродукты · металлолом · трубы</small></div>
+    <div class="word">ОТХОДЫ В ДОХОДЫ<small>нефтепродукты · металлолом · трубы · задвижки · кабели</small></div>
   </div>
   <script>
   // Как можно раньше: Telegram держит свой чёрный экран, пока не получит
@@ -1717,8 +1734,10 @@ header.app .app-sub { display:none; }
       <div class="lbfilter" id="lbfilter" style="display:none"></div>
       <div class="catseg" id="catseg">
         <button data-cat="oil" class="on">Нефтепродукты</button>
-        <button data-cat="pipe">Трубы</button>
         <button data-cat="metal">Металлолом</button>
+        <button data-cat="pipe">Трубы</button>
+        <button data-cat="valve">Задвижки</button>
+        <button data-cat="cable">Кабели</button>
       </div>
       <div class="toolbar">
         <input id="search" class="search" type="search" placeholder="Поиск по названию…" autocomplete="off">
@@ -1786,6 +1805,8 @@ header.app .app-sub { display:none; }
         <button class="fchip" type="button" data-adcat="oil">Нефтепродукты</button>
         <button class="fchip" type="button" data-adcat="metal">Металлолом</button>
         <button class="fchip" type="button" data-adcat="pipe">Трубы</button>
+        <button class="fchip" type="button" data-adcat="valve">Задвижки</button>
+        <button class="fchip" type="button" data-adcat="cable">Кабели</button>
       </div>
       <div id="ads-list" class="ad-grid"><div class="spinner"></div></div>
       <button type="button" id="ad-more" class="ad-more" hidden>Показать ещё</button>
@@ -1814,8 +1835,10 @@ header.app .app-sub { display:none; }
           <select id="lb-cat">
             <option value="">Все категории</option>
             <option value="oil">Нефтепродукты</option>
-            <option value="pipe">Трубы</option>
             <option value="metal">Металлолом</option>
+            <option value="pipe">Трубы</option>
+            <option value="valve">Задвижки</option>
+            <option value="cable">Кабели</option>
           </select>
         </div>
         <div class="lb-field">
@@ -1882,7 +1905,7 @@ header.app .app-sub { display:none; }
         <div class="tariffs" id="tariffs"></div>
         <ul class="sub-benefits">
           <li>Мгновенные алерты о новых лотах по вашим подборкам</li>
-          <li>Полная лента: нефтепродукты, металлолом, трубы</li>
+          <li>Полная лента: нефтепродукты, металлолом, трубы, задвижки, кабели</li>
           <li>Отправка документов лота в Телеграм и на почту</li>
           <li>Все площадки реализации, поиск и избранное</li>
         </ul>
@@ -2009,7 +2032,7 @@ header.app .app-sub { display:none; }
       <div class="group">
         <div class="label">О приложении и лицензии</div>
         <div class="rows about">
-          <p><b class="ab-t">Отходы в доходы</b> — тендеры на <b>реализацию</b> (продажу): нефтепродукты, металлолом, трубы. Только продажи — закупки, поставки и услуги отфильтрованы.</p>
+          <p><b class="ab-t">Отходы в доходы</b> — тендеры на <b>реализацию</b> (продажу): нефтепродукты, металлолом, трубы, задвижки, кабели. Только продажи — закупки, поставки и услуги отфильтрованы.</p>
           <div class="lic"><b>⚠️ Лицензии для участия.</b> Для законной работы, как правило, нужны:<br>• на <b>лом</b> чёрных/цветных металлов — лицензия на заготовку, хранение, переработку и реализацию лома (ФЗ-99 «О лицензировании»);<br>• на <b>отходы</b> I–IV классов опасности (отработанные нефтепродукты, масла, нефтешлам) — лицензия на сбор, транспортирование, обработку, утилизацию и обезвреживание (Росприроднадзор; ФЗ-99 и ФЗ-89 «Об отходах»).<br>Перечень зависит от вида лома/отхода и региона — уточняйте у профильного юриста и в условиях каждого лота. Это информационная справка, не юридическая консультация.</div>
           <p class="ab-link"><a href="https://t.me/nfresursbot" target="_blank" rel="noopener">Бот: @nfresursbot</a> · команды /faq, /help</p>
         </div>
@@ -2058,6 +2081,7 @@ header.app .app-sub { display:none; }
       </div>
       <div class="modal-acts">
         <a class="mbtn mbtn-go" id="modal-go" target="_blank" rel="noopener">Открыть лот</a>
+        <button class="mbtn-ic" id="modal-docs-dl" title="Скачать документацию" aria-label="Скачать документацию"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h9l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M8 3v5h7"/><path d="M8 21v-6h8v6"/></svg></button>
         <button class="mbtn-ic" id="modal-share" title="Поделиться лотом"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
         <button class="mbtn-ic" id="modal-send" title="Отправить карточку в Телеграм"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M22 3 2 10.5l6.5 2.2M22 3l-3 18-8-6.3M22 3 8.5 14.7M8.5 14.7V20l3-3.9"/></svg></button>
         <button class="mbtn-ic mail" id="modal-mail" title="Отправить карточку на почту"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button>
@@ -2246,6 +2270,71 @@ function downloadDoc(t, n, btn){
     .then(function(blob){ var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=d.name||('Документ '+(n+1)); document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000); btn.disabled=false; btn.innerHTML=old; })
     .catch(function(e){ btn.disabled=false; btn.innerHTML=old; alert('Не удалось скачать: '+e.message+'\nОткройте документ на странице лота.'); });
 }
+function nameFromDisposition(resp, fallback){
+  var cd = resp.headers.get('Content-Disposition') || '';
+  var m = /filename\*=UTF-8''([^;]+)/i.exec(cd) || /filename="?([^";]+)"?/i.exec(cd);
+  if (!m) return fallback || 'document';
+  try { return decodeURIComponent(m[1]); } catch (_) { return m[1]; }
+}
+function saveBlob(blob, name){
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name || 'document';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+}
+function fetchLotFile(t, n){
+  return fetch(API_BASE + '/api/tender/file', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({initData: initData, session: SESS(), site: t.site, number: t.number, n: n})
+  }).then(function(r){
+    if (!r.ok) return r.json().then(function(j){ throw new Error((j && j.error) || ('HTTP ' + r.status)); });
+    return r.blob().then(function(blob){ return {blob: blob, name: nameFromDisposition(r, '')}; });
+  });
+}
+function downloadLotFiles(t, btn){
+  if (!t || !btn || btn.dataset.busy) return;
+  var k = t.site + ':' + t.number;
+  function run(docs){
+    if (!docs.length){
+      showToast('Прямых файлов нет — документы на странице лота');
+      return;
+    }
+    btn.dataset.busy = '1';
+    btn.style.opacity = '.5';
+    Promise.all(docs.map(function(d){
+      return fetchLotFile(t, d.n).then(function(got){
+        return {blob: got.blob, name: got.name || d.name || ('Документ ' + (d.n + 1))};
+      });
+    })).then(function(files){
+      files.forEach(function(f){ saveBlob(f.blob, f.name); });
+      btn.dataset.busy = '';
+      btn.style.opacity = '';
+      showToast(files.length > 1 ? ('Скачано файлов: ' + files.length) : 'Документ скачан');
+    }).catch(function(e){
+      btn.dataset.busy = '';
+      btn.style.opacity = '';
+      alert('Не удалось скачать: ' + ((e && e.message) || e) + '\nОткройте документ на странице лота.');
+    });
+  }
+  if (_docsCache[k]) { run(_docsCache[k]); return; }
+  btn.dataset.busy = '1';
+  btn.style.opacity = '.5';
+  api('/api/tender/doclist', {site: t.site, number: t.number}).then(function(d){
+    var docs = (d && d.docs) || [];
+    _docsCache[k] = docs;
+    btn.dataset.busy = '';
+    btn.style.opacity = '';
+    if (_modalT === t) run(docs);
+  }).catch(function(){
+    btn.dataset.busy = '';
+    btn.style.opacity = '';
+    showToast('Документы не загрузились — попробуйте позже или откройте страницу лота');
+  });
+}
 function renderSimilar(t){
   var box=document.getElementById('modal-similar'); if(!box) return;
   var kk=key(t), cat=t.category||'oil';
@@ -2255,7 +2344,7 @@ function renderSimilar(t){
   var rest=same.filter(function(x){ return bySeller.indexOf(x)<0 && byRegion.indexOf(x)<0; });
   var list=bySeller.concat(byRegion, rest).slice(0,6);
   if(!list.length){ box.innerHTML=''; return; }
-  var catName={oil:'нефтепродукты',pipe:'трубы',metal:'металлолом'}[cat]||cat;
+  var catName={oil:'нефтепродукты',metal:'металлолом',pipe:'трубы',valve:'задвижки',cable:'кабели'}[cat]||cat;
   box.innerHTML='<div class="sim-head">Похожие лоты · '+catName+'</div>'+list.map(function(x){
     var dl=dlInfo(x.deadline), price=fmtPrice(x.price), reg=regionOf(x)||cityOf(x)||'';
     return '<div class="sim" data-key="'+encodeURIComponent(key(x))+'"><div class="sim-top"><span class="chip">'+escH(x.site_title||PLATFORMS[x.site]||x.site)+'</span><span class="deadline '+dl.cls+'"><span class="dot"></span>'+dl.txt+'</span></div><div class="sim-title">'+escH(cleanTitle(x.title))+'</div><div class="sim-meta">'+(reg?'<span>'+escH(reg)+'</span>':'')+(price?'<span class="sim-price">'+escH(price)+'</span>':'')+'</div></div>';
@@ -2383,7 +2472,7 @@ function openTender(t){
   var kk=key(t);
   if(!seen.has(kk)){ seen.add(kk); saveSeen();
     document.querySelectorAll('.card[data-key="'+encodeURIComponent(kk)+'"]').forEach(function(el){ el.classList.remove('new'); var b=el.querySelector('.new-badge'); if(b)b.remove(); }); }
-  var cat={oil:'Нефтепродукты',pipe:'Трубы',metal:'Металлолом'}[t.category||'oil']||'Нефтепродукты';
+  var cat={oil:'Нефтепродукты',metal:'Металлолом',pipe:'Трубы',valve:'Задвижки',cable:'Кабели'}[t.category||'oil']||'Нефтепродукты';
   document.getElementById('modal-chips').innerHTML='<span class="chip">'+escH(t.site_title||PLATFORMS[t.site]||t.site)+'</span><span class="chip" style="background:var(--surface-2);color:var(--text-dim)">'+cat+'</span>';
   document.getElementById('modal-title').textContent=cleanTitle(t.title);
   var city=cityOf(t), price=fmtPrice(t.price), dl=dlInfo(t.deadline);
@@ -2407,7 +2496,7 @@ function openTender(t){
   document.querySelectorAll('.card.sel').forEach(function(c){ c.classList.remove('sel'); });
   document.querySelectorAll('.card[data-key="'+encodeURIComponent(kk)+'"]').forEach(function(c){ c.classList.add('sel'); });
   notePaint(t); seenLog(t); recentPaint();   // список недавних обновляем сразу
-  ['modal-send','modal-mail'].forEach(function(id){ var b=document.getElementById(id); if(b){ b.classList.remove('sent'); b.style.opacity=''; b.dataset.busy=''; } });
+  ['modal-send','modal-mail','modal-docs-dl'].forEach(function(id){ var b=document.getElementById(id); if(b){ b.classList.remove('sent'); b.style.opacity=''; b.dataset.busy=''; } });
   document.getElementById('modal').style.display='flex';
   try{ if(tg&&tg.HapticFeedback&&tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light'); }catch(_){}
 }
@@ -3002,7 +3091,7 @@ document.addEventListener('click',e=>{
   }
   if(e.target.closest('#share-btn')){
     var url='https://t.me/nfresursbot';
-    var text='Отходы в доходы — тендеры по реализации нефтепродуктов, металлолома и труб';
+    var text='Отходы в доходы — тендеры по реализации нефтепродуктов, металлолома, труб, задвижек и кабелей';
     var link='https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);
     try{ if(tg&&tg.openTelegramLink){ tg.openTelegramLink(link); return; } }catch(_){}
     try{ if(navigator.share){ navigator.share({title:'Отходы в доходы',text:text,url:url}); return; } }catch(_){}
@@ -3111,6 +3200,7 @@ document.addEventListener('click',e=>{
         (e2 && e2.message) || 'Не удалось создать ссылку'; });
     return;
   }
+  if(e.target.closest('#modal-docs-dl')){ downloadLotFiles(_modalT, e.target.closest('#modal-docs-dl')); return; }
   if(e.target.closest('#modal-share')){ lotShare(); return; }
   if(e.target.closest('#ref-tg')){ refShare('tg'); return; }
   if(e.target.closest('#ref-wa')){ refShare('wa'); return; }
@@ -3258,7 +3348,7 @@ var LB = { list: [], regions: [], regionsReq: null, colors: [], sel: [],
 function lbEl(id){ return document.getElementById(id); }
 function lbMsg(text, cls){ var m=lbEl('lb-msg'); if(m){ m.className='lb-msg '+(cls||''); m.textContent=text||''; } }
 
-function lbCats(v){ return {oil:'Нефтепродукты', pipe:'Трубы', metal:'Металлолом'}[v] || 'Все категории'; }
+function lbCats(v){ return {oil:'Нефтепродукты', metal:'Металлолом', pipe:'Трубы', valve:'Задвижки', cable:'Кабели'}[v] || 'Все категории'; }
 
 function lbPaintColors(){
   var box=lbEl('lb-colors'); if(!box) return;
@@ -3735,8 +3825,8 @@ var ADTAB = 'all';
 var ADS = [];
 var ADMORE = null;
 var ADFILT = {q:'', cat:'', region:'', status:'', sort:'new'};
-var AD_KIND = {oil:0, metal:1, pipe:2, other:3};
-var AD_LABEL = {oil:'Нефтепродукты', metal:'Металлолом', pipe:'Трубы', other:'Другое'};
+var AD_KIND = {oil:0, metal:1, pipe:2, valve:3, cable:4, other:5};
+var AD_LABEL = {oil:'Нефтепродукты', metal:'Металлолом', pipe:'Трубы', valve:'Задвижки', cable:'Кабели', other:'Другое'};
 var AD_STATUS = {pending:'на модерации', approved:'опубликовано', rejected:'отклонено', expired:'срок истёк', banned:'заблокировано', archived:'в архиве'};
 
 function adDate(s){
@@ -3993,7 +4083,8 @@ function adById(id){
    телефоне разворачивается во весь экран и выглядит чужим. Значение держим
    в скрытом поле, чтобы отправка формы не менялась. */
 var AD_CATS = [{v: 'oil', label: 'Нефтепродукты'}, {v: 'metal', label: 'Металлолом'},
-               {v: 'pipe', label: 'Трубы'}];
+               {v: 'pipe', label: 'Трубы'}, {v: 'valve', label: 'Задвижки'},
+               {v: 'cable', label: 'Кабели'}];
 var AD_VATS = [{v: '', label: 'НДС не указан'}, {v: 'with', label: 'с НДС'},
                {v: 'without', label: 'без НДС'}];
 
@@ -4348,7 +4439,7 @@ function billPaint(){
 
 /* Готовый текст приглашения: человеку проще переслать, чем сочинять. */
 var REF_TEXT = 'Я пользуюсь сервисом «Отходы в доходы»: он собирает процедуры '
-  + 'реализации металлолома, труб и нефтепродуктов с торговых площадок в одной '
+  + 'реализации нефтепродуктов, металлолома, труб, задвижек и кабелей с торговых площадок в одной '
   + 'ленте. По моей ссылке доступен расширенный пробный период.';
 
 function refShare(куда){
@@ -4826,13 +4917,21 @@ function showLogin(msg){
   try { standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; } catch(_){}
   if (inTelegram || standalone) return;   // уже приложение или мы в Telegram — не навязываемся
 
-  // Android/Chrome: нативное предложение установки
+  function desktopScreen(){
+    try { return window.matchMedia('(min-width: 1024px)').matches; } catch(_){ return false; }
+  }
+
+  // Android/Chrome: нативное предложение установки. На компьютере кнопку
+  // не показываем — она нужна на телефоне. В Telegram установка живёт
+  // в профиле, этот плавающий баннер туда не дублируем.
   var deferred = null;
   window.addEventListener('beforeinstallprompt', function(e){
-    e.preventDefault(); deferred = e; window.__pwaPrompt = e; showBtn();
+    e.preventDefault(); deferred = e; window.__pwaPrompt = e;
+    if (!desktopScreen()) showBtn();
     try { renderInstallHelp(); } catch(_){}
   });
   function showBtn(){
+    if (desktopScreen()) return;
     if (document.getElementById('pwa-install')) return;
     var b = document.createElement('button');
     b.id = 'pwa-install';
@@ -4855,6 +4954,14 @@ function showLogin(msg){
   window.addEventListener('appinstalled', function(){
     var b = document.getElementById('pwa-install'); if (b) b.remove();
   });
+  try {
+    var desk = window.matchMedia('(min-width: 1024px)');
+    desk.addEventListener('change', function(){
+      var b = document.getElementById('pwa-install');
+      if (desk.matches) { if (b) b.remove(); }
+      else if (deferred) showBtn();
+    });
+  } catch(_){}
 
   // iOS Safari: beforeinstallprompt нет — разовая подсказка «Поделиться → На экран Домой»
   try {
